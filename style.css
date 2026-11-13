@@ -1,0 +1,71 @@
+/* ArtistByron — artistbyron.ca draft
+   Dark horror, simple, mobile-first, $0, no frameworks. */
+:root{
+  --bg:#0b0b0e; --panel:#15151b; --panel2:#1d1d26;
+  --ink:#f2ede6; --muted:#a9a4b0; --line:#2c2c38;
+  --red:#c1121f; --red2:#e5383b; --green:#4ade80; --gold:#e8b64c;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  line-height:1.55;font-size:17px}
+a{color:#ff6b6b}
+a:visited{color:#ff8f8f}
+h1,h2,h3{line-height:1.2;margin:.4em 0 .5em}
+h1{font-size:clamp(2rem,7vw,3.2rem);letter-spacing:.02em}
+h2{font-size:1.5rem;border-bottom:2px solid var(--red);padding-bottom:.3em}
+h3{font-size:1.15rem}
+p{margin:.5em 0 1em}
+.small{font-size:.9rem;color:var(--muted)}
+.wrap{max-width:920px;margin:0 auto;padding:0 16px 64px}
+header.site{border-bottom:3px solid var(--red);background:#111116}
+header.site .wrap{padding-top:18px;padding-bottom:18px}
+.brand{font-size:.85rem;letter-spacing:.22em;text-transform:uppercase;color:var(--red2);font-weight:700}
+.slogan{font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;margin:.2em 0}
+nav{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+nav a{display:inline-block;padding:9px 14px;border:1px solid var(--line);
+  border-radius:999px;color:var(--ink);text-decoration:none;background:var(--panel);font-weight:600}
+nav a:hover,nav a.active{border-color:var(--red);background:var(--red);color:#fff}
+.hero{padding:28px 0 8px}
+.hero p.lede{font-size:1.15rem}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:18px 0}
+.card h2,.card h3{margin-top:0}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:14px;text-align:center}
+.stat b{display:block;font-size:1.7rem;color:#fff}
+.stat span{font-size:.9rem;color:var(--muted)}
+.btn{display:inline-block;background:var(--red);color:#fff !important;text-decoration:none;
+  padding:12px 18px;border-radius:10px;font-weight:700;border:0;cursor:pointer;font-size:1rem}
+.btn:hover{background:var(--red2)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink) !important}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.links a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px;text-decoration:none;color:var(--ink)}
+.links a b{display:block;font-size:1.05rem}
+.links a span{color:var(--muted);font-size:.9rem}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.art{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.art .thumb{height:150px;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 30%,#3a0d12,#14141a 70%);font-size:3rem}
+.art .body{padding:14px}
+.art .body h3{margin:0 0 .3em}
+.art .body p{margin:0 0 .7em;color:var(--muted);font-size:.95rem}
+input[type="text"],input[type="search"]{width:100%;padding:13px;border-radius:10px;
+  border:1px solid var(--line);background:#0f0f14;color:var(--ink);font-size:1rem}
+label{font-weight:700;display:block;margin-bottom:6px}
+.result{margin-top:14px;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--panel2)}
+.result.good{border-color:var(--green)}
+.result.miss{border-color:var(--gold)}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{position:sticky;top:0;background:var(--panel)}
+td.num,th.num{text-align:right}
+code{background:#262630;padding:2px 6px;border-radius:6px;font-size:.9em;word-break:break-all}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+footer .wrap{padding-top:20px}
+ul.tight li{margin-bottom:.4em}
+.tier{border-left:4px solid var(--red);padding-left:12px;margin:14px 0}
+.note{background:#221a08;border:1px solid #5a4310;border-radius:var(--radius);padding:14px;margin:16px 0}
+@media (max-width:600px){body{font-size:16px}.stat-grid{grid-template-columns:repeat(2,1fr)}}

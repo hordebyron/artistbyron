@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XRPL Holders Leaderboard — ArtistByron</title>
+<meta name="description" content="XRPL leaderboard for Big Paws and Lost in Contemplation: who holds both, who holds one, and who is whitelisted for the next free drop.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <div class="brand">ArtistByron · The Horde</div>
+    <div class="slogan">XRPL Holders Leaderboard</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="holders.html" class="active">XRPL Leaderboard</a>
+      <a href="kofi.html">Ko-fi Leaderboard</a>
+      <a href="https://ko-fi.com/artistbyron">Ko-fi Shop</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Who holds both free drops?</h1>
+  <p>Big Paws (My Zombie Cats) and Lost in Contemplation (Byrons Ink) were free mints on xrp.cafe. Hold <strong>both</strong> and you are on the whitelist for the next free drop on IMCollectibles, dropping Mon 16 Nov 2026.</p>
+
+  <div class="stat-grid">
+    <div class="stat"><b>317 / 589</b><span>Big Paws minted</span></div>
+    <div class="stat"><b>310 / 589</b><span>Lost in Contemplation minted</span></div>
+    <div class="stat"><b>266</b><span>Real wallets hold both*</span></div>
+    <div class="stat"><b>314</b><span>Wallets hold at least one</span></div>
+    <div class="stat"><b>21</b><span>Big Paws only</span></div>
+    <div class="stat"><b>26</b><span>Lost only</span></div>
+  </div>
+  <p class="small">* 267 wallets hold both in the raw data. One of them, <code>rKqqb5QZXVAL3VqXJL6obfRGeHou1DtyBV</code>, holds 27 Big Paws + 15 Lost and is almost certainly xrp.cafe's minting / distribution wallet, with unclaimed mints in it. It is excluded from the ranking below. That leaves 266 real wallets holding both.</p>
+  <p class="small"><strong>Snapshot: 12 Nov 2026, 22:30–22:40 CST.</strong> These are <strong>current holders, not original minters</strong> — verified against the XRPL ledger with 0 mismatches. If someone minted then sold, the new holder is the one listed. Mint counts will have risen since this snapshot: the free mint ended Fri 13 Nov at 4pm CST, when both turned to 5.89 XRP.</p>
+
+  <section class="card">
+    <h2>Check my status</h2>
+    <p>Paste your XRPL wallet address to see your holdings, rank, and whitelist status. No login, no password, no seed — the check runs in your browser.</p>
+    <form id="status-form">
+      <label for="wallet-input">XRPL wallet address</label>
+      <input type="text" id="wallet-input" placeholder="r..." autocomplete="off" spellcheck="false">
+      <p style="margin-top:10px"><button class="btn" type="submit">Check my status</button></p>
+    </form>
+    <div id="status-result" class="result" aria-live="polite"><p class="small">A real login — for example, connecting with Xaman so the site proves you own the wallet — would need a server and a wallet integration later. It is <strong>not</strong> in this draft. This box just looks you up in the snapshot file.</p></div>
+  </section>
+
+  <section>
+    <h2>Top holders</h2>
+    <p id="holders-top-note" class="small"></p>
+    <table>
+      <thead><tr><th>Rank</th><th>Wallet</th><th class="num">Big Paws</th><th class="num">Lost</th><th class="num">Total</th><th>Both?</th></tr></thead>
+      <tbody id="holders-top"><tr><td colspan="6">Loading…</td></tr></tbody>
+    </table>
+    <p class="small">Rank is by total of these two editions only. Rank #1 holds 3 + 3 = 6, rank #2 holds 2 + 2 = 4, and rank #3 is a tie — 266 wallets hold 1 + 1 = 2. Wallets are shown shortened (<code>rXXX...XXXX</code>); the full address is in the row below the short form, and in <code>data/holders.json</code>.</p>
+  </section>
+
+  <section>
+    <h2>Search all wallets</h2>
+    <label for="holders-search">Search by wallet address</label>
+    <input type="search" id="holders-search" placeholder="Paste or type part of an r... address">
+    <p id="holders-count" class="small"></p>
+    <table>
+      <thead><tr><th>Rank</th><th>Wallet</th><th class="num">Big Paws</th><th class="num">Lost</th><th class="num">Total</th><th>Both?</th></tr></thead>
+      <tbody id="holders-all"><tr><td colspan="6">Loading…</td></tr></tbody>
+    </table>
+    <p class="small">Showing up to 200 matches at a time. The full snapshot is in <code>data/holders.json</code> (314 wallets, distribution wallet flagged, not ranked).</p>
+  </section>
+
+  <section class="card">
+    <h2>The editions</h2>
+    <ul class="tight">
+      <li><strong>Big Paws</strong> — My Zombie Cats — <a href="https://xrp.cafe/edition/myzombiecats/13451">xrp.cafe/edition/myzombiecats/13451</a> — 317 / 589, 288 unique wallets</li>
+      <li><strong>Lost in Contemplation</strong> — Byrons Ink — <a href="https://xrp.cafe/edition/byronsink/13452">xrp.cafe/edition/byronsink/13452</a> — 310 / 589, 293 unique wallets</li>
+      <li>Issuer for both: <code>rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf</code></li>
+      <li>Both were free, 1 mint per wallet at mint time. After minting, tokens can be sold or sent on, which is why a few wallets hold more than 1.</li>
+    </ul>
+  </section>
+</main>
+
+<footer><div class="wrap"><p>ArtistByron · The Horde · Data: snapshot 12 Nov 2026, 22:30–22:40 CST. Source files: <code>data/holders.json</code>, from <code>~/workspace/horde/big-paws-lost-wallets.csv</code>.</p></div></footer>
+<script src="script.js"></script>
+</body>
+</html>
