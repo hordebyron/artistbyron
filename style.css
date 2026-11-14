@@ -104,3 +104,15 @@ ul.tight li{margin-bottom:.4em}
 .news{border-left:4px solid var(--green)}
 .news h2{border-bottom-color:var(--green)}
 @media (max-width:600px){.slide{min-height:300px}.slide-emoji{font-size:4.5rem}}
+
+/* --- Art-only home page, Nov 2026: name + one hero + intro + selected work --- */
+.home-hero{text-align:center;padding:28px 0 8px}
+.home-hero img{width:100%;max-width:640px;display:block;margin:0 auto;border:1px solid var(--line);border-radius:var(--radius);background:#000}
+.home-hero h1{font-family:Impact,"Arial Black",system-ui,sans-serif;font-size:clamp(2.6rem,10vw,4.5rem);letter-spacing:.03em;margin:.5em 0 .1em;color:#f2ede6}
+.home-hero .tagline{font-size:1.2rem;color:var(--red2);font-weight:700;margin:.2em 0 1em}
+.home-intro{max-width:640px;margin:0 auto 24px;text-align:center;font-size:1.1rem}
+.work-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.work{display:block;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-decoration:none;color:var(--ink)}
+.work b{display:block;font-size:1.05rem}
+.work span{color:var(--muted);font-size:.9rem}
+.home-links{text-align:center;margin-top:28px}
