@@ -116,3 +116,22 @@ ul.tight li{margin-bottom:.4em}
 .work b{display:block;font-size:1.05rem}
 .work span{color:var(--muted);font-size:.9rem}
 .home-links{text-align:center;margin-top:28px}
+
+/* --- Split doors home, after reddwalitzki.com/home, Nov 2026 --- */
+.split-home{background:#0b0b0e}
+.split-top{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:linear-gradient(180deg,rgba(0,0,0,.75),transparent)}
+.split-brand{font-family:Impact,"Arial Black",system-ui,sans-serif;font-size:1.4rem;letter-spacing:.06em;color:#f2ede6;text-decoration:none;text-transform:uppercase}
+.split-nav{display:flex;gap:6px}
+.split-nav a{color:#f2ede6;text-decoration:none;font-weight:600;padding:8px 12px;border-radius:999px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.25)}
+.doors{display:grid;grid-template-columns:1fr 1fr;min-height:88vh}
+.door{position:relative;display:flex;align-items:flex-end;text-decoration:none;color:#fff;overflow:hidden;background:#111116 var(--door-img,none) center/cover no-repeat;min-height:420px}
+.door::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.82))}
+.door:hover{filter:brightness(1.08)}
+.door-coming{background:radial-gradient(circle at 50% 25%,#3a0d12,#14141a 70%)}
+.door-label{position:relative;z-index:2;padding:28px}
+.door-label b{display:block;font-family:Impact,"Arial Black",system-ui,sans-serif;font-size:clamp(2rem,6vw,3.4rem);letter-spacing:.03em;text-transform:uppercase;text-shadow:0 3px 12px rgba(0,0,0,.8)}
+.door-label i{display:block;font-style:normal;color:#e5e0d8;margin:.4em 0 .8em;max-width:34ch}
+.door-go{display:inline-block;border:1px solid #fff;border-radius:999px;padding:8px 16px;font-weight:700;background:rgba(0,0,0,.45)}
+.split-intro{text-align:center;padding:48px 16px 32px}
+.split-intro h1{font-size:clamp(1.4rem,4vw,2rem);max-width:720px;margin:0 auto .6em;border:0}
+@media (max-width:640px){.doors{grid-template-columns:1fr;min-height:0}.door{min-height:52vh}.split-top{padding:12px 14px}.split-nav a{padding:7px 9px}}

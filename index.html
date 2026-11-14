@@ -4,56 +4,52 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Artist Byron — I draw zombies</title>
-<meta name="description" content="Artist Byron, Canadian dark / horror artist in ink and paint for 20 years. Zombies, skulls, creepy portraits.">
+<meta name="description" content="Artist Byron, Canadian dark / horror artist in ink and paint for 20 years. Two doors: real-world art, and the crypto Horde.">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<header class="site">
-  <div class="wrap">
-    <div class="brand">Artist Byron</div>
-    <nav>
-      <a href="index.html" class="active">Home</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="about.html">About</a>
-      <a href="https://ko-fi.com/artistbyron">Shop</a>
-      <a href="game.html">Play the Game</a>
-    </nav>
-  </div>
+<body class="split-home">
+<header class="split-top">
+  <a class="split-brand" href="index.html">Artist Byron</a>
+  <nav class="split-nav">
+    <a href="gallery.html">Gallery</a>
+    <a href="about.html">About</a>
+    <a href="https://ko-fi.com/artistbyron">Shop</a>
+  </nav>
 </header>
 
-<main class="wrap home">
-  <section class="home-hero">
-    <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmNVSqNurBcPPW6TRGVDHvoFLPFV4E9A3WtS4tfZHz3j7X&size=1110&output=webp" alt="Horde's Clown #1 — a zombie clown by Artist Byron" loading="eager">
-    <h1>Artist Byron</h1>
-    <p class="tagline">I draw zombies. Ink &amp; paint, 20 years in.</p>
+<main>
+  <!-- Two doors, after reddwalitzki.com/home: Paintings / Journeys.
+       Left = Real World, right = Crypto / Horde.
+       Images are placeholders until Byron sends the two graphics:
+       - real-world.jpg (his physical art)
+       - crypto.jpg (his Horde / clown art)
+       Swap the --door-img URLs below, nothing else changes. -->
+  <section class="doors" aria-label="Choose a world">
+    <a class="door door-real door-coming" href="gallery.html">
+      <span class="door-label">
+        <b>Real World</b>
+        <i>Paintings, ink &amp; prints — the art itself</i>
+        <span class="door-go">Enter &rarr;</span>
+      </span>
+    </a>
+    <a class="door door-crypto" href="game.html" style="--door-img:url('https://resizer.atomichub.io/images/v1/preview?ipfs=QmNVSqNurBcPPW6TRGVDHvoFLPFV4E9A3WtS4tfZHz3j7X&size=1110&output=webp')">
+      <span class="door-label">
+        <b>Crypto</b>
+        <i>The Horde — free drops, games &amp; NFTs</i>
+        <span class="door-go">Enter &rarr;</span>
+      </span>
+    </a>
   </section>
 
-  <section class="home-intro">
-    <p>Hello and welcome. I&rsquo;m Byron, a Canadian artist drawing and painting undead horrors in ink and paint — zombies, skulls, and creepy portraits. I&rsquo;ve been at it for 20 years, and I still love it most when people just come for the art and stay for the Horde.</p>
-    <p><a class="btn" href="gallery.html">View Gallery</a></p>
-  </section>
-
-  <section>
-    <h2>Selected work</h2>
-    <div class="work-grid">
-      <a class="work" href="gallery.html"><b>Horde&rsquo;s Clown #1</b><span>Zombie clown, ink — new, Mon 16 Nov</span></a>
-      <a class="work" href="https://xrp.cafe/edition/myzombiecats/13451"><b>Big Paws</b><span>My Zombie Cats — free edition</span></a>
-      <a class="work" href="https://xrp.cafe/edition/byronsink/13452"><b>Lost in Contemplation</b><span>Byrons Ink — free edition</span></a>
-      <a class="work" href="https://xrp.cafe/edition/byronsink/13084"><b>Rumble Ready</b><span>Byrons Ink — animated</span></a>
-      <a class="work" href="https://ord-dropz.xyz/marketplace/listing_1793760653782"><b>Feast of fLies</b><span>1-of-1, ink &amp; watercolour — Ordinals</span></a>
-      <a class="work" href="gallery.html"><b>Skulls &amp; Portraits</b><span>Ink, paint, and creepy faces</span></a>
-    </div>
-  </section>
-
-  <section class="home-links">
-    <h2>Find me</h2>
+  <section class="split-intro wrap">
+    <h1>Byron Rempel is a Canadian horror artist, drawing &amp; painting undead horrors in ink &amp; paint for 20 years.</h1>
+    <p>Zombies, skulls, and creepy portraits. Come for the art, stay for the Horde.</p>
     <p>
-      <a href="https://ko-fi.com/artistbyron">Ko-fi Shop</a> ·
-      <a href="https://x.com/ArtistByron">X — @ArtistByron</a> ·
-      <a href="https://www.facebook.com/byrontheartist">Facebook</a> ·
-      <a href="https://www.twosentencehorrors.com/">Two Sentence Horrors</a>
+      <a class="btn" href="https://ko-fi.com/artistbyron">Get in touch — Ko-fi</a>
+      <a class="btn ghost" href="about.html">About Byron</a>
     </p>
-    <p class="small">The Horde, crypto drops, and leaderboards live one click away — on <a href="game.html">Play the Game</a> and <a href="wallet.html">My Horde Wallet</a>. This page is just art.</p>
+    <p class="small">Real World: <a href="gallery.html">Gallery</a> · <a href="https://ko-fi.com/artistbyron">Shop / Loot Crates</a> · <a href="https://www.twosentencehorrors.com/">Two Sentence Horrors</a><br>
+    Crypto: <a href="game.html">Play the Game</a> · <a href="wallet.html">My Horde Wallet</a> · <a href="holders.html">Leaderboard</a></p>
   </section>
 </main>
 
