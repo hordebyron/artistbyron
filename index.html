@@ -14,6 +14,11 @@
   .scroll-area p{font-size:1.1rem;line-height:1.5}
   .btn{display:inline-block;background:#c1121f;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:700;margin:6px 6px 6px 0}
   .btn.ghost{background:transparent;border:1px solid #555;color:#f2ede6}
+  .btn{transition:transform .12s ease, box-shadow .12s ease}
+  .btn:hover{transform:translateY(-2px)}
+  .btn:active{transform:translateY(1px) scale(.97);box-shadow:inset 0 2px 8px rgba(0,0,0,.5)}
+  a{transition:transform .12s ease}
+  a:active{transform:scale(.97)}
   .frame-img{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
   .tv-layer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
   /* Frame sits on top of the TV layers, TVs stay underneath it and just cycle. No flash. */
@@ -42,7 +47,7 @@
       <a class="btn ghost" href="game.html">Crypto, Play the Game</a>
     </p>
     <p>
-      <a href="https://ko-fi.com/artistbyron">Shop on Ko-fi</a> &middot;
+      <a href="shop.html">Shop</a> &middot; <a href="https://ko-fi.com/artistbyron">Shop on Ko-fi</a> &middot;
       <a href="https://x.com/ArtistByron">X, @ArtistByron</a> &middot;
       <a href="https://www.facebook.com/byrontheartist">Facebook</a> &middot;
       <a href="about.html">About Byron</a>
