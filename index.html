@@ -3,59 +3,83 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Artist Byron — I draw zombies</title>
-<meta name="description" content="Artist Byron, Canadian dark / horror artist in ink and paint for 20 years. Two doors: real-world art, and the crypto Horde.">
-<link rel="stylesheet" href="style.css">
+<title>Artist Byron, I draw zombies</title>
+<meta name="description" content="Artist Byron, Canadian horror artist in ink and paint for 20 years. Zombies, skulls, creepy portraits.">
+<style>
+  body{margin:0;background:#8c8c8c;font-family:system-ui,Arial,sans-serif;color:#f2ede6}
+  a{color:#ff6b6b}
+  .frame-wrap{position:relative;max-width:2400px;margin:0 auto;aspect-ratio:2400/1600;background:#8c8c8c;overflow:hidden}
+  .scroll-area{position:absolute;left:19%;top:9.4%;width:62%;height:81.2%;overflow-y:auto;background:#0b0b0e;padding:24px 28px;box-sizing:border-box;z-index:1}
+  .scroll-area h1{font-family:Impact,"Arial Black",sans-serif;font-size:2.4rem;margin:.2em 0}
+  .scroll-area p{font-size:1.1rem;line-height:1.5}
+  .btn{display:inline-block;background:#c1121f;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:700;margin:6px 6px 6px 0}
+  .btn.ghost{background:transparent;border:1px solid #555;color:#f2ede6}
+  .frame-img{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+  .tv-layer{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;transition:opacity .12s}
+  .tv-layer.flicker{opacity:.15;filter:contrast(1.6) brightness(1.4)}
+  .frame-mobile{display:none}
+  @media (max-width:768px){
+    .frame-wrap{max-width:1080px;aspect-ratio:1080/1920}
+    .frame-desktop{display:none}
+    .frame-mobile{display:block}
+    .scroll-area{left:9.4%;top:19.1%;width:81.1%;height:61.9%;padding:16px}
+    .scroll-area h1{font-size:1.8rem}
+    /* Mobile TVs are the ones painted in the vertical frame for now.
+       The landscape TV overlays do not fit a tall frame, so they are hidden here.
+       Flicker for mobile comes next, once the TV art is cropped for tall. */
+    .tv-layer{display:none}
+  }
+</style>
 </head>
-<body class="split-home">
-<header class="split-top">
-  <a class="split-brand" href="index.html">Artist Byron</a>
-  <nav class="split-nav">
-    <a href="gallery.html">Gallery</a>
-    <a href="about.html">About</a>
-    <a href="https://ko-fi.com/artistbyron">Shop</a>
-  </nav>
-</header>
-
-<main>
-  <!-- Two doors, after reddwalitzki.com/home: Paintings / Journeys.
-       Left = Real World, right = Crypto / Horde.
-       Images are placeholders until Byron sends the two graphics:
-       - real-world.jpg (his physical art)
-       - crypto.jpg (his Horde / clown art)
-       Swap the --door-img URLs below, nothing else changes. -->
-  <section class="doors" aria-label="Choose a world">
-    <a class="door door-real door-coming" href="gallery.html">
-      <span class="door-label">
-        <b>Real World</b>
-        <i>Paintings, ink &amp; prints — the art itself</i>
-        <span class="door-go">Enter &rarr;</span>
-      </span>
-    </a>
-    <a class="door door-crypto" href="game.html" style="--door-img:url('https://resizer.atomichub.io/images/v1/preview?ipfs=QmNVSqNurBcPPW6TRGVDHvoFLPFV4E9A3WtS4tfZHz3j7X&size=1110&output=webp')">
-      <span class="door-label">
-        <b>Crypto</b>
-        <i>The Horde — free drops, games &amp; NFTs</i>
-        <span class="door-go">Enter &rarr;</span>
-      </span>
-    </a>
-  </section>
-
-  <section class="split-intro wrap">
-    <h1>Byron Rempel is a Canadian horror artist, drawing &amp; painting undead horrors in ink &amp; paint for 20 years.</h1>
-    <p>Zombies, skulls, and creepy portraits. Come for the art, stay for the Horde.</p>
+<body>
+<div class="frame-wrap">
+  <div class="scroll-area">
+    <h1>Artist Byron</h1>
+    <p>I draw zombies. Ink and paint, 20 years in.</p>
+    <p>Hello and welcome. I am Byron, a Canadian artist drawing and painting undead horrors in ink and paint. Zombies, skulls, and creepy portraits. Come for the art, stay for the Horde.</p>
     <p>
-      <a class="btn" href="https://ko-fi.com/artistbyron">Get in touch — Ko-fi</a>
-      <a class="btn ghost" href="about.html">About Byron</a>
+      <a class="btn" href="gallery.html">Real World, Gallery</a>
+      <a class="btn ghost" href="game.html">Crypto, Play the Game</a>
     </p>
-    <p class="small">Real World: <a href="gallery.html">Gallery</a> · <a href="https://ko-fi.com/artistbyron">Shop / Loot Crates</a> · <a href="https://www.twosentencehorrors.com/">Two Sentence Horrors</a><br>
-    Crypto: <a href="game.html">Play the Game</a> · <a href="wallet.html">My Horde Wallet</a> · <a href="holders.html">Leaderboard</a></p>
-  </section>
-</main>
-
-<footer><div class="wrap">
-  <p>Artist Byron · The Horde · Come for the art, stay for the Horde.</p>
-</div></footer>
-<script src="script.js"></script>
+    <p>
+      <a href="https://ko-fi.com/artistbyron">Shop on Ko-fi</a> &middot;
+      <a href="https://x.com/ArtistByron">X, @ArtistByron</a> &middot;
+      <a href="https://www.facebook.com/byrontheartist">Facebook</a> &middot;
+      <a href="about.html">About Byron</a>
+    </p>
+    <p><a href="wallet.html">My Horde Wallet</a> &middot; <a href="holders.html">Leaderboard</a></p>
+    <p style="margin-top:400px">You made it to the bottom. The frame never moved.</p>
+  </div>
+  <img class="frame-img frame-desktop" src="art/frame/layoutframe.png" alt="Artist Byron frame">
+  <img class="frame-img frame-mobile" src="art/frame/vertical.png" alt="Artist Byron frame, phone">
+  <img class="tv-layer" id="tv1" src="art/tv1-top/skully.png" alt="Top TV">
+  <img class="tv-layer" id="tv2" src="art/tv2-mid/clown.png" alt="Mid TV">
+  <img class="tv-layer" id="tv3" src="art/tv2-mid/themuse.png" alt="Bottom TV 1, placeholder until tv3 art is uploaded">
+  <img class="tv-layer" id="tv4" src="art/tv1-top/madscientist.png" alt="Bottom TV 2, placeholder until tv4 art is uploaded">
+</div>
+<script>
+  var base = "https://hordebyron.github.io/artistbyron/";
+  var tvFiles = {
+    tv1: ["skully.png","climbingover.png","endoftheword.png","flaminghair.png","madscientist.png","seenitall.png"],
+    tv2: ["betterout.png","charlie.png","clown.png","dalmation.png","dino.png","help.png","inthemist.png","jellyfish.png","joker1.png","joker2.png","skullonblue.png","snot.png","themuse.png","toothy.png","whodis.png"],
+    // TODO: tv3 and tv4 use tv2/tv1 art as placeholders until art/tv3-bot1 and art/tv4-bot2 are uploaded, then switch these lists back to the numbered files.
+    tv3: ["betterout.png","charlie.png","clown.png","dalmation.png","dino.png","help.png","inthemist.png","jellyfish.png","joker1.png","joker2.png","skullonblue.png","snot.png","themuse.png","toothy.png","whodis.png"],
+    tv4: ["skully.png","climbingover.png","endoftheword.png","flaminghair.png","madscientist.png","seenitall.png"]
+  };
+  var tvDirs = {tv1: "art/tv1-top/", tv2: "art/tv2-mid/", tv3: "art/tv2-mid/", tv4: "art/tv1-top/"}; // TODO: tv3 to art/tv3-bot1/, tv4 to art/tv4-bot2/ after upload
+  var timers = {tv1: 5000, tv2: 4000, tv3: 6000, tv4: 5000};
+  Object.keys(timers).forEach(function(id){
+    var el = document.getElementById(id);
+    var i = 0;
+    setInterval(function(){
+      el.classList.add("flicker");
+      setTimeout(function(){
+        i = (i + 1) % tvFiles[id].length;
+        el.src = tvDirs[id] + tvFiles[id][i];
+        el.classList.remove("flicker");
+      }, 140);
+    }, timers[id]);
+  });
+</script>
 </body>
 </html>
