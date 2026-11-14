@@ -69,3 +69,38 @@ ul.tight li{margin-bottom:.4em}
 .tier{border-left:4px solid var(--red);padding-left:12px;margin:14px 0}
 .note{background:#221a08;border:1px solid #5a4310;border-radius:var(--radius);padding:14px;margin:16px 0}
 @media (max-width:600px){body{font-size:16px}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* --- Home redesign: bold hero, carousel, What's New, nickname box --- */
+.drip-title{
+  font-family:Impact,"Arial Black",system-ui,sans-serif;
+  font-size:clamp(3.2rem,16vw,7rem);line-height:.9;letter-spacing:.02em;
+  color:#f2ede6;margin:.1em 0 .1em;
+  text-shadow:0 4px 0 #4ade80,0 8px 0 #14532d,0 12px 24px rgba(0,0,0,.8);
+}
+.drip-title::first-line{color:#fff}
+.slogan{font-size:clamp(1.1rem,4vw,1.5rem);font-weight:800;margin:.2em 0 1em;color:var(--red2)}
+.hero-carousel{padding:20px 0 8px}
+.carousel{position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#000}
+.slides{position:relative}
+.slide{display:none;position:relative;min-height:340px}
+.slide.is-active{display:block}
+.slide-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 25%,#1d7a35,#0b0b0e 65%),linear-gradient(180deg,#14141a,#000)}
+.slide-emoji{font-size:6rem;filter:drop-shadow(0 8px 16px rgba(0,0,0,.7))}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.hero-img.is-hidden{display:none}
+.slide-caption{position:absolute;left:0;right:0;bottom:0;padding:56px 18px 18px;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.85));color:#fff}
+.slide-caption h2{margin:0 0 .2em;border:0;padding:0;font-size:1.6rem;color:#fff}
+.slide-caption p{margin:.2em 0 .8em;color:#e5e0d8}
+.carousel-btn{position:absolute;top:42%;transform:translateY(-50%);z-index:2;
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--line);
+  background:rgba(0,0,0,.65);color:#fff;font-size:1.6rem;cursor:pointer}
+.carousel-btn.prev{left:10px}.carousel-btn.next{right:10px}
+.dots{position:absolute;bottom:8px;right:12px;z-index:2;display:flex;gap:6px}
+.dot{background:transparent;border:0;color:#a9a4b0;font-size:.9rem;cursor:pointer;padding:4px}
+.dot.is-active{color:#fff}
+.hero-note{margin-top:10px}
+.news{border-left:4px solid var(--green)}
+.news h2{border-bottom-color:var(--green)}
+@media (max-width:600px){.slide{min-height:300px}.slide-emoji{font-size:4.5rem}}
