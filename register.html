@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Register — Join the Horde</title>
+<meta name="description" content="Register with the Horde. Pick a name, add your WAX name and XRPL address, and the site will know you next time. No seed, ever.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <div class="brand">ArtistByron · The Horde</div>
+    <div class="slogan">Register — Join the Horde</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="shop.html">Shop</a>
+      <a href="crypto.html">Crypto</a>
+      <a href="game.html">Play the Game</a>
+      <a href="wallet.html">My Horde Wallet</a>
+      <a href="register.html" class="active">Register</a>
+      <a href="https://ko-fi.com/artistbyron">Ko-fi</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Hey, welcome to the Horde</h1>
+  <p>Register once, and we will know you when you come back. Pick a name, add your wallets if you have them, and your Horde card is yours. No password, no seed, ever.</p>
+  <p class="small">Wallet addresses are public on the chain already, anyone can see them. Your name here is your choice, use a nickname if you like. We never ask for a seed, a private key, or a wallet password.</p>
+
+  <section class="card" id="register-card">
+    <h2>Register</h2>
+    <form id="register-form">
+      <p><label for="reg-name">What should we call you?</label>
+      <input type="text" id="reg-name" placeholder="e.g. Tony" autocomplete="off" maxlength="40" required></p>
+      <p><label for="reg-wax">WAX account name, if you have one</label>
+      <input type="text" id="reg-wax" placeholder="e.g. ylab4.wam" autocomplete="off" spellcheck="false">
+      <span class="small">Lower case, 12 characters max, like ylab4.wam. Leave it blank if you do not have one yet.</span></p>
+      <p><label for="reg-xrp">XRPL address, if you have one</label>
+      <input type="text" id="reg-xrp" placeholder="r..." autocomplete="off" spellcheck="false">
+      <span class="small">Starts with r. Leave it blank if you do not have one yet.</span></p>
+      <p><label for="reg-kofi">Ko-fi name, if you are a member</label>
+      <input type="text" id="reg-kofi" placeholder="Your Ko-fi name" autocomplete="off" maxlength="40"></p>
+      <p><label for="reg-discord">Discord name, if you are in the Horde server</label>
+      <input type="text" id="reg-discord" placeholder="Your Discord name" autocomplete="off" maxlength="40"></p>
+      <p><button class="btn" type="submit">Register me</button>
+      <button class="btn ghost" type="button" id="reg-clear">Start over</button></p>
+    </form>
+    <p><button class="btn ghost" type="button" id="wax-login-btn">Log in with WAX to prove it is yours</button></p>
+    <p class="small" id="wax-login-status">WAX login is optional. It just proves the WAX name is yours, so nobody can register as you. It signs nothing. XRPL login is coming next, for now XRPL is paste your address.</p>
+    <div id="register-result" class="result" aria-live="polite" hidden></div>
+  </section>
+
+  <section class="card" id="horde-card" hidden>
+    <h2>Your Horde card</h2>
+    <div id="horde-card-body"></div>
+    <p><a class="btn" href="wallet.html">See my Horde Wallet</a></p>
+  </section>
+
+  <section class="card">
+    <h2>How to join the shared list</h2>
+    <p>Right now this page saves your registration on this device, so it knows you when you come back here. To join the shared Horde list, copy the text below after you register and paste it in Discord to Marrow, or in a Ko-fi message to Byron. Marrow writes WAX names down already, and Byron adds them to the shared list.</p>
+    <p class="small">Next piece, when Byron says go: a small shared database, so registration follows you to any device, no copy and paste needed. That is the only part this page cannot do on its own, because GitHub Pages has no database.</p>
+    <p><label for="reg-share">Your registration, copy and paste</label>
+    <textarea id="reg-share" rows="4" readonly style="width:100%;padding:13px;border-radius:10px;border:1px solid var(--line);background:#0f0f14;color:var(--ink);font-size:1rem" placeholder="Register first, then your text to share will show here."></textarea></p>
+    <p><button class="btn" type="button" id="reg-copy">Copy my registration</button></p>
+    <p class="small" id="reg-copy-status"></p>
+  </section>
+
+  <section class="card">
+    <h2>What happens next</h2>
+    <ul class="tight">
+      <li>Come back here, or to My Horde Wallet, and the page greets you by name and shows what you hold.</li>
+      <li>Your rank comes from what you hold. Points and ranks stay quiet until after Monday 16 Nov, then they show on your Horde card.</li>
+      <li>If you only have one wallet, register that one. You can add the other one later, same name, same page.</li>
+    </ul>
+  </section>
+</main>
+
+<footer><div class="wrap"><p>ArtistByron · The Horde · Register, no seed, ever. Saved on this device for now, shared list via Marrow in Discord.</p></div></footer>
+<script>
+/* Register page. v1 saves on this device only (localStorage, key horde_registration),
+   and gives a copy and paste text for Discord / Ko-fi so Marrow and Byron can add
+   the person to the shared list. No seed, no keys, no password, ever. */
+var KEY = 'horde_registration';
+var form = document.getElementById('register-form');
+var resultEl = document.getElementById('register-result');
+var cardEl = document.getElementById('horde-card');
+var cardBody = document.getElementById('horde-card-body');
+var shareEl = document.getElementById('reg-share');
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function validWax(v){ return !v || /^[a-z1-5.]{1,12}$/.test(v); }
+function validXrp(v){ return !v || /^r[0-9a-zA-Z]{24,34}$/.test(v); }
+function shareText(r){
+  var parts = ['Hey Marrow, register me for the Horde.', 'Name: ' + r.name];
+  if (r.wax) parts.push('WAX: ' + r.wax);
+  if (r.xrp) parts.push('XRPL: ' + r.xrp);
+  if (r.kofi) parts.push('Ko-fi: ' + r.kofi);
+  if (r.discord) parts.push('Discord: ' + r.discord);
+  return parts.join('\n');
+}
+function showReg(r){
+  resultEl.hidden = false;
+  resultEl.innerHTML = '<p><strong>Registered. Hey ' + esc(r.name) + ', welcome to the Horde.</strong></p>'
+    + '<p class="small">Saved on this device. Come back here and we will know you.</p>';
+  cardEl.hidden = false;
+  cardBody.innerHTML = '<p><strong>Hey ' + esc(r.name) + ', welcome to the Horde.</strong></p>'
+    + (r.wax ? '<p>WAX: <strong>' + esc(r.wax) + '</strong></p>' : '<p>WAX: not added yet.</p>')
+    + (r.xrp ? '<p>XRPL: <strong>' + esc(r.xrp) + '</strong></p>' : '<p>XRPL: not added yet.</p>')
+    + (r.kofi ? '<p>Ko-fi: ' + esc(r.kofi) + '</p>' : '')
+    + (r.discord ? '<p>Discord: ' + esc(r.discord) + '</p>' : '')
+    + '<p class="small">Your rank shows here after Monday, once points go live.</p>';
+  shareEl.value = shareText(r);
+}
+function loadReg(){
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) { return null; }
+}
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  var r = {
+    name: document.getElementById('reg-name').value.trim(),
+    wax: document.getElementById('reg-wax').value.trim().toLowerCase(),
+    xrp: document.getElementById('reg-xrp').value.trim(),
+    kofi: document.getElementById('reg-kofi').value.trim(),
+    discord: document.getElementById('reg-discord').value.trim(),
+    registered: new Date().toISOString().slice(0,10)
+  };
+  if (!r.name) { resultEl.hidden = false; resultEl.innerHTML = '<p>Pick a name first, that is the only required bit.</p>'; return; }
+  if (!validWax(r.wax)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That WAX name does not look right. WAX names are lower case, 12 characters max, like ylab4.wam.</p>'; return; }
+  if (!validXrp(r.xrp)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That XRPL address does not look right. It should start with r.</p>'; return; }
+  if (!r.wax && !r.xrp) { resultEl.hidden = false; resultEl.innerHTML = '<p>Add at least one wallet, WAX or XRPL, so we know it is you.</p>'; return; }
+  try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (err) {}
+  showReg(r);
+});
+document.getElementById('reg-clear').addEventListener('click', function(){
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  form.reset(); shareEl.value = ''; cardEl.hidden = true;
+  resultEl.hidden = false; resultEl.innerHTML = '<p>Started over. Your saved registration on this device is cleared.</p>';
+});
+document.getElementById('reg-copy').addEventListener('click', async function(){
+  if (!shareEl.value) { document.getElementById('reg-copy-status').textContent = 'Register first, then copy.'; return; }
+  try { await navigator.clipboard.writeText(shareEl.value); document.getElementById('reg-copy-status').textContent = 'Copied. Paste it in Discord to Marrow, or in a Ko-fi message to Byron.'; }
+  catch (err) { shareEl.select(); document.getElementById('reg-copy-status').textContent = 'Copy did not work in this browser, select the text above and copy it by hand.'; }
+});
+/* If they registered before, greet them and fill the form in. */
+(function(){
+  var r = loadReg();
+  if (!r) return;
+  document.getElementById('reg-name').value = r.name || '';
+  document.getElementById('reg-wax').value = r.wax || '';
+  document.getElementById('reg-xrp').value = r.xrp || '';
+  document.getElementById('reg-kofi').value = r.kofi || '';
+  document.getElementById('reg-discord').value = r.discord || '';
+  showReg(r);
+})();
+</script>
+<script>
+/* WAX login on the register page, same as wallet.html. Proves the WAX name,
+   fills it in, signs nothing. Wharfkit SessionKit 4.0.2 via esm.sh. */
+(function () {
+  var statusEl = document.getElementById('wax-login-status');
+  var loginBtn = document.getElementById('wax-login-btn');
+  var waxInput = document.getElementById('reg-wax');
+  var sessionKit = null;
+  async function init() {
+    try {
+      var m = await Promise.all([
+        import('https://esm.sh/@wharfkit/session@4.0.2'),
+        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+      ]);
+      sessionKit = new m[0].SessionKit({
+        appName: 'artistbyron',
+        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
+        ui: new m[1].WebRenderer(),
+        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
+      });
+      loginBtn.addEventListener('click', async function () {
+        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
+        try {
+          var res = await sessionKit.login();
+          waxInput.value = String(res.session.actor);
+          statusEl.textContent = 'Logged in as ' + String(res.session.actor) + ' — proven by your wallet. Now finish the form and hit Register me.';
+        } catch (err) {
+          statusEl.textContent = 'Login cancelled or failed — you can still type your WAX name in by hand.';
+        } finally { loginBtn.disabled = false; }
+      });
+      try {
+        var session = await sessionKit.restore();
+        if (session) { waxInput.value = String(session.actor); statusEl.textContent = 'Logged in as ' + String(session.actor) + ' — proven by your wallet.'; }
+      } catch (err) {}
+    } catch (err) {
+      statusEl.textContent = 'WAX login could not load just now — you can still type your WAX name in by hand.';
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>

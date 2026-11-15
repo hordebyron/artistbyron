@@ -30,6 +30,7 @@
       <a href="crypto.html" class="active">Crypto</a>
       <a href="game.html">Play the Game</a>
       <a href="wallet.html">My Horde Wallet</a>
+      <a href="register.html">Register</a>
       <a href="collections.html">Collections</a>
       <a href="https://ko-fi.com/artistbyron">Ko-fi</a>
     </nav>
@@ -37,125 +38,25 @@
 </header>
 
 <main class="wrap">
-  <h1>Which wallet do you have?</h1>
-  <p>Pick your wallet first. That tells the site which chain you are on, so you only see the right drops, games and holdings. No password, no seed, ever. Logging in only proves the wallet is yours.</p>
+  <h1>WAX or XRP?</h1>
+  <p>Pick one. That tells the site which chain you are on, so you only see the right drops, games and holdings. No password, no seed, ever. Logging in only proves the wallet is yours.</p>
 
   <section id="step1">
-    <h2><span class="chain-tag chain-wax">WAX</span> I have a WAX wallet</h2>
     <div class="wallet-grid">
-      <button class="wallet-card" type="button" data-wax="Anchor"><b>Anchor</b><span>WAX, Anchor app. Tap, approve in Anchor, you are in.</span></button>
-      <button class="wallet-card" type="button" data-wax="Cloud Wallet"><b>Cloud Wallet</b><span>WAX, My Cloud Wallet. Tap, approve in Cloud Wallet, you are in.</span></button>
-      <button class="wallet-card" type="button" data-wax="paste"><b>I just have a WAX name</b><span>No login. Type your .wam name and check your Horde.</span></button>
+      <button class="wallet-card" type="button" onclick="window.location.href='wax.html'"><b>WAX</b><span>Anchor, Cloud Wallet, or just a .wam name. Clown drop, Catacombs, myhordeonwax.</span></button>
+      <button class="wallet-card" type="button" onclick="window.location.href='xrp.html'"><b>XRP</b><span>Xaman, GemWallet, Crossmark, or just an r... address. Big Paws, Lost, Monday free drop.</span></button>
     </div>
-
-    <h2><span class="chain-tag chain-xrp">XRP</span> I have an XRP wallet</h2>
-    <div class="wallet-grid">
-      <button class="wallet-card" type="button" data-xrp="Xaman"><b>Xaman</b><span>XRP, Xaman app. The Xaman button is coming, paste your address for now.</span></button>
-      <button class="wallet-card" type="button" data-xrp="GemWallet"><b>GemWallet</b><span>XRP, browser extension. Paste your address for now.</span></button>
-      <button class="wallet-card" type="button" data-xrp="Crossmark"><b>Crossmark</b><span>XRP, browser extension. Paste your address for now.</span></button>
-      <button class="wallet-card" type="button" data-xrp="paste"><b>I just have an XRPL address</b><span>No login. Paste your r... address and check your Horde.</span></button>
-    </div>
-    <p class="small">Not sure which one you have? WAX names look like ylab4.wam, 12 characters max, lower case. XRPL addresses start with r, like rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf.</p>
-  </section>
-
-  <section class="card" id="step2" hidden>
-    <h2 id="step2-title">Your chain</h2>
-    <p id="step2-text"></p>
-    <p><button class="btn" type="button" id="wax-login-btn" hidden>Log in with WAX</button>
-    <button class="btn ghost" type="button" id="back-btn">Back, pick a different wallet</button></p>
-    <p class="small" id="login-status"></p>
-    <div id="chain-links"></div>
+    <p class="small">Not sure which one you have? WAX names look like ylab4.wam, 12 characters max, lower case. XRPL addresses start with r, like rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf. You pick your wallet app on the next page.</p>
   </section>
 
   <section class="card">
     <h2>After you pick</h2>
     <p><strong>WAX:</strong> Horde's Clown #1, Mon 16 Nov 1pm CST, free 24h for the whitelist, then 666 WAX. Catacombs puzzle game next. Your WAX Horde is in the myhordeonwax collection.</p>
     <p><strong>XRP:</strong> Free generative drop on IMCollectibles, Mon 16 Nov, free for holders of both Big Paws and Lost in Contemplation. Your XRPL Horde is Big Paws, Lost, the Horde, Byrons Ink, and the rest, see <a href="collections.html">Collections</a>.</p>
-    <p class="small">XRP wallet login, Xaman, GemWallet and Crossmark in one button, is the next piece. It needs a free Xaman app key first, so for now XRP is paste your address. WAX login works now, Anchor and Cloud Wallet, via Wharfkit SessionKit. File: crypto.html, local draft, 14 Nov 2026.</p>
+    <p class="small">XRP wallet login, Xaman, GemWallet and Crossmark in one button, is the next piece. It needs a free Xaman app key first, so for now XRP is paste your address on the XRP page. WAX login, Anchor and Cloud Wallet, is on the WAX page via Wharfkit SessionKit.</p>
   </section>
 </main>
 
-<footer><div class="wrap"><p>ArtistByron · The Horde · Crypto entry, pick your wallet first</p></div></footer>
-<script>
-var step1 = document.getElementById('step1');
-var step2 = document.getElementById('step2');
-var titleEl = document.getElementById('step2-title');
-var textEl = document.getElementById('step2-text');
-var linksEl = document.getElementById('chain-links');
-var loginBtn = document.getElementById('wax-login-btn');
-var statusEl = document.getElementById('login-status');
-var chain = null;
-
-function showStep2(chainName, walletName, text, links) {
-  chain = chainName;
-  step1.hidden = true; step2.hidden = false;
-  titleEl.textContent = 'You are on ' + chainName + ' — ' + walletName;
-  textEl.textContent = text;
-  linksEl.innerHTML = links;
-  loginBtn.hidden = (chainName !== 'WAX');
-  statusEl.textContent = chainName === 'WAX' ? 'Tap Log in with WAX, pick Anchor or Cloud Wallet in the popup, and approve in your own wallet app. It signs nothing.' : 'XRP login is coming. For now, paste your XRPL address on the My Horde Wallet page, no seed ever.';
-  window.scrollTo(0, step2.offsetTop - 20);
-}
-document.querySelectorAll('[data-wax]').forEach(function (btn) {
-  btn.addEventListener('click', function () {
-    var w = btn.getAttribute('data-wax');
-    if (w === 'paste') { window.location.href = 'wax.html'; return; }
-    showStep2('WAX', w, 'WAX it is. Anchor and Cloud Wallet are both WAX, so you are on the WAX side now. Log in below, or go straight to the WAX page.',
-      '<p><a class="btn" href="wax.html">Go to the WAX page</a> <a class="btn ghost" href="https://wax.atomichub.io/drops/92610">Clown drop 92610, AtomicHub</a> <a class="btn ghost" href="game.html">Play the Game</a></p>');
-  });
-});
-document.querySelectorAll('[data-xrp]').forEach(function (btn) {
-  btn.addEventListener('click', function () {
-    var w = btn.getAttribute('data-xrp');
-    showStep2('XRP', w, 'XRP it is. ' + w + ' is an XRP wallet, so you are on the XRP side now. Go to the XRP page to see your Horde, Big Paws and Lost, and the Monday free drop.',
-      '<p><a class="btn" href="xrp.html">Go to the XRP page</a> <a class="btn ghost" href="collections.html">My XRPL collections</a> <a class="btn ghost" href="https://imcollectibles.io/artists/artistbyron">IMCollectibles, Mon 16 Nov</a></p>');
-  });
-});
-document.getElementById('back-btn').addEventListener('click', function () {
-  step2.hidden = true; step1.hidden = false; chain = null;
-});
-</script>
-<script>
-/* WAX login, same Wharfkit SessionKit as wallet.html. Anchor + Cloud Wallet only. */
-(function () {
-  var loginBtn = document.getElementById('wax-login-btn');
-  var statusEl = document.getElementById('login-status');
-  var sessionKit = null;
-  async function init() {
-    try {
-      var m = await Promise.all([
-        import('https://esm.sh/@wharfkit/session@4.0.2'),
-        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
-      ]);
-      sessionKit = new m[0].SessionKit({
-        appName: 'artistbyron',
-        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
-        ui: new m[1].WebRenderer(),
-        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
-      });
-      try {
-        var s = await sessionKit.restore();
-        if (s) statusEl.textContent = 'Already logged in on WAX as ' + String(s.actor) + '.';
-      } catch (e) {}
-    } catch (e) {
-      statusEl.textContent = 'WAX login could not load just now. Use the paste a WAX name option instead.';
-    }
-  }
-  loginBtn.addEventListener('click', async function () {
-    if (!sessionKit) return;
-    loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
-    try {
-      var res = await sessionKit.login();
-      statusEl.textContent = 'Logged in on WAX as ' + String(res.session.actor) + '. That is proven by your wallet, nothing was signed.';
-      window.location.href = 'wax.html';
-    } catch (e) {
-      statusEl.textContent = 'Login cancelled or failed. Try again, or paste your WAX name on the wallet page.';
-    } finally { loginBtn.disabled = false; }
-  });
-  init();
-})();
-</script>
+<footer><div class="wrap"><p>ArtistByron · The Horde · Crypto entry, pick WAX or XRP</p></div></footer>
 </body>
 </html>
