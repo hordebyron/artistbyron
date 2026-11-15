@@ -8,7 +8,11 @@
 <style>
   body{margin:0;background:#8c8c8c;font-family:system-ui,Arial,sans-serif;color:#f2ede6}
   a{color:#ff6b6b}
-  .frame-wrap{position:relative;width:min(100vw,150vh);height:100vh;margin:0 auto;aspect-ratio:2400/1600;background:#8c8c8c;overflow:hidden;flex:0 0 auto}
+  .frame-wrap{position:relative;width:min(100vw,177.78vh);height:100vh;margin:0 auto;aspect-ratio:1920/1080;background:#8c8c8c;overflow:hidden;flex:0 0 auto}
+  /* Artist for Hire hotspot, links to Ko-fi. Desktop: green text top left.
+     Mobile: same link, repositioned to the green text top right in the vertical frame. */
+  .frame-link{position:absolute;left:13%;top:11%;width:7.5%;height:11%;z-index:4;display:block;text-indent:-9999px;overflow:hidden;cursor:pointer}
+  .frame-link:hover{outline:2px solid rgba(255,255,255,.4);outline-offset:2px}
   /* Sidebars, desktop only. They stretch and shrink with the screen, cropping the metal strip, and hide on phones. */
   .sidebars{display:flex;min-height:100vh;background:#8c8c8c}
   .sidebar{flex:1 1 0;min-width:0;height:100vh;object-fit:cover;display:block}
@@ -49,6 +53,7 @@
     #mtv2{left:20.5%;top:81.5%;width:14.5%;height:12.5%}
     #mtv3{left:44%;top:84.5%;width:29%;height:14%}
     #mtv4{left:74%;top:82.5%;width:24%;height:15%}
+    .frame-link{left:70%;top:8%;width:29%;height:9%}
   }
 </style>
 </head>
@@ -73,8 +78,9 @@
     <p><a href="wallet.html">My Horde Wallet</a> &middot; <a href="holders.html">Leaderboard</a></p>
     <p style="margin-top:400px">You made it to the bottom. The frame never moved.</p>
   </div>
-  <img class="frame-img frame-desktop" src="art/frame/layoutframe.png" alt="Artist Byron frame">
+  <img class="frame-img frame-desktop" src="art/frame/layoutframe2.png" alt="Artist Byron frame">
   <img class="frame-img frame-mobile" src="art/frame/vertical.png" alt="Artist Byron frame, phone">
+  <a class="frame-link" href="https://ko-fi.com/artistbyron" title="Artist for hire, on Ko-fi">Artist for hire, on Ko-fi</a>
   <img class="tv-layer" id="tv1" src="art/tv1-top/skully.png" alt="Top TV">
   <img class="tv-layer" id="tv2" src="art/tv2-mid/clown.png" alt="Mid TV">
   <img class="tv-layer" id="tv3" src="art/tv3-bot1/1.png" alt="Bottom TV 1">
