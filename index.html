@@ -8,7 +8,11 @@
 <style>
   body{margin:0;background:#8c8c8c;font-family:system-ui,Arial,sans-serif;color:#f2ede6}
   a{color:#ff6b6b}
-  .frame-wrap{position:relative;width:min(100vw,150vh);height:100vh;margin:0 auto;aspect-ratio:2400/1600;background:#8c8c8c;overflow:hidden}
+  .frame-wrap{position:relative;width:min(100vw,150vh);height:100vh;margin:0 auto;aspect-ratio:2400/1600;background:#8c8c8c;overflow:hidden;flex:0 0 auto}
+  /* Sidebars, desktop only. They stretch and shrink with the screen, cropping the metal strip, and hide on phones. */
+  .sidebars{display:flex;min-height:100vh;background:#8c8c8c}
+  .sidebar{flex:1 1 0;min-width:0;height:100vh;object-fit:cover;display:block}
+  @media (max-width:900px){.sidebar{display:none}}
   .scroll-area{position:absolute;left:19%;top:9.4%;width:62%;height:81.2%;overflow-y:auto;background:#0b0b0e;padding:24px 28px;box-sizing:border-box;z-index:2}
   .scroll-area h1{font-family:Impact,"Arial Black",sans-serif;font-size:2.4rem;margin:.2em 0}
   .scroll-area p{font-size:1.1rem;line-height:1.5}
@@ -37,6 +41,8 @@
 </style>
 </head>
 <body>
+<div class="sidebars">
+<img class="sidebar" src="art/frame/sidebar-left.png" alt="Left sidebar, rusty metal">
 <div class="frame-wrap">
   <div class="scroll-area">
     <h1>Artist Byron</h1>
@@ -61,6 +67,8 @@
   <img class="tv-layer" id="tv2" src="art/tv2-mid/clown.png" alt="Mid TV">
   <img class="tv-layer" id="tv3" src="art/tv3-bot1/1.png" alt="Bottom TV 1">
   <img class="tv-layer" id="tv4" src="art/tv4-bot2/1.png" alt="Bottom TV 2">
+</div>
+<img class="sidebar" src="art/frame/sidebar-right.png" alt="Right sidebar, rusty metal">
 </div>
 <script>
   var base = "https://hordebyron.github.io/artistbyron/";
