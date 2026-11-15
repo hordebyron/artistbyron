@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XRP — Artist Byron</title>
+<meta name="description" content="XRP side of the Horde. Connect with Xaman, GemWallet or Crossmark, or paste your XRPL address, and see how much Byron art you hold on XRP.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <div class="brand">ArtistByron · The Horde</div>
+    <div class="slogan">XRP</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="crypto.html">Crypto</a>
+      <a href="game.html">Play the Game</a>
+      <a href="wallet.html">My Horde Wallet</a>
+      <a href="collections.html">Collections</a>
+      <a href="wax.html">WAX side</a>
+      <a href="https://ko-fi.com/artistbyron">Ko-fi</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>XRP side</h1>
+  <p>Connect with your XRP wallet. Xaman login in one button is coming, it needs a free Xaman app key first, so for now paste your XRPL address below. No password, no seed, ever, this only looks up a public address.</p>
+
+  <section class="card">
+    <h2>Log in</h2>
+    <p>
+      <button class="btn" type="button" data-xrp-login="Xaman">Log in with Xaman</button>
+      <button class="btn ghost" type="button" data-xrp-login="GemWallet">GemWallet</button>
+      <button class="btn ghost" type="button" data-xrp-login="Crossmark">Crossmark</button>
+    </p>
+    <p class="small" id="login-status">XRP wallet login is not live yet. Tap a wallet above and you will be asked to paste your address for now. That still shows your real Horde.</p>
+    <form id="paste-form">
+      <label for="xrpl-input">Your XRPL address</label>
+      <input type="text" id="xrpl-input" placeholder="r..." autocomplete="off" spellcheck="false">
+      <p style="margin-top:10px"><button class="btn" type="submit">Show my XRP Horde</button></p>
+    </form>
+  </section>
+
+  <section class="card" id="welcome-card" hidden>
+    <h2 id="welcome-title">Welcome</h2>
+    <p id="welcome-text"></p>
+    <div id="inventory"></div>
+    <p><a class="btn" href="https://imcollectibles.io/artists/artistbyron">IMCollectibles, Mon 16 Nov</a> <a class="btn ghost" href="collections.html">My XRPL collections</a></p>
+  </section>
+
+  <section class="card">
+    <h2>What counts here</h2>
+    <p>Your Byron art on XRP: Big Paws, 361 of 589, and Lost in Contemplation, 346 of 589, plus the Horde, Byrons Ink, My Zombie Cats, I Love Zombies, and the rest. Hold both Big Paws and Lost and you are on the whitelist for the free IMCollectibles drop, Mon 16 Nov 2026.</p>
+    <p class="small">Data is the final snapshot, 13 Nov 2026, 16:29 to 16:30 CST, from data/holders.json, plus a live NFT count from the ledger when your browser can reach it. On the WAX side instead? <a href="wax.html">Go to the WAX page</a>, or <a href="crypto.html">back to pick a wallet</a>.</p>
+  </section>
+</main>
+
+<footer><div class="wrap"><p>ArtistByron · The Horde · XRPL inventory, snapshot 13 Nov 2026</p></div></footer>
+<script>
+var statusEl = document.getElementById('login-status');
+var welcomeCard = document.getElementById('welcome-card');
+var welcomeTitle = document.getElementById('welcome-title');
+var welcomeText = document.getElementById('welcome-text');
+var inventoryEl = document.getElementById('inventory');
+var xrplInput = document.getElementById('xrpl-input');
+var holdersData = null;
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function shortAddr(a){ return a.length > 12 ? a.slice(0,6) + '...' + a.slice(-4) : a; }
+async function loadHolders() {
+  if (holdersData) return holdersData;
+  var res = await fetch('data/holders.json');
+  holdersData = await res.json();
+  return holdersData;
+}
+async function liveNftCount(addr) {
+  try {
+    var res = await fetch('https://s1.ripple.com:51234/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'account_nfts', params: [{ account: addr, ledger_index: 'validated', limit: 400 }] }) });
+    var j = await res.json();
+    return (j.result && j.result.account_nfts) ? j.result.account_nfts.length : null;
+  } catch (e) { return null; }
+}
+async function showHorde(addr) {
+  welcomeCard.hidden = false;
+  welcomeTitle.textContent = 'Welcome, ' + shortAddr(addr);
+  welcomeText.textContent = 'Checking your XRP inventory…';
+  inventoryEl.innerHTML = '';
+  try {
+    var data = await loadHolders();
+    var row = data.holders.find(function(h){ return h.wallet === addr; });
+    var live = await liveNftCount(addr);
+    if (!row) {
+      welcomeText.innerHTML = 'Welcome, <strong>' + esc(shortAddr(addr)) + '</strong>, you hold <strong>0</strong> of the Big Paws and Lost set in the 13 Nov snapshot.' + (live !== null ? ' Live on the ledger right now you hold ' + live + ' XRPL NFTs in total.' : '');
+      inventoryEl.innerHTML = '<p>Big Paws: <strong>0</strong> · Lost in Contemplation: <strong>0</strong></p><p>If you minted after 13 Nov, or you sold them, you will not be on this snapshot list. The live count above, if it loaded, is the truer number.</p>';
+      return;
+    }
+    if (row.is_distribution) {
+      welcomeText.innerHTML = 'Welcome, <strong>' + esc(shortAddr(addr)) + '</strong>. This is the xrp.cafe distribution wallet, not a collector wallet.';
+      inventoryEl.innerHTML = '<p>It holds ' + row.big + ' Big Paws + ' + row.lost + ' Lost as unclaimed mints.</p>';
+      return;
+    }
+    welcomeText.innerHTML = 'Welcome, <strong>' + esc(shortAddr(addr)) + '</strong>, you hold <strong>' + row.total + '</strong> of Byron\'s art on XRP, Big Paws and Lost together.' + (live !== null ? ' Live on the ledger right now you hold ' + live + ' XRPL NFTs in total.' : '');
+    inventoryEl.innerHTML = '<p>Big Paws: <strong>' + row.big + '</strong> · Lost in Contemplation: <strong>' + row.lost + '</strong> · Total: <strong>' + row.total + '</strong> · Rank ' + esc(row.rank_label) + '</p>'
+      + '<p>' + (row.both ? 'You hold <strong>both</strong>. You are on the whitelist for the free IMCollectibles drop, Mon 16 Nov 2026.' : 'You hold one of the two. One ingredient away from the Monday whitelist.') + '</p>'
+      + '<p class="small">Snapshot: 13 Nov 2026, 16:29 to 16:30 CST. Live count: just now, when it loads.</p>';
+  } catch (e) {
+    welcomeText.textContent = 'Welcome, ' + shortAddr(addr) + '. I could not load the holder data just now, try again.';
+  }
+}
+document.querySelectorAll('[data-xrp-login]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var w = btn.getAttribute('data-xrp-login');
+    statusEl.textContent = w + ' login is coming. For now, paste your XRPL address below, that still shows your real Horde, no seed ever.';
+    xrplInput.focus();
+  });
+});
+document.getElementById('paste-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var addr = xrplInput.value.trim();
+  if (!addr.startsWith('r')) { statusEl.textContent = 'That does not look like an XRPL address, it should start with r.'; return; }
+  statusEl.textContent = 'Checking ' + shortAddr(addr) + ' on XRPL.';
+  showHorde(addr);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAX — Artist Byron</title>
+<meta name="description" content="WAX side of the Horde. Log in with Anchor or Cloud Wallet, and see how much Byron art you hold on WAX.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <div class="brand">ArtistByron · The Horde</div>
+    <div class="slogan">WAX</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="crypto.html">Crypto</a>
+      <a href="game.html">Play the Game</a>
+      <a href="wallet.html">My Horde Wallet</a>
+      <a href="collections.html">Collections</a>
+      <a href="xrp.html">XRP side</a>
+      <a href="https://ko-fi.com/artistbyron">Ko-fi</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>WAX side</h1>
+  <p>Log in with your WAX wallet, Anchor or Cloud Wallet. The site only sees your account name, never your keys, and logging in signs nothing.</p>
+
+  <section class="card">
+    <h2>Log in</h2>
+    <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button>
+    <button class="btn ghost" type="button" id="wax-logout-btn" hidden>Log out</button></p>
+    <p class="small" id="login-status">Not logged in yet.</p>
+    <form id="paste-form">
+      <label for="wax-input">Or paste your WAX name</label>
+      <input type="text" id="wax-input" placeholder="e.g. ylab4.wam" autocomplete="off" spellcheck="false">
+      <p style="margin-top:10px"><button class="btn ghost" type="submit">Show my WAX Horde</button></p>
+    </form>
+  </section>
+
+  <section class="card" id="welcome-card" hidden>
+    <h2 id="welcome-title">Welcome</h2>
+    <p id="welcome-text"></p>
+    <div id="inventory"></div>
+    <p><a class="btn" href="game.html">Play the Game</a> <a class="btn ghost" href="https://wax.atomichub.io/drops/92610">Clown drop 92610</a></p>
+  </section>
+
+  <section class="card">
+    <h2>What counts here</h2>
+    <p>Your Byron art on WAX: myhordeonwax, Horde's Clown #1 and the rest, plus byronartset1, Catacombs and the 18 and DONE parts. Checked live from AtomicAssets, just now.</p>
+    <p class="small">On the XRP side instead? <a href="xrp.html">Go to the XRP page</a>, or <a href="crypto.html">back to pick a wallet</a>.</p>
+  </section>
+</main>
+
+<footer><div class="wrap"><p>ArtistByron · The Horde · WAX inventory, live from AtomicAssets</p></div></footer>
+<script>
+var statusEl = document.getElementById('login-status');
+var welcomeCard = document.getElementById('welcome-card');
+var welcomeTitle = document.getElementById('welcome-title');
+var welcomeText = document.getElementById('welcome-text');
+var inventoryEl = document.getElementById('inventory');
+var loginBtn = document.getElementById('wax-login-btn');
+var logoutBtn = document.getElementById('wax-logout-btn');
+var waxInput = document.getElementById('wax-input');
+var sessionKit = null, session = null;
+var CLOWN = ['ylab4.wam','q52aw.wam','fzyr.wam','grkx.wam','kylinvaderme','mpvee.wam','pzyas.wam'];
+
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+async function checkCollection(name, collection) {
+  var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(name) + '/' + collection + '?limit=100');
+  if (!res.ok) throw new Error(collection + ' ' + res.status);
+  var json = await res.json();
+  var data = json.data || {};
+  var total = (data.schemas || []).reduce(function(n, s){ return n + parseInt(s.assets || 0, 10); }, 0);
+  var templates = (data.templates || []).map(function(t){ return 'Template ' + t.template_id + ' x ' + t.assets; });
+  return { collection: collection, total: total, templates: templates };
+}
+async function showHorde(name) {
+  welcomeCard.hidden = false;
+  welcomeTitle.textContent = 'Welcome, ' + name;
+  welcomeText.textContent = 'Checking your WAX inventory…';
+  inventoryEl.innerHTML = '';
+  try {
+    var a = await checkCollection(name, 'myhordeonwax');
+    var b = await checkCollection(name, 'byronartset1');
+    var total = a.total + b.total;
+    welcomeText.innerHTML = 'Welcome, <strong>' + esc(name) + '</strong>, you hold <strong>' + total + '</strong> of Byron\'s art on WAX.';
+    inventoryEl.innerHTML = '<p>myhordeonwax: <strong>' + a.total + '</strong>' + (a.templates.length ? ' — ' + esc(a.templates.join(', ')) : ' — none yet.') + '</p>'
+      + '<p>byronartset1: <strong>' + b.total + '</strong>' + (b.templates.length ? ' — ' + esc(b.templates.join(', ')) : ' — none yet.') + '</p>'
+      + '<p>' + (CLOWN.includes(name) ? 'You are on the whitelist for Horde\'s Clown #1, free Mon 16 Nov 1pm CST, 24h, 1 per wallet.' : 'Not on the Clown #1 whitelist, Tony plus the 6 founders.') + '</p>'
+      + '<p class="small">Live check, just now, from AtomicAssets.</p>';
+  } catch (e) {
+    welcomeText.textContent = 'Welcome, ' + name + '. I could not reach the WAX lookup just now, check the name and try again.';
+  }
+}
+document.getElementById('paste-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var name = waxInput.value.trim().toLowerCase();
+  if (!name) return;
+  statusEl.textContent = 'Checking ' + name + ' by name, no login.';
+  showHorde(name);
+});
+(function () {
+  async function init() {
+    try {
+      var m = await Promise.all([
+        import('https://esm.sh/@wharfkit/session@4.0.2'),
+        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+      ]);
+      sessionKit = new m[0].SessionKit({
+        appName: 'artistbyron',
+        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
+        ui: new m[1].WebRenderer(),
+        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
+      });
+      loginBtn.addEventListener('click', async function () {
+        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
+        try {
+          var res = await sessionKit.login();
+          session = res.session;
+          var name = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + name + ', proven by your wallet.';
+          loginBtn.hidden = true; logoutBtn.hidden = false;
+          waxInput.value = name;
+          showHorde(name);
+        } catch (e) {
+          statusEl.textContent = 'Login cancelled or failed. Paste your WAX name below instead.';
+        } finally { loginBtn.disabled = false; }
+      });
+      logoutBtn.addEventListener('click', async function () {
+        try { await sessionKit.logout(session); } catch (e) {}
+        session = null; waxInput.value = '';
+        loginBtn.hidden = false; logoutBtn.hidden = true;
+        welcomeCard.hidden = true;
+        statusEl.textContent = 'Logged out.';
+      });
+      try {
+        session = await sessionKit.restore();
+        if (session) {
+          var name = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + name + '.';
+          loginBtn.hidden = true; logoutBtn.hidden = false;
+          waxInput.value = name;
+          showHorde(name);
+        }
+      } catch (e) {}
+    } catch (e) {
+      statusEl.textContent = 'WAX login could not load just now. Paste your WAX name below instead, that still works.';
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>
