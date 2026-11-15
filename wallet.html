@@ -113,11 +113,10 @@ document.getElementById('wallet-form').addEventListener('submit', async (e) => {
   if (wax) {
     try {
       const data = await checkWax(wax);
-      const templates = (data.templates || []).map(t => 'Template ' + esc(t.template_id) + ' × ' + esc(t.assets));
       waxTotal = (data.schemas || []).reduce((n, s) => n + parseInt(s.assets || 0, 10), 0);
       const onClownList = CLOWN_WHITELIST.includes(wax);
       waxHtml = '<h3>WAX — ' + esc(wax) + '</h3>'
-        + '<p>myhordeonwax NFTs: <strong>' + waxTotal + '</strong>' + (templates.length ? ' — ' + templates.join(', ') : ' — none in this collection yet.') + '</p>'
+        + '<p>myhordeonwax NFTs: <strong>' + waxTotal + '</strong></p>'
         + '<p>' + (onClownList ? '✅ On the whitelist for Horde\'s Clown #1 — free Mon 16 Nov, 1pm CST, 24h, 1 per wallet.' : 'Not on the Clown #1 whitelist (Tony + 6 founders).') + '</p>'
         + '<p class="small">Live check, just now. Other WAX collections (Catacombs, etc.) not in this draft yet.</p>';
     } catch (err) {

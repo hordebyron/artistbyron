@@ -74,8 +74,7 @@ async function checkCollection(name, collection) {
   var json = await res.json();
   var data = json.data || {};
   var total = (data.schemas || []).reduce(function(n, s){ return n + parseInt(s.assets || 0, 10); }, 0);
-  var templates = (data.templates || []).map(function(t){ return 'Template ' + t.template_id + ' x ' + t.assets; });
-  return { collection: collection, total: total, templates: templates };
+  return { collection: collection, total: total };
 }
 async function showHorde(name) {
   welcomeCard.hidden = false;
@@ -87,8 +86,8 @@ async function showHorde(name) {
     var b = await checkCollection(name, 'byronartset1');
     var total = a.total + b.total;
     welcomeText.innerHTML = 'Welcome, <strong>' + esc(name) + '</strong>, you hold <strong>' + total + '</strong> of Byron\'s art on WAX.';
-    inventoryEl.innerHTML = '<p>myhordeonwax: <strong>' + a.total + '</strong>' + (a.templates.length ? ' — ' + esc(a.templates.join(', ')) : ' — none yet.') + '</p>'
-      + '<p>byronartset1: <strong>' + b.total + '</strong>' + (b.templates.length ? ' — ' + esc(b.templates.join(', ')) : ' — none yet.') + '</p>'
+    inventoryEl.innerHTML = '<p>myhordeonwax: <strong>' + a.total + '</strong></p>'
+      + '<p>byronartset1: <strong>' + b.total + '</strong></p>'
       + '<p>' + (CLOWN.includes(name) ? 'You are on the whitelist for Horde\'s Clown #1, free Mon 16 Nov 1pm CST, 24h, 1 per wallet.' : 'Not on the Clown #1 whitelist, Tony plus the 6 founders.') + '</p>'
       + '<p class="small">Live check, just now, from AtomicAssets.</p>';
   } catch (e) {
