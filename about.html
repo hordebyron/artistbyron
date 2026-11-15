@@ -3,30 +3,119 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>About — Artist Byron</title>
-<meta name="description" content="About Artist Byron — Canadian zombie artist, ink and paint, 20 years.">
+<title>About Byron — The Art of Drawing Zombies</title>
+<meta name="description" content="About Byron Rempel, Canadian zombie artist. Ink and paint, nearly twenty years. Zombies, zombie portraits, zombie cats.">
 <link rel="stylesheet" href="style.css">
+<style>
+.about-hero{text-align:center;padding:24px 0 8px}
+.about-hero h1{font-family:Impact,"Arial Black",system-ui,sans-serif;font-size:clamp(2.2rem,8vw,3.6rem);letter-spacing:.03em;margin:.2em 0}
+.about-intro{display:grid;grid-template-columns:minmax(220px,340px) 1fr;gap:20px;align-items:start;margin:18px 0}
+.about-intro img{width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);display:block}
+.about-wall{display:grid;grid-template-columns:1fr minmax(220px,420px);gap:20px;align-items:start;margin:18px 0}
+.about-wall img{width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);display:block}
+.social-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}
+.social-card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px;text-decoration:none;color:var(--ink)}
+.social-card:hover{border-color:var(--red)}
+.social-card b{display:block;font-size:1.05rem}
+.social-card span{color:var(--muted);font-size:.9rem}
+.social-card .social-graphic{display:block;margin-top:10px;padding:10px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:.85rem;text-align:center}
+@media (max-width:640px){.about-intro,.about-wall{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <header class="site">
   <div class="wrap">
-    <div class="brand">Artist Byron</div>
+    <div class="brand">ArtistByron · The Horde</div>
+    <div class="slogan">About Byron</div>
     <nav>
       <a href="index.html">Home</a>
       <a href="gallery.html">Gallery</a>
       <a href="about.html" class="active">About</a>
-      <a href="https://ko-fi.com/artistbyron">Shop</a>
+      <a href="shop.html">Shop</a>
+      <a href="crypto.html">Crypto</a>
       <a href="game.html">Play the Game</a>
+      <a href="wallet.html">My Horde Wallet</a>
+      <a href="register.html">Register</a>
+      <a href="https://ko-fi.com/artistbyron">Ko-fi</a>
     </nav>
   </div>
 </header>
+
 <main class="wrap">
-  <h1>About</h1>
-  <p>I&rsquo;m Byron Rempel, a Canadian artist from Manitoba. I draw and paint undead horrors in ink and paint — zombies, skulls, creepy portraits — and I&rsquo;ve been doing it for 20 years.</p>
-  <p>For the last five years I made most of my art for crypto, and I learned a lot from it. Now I&rsquo;m shifting back to the physical art and the real collectors who love it, with the Horde — the community around the art — at the centre. Come for the art, stay for the Horde.</p>
+  <div class="about-hero">
+    <h1>The Art of Drawing Zombies</h1>
+  </div>
+
+  <div class="about-intro">
+    <img src="art/about/about-sketch.jpg" alt="Byron sketch, zombie clown, Multi Block Chain Art">
+    <div>
+      <p><strong>I&rsquo;m Byron from Canada and I draw Zombies.</strong></p>
+      <p>I&rsquo;ve been painting and drawing Zombies, Zombie Portraits, Zombie Cats and Zombie all the other things for nearly twenty years.</p>
+      <p>All artwork is created with ink and paint on paper, canvas or wood.</p>
+      <p>For those that want a brief history of my career, it&rsquo;s long and twisty with lots of ups and downs.</p>
+    </div>
+  </div>
+
+  <p>I started learning how to draw in highschool, the teenage me was really determined to be a comic artist for Image Comics and have my own comicbook eventually. Then I graduated and forgot about art as I fucked around in life, eventually meeting a girl and goofed off more. One day I got married and the next thing you know I had a kid.</p>
+
+  <p>It was time to get serious in life so I started a job as a telemarketer which helped rekindle my passion for drawing. And for a few years that&rsquo;s what I did for 8 hours a day 5 days a week. Talk on the phone trying to sell internet or credit cards to strangers in the States while drawing superheros and cartoons.</p>
+
+  <div class="about-wall">
+    <div>
+      <p>In 2009 I began blogging a bit, then around 2011 or so GooglePLUS was formed and it my career as a zombie artist really started to take off.</p>
+      <p>Google Plus really tried helping artists get onto their platform by highlighting them in many ways. I was even commissioned by Google Canada to paint over 50 of their employees as zombies.</p>
+      <p>At one point after Google PLUS closed I got busy with life and the art scene for me was an elusive dream that I still try to achieve. The last 5 years have been a grind, one foot in front of the other, stumbling all the way.</p>
+    </div>
+    <img src="art/about/about-google-wall.jpg" alt="Wall of over 50 zombie portraits Byron painted for Google Canada">
+  </div>
+
+  <p>Now I&rsquo;m shifting back to the physical art and the real collectors who love it, with the Horde, the community around the art, at the centre. Come for the art, stay for the Horde.</p>
   <p>My art is also in <a href="https://www.twosentencehorrors.com/">Two Sentence Horrors</a>, with N. M. Scuri, and I write about it on <a href="https://thedailyzombie.blogspot.com/">The Daily Zombie</a>.</p>
-  <p>Shop, prints, and Loot Crates are on <a href="https://ko-fi.com/artistbyron">Ko-fi</a>. Say hi on <a href="https://x.com/ArtistByron">X</a> or <a href="https://www.facebook.com/byrontheartist">Facebook</a>.</p>
+
+  <section class="card">
+    <h2>Find me everywhere</h2>
+    <p>One link for everything is <a href="https://linktr.ee/artistbyron">linktr.ee/artistbyron</a>. The cards below go straight to each place. Graphics for these are coming, Byron is making them, and each card will get its picture then.</p>
+
+    <h3>Home base</h3>
+    <div class="social-grid">
+      <a class="social-card" href="https://ko-fi.com/artistbyron"><b>Ko-fi</b><span>Shop, Loot Crates, memberships, Colour Me</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://linktr.ee/artistbyron"><b>Linktree</b><span>All the links, in one place</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://artistbyron.ca"><b>artistbyron.ca</b><span>This site, home</span><span class="social-graphic">Graphic coming</span></a>
+    </div>
+
+    <h3>Social</h3>
+    <div class="social-grid">
+      <a class="social-card" href="https://x.com/ArtistByron"><b>X, @ArtistByron</b><span>Main art and Ko-fi account</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://x.com/HORDEonXRPL"><b>X, @HORDEonXRPL</b><span>Crypto and Horde account</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://www.threads.net/@artistbyron"><b>Threads, @artistbyron</b><span>Short posts and art</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://www.facebook.com/byrontheartist"><b>Facebook, Byron Rempel</b><span>Main Facebook, 3.9K followers</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://www.facebook.com/ByronsZombieFactory"><b>Facebook, The Zombie Factory</b><span>The old page, coming back</span><span class="social-graphic">Graphic coming</span></a>
+    </div>
+
+    <h3>Watch and live</h3>
+    <div class="social-grid">
+      <a class="social-card" href="https://www.twitch.tv/byronrempel"><b>Twitch, byronrempel</b><span>Livestreams, drawing live</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://www.youtube.com/@byronrempel"><b>YouTube, @byronrempel</b><span>Drawing videos and shorts</span><span class="social-graphic">Graphic coming</span></a>
+    </div>
+
+    <h3>Community and writing</h3>
+    <div class="social-grid">
+      <a class="social-card" href="https://discord.gg/rA3UMEkpqc"><b>Discord, The House of the Horde</b><span>Chat, drops, Marrow the bot</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://www.publish0x.com/artistbyron"><b>Publish0x, artistbyron</b><span>Articles, Catacombs and more</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://thedailyzombie.blogspot.com/"><b>The Daily Zombie</b><span>Byron&rsquo;s blog</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://www.twosentencehorrors.com/"><b>Two Sentence Horrors</b><span>Stories by N. M. Scuri, art by Byron</span><span class="social-graphic">Graphic coming</span></a>
+    </div>
+
+    <h3>Crypto and collecting</h3>
+    <div class="social-grid">
+      <a class="social-card" href="crypto.html"><b>Crypto on this site</b><span>WAX or XRP, pick your wallet</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://imcollectibles.io/"><b>IMCollectibles</b><span>Free drops and editions on XRPL</span><span class="social-graphic">Graphic coming</span></a>
+      <a class="social-card" href="https://xrp.cafe/collection/thehorde"><b>xrp.cafe, the Horde</b><span>The Horde collection on XRPL</span><span class="social-graphic">Graphic coming</span></a>
+    </div>
+    <p class="small">Whatnot, artistbyron, is also out there, no link on this page yet until Byron confirms the right one. Instagram is not listed yet either, same reason.</p>
+  </section>
 </main>
-<footer><div class="wrap"><p>Artist Byron · The Horde</p></div></footer>
+
+<footer><div class="wrap"><p>Artist Byron · The Horde · Come for the art, stay for the Horde.</p></div></footer>
 </body>
 </html>
