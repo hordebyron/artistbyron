@@ -111,11 +111,13 @@ ul.tight li{margin-bottom:.4em}
 .home-hero h1{font-family:Impact,"Arial Black",system-ui,sans-serif;font-size:clamp(2.6rem,10vw,4.5rem);letter-spacing:.03em;margin:.5em 0 .1em;color:#f2ede6}
 .home-hero .tagline{font-size:1.2rem;color:var(--red2);font-weight:700;margin:.2em 0 1em}
 .home-intro{max-width:640px;margin:0 auto 24px;text-align:center;font-size:1.1rem}
-.work-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.work-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px}
 .work{display:block;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-decoration:none;color:var(--ink)}
 .work b{display:block;font-size:1.05rem}
 .work span{color:var(--muted);font-size:.9rem}
 .work img{width:100%;height:auto;display:block;border-radius:8px;margin-bottom:10px}
+.work.pic{padding:0;border:0;background:none;border-radius:0}
+.work.pic img{width:100%;height:100%;aspect-ratio:1/1;object-fit:cover;display:block;border-radius:0;margin:0}
 
 /* --- Gallery lightbox: click a picture to see it bigger --- */
 .lightbox{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.92);padding:16px}
