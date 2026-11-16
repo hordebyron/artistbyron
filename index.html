@@ -12,10 +12,10 @@
   /* Artist for Hire hotspot, links to Ko-fi. Desktop: green text top left.
      Mobile: same link, repositioned to the green text top right in the vertical frame. */
   .frame-link{position:absolute;left:13%;top:11%;width:7.5%;height:11%;z-index:4;display:block;text-indent:-9999px;overflow:hidden;cursor:pointer}
-  .frame-link:hover{outline:2px solid rgba(255,255,255,.4);outline-offset:2px}
+  .frame-link:hover{outline:none;box-shadow:0 0 18px 6px rgba(90,255,220,.55),0 0 42px 16px rgba(0,255,200,.25);border-radius:10px}
   /* Frame nav hotspots, desktop only. THE ART on the green TV, CRYPTO on the red TV, ABOUT bottom left. */
   .frame-nav{position:absolute;z-index:4;display:block;text-indent:-9999px;overflow:hidden;cursor:pointer}
-  .frame-nav:hover{outline:2px solid rgba(255,255,255,.4);outline-offset:2px}
+  .frame-nav:hover{outline:none;box-shadow:0 0 18px 6px rgba(90,255,220,.55),0 0 42px 16px rgba(0,255,200,.25);border-radius:10px}
   .frame-nav-art{left:83.8%;top:19.5%;width:12.4%;height:9.1%}
   .frame-nav-crypto{left:85.4%;top:47.9%;width:12.2%;height:6.1%}
   .frame-nav-about{left:8.4%;top:70.8%;width:10.8%;height:7.7%}
@@ -35,6 +35,11 @@
   a:active{transform:scale(.97)}
   .frame-img{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
   .tv-layer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+  /* TV4 art is a drawing of a little TV, smaller than the frame TV screen,
+     so it read as a TV inside a TV. Scale it up and centre it on the screen
+     so the creature fills the TV instead. All 19 TV4 pictures share the
+     same spot, so one rule fixes them all. */
+  #tv4{transform:translate(-2.76%,-3.06%) scale(1.7);transform-origin:94.6% 91.1%}
   /* Mobile bottom TVs, hidden on desktop. Each one sits under the frame,
      over one bottom TV screen, art cropped to fit with object-fit cover. */
   .mtv{display:none;position:absolute;z-index:1;overflow:hidden;border-radius:18px;pointer-events:none}

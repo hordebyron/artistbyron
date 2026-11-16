@@ -115,6 +115,17 @@ ul.tight li{margin-bottom:.4em}
 .work{display:block;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-decoration:none;color:var(--ink)}
 .work b{display:block;font-size:1.05rem}
 .work span{color:var(--muted);font-size:.9rem}
+.work img{width:100%;height:auto;display:block;border-radius:8px;margin-bottom:10px}
+
+/* --- Gallery lightbox: click a picture to see it bigger --- */
+.lightbox{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.92);padding:16px}
+.lightbox.open{display:flex}
+.lightbox img{max-width:92vw;max-height:88vh;width:auto;height:auto;border-radius:8px}
+.lb-close{position:absolute;top:12px;right:16px;background:none;border:0;color:#fff;font-size:2.4rem;cursor:pointer;line-height:1}
+.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:2rem;width:48px;height:48px;border-radius:50%;cursor:pointer}
+.lb-prev{left:12px}
+.lb-next{right:12px}
+a.work{cursor:pointer}
 .home-links{text-align:center;margin-top:28px}
 
 /* --- Split doors home, after reddwalitzki.com/home, Nov 2026 --- */

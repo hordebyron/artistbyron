@@ -22,8 +22,20 @@
 </header>
 <main class="wrap">
   <h1>Gallery</h1>
-  <p>Selected work — zombies, skulls, and creepy portraits, in ink and paint. More pieces are added as Byron sends clean art files.</p>
+  <p>Selected work — zombies, skulls, and creepy portraits, in ink and paint. Click a picture to see it bigger. More pieces are added as Byron sends clean art files.</p>
   <div class="work-grid">
+    <a class="work" href="art/gallery/grey-skull-green-slime.jpg"><img src="art/gallery/grey-skull-green-slime.jpg" alt="Grey skull in green slime, painting"></a>
+    <a class="work" href="art/gallery/face-with-glasses-spiral-eyes.jpg"><img src="art/gallery/face-with-glasses-spiral-eyes.jpg" alt="Ink drawing of a face with glasses and spiral eyes"></a>
+    <a class="work" href="art/gallery/grinning-man-brick-wall.jpg"><img src="art/gallery/grinning-man-brick-wall.jpg" alt="Ink drawing of a grinning man against a brick wall"></a>
+    <a class="work" href="art/gallery/bird-creature-coffee-cup-man.jpg"><img src="art/gallery/bird-creature-coffee-cup-man.jpg" alt="Ink drawing of a bird creature and a man holding a coffee cup"></a>
+    <a class="work" href="art/gallery/spiral-eyes-skull-rainbow.jpg"><img src="art/gallery/spiral-eyes-skull-rainbow.jpg" alt="Skull with two big spiral eyes on a rainbow striped background, painting"></a>
+    <a class="work" href="art/gallery/many-skulls-crowd.jpg"><img src="art/gallery/many-skulls-crowd.jpg" alt="Many overlapping skulls with spiral eyes, painting"></a>
+    <a class="work" href="art/gallery/orange-skull-black-background.jpg"><img src="art/gallery/orange-skull-black-background.jpg" alt="Orange and pink skull on a black background, painting"></a>
+    <a class="work" href="art/gallery/zombie-face-alien-cats.jpg"><img src="art/gallery/zombie-face-alien-cats.jpg" alt="Zombie face with a blue alien and cats, painting"></a>
+    <a class="work" href="art/gallery/green-skull-pink-background.jpg"><img src="art/gallery/green-skull-pink-background.jpg" alt="Green skull painting on a pink background"></a>
+    <a class="work" href="art/gallery/spiral-eye-skull-brick-wall.jpg"><img src="art/gallery/spiral-eye-skull-brick-wall.jpg" alt="Colourful skull with a spiral eye against a brick wall, painting"></a>
+    <a class="work" href="art/gallery/gold-skull-blue-background.jpg"><img src="art/gallery/gold-skull-blue-background.jpg" alt="Gold skull with a green eye on a deep blue background, painting"></a>
+    <a class="work" href="art/gallery/dark-splatter-skull.jpg"><img src="art/gallery/dark-splatter-skull.jpg" alt="Dark skull with splattered paint on a black background, painting"></a>
     <a class="work" href="https://resizer.atomichub.io/images/v1/preview?ipfs=QmNVSqNurBcPPW6TRGVDHvoFLPFV4E9A3WtS4tfZHz3j7X&size=1110&output=webp"><b>Horde&rsquo;s Clown #1</b><span>Zombie clown — new, Mon 16 Nov</span></a>
     <a class="work" href="https://xrp.cafe/edition/myzombiecats/13451"><b>Big Paws</b><span>My Zombie Cats — free edition</span></a>
     <a class="work" href="https://xrp.cafe/edition/byronsink/13452"><b>Lost in Contemplation</b><span>Byrons Ink — free edition</span></a>
@@ -34,5 +46,47 @@
   <p class="small">Want a piece in here? Send Byron a clean art file and it goes up.</p>
 </main>
 <footer><div class="wrap"><p>Artist Byron · The Horde</p></div></footer>
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-close" id="lb-close" aria-label="Close">&times;</button>
+  <button class="lb-prev" id="lb-prev" aria-label="Previous">&lsaquo;</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-next" id="lb-next" aria-label="Next">&rsaquo;</button>
+</div>
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('a.work[href^="art/gallery/"]'));
+  if (!links.length) return;
+  var box = document.getElementById('lightbox');
+  var img = document.getElementById('lb-img');
+  var i = 0;
+  function show(n){
+    i = (n + links.length) % links.length;
+    img.src = links[i].getAttribute('href');
+    var thumb = links[i].querySelector('img');
+    img.alt = thumb ? (thumb.getAttribute('alt') || '') : '';
+    box.classList.add('open');
+    box.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function hide(){
+    box.classList.remove('open');
+    box.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  links.forEach(function(a, n){
+    a.addEventListener('click', function(e){ e.preventDefault(); show(n); });
+  });
+  document.getElementById('lb-close').addEventListener('click', hide);
+  document.getElementById('lb-prev').addEventListener('click', function(e){ e.stopPropagation(); show(i - 1); });
+  document.getElementById('lb-next').addEventListener('click', function(e){ e.stopPropagation(); show(i + 1); });
+  box.addEventListener('click', function(e){ if (e.target === box) hide(); });
+  document.addEventListener('keydown', function(e){
+    if (!box.classList.contains('open')) return;
+    if (e.key === 'Escape') hide();
+    if (e.key === 'ArrowLeft') show(i - 1);
+    if (e.key === 'ArrowRight') show(i + 1);
+  });
+})();
+</script>
 </body>
 </html>
