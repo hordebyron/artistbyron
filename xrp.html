@@ -90,7 +90,7 @@ async function loginWithExtension(adapterId, label) {
   statusEl.textContent = 'Opening ' + label + '. Approve it in the extension.';
   try {
     var res = await kit.connect(adapterId);
-    var addr = res && res.account;
+    var addr = normAddr(res && res.account);
     if (addr) {
       statusEl.textContent = 'Logged in with ' + label + ' as ' + shortAddr(addr) + '.';
       showHorde(addr);
@@ -107,7 +107,7 @@ async function loginWithXaman() {
   statusEl.textContent = 'Opening Xaman. Scan the code with your Xaman app.';
   try {
     var res = await kit.connect('xaman');
-    var addr = res && res.account;
+    var addr = normAddr(res && res.account);
     hideXamanQr();
     if (addr) {
       statusEl.textContent = 'Logged in with Xaman as ' + shortAddr(addr) + '.';
@@ -122,6 +122,12 @@ async function loginWithXaman() {
 }
 document.getElementById('xaman-cancel').addEventListener('click', function(){ hideXamanQr(); statusEl.textContent = 'Xaman login cancelled. Paste your address below, or tap Log in with Xaman again.'; });
 function shortAddr(a){ return a.length > 12 ? a.slice(0,6) + '...' + a.slice(-4) : a; }
+function normAddr(a){
+  if (!a) return null;
+  if (typeof a === 'string') return a;
+  if (typeof a === 'object') return a.address || a.account || a.id || null;
+  return null;
+}
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 var namesData = null;
 async function getRegisteredName(addr) {
