@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP — Artist Byron</title>
-<meta name="description" content="XRP side of the Horde. Connect with Xaman, GemWallet or Crossmark, or paste your XRPL address, and see how much Byron art you hold on XRP.">
+<meta name="description" content="XRP side of the Horde. Connect with Xaman or Joey, or paste your XRPL address, and see how much Byron art you hold on XRP.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="frame-all">
@@ -36,8 +36,7 @@
     <h2>Log in</h2>
     <p>
       <button class="btn" type="button" data-xrp-login="Xaman">Log in with Xaman</button>
-      <button class="btn ghost" type="button" data-xrp-login="GemWallet">GemWallet</button>
-      <button class="btn ghost" type="button" data-xrp-login="Crossmark">Crossmark</button>
+      <button class="btn ghost" type="button" data-xrp-login="Joey">Joey</button>
     </p>
     <p class="small" id="login-status">Tap Log in with Xaman to scan a code, or paste your address below.</p>
     <div id="xaman-qr" hidden>
@@ -100,10 +99,27 @@ function hideXamanQr() { xamanQrBox.hidden = true; xamanQrImg.src = ''; }
 function getXamanKit() {
   if (xamanKit) return xamanKit;
   if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) return null;
-  xamanKit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman'], xamanClientId: XAMAN_API_KEY });
+  xamanKit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman', 'joey-wallet'], xamanClientId: XAMAN_API_KEY });
   var mgr = xamanKit.manager || xamanKit;
   if (mgr && typeof mgr.on === 'function') mgr.on('qr', showXamanQr);
   return xamanKit;
+}
+async function loginWithExtension(adapterId, label) {
+  var kit = getXamanKit();
+  if (!kit) { statusEl.textContent = label + ' login could not load. Paste your address below instead, that still shows your real Horde.'; xrplInput.focus(); return; }
+  statusEl.textContent = 'Opening ' + label + '. Approve it in the extension.';
+  try {
+    var res = await kit.connect(adapterId);
+    var addr = res && res.account;
+    if (addr) {
+      statusEl.textContent = 'Logged in with ' + label + ' as ' + shortAddr(addr) + '.';
+      showHorde(addr);
+    } else {
+      statusEl.textContent = label + ' did not return an address. Make sure the extension is installed and unlocked, or paste your address below.';
+    }
+  } catch (e) {
+    statusEl.textContent = label + ' login was cancelled or failed. Make sure the extension is installed and unlocked, or paste your address below.';
+  }
 }
 async function loginWithXaman() {
   var kit = getXamanKit();
@@ -172,6 +188,7 @@ document.querySelectorAll('[data-xrp-login]').forEach(function(btn){
   btn.addEventListener('click', function(){
     var w = btn.getAttribute('data-xrp-login');
     if (w === 'Xaman') { loginWithXaman(); return; }
+    if (w === 'Joey') { loginWithExtension('joey-wallet', 'Joey'); return; }
     statusEl.textContent = w + ' login is coming. For now, paste your XRPL address below, that still shows your real Horde, no seed ever.';
     xrplInput.focus();
   });
