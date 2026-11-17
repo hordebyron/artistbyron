@@ -174,3 +174,16 @@ body.frame-all{background:#8c8c8c}
   .frame-all .frame-mobile{display:block}
   .frame-all .scroll-area{left:9.4%;top:19.1%;width:81.1%;height:61.9%;padding:16px}
 }
+/* TV layers on framed pages: same as home, art cycles behind the frame. */
+.frame-all .tv-layer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.frame-all #tv4{transform:translate(-2.76%,-3.06%) scale(1.7);transform-origin:94.6% 91.1%}
+.frame-all .mtv{display:none;position:absolute;z-index:1;overflow:hidden;border-radius:18px;pointer-events:none}
+.frame-all .mtv img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:768px){
+  .frame-all .tv-layer{display:none}
+  .frame-all .mtv{display:block}
+  .frame-all #mtv1{left:2.5%;top:84%;width:17%;height:14.5%}
+  .frame-all #mtv2{left:20.5%;top:81.5%;width:14.5%;height:12.5%}
+  .frame-all #mtv3{left:44%;top:84.5%;width:29%;height:14%}
+  .frame-all #mtv4{left:74%;top:82.5%;width:24%;height:15%}
+}

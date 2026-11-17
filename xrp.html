@@ -30,7 +30,7 @@
 
 <main class="wrap">
   <h1>XRP side</h1>
-  <p>Connect with your XRP wallet. Xaman login in one button is coming, it needs a free Xaman app key first, so for now paste your XRPL address below. No password, no seed, ever, this only looks up a public address.</p>
+  <p>Connect with your XRP wallet. Tap Log in with Xaman and scan the code with your Xaman app, or paste your XRPL address below. No password, no seed, ever, this only looks up a public address.</p>
 
   <section class="card">
     <h2>Log in</h2>
@@ -39,7 +39,12 @@
       <button class="btn ghost" type="button" data-xrp-login="GemWallet">GemWallet</button>
       <button class="btn ghost" type="button" data-xrp-login="Crossmark">Crossmark</button>
     </p>
-    <p class="small" id="login-status">XRP wallet login is not live yet. Tap a wallet above and you will be asked to paste your address for now. That still shows your real Horde.</p>
+    <p class="small" id="login-status">Tap Log in with Xaman to scan a code, or paste your address below.</p>
+    <div id="xaman-qr" hidden>
+      <p>Scan this with your Xaman app to log in.</p>
+      <p><img id="xaman-qr-img" src="" alt="Scan this QR code with Xaman" style="max-width:220px;width:100%;background:#fff;padding:8px;border-radius:8px"></p>
+      <p><a class="btn" id="xaman-deeplink" href="#">Open in Xaman</a> <button class="btn ghost" type="button" id="xaman-cancel">Cancel</button></p>
+    </div>
     <form id="paste-form">
       <label for="xrpl-input">Your XRPL address</label>
       <input type="text" id="xrpl-input" placeholder="r..." autocomplete="off" spellcheck="false">
@@ -54,20 +59,24 @@
     <p><a class="btn" href="https://imcollectibles.io/artists/artistbyron">IMCollectibles, Mon 16 Nov</a> <a class="btn ghost" href="collections.html">My XRPL collections</a></p>
   </section>
 
-  <section class="card">
-    <h2>What counts here</h2>
-    <p>Your Byron art on XRP: Big Paws, 361 of 589, and Lost in Contemplation, 346 of 589, plus the Horde, Byrons Ink, My Zombie Cats, I Love Zombies, and the rest. Hold both Big Paws and Lost and you are on the whitelist for the free IMCollectibles drop, Mon 16 Nov 2026.</p>
-    <p class="small">Data is the final snapshot, 13 Nov 2026, 16:29 to 16:30 CST, from data/holders.json, plus a live NFT count from the ledger when your browser can reach it. On the WAX side instead? <a href="wax.html">Go to the WAX page</a>, or <a href="crypto.html">back to pick a wallet</a>.</p>
-  </section>
 </main>
 
 <footer><div class="wrap"><p>ArtistByron · The Horde · XRPL inventory, snapshot 13 Nov 2026</p></div></footer>
 </div>
 <img class="frame-img frame-desktop" src="art/frame/layoutframe3.png" alt="Artist Byron frame">
 <img class="frame-img frame-mobile" src="art/frame/vertical.png" alt="Artist Byron frame, phone">
+<img class="tv-layer" id="tv1" src="art/tv1-top/skully.png" alt="Top TV">
+<img class="tv-layer" id="tv2" src="art/tv2-mid/clown.png" alt="Mid TV">
+<img class="tv-layer" id="tv3" src="art/tv3-bot1/1.png" alt="Bottom TV 1">
+<img class="tv-layer" id="tv4" src="art/tv4-bot2/1.png" alt="Bottom TV 2">
+<div class="mtv" id="mtv1"><img src="art/tv-mobile/tv1-top/skully.png" alt="Mobile TV 1"></div>
+<div class="mtv" id="mtv2"><img src="art/tv-mobile/tv2-mid/clown.png" alt="Mobile TV 2"></div>
+<div class="mtv" id="mtv3"><img src="art/tv-mobile/tv3-bot1/1.png" alt="Mobile TV 3"></div>
+<div class="mtv" id="mtv4"><img src="art/tv-mobile/tv4-bot2/1.png" alt="Mobile TV 4"></div>
 </div>
 <img class="sidebar" src="art/frame/sidebar-right.png" alt="Right sidebar, rusty metal">
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.2/dist/xrpl-wallet-kit.iife.js"></script>
 <script>
 var statusEl = document.getElementById('login-status');
 var welcomeCard = document.getElementById('welcome-card');
@@ -75,6 +84,47 @@ var welcomeTitle = document.getElementById('welcome-title');
 var welcomeText = document.getElementById('welcome-text');
 var inventoryEl = document.getElementById('inventory');
 var xrplInput = document.getElementById('xrpl-input');
+var xamanQrBox = document.getElementById('xaman-qr');
+var xamanQrImg = document.getElementById('xaman-qr-img');
+var xamanDeeplink = document.getElementById('xaman-deeplink');
+/* Xaman public client key for the Horde app. This key is made to live in browser code, it only identifies the app. The API secret is never used here and stays private. */
+var XAMAN_API_KEY = '09e6660d-6fce-4f1c-991f-7b0497ef709d';
+var xamanKit = null;
+function showXamanQr(ev) {
+  if (!ev) return;
+  if (ev.qrPng) xamanQrImg.src = ev.qrPng;
+  if (ev.deeplink) { xamanDeeplink.href = ev.deeplink; } else if (ev.uri) { xamanDeeplink.href = ev.uri; }
+  xamanQrBox.hidden = false;
+}
+function hideXamanQr() { xamanQrBox.hidden = true; xamanQrImg.src = ''; }
+function getXamanKit() {
+  if (xamanKit) return xamanKit;
+  if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) return null;
+  xamanKit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman'], xamanClientId: XAMAN_API_KEY });
+  var mgr = xamanKit.manager || xamanKit;
+  if (mgr && typeof mgr.on === 'function') mgr.on('qr', showXamanQr);
+  return xamanKit;
+}
+async function loginWithXaman() {
+  var kit = getXamanKit();
+  if (!kit) { statusEl.textContent = 'Xaman login could not load. Paste your address below instead, that still shows your real Horde.'; xrplInput.focus(); return; }
+  statusEl.textContent = 'Opening Xaman. Scan the code with your Xaman app.';
+  try {
+    var res = await kit.connect('xaman');
+    var addr = res && res.account;
+    hideXamanQr();
+    if (addr) {
+      statusEl.textContent = 'Logged in with Xaman as ' + shortAddr(addr) + '.';
+      showHorde(addr);
+    } else {
+      statusEl.textContent = 'Xaman did not return an address. Try again, or paste your address below.';
+    }
+  } catch (e) {
+    hideXamanQr();
+    statusEl.textContent = 'Xaman login was cancelled or failed. You can paste your address below instead.';
+  }
+}
+document.getElementById('xaman-cancel').addEventListener('click', function(){ hideXamanQr(); statusEl.textContent = 'Xaman login cancelled. Paste your address below, or tap Log in with Xaman again.'; });
 var holdersData = null;
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function shortAddr(a){ return a.length > 12 ? a.slice(0,6) + '...' + a.slice(-4) : a; }
@@ -121,6 +171,7 @@ async function showHorde(addr) {
 document.querySelectorAll('[data-xrp-login]').forEach(function(btn){
   btn.addEventListener('click', function(){
     var w = btn.getAttribute('data-xrp-login');
+    if (w === 'Xaman') { loginWithXaman(); return; }
     statusEl.textContent = w + ' login is coming. For now, paste your XRPL address below, that still shows your real Horde, no seed ever.';
     xrplInput.focus();
   });
@@ -133,5 +184,6 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
   showHorde(addr);
 });
 </script>
+<script src="frame-tvs.js"></script>
 </body>
 </html>
