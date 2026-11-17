@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grow a Monster — ArtistByron</title>
+<meta name="description" content="Feed your old WAX NFTs to a monster and watch it grow. Burn an old asset, the monster levels up, its picture changes. Prototype on artistbyron.">
+<link rel="stylesheet" href="style.css">
+<style>
+.monster-hero{text-align:center}
+.monster-hero img{width:100%;max-width:420px;display:block;margin:0 auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff}
+.growth{height:18px;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin:12px auto;max-width:420px;background:#111}
+.growth > div{height:100%;background:#7ec850;width:0%}
+.stamps{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0}
+.stamp{border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;min-width:120px;text-align:center;opacity:.45}
+.stamp.lit{opacity:1;border-color:#7ec850}
+.stamp b{display:block;color:#fff}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.food{border:1px solid var(--line);border-radius:var(--radius);padding:10px;background:var(--panel2);text-align:center}
+.food img{width:100%;border-radius:8px;background:#fff}
+.food p{margin:8px 0}
+.mode-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.mode-row .pill{border:1px solid var(--line);border-radius:99px;padding:4px 12px}
+.mode-row .pill.on{border-color:#7ec850;color:#7ec850}
+.rule-list{list-style:none;padding:0}
+.rule-list li{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin:10px 0}
+.rule-list b{color:#fff}
+</style>
+</head>
+<body class="frame-all">
+<div class="sidebars">
+<img class="sidebar" src="art/frame/sidebar-left.png" alt="Left sidebar, rusty metal">
+<div class="frame-wrap">
+<div class="scroll-area">
+<header class="site">
+  <div class="wrap">
+    <div class="brand">ArtistByron · The Horde</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="contests.html">Contests</a>
+      <a href="monster.html" class="active">Grow a Monster</a>
+      <a href="wallet.html">My Horde Wallet</a>
+      <a href="https://ko-fi.com/artistbyron">Ko-fi Shop</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero monster-hero">
+    <p class="small">PROTOTYPE — test art, not Byron's art. Nothing here is live or minted yet.</p>
+    <h1>Grow a Monster</h1>
+    <p class="lede">Feed it your old NFTs and watch it grow.</p>
+    <img id="monster-img" src="art/monster/media-generation-monster-baby-0-ac38a3c5-b49a-43bc-b3a4-039adf3523f8.webp" alt="Your monster, a baby zombie, waiting to be fed">
+    <h2 id="monster-name">Baby Monster</h2>
+    <p id="monster-level">Level 1 · 0 fed so far</p>
+    <p id="player-points">Your points: 0</p>
+    <p id="monster-health">Feeling fine. Hungry.</p>
+    <p><button class="btn" type="button" id="restart-btn" hidden>Start again with a new monster</button>
+    <button class="btn ghost" type="button" id="test-decay-btn">Test: pretend 10 days passed</button></p>
+    <div class="growth"><div id="growth-fill"></div></div>
+    <p class="small" id="growth-text">Needs 15 food points to grow up.</p>
+    <div class="stamps" id="stamps">
+      <div class="stamp lit" id="stamp-enter"><b>Enter</b><span>you showed up</span></div>
+      <div class="stamp" id="stamp-feed1"><b>First feed</b><span>burn 1 old NFT</span></div>
+      <div class="stamp" id="stamp-feed5"><b>5 feeds</b><span>halfway grown</span></div>
+      <div class="stamp" id="stamp-cured"><b>Nursed back</b><span>cured a sick monster</span></div>
+      <div class="stamp" id="stamp-huge"><b>Huge</b><span>fully grown monster</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>1. Pick your food</h2>
+    <div class="mode-row">
+      <button class="btn" type="button" id="mode-practice">Practice mode</button>
+      <button class="btn ghost" type="button" id="mode-real">Real burns</button>
+      <span class="pill on" id="mode-label">Practice — nothing real burns</span>
+    </div>
+    <p class="small">Practice mode is on to start. Feeding here just pretends, so you can try the game without losing anything. 1 in 5 feeds is a bad batch: the monster gets sick, good food cures it, a second bad batch while sick kills it and you start again.</p>
+    <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button>
+    <button class="btn ghost" type="button" id="wax-logout-btn" hidden>Log out</button></p>
+    <p class="small" id="login-status">Not logged in yet. Log in to see your real NFTs as food, or try practice food below.</p>
+    <form id="paste-form">
+      <label for="wax-input">Or paste your WAX name to look, no login</label>
+      <input type="text" id="wax-input" placeholder="e.g. ylab4.wam" autocomplete="off" spellcheck="false">
+      <p style="margin-top:10px"><button class="btn ghost" type="submit">Show my food</button></p>
+    </form>
+    <div class="food-grid" id="food-grid"></div>
+    <p class="small" id="food-status">Practice food loads below. Log in or paste a name to see your real NFTs.</p>
+  </section>
+
+  <section class="card">
+    <h2>2. How it works</h2>
+    <ul class="rule-list">
+      <li><b>1. Your monster is a mutable NFT.</b> Its picture and level can change on chain, so growing up is real, not just a score on a page.</li>
+      <li><b>2. Feed it an old NFT.</b> Pick one of your old Byron NFTs and burn it. Burning is the food. How much it grows depends on how rare the food is, a 1-of-1 is worth 100 food points, a common is worth 3. The value list is the byronartset1 feed catalogue.</li>
+      <li><b>3. Sometimes the batch is bad.</b> 1 in 5 feeds is a bad batch and the monster gets sick. Feed it good food while it is sick and it gets better. But a bad batch while it is already sick, and it dies. Then you start again with a new baby monster.</li>
+      <li><b>4. It wastes away if you forget it.</b> The monster remembers the last time it ate. 3 days with no food and it gets hungry and shrinks a stage. 7 days and it gets sick. 14 days and it dies. Feeding it brings it back.</li>
+      <li><b>5. It grows up in front of you.</b> 15 food points and it grows, 50 and it is huge. The picture changes, the level changes, and this page shows it live.</li>
+    </ul>
+    <p class="small">The easy WAX command behind the Feed button is one burn: atomicassets burnasset, your wallet signs it, the NFT is gone, the monster grows. No typing commands, no copying asset IDs by hand, the button does it.</p>
+  </section>
+
+  <section class="card">
+    <h2>Earn points while you play</h2>
+    <p>Points are free. You earn them by doing normal market stuff, you never buy points.</p>
+    <ol>
+      <li><b>Burn an NFT to feed your monster: +its feed value, 1 to 100 points.</b> The biggest earner, and every burn takes one NFT off the market for good.</li>
+      <li><b>List an NFT above the floor: +5 points.</b> Pays you to hold the floor up, not undercut it.</li>
+      <li><b>Buy a Byron NFT on the market: +10 points, times the value multiplier.</b></li>
+      <li><b>Sell a Byron NFT on the market: +10 points, times the value multiplier.</b></li>
+      <li><b>Buy DHC: +10 points, times the value multiplier.</b></li>
+      <li><b>Add DHC/WAX liquidity: +1 point per WAX added, up to 100.</b></li>
+    </ol>
+    <p class="small">Guards: it has to be a real market sale with WAX paid, not a transfer, buyer and seller different wallets, and at most 100 points a day from buying and selling. Burning has no cap.</p>
+    <p class="small">Bigger sales earn more. Under 5 WAX is x1 (10 points), 5 to 20 is x2 (20), 20 to 100 is x3 (30), 100 to 500 is x5 (50), over 500 is x10 (100). Same for buying and selling.</p>
+  </section>
+
+  <section class="card">
+    <h2>Spend your points</h2>
+    <p>Points are not just a score, spend them on your monster.</p>
+    <div id="shop">
+      <p><button class="btn" type="button" id="shop-goodfood">Good food pack — 25 points</button> <span class="small">Next feed is guaranteed good, no bad batch.</span></p>
+      <p><button class="btn" type="button" id="shop-snack">Midnight snack — 15 points</button> <span class="small">Resets the hunger clock, fed for today.</span></p>
+      <p><button class="btn" type="button" id="shop-heal">Heal a sick monster — 30 points</button> <span class="small">Cures sickness right away.</span></p>
+      <p><button class="btn" type="button" id="shop-boost">Growth boost — 50 points</button> <span class="small">+10 food points straight onto your monster.</span></p>
+      <p><button class="btn" type="button" id="shop-revive">Revive a dead monster — 100 points</button> <span class="small">Brings it back as a baby, fresh start.</span></p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. What happens next</h2>
+    <p>A fully grown monster is the start of the next game, not the end. What it unlocks is Byron's call: a new drop, a reward, a new monster. Old NFTs finally have a job, they become monster food.</p>
+    <p><a class="btn" href="game.html">Back to Play the Game</a> <a class="btn ghost" href="https://discord.gg/rA3UMEkpqc">Talk about it in Discord</a></p>
+  </section>
+</main>
+
+<footer><div class="wrap"><p>ArtistByron · The Horde · Grow a Monster prototype, built 15 Nov 2026. Test art only.</p></div></footer>
+</div>
+<img class="frame-img frame-desktop" src="art/frame/layoutframe3.png" alt="Artist Byron frame">
+<img class="frame-img frame-mobile" src="art/frame/vertical.png" alt="Artist Byron frame, phone">
+</div>
+<img class="sidebar" src="art/frame/sidebar-right.png" alt="Right sidebar, rusty metal">
+</div>
+<script>
+var STAGES = [
+  { name: 'Baby Monster', level: 1, min: 0, img: 'art/monster/media-generation-monster-baby-0-ac38a3c5-b49a-43bc-b3a4-039adf3523f8.webp', next: 15 },
+  { name: 'Grown Monster', level: 2, min: 15, img: 'art/monster/media-generation-monster-grown-0-95ee0703-3efa-4cd1-bc8c-4d5a7cb32632.webp', next: 50 },
+  { name: 'Huge Monster', level: 3, min: 50, img: 'art/monster/media-generation-monster-huge-0-5dce662d-8961-4619-b739-07143accf184.webp', next: null }
+];
+function feedValueFor(issued) {
+  if (!issued || issued <= 0) return 0;
+  if (issued === 1) return 100;
+  if (issued <= 5) return 50;
+  if (issued <= 13) return 20;
+  if (issued <= 25) return 10;
+  if (issued <= 50) return 5;
+  if (issued <= 100) return 3;
+  if (issued <= 250) return 2;
+  if (issued <= 1000) return 1;
+  return 0;
+}
+var SICK_IMG = 'art/monster/media-generation-monster-sick-0-96bc02a4-e466-40a5-b388-823d23ea494f.webp';
+var DEAD_IMG = 'art/monster/media-generation-monster-dead-0-c60256b6-eedb-4702-ab1a-e4c315b20ec9.webp';
+var STRONG_IMG = 'art/monster/media-generation-monster-strong-0-ce324916-6798-429f-a12c-1569c04605e1.webp';
+var BAD_BATCH_CHANCE = 0.2;
+var DAY = 24 * 60 * 60 * 1000;
+var HUNGRY_AFTER = 3 * DAY;
+var SICK_AFTER = 7 * DAY;
+var DEAD_AFTER = 14 * DAY;
+var state = { fed: 0, points: 0, sick: false, dead: false, cured: false, deaths: 0, lastFed: Date.now(), goodFood: false };
+try {
+  var saved = JSON.parse(localStorage.getItem('horde_monster') || '{}');
+  if (saved.fed) state.fed = saved.fed;
+  if (saved.points) state.points = saved.points;
+  else if (saved.fed) state.points = saved.fed;
+  if (saved.sick) state.sick = true;
+  if (saved.dead) state.dead = true;
+  if (saved.cured) state.cured = true;
+  if (saved.deaths) state.deaths = saved.deaths;
+  if (saved.lastFed) state.lastFed = saved.lastFed;
+  if (saved.goodFood) state.goodFood = true;
+} catch (e) {}
+function saveState() { try { localStorage.setItem('horde_monster', JSON.stringify(state)); } catch (e) {} }
+function daysSinceFed() { return Math.floor((Date.now() - state.lastFed) / DAY); }
+function applyDecay() {
+  if (state.dead) return;
+  var age = Date.now() - state.lastFed;
+  if (age >= DEAD_AFTER) { state.dead = true; state.sick = false; state.deaths += 1; saveState(); }
+  else if (age >= SICK_AFTER) { state.sick = true; saveState(); }
+}
+function isHungry() { return !state.dead && !state.sick && (Date.now() - state.lastFed) >= HUNGRY_AFTER; }
+function stageFor(points) {
+  var s = STAGES[0];
+  for (var i = 0; i < STAGES.length; i++) { if (points >= STAGES[i].min) s = STAGES[i]; }
+  return s;
+}
+function getPoints() {
+  try { return parseInt(localStorage.getItem('horde_points') || '0', 10) || 0; } catch (e) { return 0; }
+}
+function renderPoints() {
+  document.getElementById('player-points').textContent = 'Your points: ' + getPoints() + (state.goodFood ? ' · good food pack ready' : '');
+}
+function addPoints(n) {
+  try { localStorage.setItem('horde_points', String(getPoints() + n)); } catch (e) {}
+  renderPoints();
+}
+function spendPoints(n) {
+  if (getPoints() < n) { alert('Not enough points. You have ' + getPoints() + ', that costs ' + n + '.'); return false; }
+  try { localStorage.setItem('horde_points', String(getPoints() - n)); } catch (e) {}
+  renderPoints();
+  return true;
+}
+function renderShop() {
+  var p = getPoints();
+  document.getElementById('shop-goodfood').disabled = state.goodFood || p < 25;
+  document.getElementById('shop-snack').disabled = state.dead || p < 15;
+  document.getElementById('shop-heal').disabled = !state.sick || p < 30;
+  document.getElementById('shop-boost').disabled = state.dead || p < 50;
+  document.getElementById('shop-revive').disabled = !state.dead || p < 100;
+}
+document.getElementById('shop-goodfood').addEventListener('click', function(){
+  if (!spendPoints(25)) return;
+  state.goodFood = true; saveState(); renderMonster();
+  alert('Good food pack ready. Your next feed cannot be a bad batch.');
+});
+document.getElementById('shop-snack').addEventListener('click', function(){
+  if (!spendPoints(15)) return;
+  state.lastFed = Date.now(); saveState(); renderMonster();
+  alert('Midnight snack eaten. The hunger clock starts again now.');
+});
+document.getElementById('shop-heal').addEventListener('click', function(){
+  if (!state.sick) { alert('Your monster is not sick.'); return; }
+  if (!spendPoints(30)) return;
+  state.sick = false; state.cured = true; saveState(); renderMonster();
+  alert('Healed! Your monster is better.');
+});
+document.getElementById('shop-boost').addEventListener('click', function(){
+  if (state.dead) { alert('Your monster is dead. Revive it first.'); return; }
+  if (!spendPoints(50)) return;
+  state.points += 10; saveState(); renderMonster();
+  alert('+10 food points. Your monster grows.');
+});
+document.getElementById('shop-revive').addEventListener('click', function(){
+  if (!state.dead) { alert('Your monster is not dead.'); return; }
+  if (!spendPoints(100)) return;
+  state = { fed: 0, points: 0, sick: false, dead: false, cured: state.cured, deaths: state.deaths, lastFed: Date.now(), goodFood: false };
+  saveState(); renderMonster(); renderFood();
+  alert('It lives! A new baby monster, fresh start.');
+});
+function renderMonster() {
+  applyDecay();
+  renderPoints();
+  renderShop();
+  var imgEl = document.getElementById('monster-img');
+  var healthEl = document.getElementById('monster-health');
+  document.getElementById('restart-btn').hidden = !state.dead;
+  if (state.dead) {
+    imgEl.src = DEAD_IMG;
+    imgEl.alt = 'Your monster has died, a little ghost';
+    document.getElementById('monster-name').textContent = 'Dead Monster';
+    document.getElementById('monster-level').textContent = 'Died after ' + state.fed + ' feeds, ' + state.points + ' food points · ' + state.deaths + ' monster(s) lost so far';
+    healthEl.textContent = 'It is gone. Start again with a new baby monster.';
+    document.getElementById('growth-fill').style.width = '0%';
+    document.getElementById('growth-text').textContent = 'Start again below.';
+  } else if (state.sick) {
+    imgEl.src = SICK_IMG;
+    imgEl.alt = 'Your monster is sick';
+    var s = stageFor(state.points);
+    document.getElementById('monster-name').textContent = s.name + ' (sick)';
+    document.getElementById('monster-level').textContent = 'Level ' + s.level + ' · ' + state.points + ' food points, ' + state.fed + ' feeds';
+    healthEl.textContent = 'SICK, ' + daysSinceFed() + ' days since it ate. Feed it good food to cure it. One more bad batch while sick and it dies.';
+    document.getElementById('growth-fill').style.width = '0%';
+    document.getElementById('growth-text').textContent = 'Sick. No growing until it is better.';
+  } else {
+    var s2 = stageFor(state.points);
+    var hungry = isHungry();
+    var strong = !hungry && s2.level === 3 && (Date.now() - state.lastFed) < DAY;
+    if (hungry && s2.level > 1) s2 = STAGES[s2.level - 2];
+    imgEl.src = strong ? STRONG_IMG : s2.img;
+    imgEl.alt = strong ? 'Your monster, strong and well fed' : 'Your monster, ' + s2.name.toLowerCase();
+    document.getElementById('monster-name').textContent = strong ? 'Strong Monster' : s2.name + (hungry ? ' (hungry)' : '');
+    document.getElementById('monster-level').textContent = 'Level ' + s2.level + ' · ' + state.points + ' food points, ' + state.fed + ' feeds';
+    healthEl.textContent = strong
+      ? 'STRONG and well fed. Fed today, full grown, at its best.'
+      : hungry
+      ? ('HUNGRY, ' + daysSinceFed() + ' days since it ate. It shrank a stage. Feed it to perk it back up.')
+      : ('Feeling fine. Hungry. Last fed ' + (daysSinceFed() === 0 ? 'today' : daysSinceFed() + ' day(s) ago') + '.');
+    var pct = s2.next ? Math.min(100, Math.round(100 * state.points / s2.next)) : 100;
+    document.getElementById('growth-fill').style.width = pct + '%';
+    document.getElementById('growth-text').textContent = s2.next
+      ? ('Needs ' + (s2.next - state.points) + ' more food points to grow up.')
+      : 'Fully grown. What a beast.';
+  }
+  document.getElementById('stamp-feed1').classList.toggle('lit', state.fed >= 1);
+  document.getElementById('stamp-feed5').classList.toggle('lit', state.fed >= 5);
+  document.getElementById('stamp-cured').classList.toggle('lit', state.cured);
+  document.getElementById('stamp-huge').classList.toggle('lit', state.points >= 50 && !state.dead);
+}
+document.getElementById('restart-btn').addEventListener('click', function(){
+  state = { fed: 0, points: 0, sick: false, dead: false, cured: state.cured, deaths: state.deaths, lastFed: Date.now(), goodFood: false };
+  saveState(); renderMonster(); renderFood();
+});
+document.getElementById('test-decay-btn').addEventListener('click', function(){
+  state.lastFed = Date.now() - 10 * DAY;
+  saveState(); renderMonster();
+  alert('Pretend 10 days passed. Your monster should look sick now, feed it good food to cure it.');
+});
+function resolveFeed(item) {
+  state.lastFed = Date.now();
+  var value = (item && item.value) ? item.value : 1;
+  var bad = false;
+  if (state.goodFood) { state.goodFood = false; }
+  else { bad = Math.random() < BAD_BATCH_CHANCE; }
+  if (bad && state.sick) {
+    state.dead = true; state.sick = false; state.deaths += 1;
+    saveState(); renderMonster();
+    return 'dead';
+  }
+  if (bad) {
+    state.sick = true;
+    saveState(); renderMonster();
+    return 'sick';
+  }
+  if (state.sick) {
+    state.sick = false; state.cured = true;
+    saveState(); renderMonster();
+    return 'cured';
+  }
+  state.fed += 1; state.points += value;
+  addPoints(value);
+  saveState(); renderMonster();
+  return 'fed';
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+var mode = 'practice';
+var sessionKit = null, session = null, myName = null;
+var loginBtn = document.getElementById('wax-login-btn');
+var logoutBtn = document.getElementById('wax-logout-btn');
+var statusEl = document.getElementById('login-status');
+var foodGrid = document.getElementById('food-grid');
+var foodStatus = document.getElementById('food-status');
+var modeLabel = document.getElementById('mode-label');
+
+function setMode(m) {
+  mode = m;
+  modeLabel.textContent = m === 'practice' ? 'Practice — nothing real burns' : 'REAL BURNS — feeding deletes the NFT forever';
+  modeLabel.classList.toggle('on', m === 'practice');
+  document.getElementById('mode-practice').className = m === 'practice' ? 'btn' : 'btn ghost';
+  document.getElementById('mode-real').className = m === 'real' ? 'btn' : 'btn ghost';
+  renderFood();
+}
+document.getElementById('mode-practice').addEventListener('click', function(){ setMode('practice'); });
+document.getElementById('mode-real').addEventListener('click', function(){
+  if (!session) { alert('Log in with WAX first, real burns need your wallet.'); return; }
+  if (!confirm('Real burns mode: feeding deletes the NFT forever. Turn it on?')) return;
+  setMode('real');
+});
+
+var practiceFood = [
+  { id: 'practice-1', name: 'Old Pumpkin (practice)', value: 3, img: 'https://resizer.atomichub.io/images/v1/preview?ipfs=QmSSjJMpn1Rhvs1KG9QURhMMuhKKqcvXu2pa1YM2bHf5FF&size=300&output=webp' },
+  { id: 'practice-2', name: 'Dusty Sketch (practice)', value: 10, img: 'https://resizer.atomichub.io/images/v1/preview?ipfs=QmNVSqNurBcPPW6TRGVDHvoFLPFV4E9A3WtS4tfZHz3j7X&size=300&output=webp' },
+  { id: 'practice-3', name: 'Spare Part (practice)', value: 1, img: 'https://resizer.atomichub.io/images/v1/preview?ipfs=QmV1QKXgvcjwdYHTsEvYwN8tVifFF1CEiGC4JABUqE4iCS&size=300&output=webp' }
+];
+var realFood = [];
+
+function foodCard(item) {
+  var div = document.createElement('div');
+  div.className = 'food';
+  div.innerHTML = '<img src="' + esc(item.img) + '" alt="' + esc(item.name) + '">'
+    + '<p><b>' + esc(item.name) + '</b><br><span class="small">worth ' + (item.value || 0) + ' food · ' + esc(item.id) + '</span></p>';
+  var btn = document.createElement('button');
+  btn.className = 'btn';
+  btn.type = 'button';
+  btn.textContent = mode === 'real' ? 'Feed it — BURN' : 'Feed it';
+  btn.addEventListener('click', function(){ feed(item, btn); });
+  div.appendChild(btn);
+  return div;
+}
+function renderFood() {
+  foodGrid.innerHTML = '';
+  var list = mode === 'real' ? realFood : practiceFood;
+  if (!list.length) {
+    foodStatus.textContent = mode === 'real'
+      ? 'No food found. Log in and check you hold Byron art on WAX.'
+      : 'Practice food loads below.';
+  } else {
+    foodStatus.textContent = mode === 'real'
+      ? list.length + ' of your NFTs, ready to feed. Burning is forever, the button asks twice.'
+      : list.length + ' practice snacks. Nothing real burns in practice mode.';
+  }
+  list.forEach(function(item){ foodGrid.appendChild(foodCard(item)); });
+}
+
+async function feed(item, btn) {
+  if (state.dead) { alert('Your monster died. Start again with a new one first.'); return; }
+  if (mode === 'practice') {
+    var result = resolveFeed(item);
+    btn.textContent = result === 'sick' ? 'Bad batch!' : result === 'dead' ? 'It died.' : result === 'cured' ? 'Cured!' : 'Yum.';
+    btn.disabled = true;
+    if (result === 'sick') alert('Bad batch! The monster is sick. Feed it good food to cure it.');
+    if (result === 'dead') alert('A bad batch while it was already sick. The monster died. Start again.');
+    if (result === 'cured') alert('Good food, the monster is better.');
+    return;
+  }
+  if (!session) { alert('Log in with WAX first.'); return; }
+  if (!confirm('Burn "' + item.name + '" forever and feed the monster? This cannot be undone.')) return;
+  if (!confirm('Last check: "' + item.name + '" will be gone for good. Feed it?')) return;
+  btn.disabled = true; btn.textContent = 'Burning…';
+  try {
+    await session.transact({ actions: [{ account: 'atomicassets', name: 'burnasset',
+      authorization: [{ actor: session.actor, permission: session.permission }],
+      data: { asset_owner: String(session.actor), asset_id: String(item.id) } }] });
+    var result2 = resolveFeed(item);
+    realFood = realFood.filter(function(f){ return f.id !== item.id; });
+    renderFood();
+    if (result2 === 'sick') alert('Fed, but it was a bad batch. The monster is sick.');
+    else if (result2 === 'dead') alert('A bad batch while it was already sick. The monster died. Start again.');
+    else if (result2 === 'cured') alert('Fed, and the good food cured it.');
+    else alert('Fed! +' + (item.value || 1) + ' food points. ' + state.points + ' points so far.');
+  } catch (e) {
+    alert('The burn did not go through. Nothing was fed, try again.');
+    btn.disabled = false; btn.textContent = 'Feed it — BURN';
+  }
+}
+
+async function loadRealFood(name) {
+  foodStatus.textContent = 'Looking for your Byron NFTs…';
+  realFood = [];
+  try {
+    var out = [];
+    for (var c = 0; c < 2; c++) {
+      var col = c === 0 ? 'myhordeonwax' : 'byronartset1';
+      var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(name) + '&collection_name=' + col + '&limit=100');
+      if (!res.ok) continue;
+      var json = await res.json();
+      (json.data || []).forEach(function(a){
+        var d = a.data || {};
+        var img = d.img || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
+        var issued = a.template ? parseInt(a.template.issued_supply || '0', 10) : 0;
+        out.push({ id: String(a.asset_id), name: (d.name || ('Asset ' + a.asset_id)), value: feedValueFor(issued), img: img ? ('https://resizer.atomichub.io/images/v1/preview?ipfs=' + img + '&size=300&output=webp') : '' });
+      });
+    }
+    realFood = out.slice(0, 24);
+    if (mode === 'real') renderFood();
+    foodStatus.textContent = realFood.length
+      ? realFood.length + ' of your NFTs found. Switch to Real burns to feed one.'
+      : 'No Byron NFTs found on this wallet. Practice food is below.';
+  } catch (e) {
+    foodStatus.textContent = 'Could not reach the WAX lookup just now. Practice food is below.';
+  }
+}
+
+document.getElementById('paste-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var name = document.getElementById('wax-input').value.trim().toLowerCase();
+  if (!name) return;
+  myName = name;
+  statusEl.textContent = 'Looking at ' + name + ' by name, no login.';
+  loadRealFood(name);
+});
+
+(function () {
+  renderMonster();
+  renderFood();
+  async function init() {
+    try {
+      var m = await Promise.all([
+        import('https://esm.sh/@wharfkit/session@4.0.2'),
+        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+      ]);
+      sessionKit = new m[0].SessionKit({
+        appName: 'artistbyron',
+        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
+        ui: new m[1].WebRenderer(),
+        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
+      });
+      loginBtn.addEventListener('click', async function () {
+        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
+        try {
+          var res = await sessionKit.login();
+          session = res.session;
+          myName = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + myName + '.';
+          loginBtn.hidden = true; logoutBtn.hidden = false;
+          document.getElementById('wax-input').value = myName;
+          loadRealFood(myName);
+        } catch (e) {
+          statusEl.textContent = 'Login cancelled or failed. Paste your WAX name below instead.';
+        } finally { loginBtn.disabled = false; }
+      });
+      logoutBtn.addEventListener('click', async function () {
+        try { await sessionKit.logout(session); } catch (e) {}
+        session = null; myName = null;
+        setMode('practice');
+        loginBtn.hidden = false; logoutBtn.hidden = true;
+        statusEl.textContent = 'Logged out.';
+      });
+      try {
+        session = await sessionKit.restore();
+        if (session) {
+          myName = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + myName + '.';
+          loginBtn.hidden = true; logoutBtn.hidden = false;
+          document.getElementById('wax-input').value = myName;
+          loadRealFood(myName);
+        }
+      } catch (e) {}
+    } catch (e) {
+      statusEl.textContent = 'WAX login could not load just now. Paste your WAX name below instead, that still works.';
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>

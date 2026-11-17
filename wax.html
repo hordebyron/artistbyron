@@ -7,15 +7,19 @@
 <meta name="description" content="WAX side of the Horde. Log in with Anchor or Cloud Wallet, and see how much Byron art you hold on WAX.">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="frame-all">
+<div class="sidebars">
+<img class="sidebar" src="art/frame/sidebar-left.png" alt="Left sidebar, rusty metal">
+<div class="frame-wrap">
+<div class="scroll-area">
 <header class="site">
   <div class="wrap">
     <div class="brand">ArtistByron · The Horde</div>
     <div class="slogan">WAX</div>
     <nav>
       <a href="index.html">Home</a>
+      <a href="contests.html">Contests</a>
       <a href="crypto.html">Crypto</a>
-      <a href="game.html">Play the Game</a>
       <a href="wallet.html">My Horde Wallet</a>
       <a href="collections.html">Collections</a>
       <a href="xrp.html">XRP side</a>
@@ -28,10 +32,9 @@
   <h1>WAX side</h1>
   <p>Log in with your WAX wallet, Anchor or Cloud Wallet. The site only sees your account name, never your keys, and logging in signs nothing.</p>
 
-  <section class="card">
+  <section class="card" id="login-card">
     <h2>Log in</h2>
-    <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button>
-    <button class="btn ghost" type="button" id="wax-logout-btn" hidden>Log out</button></p>
+    <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button></p>
     <p class="small" id="login-status">Not logged in yet.</p>
     <form id="paste-form">
       <label for="wax-input">Or paste your WAX name</label>
@@ -44,7 +47,30 @@
     <h2 id="welcome-title">Welcome</h2>
     <p id="welcome-text"></p>
     <div id="inventory"></div>
-    <p><a class="btn" href="game.html">Play the Game</a> <a class="btn ghost" href="https://wax.atomichub.io/drops/92610">Clown drop 92610</a></p>
+    <p><a class="btn" href="game.html">Play the Game</a> <a class="btn ghost" href="https://wax.atomichub.io/drops/92610">Clown drop 92610</a> <button class="btn ghost" type="button" id="wax-logout-btn">Log out</button></p>
+  </section>
+
+  <section class="card">
+    <h2>Upcoming drops</h2>
+    <p>Drops open in a new window on AtomicHub or F12KEY, where you claim with your wallet. Embedding them here does not work, they block it and the wallet login needs their site.</p>
+    <div class="card-grid">
+      <a class="shop-card" href="https://wax.atomichub.io/drops/92625" target="_blank" rel="noopener">
+        <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmdeBvRBDtvCN5SCrWacF2kK6ScJWyGs5GkhehQgVaptsS&amp;size=1110&amp;output=webp" alt="Pot of GM">
+        <h3>Pot of GM, free</h3><p>Wed 18 Nov, 1 to 3pm CST. Free for Tony and the founders, 1 per wallet.</p><span>Open on AtomicHub</span>
+      </a>
+      <a class="shop-card" href="https://f12key.eu/f12key-drops" target="_blank" rel="noopener">
+        <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmdeBvRBDtvCN5SCrWacF2kK6ScJWyGs5GkhehQgVaptsS&amp;size=1110&amp;output=webp" alt="Pot of GM">
+        <h3>Pot of GM, WAX or DHC</h3><p>Wed 18 Nov 3pm to Wed 25 Nov 3pm CST. 66.6 WAX or 666 DHC, 1 per wallet.</p><span>Open on F12KEY</span>
+      </a>
+      <a class="shop-card" href="https://wax.atomichub.io/drops/92617" target="_blank" rel="noopener">
+        <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmV1QKXgvcjwdYHTsEvYwN8tVifFF1CEiGC4JABUqE4iCS&amp;size=1110&amp;output=webp" alt="Horde Dude Worries">
+        <h3>Horde Dude Worries, free</h3><p>Free until Wed 18 Nov 1pm CST, then 666 WAX. 1 per wallet.</p><span>Open on AtomicHub</span>
+      </a>
+      <a class="shop-card" href="https://wax.atomichub.io/drops/92610" target="_blank" rel="noopener">
+        <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmNVSqNurBcPPW6TRGVDHvoFLPFV4E9A3WtS4tfZHz3j7X&amp;size=1110&amp;output=webp" alt="Horde's Clown #1">
+        <h3>Horde's Clown #1, 666 WAX</h3><p>Public now, until Tue 24 Nov 1pm CST. 9 left of 13.</p><span>Open on AtomicHub</span>
+      </a>
+    </div>
   </section>
 
   <section class="card">
@@ -55,8 +81,15 @@
 </main>
 
 <footer><div class="wrap"><p>ArtistByron · The Horde · WAX inventory, live from AtomicAssets</p></div></footer>
+</div>
+<img class="frame-img frame-desktop" src="art/frame/layoutframe3.png" alt="Artist Byron frame">
+<img class="frame-img frame-mobile" src="art/frame/vertical.png" alt="Artist Byron frame, phone">
+</div>
+<img class="sidebar" src="art/frame/sidebar-right.png" alt="Right sidebar, rusty metal">
+</div>
 <script>
 var statusEl = document.getElementById('login-status');
+var loginCard = document.getElementById('login-card');
 var welcomeCard = document.getElementById('welcome-card');
 var welcomeTitle = document.getElementById('welcome-title');
 var welcomeText = document.getElementById('welcome-text');
@@ -88,7 +121,7 @@ async function showHorde(name) {
     welcomeText.innerHTML = 'Welcome, <strong>' + esc(name) + '</strong>, you hold <strong>' + total + '</strong> of Byron\'s art on WAX.';
     inventoryEl.innerHTML = '<p>myhordeonwax: <strong>' + a.total + '</strong></p>'
       + '<p>byronartset1: <strong>' + b.total + '</strong></p>'
-      + '<p>' + (CLOWN.includes(name) ? 'You are on the whitelist for Horde\'s Clown #1, free Mon 16 Nov 1pm CST, 24h, 1 per wallet.' : 'Not on the Clown #1 whitelist, Tony plus the 6 founders.') + '</p>'
+      + (CLOWN.includes(name) ? '<p>You are on the whitelist for Horde\'s Clown #1, free Mon 16 Nov 1pm CST, 24h, 1 per wallet.</p>' : '')
       + '<p class="small">Live check, just now, from AtomicAssets.</p>';
   } catch (e) {
     welcomeText.textContent = 'Welcome, ' + name + '. I could not reach the WAX lookup just now, check the name and try again.';
@@ -123,7 +156,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
           session = res.session;
           var name = String(session.actor);
           statusEl.textContent = 'Logged in as ' + name + ', proven by your wallet.';
-          loginBtn.hidden = true; logoutBtn.hidden = false;
+          loginCard.hidden = true;
           waxInput.value = name;
           showHorde(name);
         } catch (e) {
@@ -133,7 +166,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
       logoutBtn.addEventListener('click', async function () {
         try { await sessionKit.logout(session); } catch (e) {}
         session = null; waxInput.value = '';
-        loginBtn.hidden = false; logoutBtn.hidden = true;
+        loginCard.hidden = false;
         welcomeCard.hidden = true;
         statusEl.textContent = 'Logged out.';
       });
@@ -142,7 +175,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
         if (session) {
           var name = String(session.actor);
           statusEl.textContent = 'Logged in as ' + name + '.';
-          loginBtn.hidden = true; logoutBtn.hidden = false;
+          loginCard.hidden = true;
           waxInput.value = name;
           showHorde(name);
         }
