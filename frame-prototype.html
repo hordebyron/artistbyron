@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artist Byron frame prototype</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<style>
+  /* Flat grey behind the frame, as Byron asked */
+  body{margin:0;background:#8c8c8c;font-family:system-ui,Arial,sans-serif;color:#f2ede6}
+  .frame-wrap{position:relative;max-width:2400px;margin:0 auto;aspect-ratio:2400/1600;background:#8c8c8c;overflow:hidden}
+  /* The scroll area: the transparent middle of the frame.
+     Measured from layoutframe.png (2400x1600):
+     left 19.0%, top 9.4%, width 62.0%, height 81.2% */
+  .scroll-area{position:absolute;left:19%;top:9.4%;width:62%;height:81.2%;overflow-y:auto;background:#0b0b0e;padding:24px 28px;box-sizing:border-box;z-index:1}
+  .scroll-area h1{font-family:Impact,"Arial Black",sans-serif;font-size:2.2rem;margin:.2em 0}
+  .scroll-area a{color:#ff6b6b}
+  /* The frame image sits on top, clicks pass through it */
+  .frame-img{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+  /* TV overlays sit on top of the frame, full frame size, transparent except the TV.
+     No positioning needed, the TV is already in the right place in each PNG. */
+  .tv-layer{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;transition:opacity .12s}
+  .tv-layer.flicker{opacity:.15;filter:contrast(1.6) brightness(1.4)}
+</style>
+</head>
+<body>
+<div class="frame-wrap">
+  <div class="scroll-area" id="scrollArea">
+    <h1>Artist Byron</h1>
+    <p>I draw zombies. Ink and paint, 20 years in.</p>
+    <p>This middle part is the bit that scrolls. Everything else, the frame and the TVs, stays put.</p>
+    <p><a href="gallery.html">Real World: Gallery</a></p>
+    <p><a href="game.html">Crypto: Play the Game</a></p>
+    <p><a href="https://ko-fi.com/artistbyron">Shop on Ko-fi</a></p>
+    <p>Scroll down for more. This is placeholder text to prove the scroll works.</p>
+    <p style="margin-top:600px">You made it to the bottom. The frame never moved.</p>
+  </div>
+  <!-- Replace FRAME_URL with the hosted frame image URL when it is pinned -->
+  <img class="frame-img" src="FRAME_URL" alt="Artist Byron frame">
+  <!-- TV overlays: each image is a full 1920x1080 transparent PNG,
+       with its TV already in the right corner. Swap the whole image to flicker.
+       Paths below are local art-library paths; for live use they become hosted URLs. -->
+  <img class="tv-layer" id="tv1" src="../horde/art-library/tv1-top/skully.png" alt="Top TV">
+  <img class="tv-layer" id="tv2" src="../horde/art-library/tv2-mid/clown.png" alt="Mid TV">
+  <img class="tv-layer" id="tv3" src="../horde/art-library/tv3-bot1/1.png" alt="Bottom TV 1">
+  <img class="tv-layer" id="tv4" src="../horde/art-library/tv4-bot2/1.png" alt="Bottom TV 2">
+</div>
+<script>
+  // Flicker by swapping whole overlay images. Lists are the art library files.
+  const tvFiles = {
+    tv1: ["skully.png","climbingover.png","endoftheword.png","flaminghair.png","madscientist.png","seenitall.png"],
+    tv2: ["betterout.png","charlie.png","clown.png","dalmation.png","dino.png","help.png","inthemist.png","jellyfish.png","joker1.png","joker2.png","skullonblue.png","snot.png","themuse.png","toothy.png","whodis.png"],
+    tv3: ["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png","9.png","10.png","11.png","12.png","13.png","14.png","15.png","16.png","17.png","allcollections.png"],
+    tv4: ["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png","9.png","10.png","11.png","12.png","13.png","14.png","15.png","16.png","17.png","18.png","allcollections.png"]
+  };
+  const tvDirs = {tv1: "tv1-top", tv2: "tv2-mid", tv3: "tv3-bot1", tv4: "tv4-bot2"};
+  const timers = {tv1: 5000, tv2: 4000, tv3: 6000, tv4: 5000};
+  for (const id of Object.keys(timers)) {
+    const el = document.getElementById(id);
+    let i = 0;
+    setInterval(() => {
+      el.classList.add("flicker");
+      setTimeout(() => {
+        i = (i + 1) % tvFiles[id].length;
+        el.src = "../horde/art-library/" + tvDirs[id] + "/" + tvFiles[id][i];
+        el.classList.remove("flicker");
+      }, 140);
+    }, timers[id]);
+  }
+</script>
+</body>
+</html>

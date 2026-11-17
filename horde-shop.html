@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horde Shop</title>
+<meta name="description" content="Buy Byron's NFTs direct, on the XRP Ledger, priced in $HORDE or XRP. No platform cut, the money goes straight to the seller.">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <div class="brand">ArtistByron · The Horde</div>
+    <div class="slogan">Horde Shop</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="about.html">About</a>
+      <a href="shop.html">Shop</a>
+      <a href="collections.html">Collections</a>
+      <a href="crypto.html">Crypto</a>
+      <a href="wallet.html">My Horde Wallet</a>
+      <a href="holders.html">Leaderboard</a>
+      <a href="register.html">Register</a>
+      <a href="https://ko-fi.com/artistbyron">Ko-fi</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Horde Shop</h1>
+  <p><strong>Draft, not live yet.</strong> This is Byron's own shop window. The NFTs live on the XRP Ledger, the sale happens on the ledger, this page is just the window. No platform cut, the money goes straight to the seller.</p>
+  <p>How it works: pick a listing, connect your XRP wallet, Xaman or GemWallet, sign in your own wallet. $HORDE or XRP goes to the seller, the NFT goes to you, all on ledger. If you buy on Ko-fi with PayPal or a card instead, send Byron your wallet address in a Ko-fi message and he mints or sends the NFT to you by hand.</p>
+
+  <section>
+    <h2>$HORDE price, live from the ledger</h2>
+    <p id="hordePrice">Checking the $HORDE pool...</p>
+    <p class="small">Pool checked live from the XRP Ledger AMM. $HORDE issuer rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR. The price moves, so a $HORDE price is set at listing time.</p>
+  </section>
+
+  <section>
+    <h2>Do I hold enough?</h2>
+    <p>Paste your XRPL address. This checks the ledger, nothing is signed, no wallet is connected.</p>
+    <label for="addr">Your XRPL address</label>
+    <input type="text" id="addr" placeholder="r..." autocomplete="off">
+    <p><button class="btn ghost" id="checkBtn" type="button">Check my wallet</button></p>
+    <div id="checkOut" class="result" hidden></div>
+  </section>
+
+  <section>
+    <h2>For sale in $HORDE</h2>
+    <p>Hold Horde &amp; Hoard is the only collection priced in $HORDE so far. 7 tokens, all physical art, no AI. Checked 15 Nov 2026: none of the 7 are listed for sale on the ledger right now, so there is nothing to buy in $HORDE today. When Byron or a holder lists one, it shows up here.</p>
+    <div class="card">
+      <h3>Hold Horde &amp; Hoard</h3>
+      <p>Taxon 1313 · 7 tokens · 5 owners · ArtistByron wallet<br><a href="https://imcollectibles.io/collections/hold-horde-hoard-1313/">See it on IMCollectibles</a></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>First real listing goes here</h2>
+    <div class="card">
+      <h3>Coming soon, Byron picks it</h3>
+      <p>The first real $HORDE listing on this page will be a real Byron NFT, with real art, a real price, and a real sell offer on the ledger. Byron still has to pick the art and the price. Until then, the test listing below is the only buy button on the page, and it takes nothing.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Featured collections, for sale in XRP</h2>
+    <p>These are Byron's main collections. Buying still happens on the ledger, through xrp.cafe or IMCollectibles for now, until their listings move here too.</p>
+    <div class="card">
+      <h3><a href="https://xrp.cafe/collection/thehorde">the Horde</a></h3>
+      <p>Taxon 1 · 355 tokens · 106 owners · Floor about 10 to 18 XRP</p>
+      <h3><a href="https://xrp.cafe/edition/myzombiecats/13451">Big Paws, My Zombie Cats</a></h3>
+      <p>Free edition, 361 of 589 minted, final check 13 Nov</p>
+      <h3><a href="https://xrp.cafe/edition/byronsink/13452">Lost in Contemplation, Byrons Ink</a></h3>
+      <p>Free edition, 346 of 589 minted, final check 13 Nov</p>
+      <h3><a href="https://imcollectibles.io/collections/byrons-oes-666/">Byron's OEs</a></h3>
+      <p>Taxon 666 · 192 tokens · 44 owners · Floor 10 XRP</p>
+      <p><a href="collections.html">See all 29 collections</a></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sell your Horde NFT here</h2>
+    <p>Got a Byron NFT and want to sell it? List it on the ledger, then tell Byron or Marrow in Discord and it can show up here.</p>
+    <p>1. In Xaman, open your NFT, make a sell offer, pick XRP or $HORDE and your price.<br>
+    2. Tell Byron the NFT name and the price, in Discord or a Ko-fi message.<br>
+    3. Muse checks the ledger to confirm the sell offer is real, then adds it to this page.<br>
+    No wash trading, selling to yourself does not count, and no one promises a price or a profit.</p>
+  </section>
+
+  <section>
+    <h2>WAX, too</h2>
+    <p>WAX drops live on AtomicHub, not here. Free this week: <a href="https://wax.atomichub.io/drops/92610">Horde's Clown #1, Mon 16 Nov 1pm to Tue 17 Nov 1pm CST</a>, and <a href="https://wax.atomichub.io/drops/92617">Horde Dude Worries, Tue 17 Nov 1pm to Wed 18 Nov 1pm CST</a>. Both free, 1 per wallet, whitelisted to Tony and the founders, then 666 WAX public.</p>
+  </section>
+
+  <section>
+    <h2>Test listing, NOT real art</h2>
+    <div class="card">
+      <h3>Muse Test Zombie, TEST ONLY</h3>
+      <p><strong>NOT Byron art.</strong> A test doodle Muse made on testnet, used here only so we do not sell Byron art by accident.</p>
+      <p>Price: <strong>10,000,000 $HORDE</strong><br>
+      That was about 0.18 XRP at the AMM pool price on 13 Nov, and about the same today.<br>
+      Seller: Muse test wallet, rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH<br>
+      $HORDE issuer: rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR</p>
+      <p><button class="btn" id="buyBtn" type="button">Buy with $HORDE, TEST</button></p>
+      <p id="buyMsg" class="small">No live sell offer exists for this test NFT yet. Clicking Buy shows the steps instead of taking any $HORDE.</p>
+      <p class="small">To make this live, only when Byron says go: mint the test NFT on mainnet from Muse's wallet, mutable, fee about 0.00001 XRP plus a 0.2 XRP reserve while it is held, then create a sell offer on ledger, NFTokenCreateOffer, priced in $HORDE. Then the Buy button opens that offer in the buyer's wallet to accept and sign.</p>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><p>ArtistByron · The Horde · Horde Shop, draft, built 15 Nov 2026, not pushed live yet</p></div></footer>
+<script>
+const HORDE_HEX = '24484F5244450000000000000000000000000000';
+const HORDE_ISSUER = 'rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR';
+async function rpc(method, params) {
+  const res = await fetch('https://s1.ripple.com:51234/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: method, params: [params] }) });
+  return res.json();
+}
+async function loadPrice() {
+  const el = document.getElementById('hordePrice');
+  try {
+    const j = await rpc('amm_info', { asset: { currency: HORDE_HEX, issuer: HORDE_ISSUER }, asset2: { currency: 'XRP' } });
+    const amm = j.result && j.result.amm;
+    if (!amm) throw new Error('no pool');
+    const horde = Number(amm.amount.value);
+    const xrp = Number(amm.amount2) / 1000000;
+    const perHorde = xrp / horde;
+    el.textContent = '1 $HORDE is about ' + perHorde.toFixed(12) + ' XRP right now. 10,000,000 $HORDE is about ' + (perHorde * 10000000).toFixed(2) + ' XRP. Pool: ' + Math.round(horde).toLocaleString() + ' $HORDE and ' + xrp.toFixed(2) + ' XRP.';
+  } catch (e) {
+    el.textContent = 'Could not reach the ledger for a live price. Last check, 15 Nov: 10,000,000 $HORDE was about 0.18 XRP.';
+  }
+}
+loadPrice();
+document.getElementById('buyBtn').addEventListener('click', function () {
+  document.getElementById('buyMsg').textContent = 'TEST: a real buy would now ask your XRP wallet, Xaman or GemWallet, to accept a sell offer for 10,000,000 $HORDE. No offer exists yet, so nothing was signed and nothing was spent. Next step is mint the test NFT and create that offer on ledger, only when Byron says go.';
+});
+document.getElementById('checkBtn').addEventListener('click', async function () {
+  const addr = document.getElementById('addr').value.trim();
+  const out = document.getElementById('checkOut');
+  out.hidden = false;
+  if (!addr.startsWith('r')) { out.textContent = 'That does not look like an XRPL address, it should start with r.'; return; }
+  out.textContent = 'Checking the ledger...';
+  try {
+    const bal = await rpc('account_info', { account: addr, ledger_index: 'validated' });
+    const lines = await rpc('account_lines', { account: addr, ledger_index: 'validated' });
+    if (bal.error) { out.textContent = 'Ledger said: ' + JSON.stringify(bal.error); return; }
+    const xrp = Number(bal.result.account_data.Balance) / 1000000;
+    const line = (lines.result.lines || []).find(function (l) { return l.currency === HORDE_HEX; });
+    out.textContent = 'XRP: ' + xrp + '. $HORDE: ' + (line ? line.balance : 'no $HORDE trustline, you would need to set one to issuer ' + HORDE_ISSUER + ' before you can hold it.');
+  } catch (e) { out.textContent = 'Could not reach the ledger from this browser, try again, or check the address on xrpscan.com.'; }
+});
+</script>
+</body>
+</html>
