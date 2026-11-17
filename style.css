@@ -158,6 +158,10 @@ a.work{cursor:pointer}
 .shop-card img{width:100%;height:auto;border-radius:8px}
 .shop-card span{color:var(--red);font-weight:700}
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.xrp-centered{text-align:center}
+.xrp-centered .card{text-align:center}
+.xrp-centered input[type="text"]{max-width:420px;margin:0 auto;display:block}
+.xrp-centered .card p{text-align:center}
 
 /* --- Frame on all pages (preview, Nov 2026) --- */
 body.frame-all{background:#8c8c8c}

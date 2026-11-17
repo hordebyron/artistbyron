@@ -28,11 +28,10 @@
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap xrp-centered">
   <h1>XRP side</h1>
-  <p>Connect with your XRP wallet. Tap Log in with Xaman and scan the code with your Xaman app, or paste your XRPL address below. No password, no seed, ever, this only looks up a public address.</p>
 
-  <section class="card">
+  <section class="card" id="login-card">
     <h2>Log in</h2>
     <p>
       <button class="btn" type="button" data-xrp-login="Xaman">Log in with Xaman</button>
@@ -51,11 +50,12 @@
     </form>
   </section>
 
+  <p class="small">Connect with your XRP wallet. No password, no seed, ever, this only looks up a public address.</p>
+
   <section class="card" id="welcome-card" hidden>
-    <h2 id="welcome-title">Welcome</h2>
+    <h2 id="welcome-title">Welcome to the Horde</h2>
     <p id="welcome-text"></p>
     <div id="inventory"></div>
-    <p><a class="btn" href="https://imcollectibles.io/artists/artistbyron">IMCollectibles, Mon 16 Nov</a> <a class="btn ghost" href="collections.html">My XRPL collections</a></p>
   </section>
 
 </main>
@@ -141,48 +141,63 @@ async function loginWithXaman() {
   }
 }
 document.getElementById('xaman-cancel').addEventListener('click', function(){ hideXamanQr(); statusEl.textContent = 'Xaman login cancelled. Paste your address below, or tap Log in with Xaman again.'; });
-var holdersData = null;
-function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function shortAddr(a){ return a.length > 12 ? a.slice(0,6) + '...' + a.slice(-4) : a; }
-async function loadHolders() {
-  if (holdersData) return holdersData;
-  var res = await fetch('data/holders.json');
-  holdersData = await res.json();
-  return holdersData;
-}
-async function liveNftCount(addr) {
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+var namesData = null;
+async function getRegisteredName(addr) {
   try {
-    var res = await fetch('https://s1.ripple.com:51234/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'account_nfts', params: [{ account: addr, ledger_index: 'validated', limit: 400 }] }) });
-    var j = await res.json();
-    return (j.result && j.result.account_nfts) ? j.result.account_nfts.length : null;
+    var raw = localStorage.getItem('horde_registration');
+    if (raw) {
+      var r = JSON.parse(raw);
+      if (r && r.xrp === addr && r.name) return r.name;
+    }
+  } catch (e) {}
+  try {
+    if (!namesData) {
+      var res = await fetch('data/names.json');
+      namesData = await res.json();
+    }
+    var names = (namesData && namesData.names) ? namesData.names : {};
+    for (var nick in names) {
+      var entry = names[nick];
+      if (entry && entry.wallet === addr) return (entry.kofi_name || nick);
+    }
+  } catch (e) {}
+  return null;
+}
+var byronIssuers = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': true, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': true };
+async function liveByronCount(addr) {
+  var count = 0;
+  var marker = null;
+  try {
+    for (var i = 0; i < 10; i++) {
+      var params = { account: addr, ledger_index: 'validated', limit: 400 };
+      if (marker) params.marker = marker;
+      var res = await fetch('https://s1.ripple.com:51234/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'account_nfts', params: [params] }) });
+      var j = await res.json();
+      var nfts = (j.result && j.result.account_nfts) ? j.result.account_nfts : [];
+      nfts.forEach(function(nft){ if (byronIssuers[nft.Issuer]) count++; });
+      marker = (j.result && j.result.marker) ? j.result.marker : null;
+      if (!marker) break;
+    }
+    return count;
   } catch (e) { return null; }
 }
 async function showHorde(addr) {
   welcomeCard.hidden = false;
-  welcomeTitle.textContent = 'Welcome, ' + shortAddr(addr);
-  welcomeText.textContent = 'Checking your XRP inventory…';
+  welcomeTitle.textContent = 'Welcome to the Horde';
+  welcomeText.textContent = 'Checking your XRP art…';
   inventoryEl.innerHTML = '';
-  try {
-    var data = await loadHolders();
-    var row = data.holders.find(function(h){ return h.wallet === addr; });
-    var live = await liveNftCount(addr);
-    if (!row) {
-      welcomeText.innerHTML = 'Welcome, <strong>' + esc(shortAddr(addr)) + '</strong>, you hold <strong>0</strong> of the Big Paws and Lost set in the 13 Nov snapshot.' + (live !== null ? ' Live on the ledger right now you hold ' + live + ' XRPL NFTs in total.' : '');
-      inventoryEl.innerHTML = '<p>Big Paws: <strong>0</strong> · Lost in Contemplation: <strong>0</strong></p><p>If you minted after 13 Nov, or you sold them, you will not be on this snapshot list. The live count above, if it loaded, is the truer number.</p>';
-      return;
-    }
-    if (row.is_distribution) {
-      welcomeText.innerHTML = 'Welcome, <strong>' + esc(shortAddr(addr)) + '</strong>. This is the xrp.cafe distribution wallet, not a collector wallet.';
-      inventoryEl.innerHTML = '<p>It holds ' + row.big + ' Big Paws + ' + row.lost + ' Lost as unclaimed mints.</p>';
-      return;
-    }
-    welcomeText.innerHTML = 'Welcome, <strong>' + esc(shortAddr(addr)) + '</strong>, you hold <strong>' + row.total + '</strong> of Byron\'s art on XRP, Big Paws and Lost together.' + (live !== null ? ' Live on the ledger right now you hold ' + live + ' XRPL NFTs in total.' : '');
-    inventoryEl.innerHTML = '<p>Big Paws: <strong>' + row.big + '</strong> · Lost in Contemplation: <strong>' + row.lost + '</strong> · Total: <strong>' + row.total + '</strong> · Rank ' + esc(row.rank_label) + '</p>'
-      + '<p>' + (row.both ? 'You hold <strong>both</strong>. You are on the whitelist for the free IMCollectibles drop, Mon 16 Nov 2026.' : 'You hold one of the two. One ingredient away from the Monday whitelist.') + '</p>'
-      + '<p class="small">Snapshot: 13 Nov 2026, 16:29 to 16:30 CST. Live count: just now, when it loads.</p>';
-  } catch (e) {
-    welcomeText.textContent = 'Welcome, ' + shortAddr(addr) + '. I could not load the holder data just now, try again.';
+  var name = await getRegisteredName(addr);
+  var count = await liveByronCount(addr);
+  if (count === null) {
+    welcomeText.textContent = 'I could not load your art count just now, try again.';
+    if (name) welcomeTitle.textContent = 'Welcome to the Horde, ' + name;
+    return;
   }
+  if (name) welcomeTitle.textContent = 'Welcome to the Horde, ' + name;
+  welcomeText.innerHTML = 'You hold <strong>' + count + '</strong> ' + (count === 1 ? 'piece' : 'pieces') + ' of art from ArtistByron, from all collections.'
+    + (name ? '' : ' <a href="register.html">Want us to call you by name next time? Register here.</a>');
 }
 document.querySelectorAll('[data-xrp-login]').forEach(function(btn){
   btn.addEventListener('click', function(){

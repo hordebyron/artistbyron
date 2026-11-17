@@ -104,6 +104,28 @@ var sessionKit = null, session = null;
 var CLOWN = ['ylab4.wam','q52aw.wam','fzyr.wam','grkx.wam','kylinvaderme','mpvee.wam','pzyas.wam'];
 
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+var namesData = null;
+async function getRegisteredName(waxName) {
+  try {
+    var raw = localStorage.getItem('horde_registration');
+    if (raw) {
+      var r = JSON.parse(raw);
+      if (r && r.wax === waxName && r.name) return r.name;
+    }
+  } catch (e) {}
+  try {
+    if (!namesData) {
+      var res = await fetch('data/names.json');
+      namesData = await res.json();
+    }
+    var names = (namesData && namesData.names) ? namesData.names : {};
+    for (var nick in names) {
+      var entry = names[nick];
+      if (entry && entry.wax === waxName) return (entry.kofi_name || nick);
+    }
+  } catch (e) {}
+  return null;
+}
 async function checkCollection(name, collection) {
   var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(name) + '/' + collection + '?limit=100');
   if (!res.ok) throw new Error(collection + ' ' + res.status);
@@ -117,17 +139,20 @@ async function showHorde(name) {
   welcomeTitle.textContent = 'Welcome, ' + name;
   welcomeText.textContent = 'Checking your WAX inventory…';
   inventoryEl.innerHTML = '';
+  var displayName = await getRegisteredName(name);
+  if (displayName) welcomeTitle.textContent = 'Welcome to the Horde, ' + displayName;
   try {
     var a = await checkCollection(name, 'myhordeonwax');
     var b = await checkCollection(name, 'byronartset1');
     var total = a.total + b.total;
-    welcomeText.innerHTML = 'Welcome, <strong>' + esc(name) + '</strong>, you hold <strong>' + total + '</strong> of Byron\'s art on WAX.';
+    welcomeText.innerHTML = 'You hold <strong>' + total + '</strong> of Byron\'s art on WAX.'
+      + (displayName ? '' : ' <a href="register.html">Want us to call you by name next time? Register here.</a>');
     inventoryEl.innerHTML = '<p>myhordeonwax: <strong>' + a.total + '</strong></p>'
       + '<p>byronartset1: <strong>' + b.total + '</strong></p>'
       + (CLOWN.includes(name) ? '<p>You are on the whitelist for Horde\'s Clown #1, free Mon 16 Nov 1pm CST, 24h, 1 per wallet.</p>' : '')
       + '<p class="small">Live check, just now, from AtomicAssets.</p>';
   } catch (e) {
-    welcomeText.textContent = 'Welcome, ' + name + '. I could not reach the WAX lookup just now, check the name and try again.';
+    welcomeText.textContent = 'I could not reach the WAX lookup just now, check the name and try again.';
   }
 }
 document.getElementById('paste-form').addEventListener('submit', function(e){
