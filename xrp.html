@@ -8,6 +8,14 @@
 <link rel="stylesheet" href="style.css">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
+<style>
+.collection-list{list-style:none;margin:18px 0 0;padding:0;text-align:left}
+.collection-row{display:flex;align-items:center;gap:12px;padding:8px 4px;border-top:1px solid rgba(255,255,255,.08)}
+.collection-row img{width:48px;height:48px;object-fit:cover;border-radius:8px;flex:0 0 48px;background:#222}
+.collection-row .collection-name{flex:1;font-weight:600}
+.collection-row .collection-count{font-weight:700;white-space:nowrap}
+.collection-row.zero{opacity:.55}
+</style>
 </head>
 <body class="frame-all">
 <div class="sidebars">
@@ -151,9 +159,19 @@ async function getRegisteredName(addr) {
   } catch (e) {}
   return null;
 }
-var byronIssuers = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': true, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': true };
-async function liveByronCount(addr) {
-  var count = 0;
+var byronIssuers = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 'A', 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 'H' };
+var collectionsData = null;
+async function loadCollections() {
+  if (collectionsData) return collectionsData;
+  try {
+    var res = await fetch('data/collections.json');
+    collectionsData = await res.json();
+  } catch (e) { collectionsData = { collections: [], issuers: {} }; }
+  return collectionsData;
+}
+async function liveByronHoldings(addr) {
+  var byKey = {};
+  var total = 0;
   var marker = null;
   try {
     for (var i = 0; i < 10; i++) {
@@ -162,11 +180,17 @@ async function liveByronCount(addr) {
       var res = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'account_nfts', params: [params] }) });
       var j = await res.json();
       var nfts = (j.result && j.result.account_nfts) ? j.result.account_nfts : [];
-      nfts.forEach(function(nft){ if (byronIssuers[nft.Issuer]) count++; });
+      nfts.forEach(function(nft){
+        var letter = byronIssuers[nft.Issuer];
+        if (!letter) return;
+        var key = letter + '-' + nft.NFTokenTaxon;
+        byKey[key] = (byKey[key] || 0) + 1;
+        total++;
+      });
       marker = (j.result && j.result.marker) ? j.result.marker : null;
       if (!marker) break;
     }
-    return count;
+    return { total: total, byKey: byKey };
   } catch (e) { return null; }
 }
 async function showHorde(addr) {
@@ -175,15 +199,33 @@ async function showHorde(addr) {
   welcomeText.textContent = 'Checking your XRP art…';
   inventoryEl.innerHTML = '';
   var name = await getRegisteredName(addr);
-  var count = await liveByronCount(addr);
-  if (count === null) {
+  var data = await loadCollections();
+  var holdings = await liveByronHoldings(addr);
+  if (holdings === null) {
     welcomeText.textContent = 'I could not load your art count just now, try again.';
     if (name) welcomeTitle.textContent = 'Welcome to the Horde, ' + name;
     return;
   }
   if (name) welcomeTitle.textContent = 'Welcome to the Horde, ' + name;
-  welcomeText.innerHTML = 'You hold <strong>' + count + '</strong> ' + (count === 1 ? 'piece' : 'pieces') + ' of art from ArtistByron, from all collections.'
+  var total = holdings.total;
+  welcomeText.innerHTML = 'You hold <strong>' + total + '</strong> ' + (total === 1 ? 'piece' : 'pieces') + ' of art from ArtistByron, from all collections.'
     + (name ? '' : ' <a href="register.html">Want us to call you by name next time? Register here.</a>');
+  var rows = (data.collections || []).map(function(c){
+    var key = c.issuer + '-' + c.taxon;
+    return { name: c.name, icon: c.icon, count: holdings.byKey[key] || 0 };
+  });
+  rows.sort(function(a, b){ return (b.count - a.count) || (a.name < b.name ? -1 : 1); });
+  var html = '<ul class="collection-list">';
+  rows.forEach(function(r){
+    var icon = r.icon ? esc(r.icon) : 'art/horde-h-icon.png';
+    html += '<li class="collection-row' + (r.count === 0 ? ' zero' : '') + '">'
+      + '<img src="' + icon + '" alt="" loading="lazy">'
+      + '<span class="collection-name">' + esc(r.name) + '</span>'
+      + '<span class="collection-count">' + r.count + ' ' + (r.count === 1 ? 'piece' : 'pieces') + '</span>'
+      + '</li>';
+  });
+  html += '</ul>';
+  inventoryEl.innerHTML = html;
 }
 document.querySelectorAll('[data-xrp-login]').forEach(function(btn){
   btn.addEventListener('click', function(){
