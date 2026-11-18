@@ -1,9 +1,10 @@
 /* ArtistByron — artistbyron.ca draft
    Dark horror, simple, mobile-first, $0, no frameworks. */
+/* Warm Ash, Nov 2026, option 2: matte greys, no gradients, no glow */
 :root{
-  --bg:#0b0b0e; --panel:#15151b; --panel2:#1d1d26;
-  --ink:#f2ede6; --muted:#a9a4b0; --line:#2c2c38;
-  --red:#c1121f; --red2:#e5383b; --green:#4ade80; --gold:#e8b64c;
+  --bg:#171614; --panel:#221f1d; --panel2:#2a2521;
+  --ink:#e6e1da; --muted:#9a938b; --line:#3a3633;
+  --red:#a31621; --red2:#c22a2a; --green:#4ade80; --gold:#e8b64c;
   --radius:14px;
 }
 *{box-sizing:border-box}
@@ -204,7 +205,7 @@ body.frame-all{background:#8c8c8c}
 /* --- Overhaul Nov 2026: top nav only, no frame --- */
 body{font-family:Barlow,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial Black",system-ui,sans-serif;letter-spacing:.02em}
-.topnav{position:sticky;top:0;z-index:40;background:#111116;border-bottom:3px solid var(--red)}
+.topnav{position:sticky;top:0;z-index:40;background:#1c1917;border-bottom:3px solid var(--red)}
 .topnav-inner{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px}
 .topnav-brand{display:flex;align-items:center;gap:8px;color:#f2ede6;text-decoration:none;font-weight:700;font-size:1.15rem;white-space:nowrap}
 .topnav-mark{width:28px;height:28px;border-radius:6px}
@@ -219,7 +220,7 @@ h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial 
 .wrap.wide{max-width:1100px}
 .lede{font-size:1.2rem}
 .hero-bleed{position:relative;border-radius:var(--radius);overflow:hidden;margin:18px 0}
-.hero-bleed>img{width:100%;height:auto;max-height:520px;object-fit:cover;display:block}
+.hero-bleed>img{width:100%;height:auto;max-height:520px;object-fit:cover;display:block;filter:brightness(.72)}
 .hero-text{position:absolute;inset:auto 0 0 0;padding:64px 24px 24px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.88));color:#fff}
 .hero-text h1{font-size:clamp(2.6rem,9vw,4.5rem);line-height:.95;margin:0 0 .2em;color:#fff}
 .hero-tag{font-size:1.25rem;color:#ff6b6b;font-weight:700;margin:.2em 0 .8em}
@@ -236,7 +237,7 @@ h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial 
 .chip{padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:600;cursor:pointer;font-size:1rem}
 .chip:hover,.chip.is-active{border-color:var(--red);background:var(--red);color:#fff}
 .gallery-grid{grid-template-columns:repeat(3,1fr);gap:10px}
-.gallery-grid .work.pic img{aspect-ratio:auto;height:auto;object-fit:contain;background:#000}
+.gallery-grid .work.pic img{aspect-ratio:auto;height:auto;object-fit:contain;background:#221f1d}
 .lb-actions{position:absolute;bottom:16px;left:0;right:0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:0 12px}
 .lb-actions .btn{padding:10px 14px}
 .chooser{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
