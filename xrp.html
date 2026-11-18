@@ -87,11 +87,29 @@ function hideXamanQr() { xamanQrBox.hidden = true; xamanQrImg.src = ''; }
 function getXamanKit() {
   if (xamanKit) return xamanKit;
   if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) return null;
-  xamanKit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman', 'joey-wallet'], xamanClientId: XAMAN_API_KEY });
+  xamanKit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman', 'joey-wallet'], xamanClientId: XAMAN_API_KEY, autoReconnect: true });
   var mgr = xamanKit.manager || xamanKit;
   if (mgr && typeof mgr.on === 'function') mgr.on('qr', showXamanQr);
   return xamanKit;
 }
+/* Pick up a finished Xaman login when the page loads again after the trip to the Xaman app.
+   The kit keeps a pending-recovery marker for about 3 minutes, so approve in Xaman and come back quickly. */
+async function tryAutoReconnect() {
+  var kit = getXamanKit();
+  if (!kit) return;
+  var mgr = kit.manager || kit;
+  if (!mgr || typeof mgr.autoReconnect !== 'function') return;
+  try {
+    await mgr.autoReconnect();
+    var acct = (typeof mgr.getAccount === 'function') ? mgr.getAccount() : null;
+    var addr = normAddr(acct);
+    if (addr) {
+      statusEl.textContent = 'Logged in with Xaman as ' + shortAddr(addr) + '.';
+      showHorde(addr);
+    }
+  } catch (e) {}
+}
+tryAutoReconnect();
 async function loginWithExtension(adapterId, label) {
   var kit = getXamanKit();
   if (!kit) { statusEl.textContent = label + ' login could not load. Paste your address below instead, that still shows your real Horde.'; xrplInput.focus(); return; }
