@@ -46,6 +46,7 @@
     <h2 id="welcome-title">Welcome to the Horde</h2>
     <p id="welcome-text"></p>
     <div id="inventory"></div>
+    <p class="small" id="switch-wallet-wrap" hidden><a href="#" id="switch-wallet">Use a different wallet</a></p>
   </section>
 
 </main>
@@ -66,6 +67,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.2/dist/xrpl-wallet-kit.iife.js"></script>
 <script>
 var statusEl = document.getElementById('login-status');
+var loginCard = document.getElementById('login-card');
 var welcomeCard = document.getElementById('welcome-card');
 var welcomeTitle = document.getElementById('welcome-title');
 var welcomeText = document.getElementById('welcome-text');
@@ -212,16 +214,21 @@ async function liveByronHoldings(addr) {
   } catch (e) { return null; }
 }
 async function showHorde(addr) {
+  /* After login, the login card goes away. Just the welcome, the count, and the list. */
+  loginCard.hidden = true;
+  hideXamanQr();
   welcomeCard.hidden = false;
   welcomeTitle.textContent = 'Welcome to the Horde';
   welcomeText.textContent = 'Checking your XRP art…';
   inventoryEl.innerHTML = '';
+  document.getElementById('switch-wallet-wrap').hidden = true;
   var name = await getRegisteredName(addr);
   var data = await loadCollections();
   var holdings = await liveByronHoldings(addr);
   if (holdings === null) {
     welcomeText.textContent = 'I could not load your art count just now, try again.';
     if (name) welcomeTitle.textContent = 'Welcome to the Horde, ' + name;
+    document.getElementById('switch-wallet-wrap').hidden = false;
     return;
   }
   if (name) welcomeTitle.textContent = 'Welcome to the Horde, ' + name;
@@ -244,7 +251,14 @@ async function showHorde(addr) {
   });
   html += '</ul>';
   inventoryEl.innerHTML = html;
+  document.getElementById('switch-wallet-wrap').hidden = false;
 }
+document.getElementById('switch-wallet').addEventListener('click', function(e){
+  e.preventDefault();
+  welcomeCard.hidden = true;
+  loginCard.hidden = false;
+  statusEl.textContent = 'Tap Log in with Xaman to scan a code, or paste your address below.';
+});
 document.querySelectorAll('[data-xrp-login]').forEach(function(btn){
   btn.addEventListener('click', function(){
     var w = btn.getAttribute('data-xrp-login');
