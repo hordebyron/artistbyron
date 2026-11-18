@@ -41,7 +41,7 @@
     <h2 id="welcome-title">Welcome</h2>
     <p id="welcome-text"></p>
     <div id="inventory"></div>
-    <p><a class="btn" href="game.html">Play the Game</a> <a class="btn ghost" href="https://wax.atomichub.io/drops/92610">Clown drop 92610</a> <button class="btn ghost" type="button" id="wax-logout-btn">Log out</button></p>
+    <p><button class="btn ghost" type="button" id="wax-logout-btn">Log out</button></p>
   </section>
 
   <section class="card">
@@ -63,6 +63,29 @@
       <a class="shop-card" href="https://wax.atomichub.io/drops/92610" target="_blank" rel="noopener">
         <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmNVSqNurBcPPW6TRGVDHvoFLPFV4E9A3WtS4tfZHz3j7X&amp;size=1110&amp;output=webp" alt="Horde's Clown #1">
         <h3>Horde's Clown #1, 666 WAX</h3><p>Public now, until Tue 24 Nov 1pm CST. 9 left of 13.</p><span>Open on AtomicHub</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Byron's WAX collections</h2>
+    <p>Four collections, all by Byron. Tap one to browse it on AtomicHub.</p>
+    <div class="card-grid">
+      <a class="shop-card" href="https://wax.atomichub.io/explorer/collection/byronartset1" target="_blank" rel="noopener">
+        <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmTPFQfm635sid4G2SHELV6CY8HbHeNssdmgV7qp2tMMQS&amp;size=512&amp;output=webp" alt="Art of Byron">
+        <h3>Art of Byron</h3><p>A huge art dump, artwork from as far back as 2009. Art over anything else.</p><span>609,704 WAX traded · 50,619 sales</span>
+      </a>
+      <a class="shop-card" href="https://wax.atomichub.io/explorer/collection/myzicklearmy" target="_blank" rel="noopener">
+        <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmRyvX197jX3fpdZqUz5zERNtEDbonAFBtgaBKNPuT2LQv&amp;size=512&amp;output=webp" alt="My Zickle Army">
+        <h3>My Zickle Army</h3><p>An army of zombie pickles, fresh from the dill pickled mind of Byron.</p><span>20,683 WAX traded · 8,903 sales</span>
+      </a>
+      <a class="shop-card" href="https://wax.atomichub.io/explorer/collection/myzombiecats" target="_blank" rel="noopener">
+        <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmNro3DimgmzKs8qLQteMf4zMuZazejZYGuBsdKdykCwEu&amp;size=512&amp;output=webp" alt="My Zombie Cat Collection">
+        <h3>My Zombie Cat Collection</h3><p>If you feed a stray cat, it comes back. A stray zombie cat? Aww, what a cutie.</p><span>6,669 WAX traded · 132 sales</span>
+      </a>
+      <a class="shop-card" href="https://wax.atomichub.io/explorer/collection/myhordeonwax" target="_blank" rel="noopener">
+        <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmVn1E4cz7CuWL4ikikvmBe3Qa5mwHkNFKJMvy9uZ7GJkb&amp;size=512&amp;output=webp" alt="HORDE on WAX">
+        <h3>HORDE on WAX</h3><p>The art of Byron on WAX, a fresh start with clear intent, his way all the way.</p><span>Home of the Horde drops</span>
       </a>
     </div>
   </section>
@@ -105,7 +128,6 @@ var loginBtn = document.getElementById('wax-login-btn');
 var logoutBtn = document.getElementById('wax-logout-btn');
 var waxInput = document.getElementById('wax-input');
 var sessionKit = null, session = null;
-var CLOWN = ['ylab4.wam','q52aw.wam','fzyr.wam','grkx.wam','kylinvaderme','mpvee.wam','pzyas.wam'];
 
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 var namesData = null;
@@ -138,6 +160,12 @@ async function checkCollection(name, collection) {
   var total = (data.schemas || []).reduce(function(n, s){ return n + parseInt(s.assets || 0, 10); }, 0);
   return { collection: collection, total: total };
 }
+var WAX_COLLECTIONS = [
+  { id: 'byronartset1', name: 'Art of Byron' },
+  { id: 'myzicklearmy', name: 'My Zickle Army' },
+  { id: 'myzombiecats', name: 'My Zombie Cat Collection' },
+  { id: 'myhordeonwax', name: 'HORDE on WAX' }
+];
 async function showHorde(name) {
   welcomeCard.hidden = false;
   welcomeTitle.textContent = 'Welcome, ' + name;
@@ -146,15 +174,12 @@ async function showHorde(name) {
   var displayName = await getRegisteredName(name);
   if (displayName) welcomeTitle.textContent = 'Welcome to the Horde, ' + displayName;
   try {
-    var a = await checkCollection(name, 'myhordeonwax');
-    var b = await checkCollection(name, 'byronartset1');
-    var total = a.total + b.total;
-    welcomeText.innerHTML = 'You hold <strong>' + total + '</strong> of Byron\'s art on WAX.'
-      + (displayName ? '' : ' <a href="register.html">Want us to call you by name next time? Register here.</a>');
-    inventoryEl.innerHTML = '<p>myhordeonwax: <strong>' + a.total + '</strong></p>'
-      + '<p>byronartset1: <strong>' + b.total + '</strong></p>'
-      + (CLOWN.includes(name) ? '<p>You are on the whitelist for Horde\'s Clown #1, free Mon 16 Nov 1pm CST, 24h, 1 per wallet.</p>' : '')
-      + '<p class="small">Live check, just now, from AtomicAssets.</p>';
+    var results = await Promise.all(WAX_COLLECTIONS.map(function(c){ return checkCollection(name, c.id); }));
+    var total = results.reduce(function(n, r){ return n + r.total; }, 0);
+    welcomeText.textContent = total > 0 ? 'You have assets in these collections.' : 'You do not hold any of Byron\'s WAX art yet.';
+    inventoryEl.innerHTML = results.map(function(r, i){
+      return '<p>' + WAX_COLLECTIONS[i].name + ': <strong>' + r.total + '</strong></p>';
+    }).join('');
   } catch (e) {
     welcomeText.textContent = 'I could not reach the WAX lookup just now, check the name and try again.';
   }
