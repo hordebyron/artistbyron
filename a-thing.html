@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>a thing - Horde on WAX</title>
-<meta name="description" content="a thing, a free WAX drop for Tony and the founders. Claim it here on artistbyron.ca.">
+<meta name="description" content="a thing, a free WAX drop for Tony and the founders. Claim it here on artistbyron.ca, on the Horde's own drop contract.">
 <link rel="stylesheet" href="style.css?v=6">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
@@ -23,22 +23,27 @@
     <strong>Price:</strong> Free<br>
     <strong>Whitelist:</strong> Tony and the founders<br>
     <strong>Limit:</strong> 1 per wallet, 7 total<br>
-    <strong>Status:</strong> Paused for now. This drop will come back on our own Horde drop contract, claimed right here on this site, with no AtomicHub drop.</p>
-    <p class="small" id="drop-status">This drop is paused for now.</p>
-    <p class="small">The AtomicHub drop for "a thing" was erased. It will return on the Horde's own drop contract, claimed here on artistbyron.ca.</p>
+    <strong>Starts:</strong> Thu 19 Nov 2026, 4:15pm CST<br>
+    <strong>Ends:</strong> Thu 26 Nov 2026, 4:15pm CST</p>
+    <p class="small" id="drop-status">Checking the drop…</p>
+    <p class="small">This drop runs on the Horde's own drop contract (hordedrop421). There is no AtomicHub drop for it. You claim it right here, you never have to leave this site.</p>
   </section>
 
   <section class="card" id="claim-card">
     <h2>Claim it here</h2>
-    <p>This drop is paused for now. It will come back on our own Horde drop contract, claimed right here on this site.</p>
+    <p>Log in with your WAX wallet, Anchor or Cloud Wallet. The site only sees your account name, never your keys. Claiming signs one transaction in your wallet, and the NFT mints straight to you.</p>
+    <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button></p>
+    <p class="small" id="login-status">Not logged in yet.</p>
     <p><button class="btn" type="button" id="claim-btn" disabled>Claim a thing</button></p>
-    <p class="small" id="claim-status">Paused for now.</p>
+    <p class="small" id="claim-status"></p>
+    <p><button class="btn ghost" type="button" id="wax-logout-btn" hidden>Log out</button></p>
     <p><a href="wax.html">&larr; Back to WAX side</a></p>
   </section>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Blockchain</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="wallet.html">My Horde Wallet</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script>
-var DROP_ID = 92631;
+var CONTRACT = 'hordedrop421';
+var DROP_ID = 1;
 var START_TIME = 1795126500;
 var END_TIME = 1795731300;
 var MAX_CLAIMABLE = 7;
@@ -51,11 +56,11 @@ var loginBtn = document.getElementById('wax-login-btn');
 var logoutBtn = document.getElementById('wax-logout-btn');
 var sessionKit = null, session = null, dropLive = false, claimedCount = null;
 
-async function tableRows(table, scope) {
+async function tableRows(code, scope, table) {
   var res = await fetch('https://wax.greymass.com/v1/chain/get_table_rows', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ json: true, code: 'atomicdropsx', scope: scope, table: table, limit: 100 })
+    body: JSON.stringify({ json: true, code: code, scope: scope, table: table, limit: 100 })
   });
   if (!res.ok) throw new Error('table ' + table + ' ' + res.status);
   var json = await res.json();
@@ -63,11 +68,11 @@ async function tableRows(table, scope) {
 }
 async function refreshDrop() {
   try {
-    var rows = await tableRows('drops', 'atomicdropsx');
+    var rows = await tableRows(CONTRACT, CONTRACT, 'drops');
     var drop = null;
     for (var i = 0; i < rows.length; i++) { if (rows[i].drop_id === DROP_ID) drop = rows[i]; }
-    if (!drop) { dropStatusEl.textContent = 'Drop 92631 not found on chain yet.'; return; }
-    claimedCount = parseInt(drop.current_claimed, 10);
+    if (!drop) { dropStatusEl.textContent = 'Drop not found on chain yet.'; return; }
+    claimedCount = parseInt(drop.claimed, 10);
     var now = Math.floor(Date.now() / 1000);
     dropLive = now >= drop.start_time && now <= drop.end_time && claimedCount < MAX_CLAIMABLE;
     var state = now < drop.start_time ? 'Opens Thu 19 Nov 2026, 4:15pm CST.' : now > drop.end_time ? 'This drop has ended.' : claimedCount >= MAX_CLAIMABLE ? 'All 7 claimed.' : 'Live now.';
@@ -143,7 +148,7 @@ function updateClaimBtn() {
         claimBtn.disabled = true;
         claimStatusEl.textContent = 'Sending your claim, approve it in your wallet…';
         try {
-          var r = await session.transact({ actions: [{ account: 'atomicdropsx', name: 'claimdropwl', authorization: [{ actor: name, permission: 'active' }], data: { claimer: name, drop_id: DROP_ID, claim_amount: 1, intended_delphi_median: 0, referrer: '', country: '' } }] }, { broadcast: true });
+          var r = await session.transact({ actions: [{ account: CONTRACT, name: 'claim', authorization: [{ actor: name, permission: 'active' }], data: { claimer: name, drop_id: DROP_ID } }] }, { broadcast: true });
           var tx = r.response && r.response.transaction_id ? r.response.transaction_id : '';
           claimStatusEl.textContent = 'Claimed! a thing is on its way to ' + name + (tx ? ' Transaction: ' + tx : '');
           refreshDrop();

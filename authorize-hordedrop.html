@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Authorize the Horde drop contract - Horde on WAX</title>
+<meta name="description" content="Byron only: authorize hordedrop421 to mint on byronartset1 and myhordeonwax.">
+<link rel="stylesheet" href="style.css?v=6">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a class="nav-cta" href="https://discord.gg/rA3UMEkpqc">Horde's Discord</a><a href="crypto.html">Blockchain</a></nav></div></header>
+<main class="wrap">
+  <h1>Authorize the Horde drop contract</h1>
+  <p>Byron only. This lets the Horde's own drop contract, <strong>hordedrop421</strong>, mint NFTs on your two WAX collections. It does not move any NFTs or WAX, it only adds hordedrop421 to the authorized list, the same way hordesmuse42, AtomicHub and F12KEY are already on it. You can remove it any time.</p>
+
+  <section class="card">
+    <h2>Step 1: log in as byronjrempel</h2>
+    <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button></p>
+    <p class="small" id="login-status">Not logged in yet.</p>
+    <p class="small" id="auth-status">Checking the authorized lists…</p>
+  </section>
+
+  <section class="card">
+    <h2>Step 2: authorize hordedrop421</h2>
+    <p>Two taps, one for each collection. Each one asks your wallet to sign, nothing else.</p>
+    <p><button class="btn" type="button" id="auth-byronartset1-btn" disabled>Authorize on Art of Byron (byronartset1)</button></p>
+    <p class="small" id="auth-byronartset1-status"></p>
+    <p><button class="btn" type="button" id="auth-myhorde-btn" disabled>Authorize on HORDE on WAX (myhordeonwax)</button></p>
+    <p class="small" id="auth-myhorde-status"></p>
+    <p><a href="a-thing.html">&larr; Back to a thing</a></p>
+  </section>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p></div></footer>
+<script>
+var CONTRACT = 'hordedrop421';
+var AUTHOR = 'byronjrempel';
+var sessionKit = null, session = null;
+var statusEl = document.getElementById('login-status');
+var authStatusEl = document.getElementById('auth-status');
+var btn1 = document.getElementById('auth-byronartset1-btn');
+var btn2 = document.getElementById('auth-myhorde-btn');
+var st1 = document.getElementById('auth-byronartset1-status');
+var st2 = document.getElementById('auth-myhorde-status');
+
+async function checkAuth() {
+  try {
+    var out = [];
+    for (var i = 0; i < 2; i++) {
+      var col = i === 0 ? 'byronartset1' : 'myhordeonwax';
+      var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/collections/' + col);
+      var json = await res.json();
+      var list = (json.data && json.data.authorized_accounts) || [];
+      var ok = list.indexOf(CONTRACT) !== -1;
+      out.push(col + ': ' + (ok ? 'hordedrop421 IS authorized.' : 'hordedrop421 is NOT authorized yet.'));
+      if (ok && i === 0) { btn1.disabled = true; st1.textContent = 'Already authorized.'; }
+      if (ok && i === 1) { btn2.disabled = true; st2.textContent = 'Already authorized.'; }
+    }
+    authStatusEl.textContent = out.join(' ');
+  } catch (e) {
+    authStatusEl.textContent = 'Could not check the lists just now, try reloading the page.';
+  }
+}
+function updateBtns() {
+  var ok = session && String(session.actor) === AUTHOR;
+  btn1.disabled = !ok;
+  btn2.disabled = !ok;
+  if (session && !ok) statusEl.textContent = 'Logged in as ' + String(session.actor) + '. Only byronjrempel can authorize, please log in with that wallet.';
+}
+async function authorize(collection, statusEl2, btn) {
+  var name = String(session.actor);
+  btn.disabled = true;
+  statusEl2.textContent = 'Sending, approve it in your wallet…';
+  try {
+    var r = await session.transact({ actions: [{ account: 'atomicassets', name: 'addcolauth', authorization: [{ actor: name, permission: 'active' }], data: { collection_name: collection, account_to_add: CONTRACT } }] }, { broadcast: true });
+    var tx = r.response && r.response.transaction_id ? r.response.transaction_id : '';
+    statusEl2.textContent = 'Done! hordedrop421 is authorized on ' + collection + (tx ? ' Transaction: ' + tx : '');
+    checkAuth();
+  } catch (e) {
+    var msg = (e && e.message) ? e.message : String(e);
+    statusEl2.textContent = 'Did not go through: ' + msg + (msg.indexOf('already an authorized') !== -1 ? ' That means it is already authorized.' : '');
+    btn.disabled = false;
+  }
+}
+(function () {
+  checkAuth();
+  setInterval(checkAuth, 60000);
+  async function init() {
+    try {
+      var m = await Promise.all([
+        import('https://esm.sh/@wharfkit/session@4.0.2'),
+        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+      ]);
+      sessionKit = new m[0].SessionKit({
+        appName: 'artistbyron',
+        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
+        ui: new m[1].WebRenderer(),
+        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
+      });
+      document.getElementById('wax-login-btn').addEventListener('click', async function () {
+        statusEl.textContent = 'Opening your wallet…';
+        try {
+          var res = await sessionKit.login();
+          session = res.session;
+          statusEl.textContent = 'Logged in as ' + String(session.actor) + ', proven by your wallet.';
+          updateBtns();
+          checkAuth();
+        } catch (e) {
+          statusEl.textContent = 'Login cancelled or failed. Try again.';
+        }
+      });
+      btn1.addEventListener('click', function () { authorize('byronartset1', st1, btn1); });
+      btn2.addEventListener('click', function () { authorize('myhordeonwax', st2, btn2); });
+      try {
+        session = await sessionKit.restore();
+        if (session) {
+          statusEl.textContent = 'Logged in as ' + String(session.actor) + '.';
+          updateBtns();
+        }
+      } catch (e) {}
+    } catch (e) {
+      statusEl.textContent = 'WAX login could not load just now. Reload the page and try again.';
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>
