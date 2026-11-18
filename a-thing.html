@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>a thing - Horde on WAX</title>
+<meta name="description" content="a thing, a free WAX drop for Tony and the founders. Claim it here on artistbyron.ca.">
+<link rel="stylesheet" href="style.css?v=5">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a class="nav-cta" href="https://discord.gg/rA3UMEkpqc">Horde's Discord</a><a href="crypto.html">Blockchain</a></nav></div></header>
+<main class="wrap">
+  <h1>a thing</h1>
+  <p>you need to sacrifice something to start the growth</p>
+
+  <section class="card">
+    <img src="https://resizer.atomichub.io/images/v1/preview?ipfs=QmXFWEVYxGusdqS5XHWUqayqUx8V1xxeZY54q7xEeGNoHW&amp;size=1110&amp;output=webp" alt="a thing" style="width:100%;max-width:520px;display:block;margin:0 auto;">
+    <p><strong>Collection:</strong> Art of Byron (byronartset1)<br>
+    <strong>Template:</strong> 909606<br>
+    <strong>Price:</strong> Free<br>
+    <strong>Whitelist:</strong> Tony and the founders<br>
+    <strong>Limit:</strong> 1 per wallet, 7 total<br>
+    <strong>Starts:</strong> Thu 19 Nov 2026, 4:15pm CST<br>
+    <strong>Ends:</strong> Thu 26 Nov 2026, 4:15pm CST</p>
+    <p class="small" id="drop-status">Checking the drop…</p>
+    <p class="small">AtomicHub drop 92631. The drop runs on AtomicHub in the background, but you claim it right here, you never have to leave this site.</p>
+  </section>
+
+  <section class="card" id="claim-card">
+    <h2>Claim it here</h2>
+    <p>Log in with your WAX wallet, Anchor or Cloud Wallet. The site only sees your account name, never your keys. Claiming signs one transaction in your wallet, and the NFT mints straight to you.</p>
+    <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button></p>
+    <p class="small" id="login-status">Not logged in yet.</p>
+    <p><button class="btn" type="button" id="claim-btn" disabled>Claim a thing</button></p>
+    <p class="small" id="claim-status"></p>
+    <p><button class="btn ghost" type="button" id="wax-logout-btn" hidden>Log out</button></p>
+    <p><a href="wax.html">&larr; Back to WAX side</a></p>
+  </section>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Blockchain</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="wallet.html">My Horde Wallet</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
+<script>
+var DROP_ID = 92631;
+var START_TIME = 1795126500;
+var END_TIME = 1795731300;
+var MAX_CLAIMABLE = 7;
+var WHITELIST = ['ylab4.wam','q52aw.wam','fzyr.wam','grkx.wam','kylinvaderme','mpvee.wam','pzyas.wam'];
+var dropStatusEl = document.getElementById('drop-status');
+var statusEl = document.getElementById('login-status');
+var claimBtn = document.getElementById('claim-btn');
+var claimStatusEl = document.getElementById('claim-status');
+var loginBtn = document.getElementById('wax-login-btn');
+var logoutBtn = document.getElementById('wax-logout-btn');
+var sessionKit = null, session = null, dropLive = false, claimedCount = null;
+
+async function tableRows(table, scope) {
+  var res = await fetch('https://wax.greymass.com/v1/chain/get_table_rows', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ json: true, code: 'atomicdropsx', scope: scope, table: table, limit: 100 })
+  });
+  if (!res.ok) throw new Error('table ' + table + ' ' + res.status);
+  var json = await res.json();
+  return json.rows || [];
+}
+async function refreshDrop() {
+  try {
+    var rows = await tableRows('drops', 'atomicdropsx');
+    var drop = null;
+    for (var i = 0; i < rows.length; i++) { if (rows[i].drop_id === DROP_ID) drop = rows[i]; }
+    if (!drop) { dropStatusEl.textContent = 'Drop 92631 not found on chain yet.'; return; }
+    claimedCount = parseInt(drop.current_claimed, 10);
+    var now = Math.floor(Date.now() / 1000);
+    dropLive = now >= drop.start_time && now <= drop.end_time && claimedCount < MAX_CLAIMABLE;
+    var state = now < drop.start_time ? 'Opens Thu 19 Nov 2026, 4:15pm CST.' : now > drop.end_time ? 'This drop has ended.' : claimedCount >= MAX_CLAIMABLE ? 'All 7 claimed.' : 'Live now.';
+    dropStatusEl.textContent = claimedCount + ' of 7 claimed. ' + state;
+    updateClaimBtn();
+  } catch (e) {
+    var now2 = Math.floor(Date.now() / 1000);
+    dropLive = now2 >= START_TIME && now2 <= END_TIME;
+    dropStatusEl.textContent = now2 < START_TIME ? 'Opens Thu 19 Nov 2026, 4:15pm CST. 0 of 7 claimed.' : now2 > END_TIME ? 'This drop has ended.' : 'Live now. 0 of 7 claimed.';
+    updateClaimBtn();
+  }
+}
+function updateClaimBtn() {
+  if (!session) { claimBtn.disabled = true; return; }
+  var name = String(session.actor);
+  if (WHITELIST.indexOf(name) === -1) {
+    claimBtn.disabled = true;
+    claimStatusEl.textContent = name + ' is not on the whitelist for this drop. It is free for Tony and the founders only.';
+    return;
+  }
+  if (!dropLive) {
+    claimBtn.disabled = true;
+    claimStatusEl.textContent = 'The drop is not live right now. It opens Thu 19 Nov 2026, 4:15pm CST.';
+    return;
+  }
+  claimBtn.disabled = false;
+  claimStatusEl.textContent = 'You are on the whitelist. Tap Claim, then approve it in your wallet.';
+}
+(function () {
+  refreshDrop();
+  setInterval(refreshDrop, 60000);
+  async function init() {
+    try {
+      var m = await Promise.all([
+        import('https://esm.sh/@wharfkit/session@4.0.2'),
+        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+      ]);
+      sessionKit = new m[0].SessionKit({
+        appName: 'artistbyron',
+        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
+        ui: new m[1].WebRenderer(),
+        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
+      });
+      loginBtn.addEventListener('click', async function () {
+        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
+        try {
+          var res = await sessionKit.login();
+          session = res.session;
+          var name = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + name + ', proven by your wallet.';
+          logoutBtn.hidden = false;
+          loginBtn.disabled = true;
+          updateClaimBtn();
+        } catch (e) {
+          statusEl.textContent = 'Login cancelled or failed. Try again.';
+          loginBtn.disabled = false;
+        }
+      });
+      logoutBtn.addEventListener('click', async function () {
+        try { await sessionKit.logout(session); } catch (e) {}
+        session = null;
+        loginBtn.disabled = false;
+        logoutBtn.hidden = true;
+        statusEl.textContent = 'Logged out.';
+        claimBtn.disabled = true;
+        claimStatusEl.textContent = '';
+      });
+      claimBtn.addEventListener('click', async function () {
+        if (!session) return;
+        var name = String(session.actor);
+        claimBtn.disabled = true;
+        claimStatusEl.textContent = 'Sending your claim, approve it in your wallet…';
+        try {
+          var r = await session.transact({ actions: [{ account: 'atomicdropsx', name: 'claimdropwl', authorization: [{ actor: name, permission: 'active' }], data: { claimer: name, drop_id: DROP_ID, claim_amount: 1, intended_delphi_median: 0, referrer: '', country: '' } }] }, { broadcast: true });
+          var tx = r.response && r.response.transaction_id ? r.response.transaction_id : '';
+          claimStatusEl.textContent = 'Claimed! a thing is on its way to ' + name + (tx ? ' Transaction: ' + tx : '');
+          refreshDrop();
+        } catch (e) {
+          var msg = (e && e.message) ? e.message : String(e);
+          claimStatusEl.textContent = 'Claim did not go through: ' + msg + ' If you already claimed one, that is why, 1 per wallet.';
+          updateClaimBtn();
+        }
+      });
+      try {
+        session = await sessionKit.restore();
+        if (session) {
+          var name = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + name + '.';
+          loginBtn.disabled = true;
+          logoutBtn.hidden = false;
+          updateClaimBtn();
+        }
+      } catch (e) {}
+    } catch (e) {
+      statusEl.textContent = 'WAX login could not load just now. Reload the page and try again.';
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>
