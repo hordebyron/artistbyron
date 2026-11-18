@@ -9,6 +9,7 @@
 
 
 <style>
+.pick{text-decoration:none;color:inherit}
 .wallet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:16px 0}
 .crypto-centered{text-align:center}
 .crypto-centered .wallet-grid{max-width:640px;margin:16px auto}
@@ -28,85 +29,21 @@
 <h1>Pick your poison.</h1>
 <p class="lede">How big is your Horde? Pick your chain, and this page shows you your side of the Horde, and only your side.</p>
 <div class="chooser" id="cryptoChooser">
-  <button class="pick" type="button" data-chain="wax">
+  <a class="pick" href="wax.html">
     <b>WAX</b>
     <span>Drops on AtomicHub and F12KEY, HORDE on WAX, Da Horde's Coin (DHC), and the Catacombs side of the Horde.</span>
     <span class="door-go">I&rsquo;m WAX &rarr;</span>
-  </button>
-  <button class="pick" type="button" data-chain="xrp">
+  </a>
+  <a class="pick" href="xrp.html">
     <b>XRP</b>
     <span>The Horde on the XRP Ledger: Faces of the Horde, the collections on xrp.cafe and IMCollectibles, and $HORDE.</span>
     <span class="door-go">I&rsquo;m XRP &rarr;</span>
-  </button>
+  </a>
 </div>
-<div id="cryptoPanels" hidden>
-  <p><button class="btn ghost" type="button" id="pickAgain">&larr; Pick again</button>
-  <span id="chainLabel" class="small"></span></p>
-  <section class="card" id="waxPanel" hidden>
-    <h2>You&rsquo;re on WAX</h2>
-    <p>This is your side: the drops. Claim with your WAX wallet on AtomicHub or F12KEY, 1 per wallet on the limited ones. The live drops are right below. All times CST.</p>
-    <p><a class="btn" href="wax.html">Log in with WAX</a>
-    <a class="btn ghost" href="wax.html">See the WAX side</a></p>
-    <h3>Drops on WAX, live now</h3>
-    <div class="card-grid">
-      <a class="shop-card" href="https://wax.atomichub.io/drops/92625"><h3>Pot of GM, free</h3><p>Wed 18 Nov 1pm to Wed 25 Nov 1pm CST. Free for Tony and the founders, 1 per wallet. AtomicHub drop 92625, max 7.</p><span>Claim on AtomicHub</span></a>
-      <a class="shop-card" href="https://f12key.eu/f12key-drops"><h3>Pot of GM, WAX or DHC</h3><p>Wed 18 Nov 3pm to Wed 25 Nov 3pm CST. 66.6 WAX or 666 DHC, 1 per wallet. The first Horde drop priced in DHC.</p><span>Open on F12KEY</span></a>
-      <a class="shop-card" href="https://wax.atomichub.io/drops/92617"><h3>Horde Dude Worries, 666 WAX</h3><p>Public now, 666 WAX, until Wed 25 Nov 1pm CST. 4 of 13 claimed, 9 left.</p><span>Open on AtomicHub</span></a>
-      <a class="shop-card" href="https://wax.atomichub.io/drops/92610"><h3>Horde&rsquo;s Clown #1, 666 WAX</h3><p>Public now, until Tue 24 Nov 1pm CST. 9 left of 13 at last check.</p><span>Open on AtomicHub</span></a>
-    </div>
-    <p><a href="https://wax.atomichub.io/explorer/collection/myhordeonwax">HORDE on WAX, home of the drops</a> &middot;
-    <a href="https://wax.atomichub.io/explorer/collection/byronartset1">Art of Byron</a> &middot;
-    <a href="https://wax.atomichub.io/explorer/collection/myzicklearmy">My Zickle Army</a> &middot;
-    <a href="https://wax.atomichub.io/explorer/collection/myzombiecats">My Zombie Cat Collection</a></p>
-  </section>
-  <section class="card" id="xrpPanel" hidden>
-    <h2>You&rsquo;re on XRP</h2>
-    <p>Every XRP collection in one place, with what it is, what it costs, and where to get it. Free first: most of the Horde starts as a free mint, and holding pieces is how you get into the next one.</p>
-    <p><a class="btn" href="xrp.html">Log in with Xaman or Joey</a>
-    <a class="btn ghost" href="xrp.html">See my XRP Horde</a></p>
-    <div class="card-grid">
-      <a class="shop-card" href="https://imcollectibles.io/collections/?taxon=66601&amp;issuer=rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney"><h3>Faces of the Horde v1</h3><p>666 generative zombie faces, launched Mon 16 Nov on IMCollectibles. Free for the allowlist, 1 XRP after that.</p><span>Mint on IMCollectibles</span></a>
-      <a class="shop-card" href="https://xrp.cafe/edition/byronsink/13752"><h3>Skull Banging</h3><p>New ink on chain, Byrons Ink. 1 XRP, 0 of 589 minted, checked 18 Nov 2026.</p><span>Mint on xrp.cafe</span></a>
-      <a class="shop-card" href="https://xrp.cafe/collection/thehorde"><h3>the Horde</h3><p>Zombies that are just zombies, hand drawn and painted. The main collection. 355 tokens, 106 owners, floor about 10 to 18 XRP.</p><span>Open on xrp.cafe</span></a>
-      <a class="shop-card" href="https://xrp.cafe/collection/ilovezombies"><h3>I Love Zombies</h3><p>1000 hearts, given freely to those that support the Horde. 988 tokens, 105 owners, floor 4 XRP.</p><span>Open on xrp.cafe</span></a>
-      <a class="shop-card" href="https://xrp.cafe/edition/myzombiecats/13451"><h3>My Zombie Cats</h3><p>Home of Big Paws, the free mint that passed 300 of 589 in its first days. 324 tokens, floor 1.45 XRP.</p><span>Open on xrp.cafe</span></a>
-      <a class="shop-card" href="https://xrp.cafe/edition/byronsink/13452"><h3>Byrons Ink</h3><p>The ink work on chain. Home of Lost in Contemplation and Rumble Ready. 627 tokens, 198 owners, floor 1.55 XRP.</p><span>Open on xrp.cafe</span></a>
-      <a class="shop-card" href="https://imcollectibles.io/collections/byrons-oes-666/"><h3>Byron&rsquo;s OEs</h3><p>The official open editions. Zombie Breaking In, derP Cat, and more. 192 tokens, 44 owners, floor 10 XRP.</p><span>Open on IMCollectibles</span></a>
-    </div>
-    <p>That is 7 of 29 XRP collections, 5,856 tokens across both of Byron&rsquo;s issuer wallets. Counts checked 13 Nov 2026, they go up as more mint.</p>
-    <p><a href="collections.html">See all 29 collections</a> &middot; <a href="wallet.html">My Horde Wallet</a> &middot; <a href="holders.html">Leaderboard</a></p>
-  </section>
-</div>
+<p class="small crypto-centered">Tap one, you go straight to that page and log in there, one tap.</p>
 
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Blockchain</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="wallet.html">My Horde Wallet</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 
-<script>
-(function(){
-  var chooser = document.getElementById('cryptoChooser');
-  var panels = document.getElementById('cryptoPanels');
-  var wax = document.getElementById('waxPanel');
-  var xrp = document.getElementById('xrpPanel');
-  var label = document.getElementById('chainLabel');
-  function pick(chain){
-    chooser.hidden = true;
-    panels.hidden = false;
-    wax.hidden = (chain !== 'wax');
-    xrp.hidden = (chain !== 'xrp');
-    label.textContent = chain === 'wax' ? 'You are on WAX. Switch any time.' : 'You are on XRP. Switch any time.';
-    try { localStorage.setItem('horde_chain', chain); } catch (e) {}
-  }
-  document.querySelectorAll('.pick').forEach(function(b){
-    b.addEventListener('click', function(){ pick(b.getAttribute('data-chain')); });
-  });
-  document.getElementById('pickAgain').addEventListener('click', function(){
-    chooser.hidden = false;
-    panels.hidden = true;
-    wax.hidden = true;
-    xrp.hidden = true;
-    try { localStorage.removeItem('horde_chain'); } catch (e) {}
-  });
-})();
-</script>
 </body>
 </html>
