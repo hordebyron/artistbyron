@@ -4,77 +4,39 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde's Gallery</title>
-<meta name="description" content="Selected work by Artist Byron — zombies, skulls, creepy portraits in ink and paint.">
-<link rel="stylesheet" href="style.css?v=2">
+<meta name="description" content="Selected work by Artist Byron, zombies, skulls, creepy portraits in ink and paint.">
+
+
+
+
+<link rel="stylesheet" href="style.css?v=3">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 </head>
-<body class="frame-all">
-<div class="sidebars">
-<img class="sidebar" src="art/frame/sidebar-left.png" alt="Left sidebar, rusty metal">
-<div class="frame-wrap">
-<div class="scroll-area">
-<header class="site">
-  <div class="wrap">
-    <div class="brand">Artist Byron</div>
-    
-  </div>
-</header>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="index.html">Home</a><a href="gallery.html" class="active">Gallery</a><a href="crypto.html">Crypto</a><a href="shop.html">Shop</a><a href="contests.html">Contests</a><a href="game.html">Play</a><a href="about.html">About</a><a class="nav-cta" href="https://discord.gg/rA3UMEkpqc">Discord</a><a class="nav-cta kofi" href="https://ko-fi.com/artistbyron">Ko-fi</a></nav></div></header>
 <main class="wrap">
-  <h1>Gallery</h1>
-  <p>Selected work — zombies, skulls, and creepy portraits, in ink and paint. Click a picture to see it bigger. More pieces are added as Byron sends clean art files.</p>
-  <div class="work-grid">
-    <a class="work pic" href="art/gallery/blue-eyes-scruffy-cat.jpg"><img src="art/gallery/blue-eyes-scruffy-cat.jpg" alt="Scruffy cat with big blue eyes, painting"></a>
-    <a class="work pic" href="art/gallery/green-cat-red-eyes.jpg"><img src="art/gallery/green-cat-red-eyes.jpg" alt="Green cat with red eyes, painting"></a>
-    <a class="work pic" href="art/gallery/orange-one-eyed-cat.jpg"><img src="art/gallery/orange-one-eyed-cat.jpg" alt="Orange one-eyed cat, drawing"></a>
-    <a class="work pic" href="art/gallery/blue-batman-cat.jpg"><img src="art/gallery/blue-batman-cat.jpg" alt="Blue cat with a bat symbol, drawing"></a>
-    <a class="work pic" href="art/gallery/grey-skull-green-slime.jpg"><img src="art/gallery/grey-skull-green-slime.jpg" alt="Grey skull in green slime, painting"></a>
-    <a class="work pic" href="art/gallery/face-with-glasses-spiral-eyes.jpg"><img src="art/gallery/face-with-glasses-spiral-eyes.jpg" alt="Ink drawing of a face with glasses and spiral eyes"></a>
-    <a class="work pic" href="art/gallery/grinning-man-brick-wall.jpg"><img src="art/gallery/grinning-man-brick-wall.jpg" alt="Ink drawing of a grinning man against a brick wall"></a>
-    <a class="work pic" href="art/gallery/bird-creature-coffee-cup-man.jpg"><img src="art/gallery/bird-creature-coffee-cup-man.jpg" alt="Ink drawing of a bird creature and a man holding a coffee cup"></a>
-    <a class="work pic" href="art/gallery/spiral-eyes-skull-rainbow.jpg"><img src="art/gallery/spiral-eyes-skull-rainbow.jpg" alt="Skull with two big spiral eyes on a rainbow striped background, painting"></a>
-    <a class="work pic" href="art/gallery/many-skulls-crowd.jpg"><img src="art/gallery/many-skulls-crowd.jpg" alt="Many overlapping skulls with spiral eyes, painting"></a>
-    <a class="work pic" href="art/gallery/orange-skull-black-background.jpg"><img src="art/gallery/orange-skull-black-background.jpg" alt="Orange and pink skull on a black background, painting"></a>
-    <a class="work pic" href="art/gallery/zombie-face-alien-cats.jpg"><img src="art/gallery/zombie-face-alien-cats.jpg" alt="Zombie face with a blue alien and cats, painting"></a>
-    <a class="work pic" href="art/gallery/green-skull-pink-background.jpg"><img src="art/gallery/green-skull-pink-background.jpg" alt="Green skull painting on a pink background"></a>
-    <a class="work pic" href="art/gallery/spiral-eye-skull-brick-wall.jpg"><img src="art/gallery/spiral-eye-skull-brick-wall.jpg" alt="Colourful skull with a spiral eye against a brick wall, painting"></a>
-    <a class="work pic" href="art/gallery/gold-skull-blue-background.jpg"><img src="art/gallery/gold-skull-blue-background.jpg" alt="Gold skull with a green eye on a deep blue background, painting"></a>
-    <a class="work pic" href="art/gallery/dark-splatter-skull.jpg"><img src="art/gallery/dark-splatter-skull.jpg" alt="Dark skull with splattered paint on a black background, painting"></a>
-  </div>
+<h1>The Gallery</h1><p>Zombies, skulls, and creepy portraits, in ink and paint. No labels, just the art. Click a picture to see it bigger. Prints and originals are sold through the <a href="https://ko-fi.com/artistbyron/shop">Ko-fi shop</a>.</p><p class="filters" role="group" aria-label="Filter the gallery"><button class="chip is-active" data-filter="all">All 16</button><button class="chip" data-filter="painting">Paintings</button><button class="chip" data-filter="ink">Ink</button><button class="chip" data-filter="skull">Skulls</button><button class="chip" data-filter="cat">Cats</button><button class="chip" data-filter="face">Faces</button></p><div class="work-grid gallery-grid">
+<a class="work pic" href="art/gallery/blue-eyes-scruffy-cat.jpg" data-cat="painting cat face"><img src="art/gallery/blue-eyes-scruffy-cat.jpg" alt="Scruffy cat with big blue eyes, painting" loading="lazy"></a>
+<a class="work pic" href="art/gallery/green-cat-red-eyes.jpg" data-cat="painting cat"><img src="art/gallery/green-cat-red-eyes.jpg" alt="Green cat with red eyes, painting" loading="lazy"></a>
+<a class="work pic" href="art/gallery/orange-one-eyed-cat.jpg" data-cat="ink cat"><img src="art/gallery/orange-one-eyed-cat.jpg" alt="Orange one-eyed cat, drawing" loading="lazy"></a>
+<a class="work pic" href="art/gallery/blue-batman-cat.jpg" data-cat="ink cat"><img src="art/gallery/blue-batman-cat.jpg" alt="Blue cat with a bat symbol, drawing" loading="lazy"></a>
+<a class="work pic" href="art/gallery/grey-skull-green-slime.jpg" data-cat="painting skull"><img src="art/gallery/grey-skull-green-slime.jpg" alt="Grey skull in green slime, painting" loading="lazy"></a>
+<a class="work pic" href="art/gallery/face-with-glasses-spiral-eyes.jpg" data-cat="ink face"><img src="art/gallery/face-with-glasses-spiral-eyes.jpg" alt="Ink drawing of a face with glasses and spiral eyes" loading="lazy"></a>
+<a class="work pic" href="art/gallery/grinning-man-brick-wall.jpg" data-cat="ink face"><img src="art/gallery/grinning-man-brick-wall.jpg" alt="Ink drawing of a grinning man against a brick wall" loading="lazy"></a>
+<a class="work pic" href="art/gallery/bird-creature-coffee-cup-man.jpg" data-cat="ink face"><img src="art/gallery/bird-creature-coffee-cup-man.jpg" alt="Ink drawing of a bird creature and a man holding a coffee cup" loading="lazy"></a>
+<a class="work pic" href="art/gallery/spiral-eyes-skull-rainbow.jpg" data-cat="painting skull"><img src="art/gallery/spiral-eyes-skull-rainbow.jpg" alt="Skull with two big spiral eyes on a rainbow striped background, painting" loading="lazy"></a>
+<a class="work pic" href="art/gallery/many-skulls-crowd.jpg" data-cat="painting skull"><img src="art/gallery/many-skulls-crowd.jpg" alt="Many overlapping skulls with spiral eyes, painting" loading="lazy"></a>
+<a class="work pic" href="art/gallery/orange-skull-black-background.jpg" data-cat="painting skull"><img src="art/gallery/orange-skull-black-background.jpg" alt="Orange and pink skull on a black background, painting" loading="lazy"></a>
+<a class="work pic" href="art/gallery/zombie-face-alien-cats.jpg" data-cat="painting face cat"><img src="art/gallery/zombie-face-alien-cats.jpg" alt="Zombie face with a blue alien and cats, painting" loading="lazy"></a>
+<a class="work pic" href="art/gallery/green-skull-pink-background.jpg" data-cat="painting skull"><img src="art/gallery/green-skull-pink-background.jpg" alt="Green skull painting on a pink background" loading="lazy"></a>
+<a class="work pic" href="art/gallery/spiral-eye-skull-brick-wall.jpg" data-cat="painting skull face"><img src="art/gallery/spiral-eye-skull-brick-wall.jpg" alt="Colourful skull with a spiral eye against a brick wall, painting" loading="lazy"></a>
+<a class="work pic" href="art/gallery/gold-skull-blue-background.jpg" data-cat="painting skull"><img src="art/gallery/gold-skull-blue-background.jpg" alt="Gold skull with a green eye on a deep blue background, painting" loading="lazy"></a>
+<a class="work pic" href="art/gallery/dark-splatter-skull.jpg" data-cat="painting skull"><img src="art/gallery/dark-splatter-skull.jpg" alt="Dark skull with splattered paint on a black background, painting" loading="lazy"></a>
+</div><div class="lightbox" id="lightbox" aria-hidden="true"><button class="lb-close" id="lb-close" aria-label="Close">&times;</button><button class="lb-prev" id="lb-prev" aria-label="Previous">&lsaquo;</button><img id="lb-img" src="" alt=""><div class="lb-actions"><a class="btn" href="https://ko-fi.com/artistbyron/shop">Prints &amp; originals, Ko-fi shop</a></div><button class="lb-next" id="lb-next" aria-label="Next">&rsaquo;</button></div>
 </main>
-
-<nav>
-      <a href="index.html">Home</a>
-      <a href="gallery.html" class="active">Gallery</a>
-      <a href="about.html">About</a>
-      <a href="https://ko-fi.com/artistbyron">Shop</a>
-      <a href="contests.html">Contests</a>
-    </nav>
-<footer><div class="wrap"><p>Artist Byron · The Horde</p></div></footer>
-<div class="lightbox" id="lightbox" aria-hidden="true">
-  <button class="lb-close" id="lb-close" aria-label="Close">&times;</button>
-  <button class="lb-prev" id="lb-prev" aria-label="Previous">&lsaquo;</button>
-  <img id="lb-img" src="" alt="">
-  <button class="lb-next" id="lb-next" aria-label="Next">&rsaquo;</button>
-</div>
-</div>
-<img class="frame-img frame-desktop" src="art/frame/layoutframe-new.webp" alt="Artist Byron frame">
-<img class="frame-img frame-mobile" src="art/frame/vertical.png" alt="Artist Byron frame, phone">
-<a class="frame-link" href="https://ko-fi.com/artistbyron" title="Artist for hire, on Ko-fi">Artist for hire, on Ko-fi</a>
-<a class="frame-nav frame-nav-art" href="gallery.html" title="The Art, Gallery">The Art</a>
-<a class="frame-nav frame-nav-crypto" href="crypto.html" title="Crypto">Crypto</a>
-<a class="frame-nav frame-nav-about" href="about.html" title="About Byron">About Byron</a>
-<img class="tv-layer" id="tv1" src="art/tv1-top/skully.png" alt="Top TV">
-<img class="tv-layer" id="tv2" src="art/tv2-mid/clown.png" alt="Mid TV">
-<img class="tv-layer" id="tv3" src="art/tv3-bot1/1.png" alt="Bottom TV 1">
-<img class="tv-layer" id="tv4" src="art/tv4-bot2/1.png" alt="Bottom TV 2">
-<div class="mtv" id="mtv1"><img src="art/tv-mobile/tv1-top/skully.png" alt="Mobile TV 1"></div>
-<div class="mtv" id="mtv2"><img src="art/tv-mobile/tv2-mid/clown.png" alt="Mobile TV 2"></div>
-<div class="mtv" id="mtv3"><img src="art/tv-mobile/tv3-bot1/1.png" alt="Mobile TV 3"></div>
-<div class="mtv" id="mtv4"><img src="art/tv-mobile/tv4-bot2/1.png" alt="Mobile TV 4"></div>
-</div>
-<img class="sidebar" src="art/frame/sidebar-right.png" alt="Right sidebar, rusty metal">
-</div>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Crypto</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script>
 (function(){
   var links = Array.prototype.slice.call(document.querySelectorAll('a.work[href^="art/gallery/"]'));
@@ -111,6 +73,22 @@
   });
 })();
 </script>
-<script src="frame-tvs.js"></script>
+<script>
+(function(){
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+  var works = Array.prototype.slice.call(document.querySelectorAll('a.work[data-cat]'));
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      chips.forEach(function(c){ c.classList.remove('is-active'); });
+      chip.classList.add('is-active');
+      var f = chip.getAttribute('data-filter');
+      works.forEach(function(w){
+        var show = (f === 'all') || (w.getAttribute('data-cat').split(' ').indexOf(f) !== -1);
+        w.style.display = show ? '' : 'none';
+      });
+    });
+  });
+})();
+</script>
 </body>
 </html>

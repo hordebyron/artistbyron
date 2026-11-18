@@ -5,158 +5,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Artist Byron — The Horde</title>
 <meta name="description" content="Artist Byron, Canadian horror artist in ink and paint for 20 years. Zombies, skulls, creepy portraits.">
+
+
+<link rel="stylesheet" href="style.css?v=3">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
-<style>
-  body{margin:0;background:#8c8c8c;font-family:system-ui,Arial,sans-serif;color:#f2ede6}
-  a{color:#ff6b6b}
-  .frame-wrap{position:relative;width:min(100vw,177.78vh);height:100vh;margin:0 auto;aspect-ratio:1920/1080;background:#8c8c8c;overflow:hidden;flex:0 0 auto}
-  /* Artist for Hire hotspot, links to Ko-fi. Desktop: green text top left.
-     Mobile: same link, repositioned to the green text top right in the vertical frame. */
-  .frame-link{position:absolute;left:13%;top:11%;width:6%;height:11%;z-index:4;display:block;text-indent:-9999px;overflow:hidden;cursor:pointer}
-  .frame-link:hover{outline:none;box-shadow:0 0 18px 6px rgba(90,255,220,.55),0 0 42px 16px rgba(0,255,200,.25);border-radius:10px}
-  /* Frame nav hotspots, desktop only. THE ART on the green TV, CRYPTO on the red TV, ABOUT bottom left. */
-  .frame-nav{position:absolute;z-index:4;display:block;text-indent:-9999px;overflow:hidden;cursor:pointer}
-  .frame-nav:hover{outline:none;box-shadow:0 0 18px 6px rgba(90,255,220,.55),0 0 42px 16px rgba(0,255,200,.25);border-radius:10px}
-  .frame-nav-art{left:82%;top:2%;width:17.5%;height:24%}
-  .frame-nav-crypto{left:83%;top:30%;width:16.5%;height:26%}
-  .frame-nav-about{left:4%;top:62%;width:14.5%;height:30%}
-  /* Social links as plain text on the free space of the frame's left strip,
-     over the dark metal plate. Desktop only, above the frame image. */
-  .frame-links{position:absolute;left:1%;top:67%;width:9%;z-index:4;font-size:.85rem;line-height:1.7}
-  .frame-links a{display:block;color:#ff6b6b;text-decoration:none;text-shadow:0 1px 3px rgba(0,0,0,.9)}
-  .frame-links a:hover{text-decoration:underline}
-  /* Sidebars, desktop only. They stretch and shrink with the screen, cropping the metal strip, and hide on phones. */
-  .sidebars{display:flex;min-height:100vh;background:#8c8c8c}
-  .sidebar{flex:1 1 0;min-width:0;height:100vh;object-fit:cover;display:block}
-  @media (max-width:900px){.sidebar{display:none}}
-  .scroll-area{position:absolute;left:19%;top:9.4%;width:62%;height:81.2%;overflow-y:auto;background:#0b0b0e;padding:24px 28px;box-sizing:border-box;z-index:2}
-  .scroll-area h1{font-family:Impact,"Arial Black",sans-serif;font-size:2.4rem;margin:.2em 0}
-  .scroll-area p{font-size:1.1rem;line-height:1.5}
-  .btn{display:inline-block;background:#c1121f;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:700;margin:6px 6px 6px 0}
-  .btn.ghost{background:transparent;border:1px solid #555;color:#f2ede6}
-  .btn{transition:transform .12s ease, box-shadow .12s ease}
-  .btn:hover{transform:translateY(-2px)}
-  .btn:active{transform:translateY(1px) scale(.97);box-shadow:inset 0 2px 8px rgba(0,0,0,.5)}
-  a{transition:transform .12s ease}
-  a:active{transform:scale(.97)}
-  .frame-img{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
-  .tv-layer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
-  /* TV4 art is a drawing of a little TV, smaller than the frame TV screen,
-     so it read as a TV inside a TV. Scale it up and centre it on the screen
-     so the creature fills the TV instead. All 19 TV4 pictures share the
-     same spot, so one rule fixes them all. */
-  #tv4{transform:translate(-2.76%,-3.06%) scale(1.7);transform-origin:94.6% 91.1%}
-  /* Mobile bottom TVs, hidden on desktop. Each one sits under the frame,
-     over one bottom TV screen, art cropped to fit with object-fit cover. */
-  .mtv{display:none;position:absolute;z-index:1;overflow:hidden;border-radius:18px;pointer-events:none}
-  .mtv img{width:100%;height:100%;object-fit:cover;display:block}
-  /* Frame sits on top of the TV layers, TVs stay underneath it and just cycle. No flash. */
-  .frame-mobile{display:none}
-  @media (max-width:768px){
-    .frame-wrap{width:100%;height:auto;max-width:1080px;aspect-ratio:1080/1920}
-    .frame-desktop{display:none}
-    .frame-mobile{display:block}
-    .scroll-area{left:9.4%;top:19.1%;width:81.1%;height:61.9%;padding:16px}
-    .scroll-area h1{font-size:1.8rem}
-    /* Mobile TVs are the ones painted in the vertical frame for now.
-       The landscape TV overlays do not fit a tall frame, so they are hidden here.
-       Flicker for mobile comes next, once the TV art is cropped for tall. */
-    .tv-layer{display:none}
-    /* Bottom TVs, left to right = TV1, TV2, TV3, TV4. They sit under the
-       frame, the frame's TV screens are almost transparent, so the art
-       shows through, tinted a little by the screen colour. */
-    .mtv{display:block}
-    #mtv1{left:2.5%;top:84%;width:17%;height:14.5%}
-    #mtv2{left:20.5%;top:81.5%;width:14.5%;height:12.5%}
-    #mtv3{left:44%;top:84.5%;width:29%;height:14%}
-    #mtv4{left:74%;top:82.5%;width:24%;height:15%}
-    .frame-link{left:70%;top:8%;width:29%;height:9%}
-    .frame-nav{display:none}
-    .frame-links{display:none}
-  }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="sidebars">
-<img class="sidebar" src="art/frame/sidebar-left.png" alt="Left sidebar, rusty metal">
-<div class="frame-wrap">
-  <div class="scroll-area">
-    <h1>Artist Byron</h1>
-    <p>I draw zombies. Ink and paint, 20 years in.</p>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="index.html" class="active">Home</a><a href="gallery.html">Gallery</a><a href="crypto.html">Crypto</a><a href="shop.html">Shop</a><a href="contests.html">Contests</a><a href="game.html">Play</a><a href="about.html">About</a><a class="nav-cta" href="https://discord.gg/rA3UMEkpqc">Discord</a><a class="nav-cta kofi" href="https://ko-fi.com/artistbyron">Ko-fi</a></nav></div></header>
+<main class="wrap">
+
+<section class="hero-bleed">
+  <img src="art/gallery/many-skulls-crowd.jpg" alt="Many overlapping skulls with spiral eyes, painting by Artist Byron">
+  <div class="hero-text">
+    <h1>I draw<br>zombies.</h1>
+    <p class="hero-tag">Ink and paint, 20 years in.</p>
     <p>Hello and welcome. I am Byron, a Canadian artist drawing and painting undead horrors in ink and paint. Zombies, skulls, and creepy portraits. Come for the art, stay for the Horde.</p>
-    <p>
-      <a class="btn" href="gallery.html">Real World, Gallery</a>
-      <a class="btn ghost" href="crypto.html">Crypto</a>
-    </p>
-    <p style="margin-top:400px">You made it to the bottom. The frame never moved.</p>
+    <p><a class="btn" href="gallery.html">See the Gallery</a>
+    <a class="btn ghost" href="crypto.html">Enter the Crypto Side</a>
+    <a class="btn ghost" href="https://discord.gg/rA3UMEkpqc">Join the Horde</a></p>
   </div>
-  <div class="frame-links">
-    <a href="shop.html">Shop</a>
-    <a href="https://ko-fi.com/artistbyron">Shop on Ko-fi</a>
-    <a href="https://x.com/ArtistByron">X, @ArtistByron</a>
-    <a href="https://www.facebook.com/byrontheartist">Facebook</a>
-    <a href="about.html">About Byron</a>
-    <a href="wallet.html">My Horde Wallet</a>
-    <a href="holders.html">Leaderboard</a>
+</section>
+<section class="now-strip" aria-label="Happening now">
+  <div class="now-item"><b>Contest open</b><span>Colour Me, entries coming in</span></div>
+  <div class="now-item"><b>Last crate of the year</b><span>Holiday Loot Crate, ordering now</span></div>
+</section>
+<section class="doors-intro">
+  <h2>Two doors</h2>
+  <p>The Gallery is its own page now, all 16 pieces and nothing else. Crypto is its own page too. Step inside when you are ready.</p>
+</section>
+<div class="doors">
+  <a class="door" href="gallery.html" style="--door-img:url(art/gallery/blue-eyes-scruffy-cat.jpg)">
+    <span class="door-label"><b>The Gallery</b><i>All 16 paintings and ink drawings on a page of their own. No labels, just the art.</i><span class="door-go">Enter the Gallery &rarr;</span></span>
+  </a>
+  <a class="door" href="crypto.html" style="--door-img:url(art/gallery/gold-skull-blue-background.jpg)">
+    <span class="door-label"><b>Crypto</b><i>Step inside to see the other side of the Horde.</i><span class="door-go">Enter Crypto &rarr;</span></span>
+  </a>
+</div>
+<section class="card">
+  <h2>The Shop</h2>
+  <p>Real art, shipped to real doors. Everything is sold through Ko-fi, that is the cart. This page just points you to the right shelf.</p>
+  <h3>Horde's Holiday Loot Crate, last of the year</h3>
+  <p>The 3rd crate, and the first holiday themed one. Contents stay secret until it lands on your doorstep. Orders until near the end of November, ships in the first 2 weeks of December, from the USA. 50 crates a month, that is the limit, and there is no other holiday crate until 2027.</p>
+  <p><strong>$35 CAD standard &middot; $50 CAD with the 2027 horror calendar</strong></p>
+  <p><a class="btn" href="https://ko-fi.com/s/7c49d513a7">Order a Loot Crate on Ko-fi</a>
+  <a class="btn ghost" href="shop.html">See the shop</a></p>
+</section>
+<section class="card">
+  <h2>Memberships</h2>
+  <p>Ko-fi memberships, CAD per month. Draw tickets every month, Loot Crate bonuses, and custom art at the higher tiers.</p>
+  <div class="card-grid">
+    <div class="shop-card"><h3>$5 &middot; The Wanderer</h3><p>1 monthly draw ticket. Behind the scenes posts. Bonus sticker pack with a Loot Crate order that month.</p></div>
+    <div class="shop-card"><h3>$12 &middot; The Seeker</h3><p>3 draw tickets, a bigger Loot Crate bonus, and 1 custom sketchbook ink sketch a month.</p></div>
+    <div class="shop-card"><h3>$25 &middot; The Serious</h3><p>5 draw tickets, an even bigger bonus, a custom sketch drawn live on stream, plus 1 ticket in a bonus monthly draw.</p></div>
+    <div class="shop-card"><h3>$125 &middot; The Assimilated</h3><p>10 draw tickets, the biggest bonus, a custom 5x7 inch painting livestreamed and shipped to you, plus 2 tickets in the special member draw.</p></div>
   </div>
-  <img class="frame-img frame-desktop" src="art/frame/layoutframe-new.webp" alt="Artist Byron frame">
-  <img class="frame-img frame-mobile" src="art/frame/vertical.png" alt="Artist Byron frame, phone">
-  <a class="frame-link" href="https://ko-fi.com/artistbyron" title="Artist for hire, on Ko-fi">Artist for hire, on Ko-fi</a>
-  <a class="frame-nav frame-nav-art" href="gallery.html" title="The Art, Gallery">The Art</a>
-  <a class="frame-nav frame-nav-crypto" href="crypto.html" title="Crypto">Crypto</a>
-  <a class="frame-nav frame-nav-about" href="about.html" title="About Byron">About Byron</a>
-  <img class="tv-layer" id="tv1" src="art/tv1-top/skully.png" alt="Top TV">
-  <img class="tv-layer" id="tv2" src="art/tv2-mid/clown.png" alt="Mid TV">
-  <img class="tv-layer" id="tv3" src="art/tv3-bot1/1.png" alt="Bottom TV 1">
-  <img class="tv-layer" id="tv4" src="art/tv4-bot2/1.png" alt="Bottom TV 2">
-  <div class="mtv" id="mtv1"><img src="art/tv-mobile/tv1-top/skully.png" alt="Mobile TV 1"></div>
-  <div class="mtv" id="mtv2"><img src="art/tv-mobile/tv2-mid/clown.png" alt="Mobile TV 2"></div>
-  <div class="mtv" id="mtv3"><img src="art/tv-mobile/tv3-bot1/1.png" alt="Mobile TV 3"></div>
-  <div class="mtv" id="mtv4"><img src="art/tv-mobile/tv4-bot2/1.png" alt="Mobile TV 4"></div>
-</div>
-<img class="sidebar" src="art/frame/sidebar-right.png" alt="Right sidebar, rusty metal">
-</div>
-<script>
-  var base = "https://hordebyron.github.io/artistbyron/";
-  var tvFiles = {
-    tv1: ["skully.png","climbingover.png","endoftheword.png","flaminghair.png","madscientist.png","seenitall.png"],
-    tv2: ["betterout.png","charlie.png","clown.png","dalmation.png","dino.png","help.png","inthemist.png","jellyfish.png","joker1.png","joker2.png","skullonblue.png","snot.png","themuse.png","toothy.png","whodis.png"],
-    tv3: ["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png","9.png","10.png","11.png","12.png","13.png","14.png","15.png","16.png","17.png","allcollections.png"],
-    tv4: ["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png","9.png","10.png","11.png","12.png","13.png","14.png","15.png","16.png","17.png","18.png","allcollections.png"]
-  };
-  var tvDirs = {tv1: "art/tv1-top/", tv2: "art/tv2-mid/", tv3: "art/tv3-bot1/", tv4: "art/tv4-bot2/"};
-  var stagger = {tv1: 0, tv2: 200, tv3: 400, tv4: 600};
-  Object.keys(tvFiles).forEach(function(id){
-    var el = document.getElementById(id);
-    var i = 0;
-    // Preload the TV pictures so a fast cycle does not show a blank TV.
-    tvFiles[id].forEach(function(f){ var im = new Image(); im.src = tvDirs[id] + f; });
-    function next(){
-      i = (i + 1) % tvFiles[id].length;
-      el.src = tvDirs[id] + tvFiles[id][i];
-      setTimeout(next, 500 + Math.random() * 900);
-    }
-    setTimeout(next, 500 + stagger[id]);
-  });
-  /* Mobile bottom TVs, same art sets as desktop, left to right TV1 to TV4.
-     They only show under 768px, but the timers run anyway, so they are
-     already cycling when a phone loads the page. */
-  var mtvMap = {mtv1: 'tv1', mtv2: 'tv2', mtv3: 'tv3', mtv4: 'tv4'};
-  var mtvDirs = {tv1: 'art/tv-mobile/tv1-top/', tv2: 'art/tv-mobile/tv2-mid/', tv3: 'art/tv-mobile/tv3-bot1/', tv4: 'art/tv-mobile/tv4-bot2/'};
-  Object.keys(mtvMap).forEach(function(mtvId){
-    var deskId = mtvMap[mtvId];
-    var wrap = document.getElementById(mtvId);
-    if (!wrap) return;
-    var img = wrap.querySelector('img');
-    var j = 0;
-    function nextMobile(){
-      j = (j + 1) % tvFiles[deskId].length;
-      img.src = mtvDirs[deskId] + tvFiles[deskId][j];
-      setTimeout(nextMobile, 500 + Math.random() * 900);
-    }
-    setTimeout(nextMobile, 500 + stagger[deskId]);
-  });
-</script>
+  <p><a class="btn" href="https://ko-fi.com/artistbyron">Join on Ko-fi</a></p>
+</section>
+<section class="card">
+  <h2>Contests</h2>
+  <p>Colour something, make something, win something. New contests show up here when they open.</p>
+  <h3>Colour Me, win a prize</h3>
+  <p>The first Horde colouring page contest. Colour the page yourself, crayons or digital, just no AI. Post it on social media, then drop the link in a Ko-fi comment to enter. Prize is a small sticker or print pack, a Horde Reward.</p>
+  <p><a class="btn" href="https://ko-fi.com/post/Colour-Me-for-a-chance-to-win-H4W72A47GG">Enter on Ko-fi</a>
+  <a class="btn ghost" href="contests.html">All contests</a></p>
+</section>
+<section class="card">
+  <h2>Play the Game</h2>
+  <p>Games, puzzles and contests from the Horde. Start with a colouring contest, then see what is next.</p>
+  <p><a class="btn" href="game.html">Play the Game</a>
+  <a class="btn ghost" href="register.html">Register for the Horde</a>
+  <a class="btn ghost" href="https://discord.gg/rA3UMEkpqc">Join the Discord</a></p>
+</section>
+<section class="card">
+  <h2>About Byron</h2>
+  <p>I am Byron from Canada and I draw zombies. I have been painting and drawing zombies, zombie portraits, zombie cats and zombie all the other things for nearly twenty years. All artwork is created with ink and paint on paper, canvas or wood.</p>
+  <p>Now I am shifting back to the physical art and the real collectors who love it, with the Horde, the community around the art, at the centre. Come for the art, stay for the Horde.</p>
+  <p><a class="btn ghost" href="about.html">More about Byron</a></p>
+</section>
+
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Crypto</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
+
 </body>
 </html>
