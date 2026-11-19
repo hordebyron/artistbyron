@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log in · Artist Byron</title>
+<meta name="description" content="Log in to the Horde with your WAX or XRP wallet. One login, one profile, both chains.">
+<link rel="stylesheet" href="style.css?v=19">
+<link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a href="login.html" class="active">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>Log in to the Horde</h1>
+  <p>One login, one profile, both chains. Log in with either wallet and the site knows you, your WAX side and your XRP side live on the same profile.</p>
+  <p class="small">Logging in signs nothing and sends nothing. It only proves the wallet is yours. No password, no seed, ever.</p>
+
+  <section class="card" id="known-card" hidden>
+    <h2 id="known-title">Welcome back</h2>
+    <p>This device already knows your Horde profile.</p>
+    <p><a class="btn" href="profile.html">Go to my profile</a></p>
+  </section>
+
+  <section class="card" id="wax-login-card">
+    <h2>Log in with WAX</h2>
+    <p>Tap the button, pick Anchor or My Cloud Wallet, and approve in your wallet app. The site only sees your account name.</p>
+    <p><button class="btn" type="button" id="login-wax-btn">Log in with WAX</button></p>
+    <p class="small" id="login-wax-status"></p>
+    <p class="small">No wallet app on this device? You can also <a href="wax.html">look at the WAX page</a> and paste your WAX name there to view, and log in later from a device with your wallet.</p>
+  </section>
+
+  <section class="card">
+    <h2>Log in with XRP</h2>
+    <p>XRP login runs through Xaman or Joey on the XRP page. Log in there and your profile button appears, one tap to your page.</p>
+    <p><a class="btn" href="xrp.html">Go to the XRP login</a></p>
+  </section>
+
+  <section class="card">
+    <h2>New here?</h2>
+    <p>Fresh to the Horde? Register once with your name and your wallets, and you get your Horde profile and your place in line for a Horde Profile Token, your key on both chains.</p>
+    <p><a class="btn" href="register.html">Join the Horde, register</a> <a class="btn ghost" href="profile.html">What is a Horde profile?</a></p>
+  </section>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
+<script>
+var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
+var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+async function sbFind(wax, xrp){
+  try {
+    var q = wax ? 'wax=eq.' + encodeURIComponent(wax) : 'xrp=eq.' + encodeURIComponent(xrp);
+    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&' + q, { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    var rows = await res.json();
+    return (rows && rows.length) ? rows[0] : null;
+  } catch (e) { return null; }
+}
+function sbMirrorLocal(r){
+  try { localStorage.setItem('horde_registration', JSON.stringify({ name: r.name || '', badgename: r.badge_name || '', badge_flagged: !!r.badge_flagged, wax: r.wax || '', xrp: r.xrp || '', discord: r.discord || '', kofi: r.kofi || '' })); } catch (e) {}
+}
+(function(){
+  try {
+    var prof = JSON.parse(localStorage.getItem('horde_profile') || 'null');
+    var reg = JSON.parse(localStorage.getItem('horde_registration') || 'null');
+    var who = prof || reg;
+    if (who && (who.name || who.wax || who.xrp)) {
+      var card = document.getElementById('known-card');
+      card.hidden = false;
+      if (who.name) document.getElementById('known-title').textContent = 'Welcome back, ' + who.name;
+      document.getElementById('wax-login-card').hidden = true;
+    }
+  } catch (e) {}
+})();
+async function goProfile(wax){
+  var st = document.getElementById('login-wax-status');
+  st.textContent = 'Logged in as ' + wax + '. Looking up your Horde profile…';
+  var row = await sbFind(wax, null);
+  if (row) { sbMirrorLocal(row); location.href = 'profile.html?n=' + row.profile_no; return; }
+  st.textContent = 'Logged in as ' + wax + ', but no Horde profile has that wallet yet. If you already registered, Byron can check the list. If you are new, register and this wallet ties to your profile.';
+}
+</script>
+<script type="module">
+import { SessionKit } from 'https://cdn.jsdelivr.net/npm/@wharfkit/session@1.3.0/+esm';
+import { WebRenderer } from 'https://cdn.jsdelivr.net/npm/@wharfkit/web-renderer@1.3.0/+esm';
+import { WalletPluginAnchor } from 'https://cdn.jsdelivr.net/npm/@wharfkit/wallet-plugin-anchor@1.3.0/+esm';
+import { WalletPluginCloudWallet } from 'https://cdn.jsdelivr.net/npm/@wharfkit/wallet-plugin-cloudwallet@1.3.0/+esm';
+const kit = new SessionKit({
+  appName: 'Artist Byron - the Horde',
+  chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2ea8dd6f8617d51c49d05586b31a', url: 'https://wax.greymass.com' }],
+  ui: new WebRenderer(),
+  walletPlugins: [new WalletPluginAnchor(), new WalletPluginCloudWallet()],
+});
+window.__loginKit = kit;
+try {
+  const restored = await kit.restore();
+  if (restored) { window.goProfile(String(restored.actor)); }
+} catch (e) {}
+document.getElementById('login-wax-btn').addEventListener('click', async () => {
+  const st = document.getElementById('login-wax-status');
+  st.textContent = 'Opening your wallet…';
+  try {
+    const { session } = await kit.login();
+    window.goProfile(String(session.actor));
+  } catch (e) { st.textContent = 'Login was cancelled or failed. Nothing was signed.'; }
+});
+</script>
+</body>
+</html>
