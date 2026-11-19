@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=13">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -26,9 +26,16 @@
 <main class="wrap">
   <h1>My Horde profile</h1>
   <p>One person, one profile. Your WAX wallet and your XRPL wallet live here together, tied to one name, so the Horde knows both wallets are you. Add a picture, add your links, and this is the face you show the Horde.</p>
-  <p class="small">Saved on this device for now, same as Register. No password, no seed, ever. Wallet addresses are public on the chain already.</p>
+  <p class="small">Saved to the shared Horde list and this device. No password, no seed, ever. Wallet addresses are public on the chain already.</p>
 
-  <section class="card">
+  <section class="card" id="profile-login-card">
+    <h2>Log in, and your profile loads itself</h2>
+    <p>Log in with the wallet you registered with. The site finds your Horde profile in the shared list and loads it here, name, badge, both wallets, your pieces. Nothing to retype.</p>
+    <p><button class="btn" type="button" id="pf-wax-login">Log in with WAX</button> <a class="btn ghost" href="xrp.html">Log in with XRP instead</a></p>
+    <p class="small" id="pf-login-status">Not logged in yet. New here? Build your profile below, that registers you.</p>
+  </section>
+
+  <section class="card" id="event-card">
     <h2>Join the Horde, the event</h2>
     <ol class="tight">
       <li>Register below and pick the name you want on your badge.</li>
@@ -39,12 +46,6 @@
     <p class="small">Badge names: nothing overly obscene. A filter flags rough names automatically, and Byron checks every flagged name himself. Byron has the final say, always.</p>
   </section>
 
-  <section class="card" id="profile-login-card">
-    <h2>Log in, and your profile loads itself</h2>
-    <p>Log in with the wallet you registered with. The site finds your Horde profile in the shared list and loads it here, name, badge, both wallets, your pieces. Nothing to retype.</p>
-    <p><button class="btn" type="button" id="pf-wax-login">Log in with WAX</button> <a class="btn ghost" href="xrp.html">Log in with XRP instead</a></p>
-    <p class="small" id="pf-login-status">Not logged in yet. New here? Build your profile below, that registers you.</p>
-  </section>
 
   <section class="card">
     <h2>Build your profile</h2>
