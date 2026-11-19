@@ -9,7 +9,7 @@
 
 
 
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=10">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -160,9 +160,11 @@ async function showHorde(name) {
     var results = await Promise.all(WAX_COLLECTIONS.map(function(c){ return checkCollection(name, c.id); }));
     var total = results.reduce(function(n, r){ return n + r.total; }, 0);
     welcomeText.textContent = total > 0 ? 'You have assets in these collections.' : 'You do not hold any of Byron\'s WAX art yet.';
-    inventoryEl.innerHTML = results.map(function(r, i){
-      return '<p>' + WAX_COLLECTIONS[i].name + ': <strong>' + r.total + '</strong></p>';
-    }).join('');
+    var held = [], rest = [];
+    results.forEach(function(r, i){ (r.total > 0 ? held : rest).push('<p>' + WAX_COLLECTIONS[i].name + ': <strong>' + r.total + '</strong></p>'); });
+    var html = held.join('');
+    if (rest.length) html += '<details><summary>Collections you do not hold yet (' + rest.length + ')</summary>' + rest.join('') + '</details>';
+    inventoryEl.innerHTML = html;
   } catch (e) {
     welcomeText.textContent = 'I could not reach the WAX lookup just now, check the name and try again.';
   }
