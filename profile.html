@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=19">
+<link rel="stylesheet" href="style.css?v=21">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -404,6 +404,8 @@ async function loadPieces(p){
     } catch (e) { wbox.innerHTML = '<p class="small">WAX collections could not load just now.</p>'; }
   }
   status.textContent = totals.length ? totals.join(' · ') + '.' : '';
+  var ht = document.getElementById('holdings-text');
+  if (ht && totals.length) ht.textContent = totals.join(' · ') + ', all one Horde profile.';
 }
 
 /* Login loads the Horde profile from the shared list. */
@@ -568,10 +570,7 @@ async function showProfile(p){
   } catch (e) {}
   k.textContent = keys.length ? 'Horde Profile Token ' + keys.join(' and ') + '. This profile is unlocked.' : 'No Horde Profile Token found yet for these wallets.';
   var h = document.getElementById('holdings-text');
-  var parts = [];
-  try { if (p.xrp) parts.push(await xrpCount(p.xrp) + ' pieces on XRP'); } catch (e) {}
-  try { if (p.wax) parts.push(await waxCount(p.wax) + ' pieces on WAX'); } catch (e) {}
-  h.textContent = parts.length ? parts.join('  ·  ') + ', all one Horde profile.' : 'Add a wallet and your holdings show here.';
+  h.textContent = 'Counting your pieces on both chains…';
   loadPieces(p);
 }
 
