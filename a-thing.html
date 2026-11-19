@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>a thing - Horde on WAX</title>
 <meta name="description" content="a thing, a free WAX drop for Tony and the founders. Claim it here on artistbyron.ca, on the Horde's own drop contract.">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=8">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
     <strong>Price:</strong> Free<br>
     <strong>Whitelist:</strong> Tony and the founders<br>
     <strong>Limit:</strong> 1 per wallet, 7 total<br>
-    <strong>Starts:</strong> Thu 19 Nov 2026, 4:15pm CST<br>
+    <strong>Starts:</strong> Fri 20 Nov 2026, 1pm CST<br>
     <strong>Ends:</strong> Thu 26 Nov 2026, 4:15pm CST</p>
     <p class="small" id="drop-status">Checking the drop…</p>
     <p class="small">This drop runs on the Horde's own drop contract (hordedrop421). There is no AtomicHub drop for it. You claim it right here, you never have to leave this site.</p>
@@ -43,8 +43,8 @@
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Blockchain</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="wallet.html">My Horde Wallet</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script>
 var CONTRACT = 'hordedrop421';
-var DROP_ID = 1;
-var START_TIME = 1795126500;
+var DROP_ID = 2;
+var START_TIME = 1795201200;
 var END_TIME = 1795731300;
 var MAX_CLAIMABLE = 7;
 var WHITELIST = ['ylab4.wam','q52aw.wam','fzyr.wam','grkx.wam','kylinvaderme','mpvee.wam','pzyas.wam'];
@@ -75,13 +75,13 @@ async function refreshDrop() {
     claimedCount = parseInt(drop.claimed, 10);
     var now = Math.floor(Date.now() / 1000);
     dropLive = now >= drop.start_time && now <= drop.end_time && claimedCount < MAX_CLAIMABLE;
-    var state = now < drop.start_time ? 'Opens Thu 19 Nov 2026, 4:15pm CST.' : now > drop.end_time ? 'This drop has ended.' : claimedCount >= MAX_CLAIMABLE ? 'All 7 claimed.' : 'Live now.';
+    var state = now < drop.start_time ? 'Opens Fri 20 Nov 2026, 1pm CST.' : now > drop.end_time ? 'This drop has ended.' : claimedCount >= MAX_CLAIMABLE ? 'All 7 claimed.' : 'Live now.';
     dropStatusEl.textContent = claimedCount + ' of 7 claimed. ' + state;
     updateClaimBtn();
   } catch (e) {
     var now2 = Math.floor(Date.now() / 1000);
     dropLive = now2 >= START_TIME && now2 <= END_TIME;
-    dropStatusEl.textContent = now2 < START_TIME ? 'Opens Thu 19 Nov 2026, 4:15pm CST. 0 of 7 claimed.' : now2 > END_TIME ? 'This drop has ended.' : 'Live now. 0 of 7 claimed.';
+    dropStatusEl.textContent = now2 < START_TIME ? 'Opens Fri 20 Nov 2026, 1pm CST. 0 of 7 claimed.' : now2 > END_TIME ? 'This drop has ended.' : 'Live now. 0 of 7 claimed.';
     updateClaimBtn();
   }
 }
@@ -95,7 +95,7 @@ function updateClaimBtn() {
   }
   if (!dropLive) {
     claimBtn.disabled = true;
-    claimStatusEl.textContent = 'The drop is not live right now. It opens Thu 19 Nov 2026, 4:15pm CST.';
+    claimStatusEl.textContent = 'The drop is not live right now. It opens Fri 20 Nov 2026, 1pm CST.';
     return;
   }
   claimBtn.disabled = false;
