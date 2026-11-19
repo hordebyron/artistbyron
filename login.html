@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde with your WAX or XRP wallet. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=19">
+<link rel="stylesheet" href="style.css?v=20">
 <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
@@ -18,7 +18,8 @@
   <section class="card" id="known-card" hidden>
     <h2 id="known-title">Welcome back</h2>
     <p>This device already knows your Horde profile.</p>
-    <p><a class="btn" href="profile.html">Go to my profile</a></p>
+    <p>Taking you to your profile now. <a class="btn" href="profile.html">Go to my profile</a></p>
+    <p class="small"><a href="#" id="known-stay">Not you? Stay here and log in with a wallet</a></p>
   </section>
 
   <section class="card" id="wax-login-card">
@@ -66,6 +67,7 @@ function sbMirrorLocal(r){
       card.hidden = false;
       if (who.name) document.getElementById('known-title').textContent = 'Welcome back, ' + who.name;
       document.getElementById('wax-login-card').hidden = true;
+      window.__knownTimer = setTimeout(function(){ location.href = 'profile.html'; }, 900);
     }
   } catch (e) {}
 })();
@@ -76,6 +78,7 @@ async function goProfile(wax){
   if (row) { sbMirrorLocal(row); location.href = 'profile.html?n=' + row.profile_no; return; }
   st.textContent = 'Logged in as ' + wax + ', but no Horde profile has that wallet yet. If you already registered, Byron can check the list. If you are new, register and this wallet ties to your profile.';
 }
+document.getElementById('known-stay').addEventListener('click', function(e){ e.preventDefault(); if (window.__knownTimer) clearTimeout(window.__knownTimer); document.getElementById('known-card').hidden = true; document.getElementById('wax-login-card').hidden = false; });
 </script>
 <script type="module">
 import { SessionKit } from 'https://cdn.jsdelivr.net/npm/@wharfkit/session@1.3.0/+esm';
