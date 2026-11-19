@@ -1,11 +1,23 @@
 {
   "name": "Horde Profile #1",
   "description": "Horde Profile Token. A non-transferable key to one Horde profile on artistbyron.ca. It cannot be sold or given away. If the wallet is lost, the issuer burns this key and issues a fresh one with the same profile number.",
-  "image": "https://artistbyron.ca/art/horde-h-icon.png",
+  "image": "https://artistbyron.ca/art/join-the-horde-xrp.webp",
   "attributes": [
-    { "trait_type": "Profile No", "value": "1" },
-    { "trait_type": "Name", "value": "Byron" },
-    { "trait_type": "Level", "value": "1" },
-    { "trait_type": "Type", "value": "Profile Key, non-transferable" }
+    {
+      "trait_type": "Profile No",
+      "value": "1"
+    },
+    {
+      "trait_type": "Name",
+      "value": "Byron"
+    },
+    {
+      "trait_type": "Level",
+      "value": "1"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Profile Key, non-transferable"
+    }
   ]
 }
