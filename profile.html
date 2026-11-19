@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=12">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -37,6 +37,13 @@
       <li>Use that badge as your profile picture, here and anywhere.</li>
     </ol>
     <p class="small">Badge names: nothing overly obscene. A filter flags rough names automatically, and Byron checks every flagged name himself. Byron has the final say, always.</p>
+  </section>
+
+  <section class="card" id="profile-login-card">
+    <h2>Log in, and your profile loads itself</h2>
+    <p>Log in with the wallet you registered with. The site finds your Horde profile in the shared list and loads it here, name, badge, both wallets, your pieces. Nothing to retype.</p>
+    <p><button class="btn" type="button" id="pf-wax-login">Log in with WAX</button> <a class="btn ghost" href="xrp.html">Log in with XRP instead</a></p>
+    <p class="small" id="pf-login-status">Not logged in yet. New here? Build your profile below, that registers you.</p>
   </section>
 
   <section class="card">
@@ -272,6 +279,7 @@ async function loadProfileForWax(name){
 (function(){
   var btn = document.getElementById('pf-wax-login');
   var st = document.getElementById('pf-login-status');
+  if (!btn || !st) return;
   var kit = null, sess = null;
   async function init(){
     try {
