@@ -156,5 +156,23 @@ document.getElementById('checkBtn').addEventListener('click', async function () 
   } catch (e) { out.textContent = 'Could not reach the ledger from this browser, try again, or check the address on xrpscan.com.'; }
 });
 </script>
+
+<script>
+(function(){
+  var a = document.getElementById('nav-login'); if (!a) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); } catch (err) {}
+    try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
+    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+})();
+</script>
 </body>
 </html>
