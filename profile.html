@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=17">
+<link rel="stylesheet" href="style.css?v=18">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -17,6 +17,11 @@
 .profile-view .pfp{width:96px;height:96px}
 .pieces{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px}
 .sides{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.collrow{display:flex;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid var(--line);cursor:pointer}
+.collrow img{width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#0f0f14}
+.collrow .cname{font-weight:700}
+.collrow .ccount{color:var(--muted);font-size:.9rem}
+details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 @media (max-width:720px){.sides{grid-template-columns:1fr}}
 .pieces figure{margin:0}
 .pieces img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#0f0f14}
@@ -125,20 +130,28 @@
     <p class="small">Only Horde pieces show here, from Byron's own collections on both chains. Nothing else from your wallets.</p>
     <p class="small" id="pieces-status"></p>
     <div class="sides">
-      <div><h3>Your XRP side</h3><p class="small" id="side-xrp-wallet"></p><div class="pieces" id="pieces-xrp"></div></div>
-      <div><h3>Your WAX side</h3><p class="small" id="side-wax-wallet"></p><div class="pieces" id="pieces-wax"></div></div>
+      <div><h3>Your XRP side</h3><p class="small" id="side-xrp-wallet"></p><div id="coll-xrp"></div><details id="unheld-xrp-wrap" hidden><summary id="unheld-xrp-summary"></summary><div id="unheld-xrp" class="small"></div></details></div>
+      <div><h3>Your WAX side</h3><p class="small" id="side-wax-wallet"></p><div id="coll-wax"></div><details id="unheld-wax-wrap" hidden><summary id="unheld-wax-summary"></summary><div id="unheld-wax" class="small"></div></details></div>
     </div>
   </section>
 
-  <section class="card">
+  <section class="card" id="tie-card">
     <h2>How the tie works</h2>
     <ul class="tight">
       <li>Register once with both wallets, and both chains point at the same profile. A drop or a reward on either chain finds the same person.</li>
       <li>Log in with WAX here, or with Xaman on the XRP page, and the site greets you by your profile name, not your wallet address.</li>
-      <li>Next piece, when Byron says go: a small shared database, so your profile follows you to any device. Right now it saves on this device, like Register does.</li>
+      <li>Your profile lives on the shared Horde list, so it follows you to any device. Log in with either wallet, or open your own profile link, and it is you.</li>
     </ul>
     <p><a class="btn ghost" href="register.html">Register page</a> <a class="btn ghost" href="roster.html">See the Horde roster</a></p>
   </section>
+  <div id="piece-modal" hidden style="position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:80;overflow:auto;padding:22px 12px">
+    <div class="card" style="max-width:880px;margin:24px auto">
+      <h3 id="modal-title">Collection</h3>
+      <p class="small" id="modal-status"></p>
+      <div class="pieces" id="modal-grid"></div>
+      <p style="margin-top:14px"><button class="btn" type="button" id="modal-close">Close</button></p>
+    </div>
+  </div>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Blockchain</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script>
@@ -237,19 +250,100 @@ function addPiece(box, img, name){
   c.textContent = name || '';
   f.appendChild(im); f.appendChild(c); box.appendChild(f);
 }
+var profWallets = { xrp: '', wax: '' };
+var xrpGroups = {};
+function thumbInto(imgEl, src){
+  var cid = '';
+  var m = String(src || '').match(/ipfs\/([A-Za-z0-9]+)/) || String(src || '').match(/^(Qm[A-Za-z0-9]+)$/);
+  if (m) cid = m[1];
+  var tries = [src];
+  if (cid) tries = ['https://ipfs.io/ipfs/' + cid, 'https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=200&output=webp'];
+  var ti = 0;
+  imgEl.onerror = function(){ ti++; if (ti < tries.length) imgEl.src = tries[ti]; else imgEl.style.visibility = 'hidden'; };
+  imgEl.src = tries[0];
+}
+function collRow(name, count, icon, onclick){
+  var row = document.createElement('div');
+  row.className = 'collrow';
+  var im = document.createElement('img'); im.alt = ''; im.loading = 'lazy';
+  thumbInto(im, icon || 'art/horde-h-icon.png');
+  var mid = document.createElement('div');
+  var n1 = document.createElement('div'); n1.className = 'cname'; n1.textContent = name;
+  var n2 = document.createElement('div'); n2.className = 'ccount'; n2.textContent = count + (count === 1 ? ' piece' : ' pieces') + ' · tap to see them';
+  mid.appendChild(n1); mid.appendChild(n2);
+  row.appendChild(im); row.appendChild(mid);
+  row.addEventListener('click', onclick);
+  return row;
+}
+function openModal(title){
+  var m = document.getElementById('piece-modal');
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-grid').innerHTML = '';
+  document.getElementById('modal-status').textContent = 'Loading…';
+  m.hidden = false; m.style.display = 'block';
+}
+function closeModal(){ var m = document.getElementById('piece-modal'); m.hidden = true; m.style.display = 'none'; }
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('piece-modal').addEventListener('click', function(e){ if (e.target === this) closeModal(); });
+async function openXrpCollection(key){
+  var g = xrpGroups[key]; if (!g) return;
+  openModal(g.name);
+  var grid = document.getElementById('modal-grid');
+  var list = g.nfts.slice(0, 100);
+  document.getElementById('modal-status').textContent = list.length + ' pieces' + (g.nfts.length > list.length ? ' (first 100 shown)' : '') + ', loading pictures…';
+  for (var i = 0; i < list.length; i += 6) {
+    var batch = list.slice(i, i + 6);
+    await Promise.all(batch.map(async function(n){
+      var name = g.name, img = '';
+      try {
+        var uriHex = n.URI || n.uri;
+        if (uriHex) {
+          var mu = ipfsUrl(uriHex.match(/.{2}/g).map(function(h){ return String.fromCharCode(parseInt(h, 16)); }).join(''));
+          var mr = await fetch(mu); var mj = await mr.json();
+          name = mj.name || name; img = ipfsUrl(mj.image || mj.image_url || '');
+        }
+      } catch (e) {}
+      if (img) addPiece(grid, img, name);
+    }));
+  }
+  document.getElementById('modal-status').textContent = list.length + ' pieces.';
+}
+async function openWaxCollection(collName, displayName){
+  openModal(displayName);
+  var grid = document.getElementById('modal-grid');
+  try {
+    var wr = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(profWallets.wax) + '&collection_name=' + collName + '&limit=100&order_desc=false');
+    var wj = await wr.json();
+    var data = wj.data || [];
+    document.getElementById('modal-status').textContent = data.length + ' pieces' + (data.length >= 100 ? ' (first 100 shown)' : '') + '.';
+    data.forEach(function(a){
+      var cid = (a.data && a.data.img) || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
+      var nm = (a.data && a.data.name) || (a.template && a.template.immutable_data && a.template.immutable_data.name) || displayName;
+      if (cid) addPiece(grid, 'https://ipfs.io/ipfs/' + String(cid).replace(/^ipfs:\/\//, ''), nm);
+    });
+    if (!grid.children.length) document.getElementById('modal-status').textContent = 'No pictures could load for this collection.';
+  } catch (e) { document.getElementById('modal-status').textContent = 'Could not load this collection just now.'; }
+}
 async function loadPieces(p){
   var card = document.getElementById('pieces-card');
   var status = document.getElementById('pieces-status');
-  var xbox = document.getElementById('pieces-xrp');
-  var wbox = document.getElementById('pieces-wax');
+  var xbox = document.getElementById('coll-xrp');
+  var wbox = document.getElementById('coll-wax');
   if (!p.xrp && !p.wax) return;
   card.hidden = false;
+  profWallets = { xrp: p.xrp || '', wax: p.wax || '' };
   var sx = document.getElementById('side-xrp-wallet'); if (sx) sx.textContent = p.xrp ? 'Wallet: ' + p.xrp : 'No XRP wallet on this profile.';
   var sw = document.getElementById('side-wax-wallet'); if (sw) sw.textContent = p.wax ? 'Wallet: ' + p.wax : 'No WAX wallet on this profile.';
-  status.textContent = 'Loading your pieces from both chains…';
-  pieceCounter.shown = 0;
+  status.textContent = 'Counting your collections on both chains…';
+  var totals = [];
+  xrpGroups = {};
   if (p.xrp) {
     try {
+      var meta = {};
+      try {
+        var cj = await (await fetch('data/collections.json')).json();
+        (cj.collections || []).forEach(function(c){ meta[(cj.issuers[c.issuer] || '') + '|' + c.taxon] = c; });
+      } catch (e) {}
       var marker = null, pages = 0, mine = [];
       do {
         var b = { method: 'account_nfts', params: [{ account: p.xrp, limit: 400 }] };
@@ -259,39 +353,57 @@ async function loadPieces(p){
         ((j.result && j.result.account_nfts) || []).forEach(function(n){ var iss = n.Issuer || n.issuer; if (iss && OUR_ISSUERS[iss]) mine.push(n); });
         marker = j.result && j.result.marker; pages++;
       } while (marker && pages < 10);
-      var capped = mine.slice(0, 60);
-      for (var i = 0; i < capped.length; i++) {
-        var n = capped[i], name = 'Horde piece', img = '';
-        try {
-          var uriHex = n.URI || n.uri; if (uriHex) {
-            var mu = ipfsUrl(uriHex.match(/.{2}/g).map(function(h){ return String.fromCharCode(parseInt(h, 16)); }).join(''));
-            var mr = await fetch(mu); var mj = await mr.json();
-            name = mj.name || name; img = ipfsUrl(mj.image || mj.image_url || '');
-          }
-        } catch (e) {}
-        if (img) { addPiece(xbox, img, name); }
+      mine.forEach(function(n){
+        var iss = n.Issuer || n.issuer, tax = (n.NFTokenTaxon !== undefined ? n.NFTokenTaxon : n.nftoken_taxon);
+        var key = iss + '|' + tax;
+        if (!xrpGroups[key]) {
+          var mc = meta[key];
+          xrpGroups[key] = { name: mc ? mc.name : (iss === 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH' && tax === 66602 ? 'with the Horde' : 'Collection ' + tax), icon: mc ? mc.icon : '', nfts: [] };
+        }
+        xrpGroups[key].nfts.push(n);
+      });
+      var keys = Object.keys(xrpGroups).sort(function(a, b){ return xrpGroups[b].nfts.length - xrpGroups[a].nfts.length; });
+      xbox.innerHTML = '';
+      keys.forEach(function(key){ var g = xrpGroups[key]; xbox.appendChild(collRow(g.name, g.nfts.length, g.icon, function(){ openXrpCollection(key); })); });
+      if (!keys.length) xbox.innerHTML = '<p class="small">No Horde pieces found on XRP for this wallet.</p>';
+      var heldKeys = {}; keys.forEach(function(k){ heldKeys[k] = true; });
+      var unheld = Object.keys(meta).filter(function(k){ return !heldKeys[k]; }).map(function(k){ return meta[k].name; }).sort();
+      if (unheld.length) {
+        document.getElementById('unheld-xrp-wrap').hidden = false;
+        document.getElementById('unheld-xrp-summary').textContent = 'Collections you do not hold yet (' + unheld.length + ')';
+        document.getElementById('unheld-xrp').textContent = unheld.join(' · ');
       }
-      if (!xbox.children.length) xbox.innerHTML = '<p class="small">No Horde pieces found on XRP for this wallet.</p>';
-      if (mine.length > capped.length) status.textContent = 'Showing first 60 of ' + mine.length + ' XRP pieces.';
-    } catch (e) { xbox.innerHTML = '<p class="small">XRP pieces could not load just now.</p>'; }
+      totals.push(mine.length + ' pieces on XRP in ' + keys.length + (keys.length === 1 ? ' collection' : ' collections'));
+    } catch (e) { xbox.innerHTML = '<p class="small">XRP collections could not load just now.</p>'; }
   }
   if (p.wax) {
     try {
-      var cols = ['byronartset1', 'myhordeonwax'], any = false;
-      for (var ci = 0; ci < cols.length; ci++) {
-        var wr = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(p.wax) + '&collection_name=' + cols[ci] + '&limit=100&order_desc=false');
-        var wj = await wr.json();
-        (wj.data || []).forEach(function(a){
-          var cid = (a.data && a.data.img) || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
-          var nm = (a.data && a.data.name) || (a.template && a.template.immutable_data && a.template.immutable_data.name) || 'Horde piece';
-          if (cid) { addPiece(wbox, 'https://ipfs.io/ipfs/' + cid, nm); any = true; }
-        });
+      var ar = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(p.wax));
+      var aj = await ar.json();
+      var ours = { byronartset1: 'Art of Byron', myhordeonwax: 'HORDE on WAX' };
+      var heldW = {};
+      var totalW = 0;
+      wbox.innerHTML = '';
+      ((aj.data && aj.data.collections) || []).forEach(function(c){
+        var cn = c.collection && c.collection.collection_name;
+        if (!ours[cn]) return;
+        var count = parseInt(c.assets, 10) || 0;
+        heldW[cn] = true; totalW += count;
+        var nm = (c.collection && c.collection.name) || ours[cn];
+        var ic = (c.collection && c.collection.img) || '';
+        wbox.appendChild(collRow(nm, count, ic, function(){ openWaxCollection(cn, nm); }));
+      });
+      if (!Object.keys(heldW).length) wbox.innerHTML = '<p class="small">No Horde pieces found on WAX for this wallet.</p>';
+      var unheldW = Object.keys(ours).filter(function(k){ return !heldW[k]; }).map(function(k){ return ours[k]; });
+      if (unheldW.length) {
+        document.getElementById('unheld-wax-wrap').hidden = false;
+        document.getElementById('unheld-wax-summary').textContent = 'Collections you do not hold yet (' + unheldW.length + ')';
+        document.getElementById('unheld-wax').textContent = unheldW.join(' · ');
       }
-      if (!any) wbox.innerHTML = '<p class="small">No Horde pieces found on WAX for this wallet.</p>';
-    } catch (e) { wbox.innerHTML = '<p class="small">WAX pieces could not load just now.</p>'; }
+      totals.push(totalW + ' pieces on WAX in ' + Object.keys(heldW).length + (Object.keys(heldW).length === 1 ? ' collection' : ' collections'));
+    } catch (e) { wbox.innerHTML = '<p class="small">WAX collections could not load just now.</p>'; }
   }
-  await new Promise(function(r){ setTimeout(r, 2500); });
-  status.textContent = pieceCounter.shown + ' Horde pieces shown.';
+  status.textContent = totals.length ? totals.join(' · ') + '.' : '';
 }
 
 /* Login loads the Horde profile from the shared list. */
@@ -406,7 +518,7 @@ async function waxCount(acct){
 }
 function setMember(p){
   var known = !!(p && (p.name || p.wax || p.xrp));
-  ['find-card','profile-login-card','event-card','profile-intro'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = known; });
+  ['find-card','profile-login-card','event-card','profile-intro','tie-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = known; });
   var mc = document.getElementById('member-card');
   if (mc && known) {
     mc.hidden = false;
