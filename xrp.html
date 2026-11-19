@@ -21,7 +21,7 @@
 }
 </style>
 
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=11">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -61,6 +61,27 @@
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Blockchain</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="wallet.html">My Horde Wallet</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.2/dist/xrpl-wallet-kit.iife.js"></script>
 <script>
+
+/* Supabase shared profiles (Horde Profiles project). The publishable
+   key is public by design; row rules in the database say the site
+   can add a profile and read profiles, nothing else. */
+var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
+var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+async function sbFind(wax, xrp){
+  try {
+    var filters = [];
+    if (wax) filters.push('wax.eq.' + encodeURIComponent(wax));
+    if (xrp) filters.push('xrp.eq.' + encodeURIComponent(xrp));
+    if (!filters.length) return null;
+    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&or=(' + filters.join(',') + ')&limit=1', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    var rows = await res.json();
+    return (rows && rows.length) ? rows[0] : null;
+  } catch (e) { return null; }
+}
+function sbMirrorLocal(row){
+  if (!row) return;
+  try { localStorage.setItem('horde_registration', JSON.stringify({ name: row.name, badgename: row.badge_name || '', badge_flagged: !!row.badge_flagged, wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
+}
 var statusEl = document.getElementById('login-status');
 var loginCard = document.getElementById('login-card');
 var welcomeCard = document.getElementById('welcome-card');
@@ -217,6 +238,8 @@ async function showHorde(addr) {
   welcomeText.textContent = 'Checking your XRP art…';
   inventoryEl.innerHTML = '';
   document.getElementById('switch-wallet-wrap').hidden = true;
+  var sbRow = await sbFind(null, addr);
+  if (sbRow) sbMirrorLocal(sbRow);
   var name = await getRegisteredName(addr);
   var data = await loadCollections();
   var holdings = await liveByronHoldings(addr);
@@ -235,16 +258,19 @@ async function showHorde(addr) {
     return { name: c.name, icon: c.icon, count: holdings.byKey[key] || 0 };
   });
   rows.sort(function(a, b){ return (b.count - a.count) || (a.name < b.name ? -1 : 1); });
-  var html = '<ul class="collection-list">';
-  rows.forEach(function(r){
+  function rowHtml(r){
     var icon = r.icon ? esc(r.icon) : 'art/horde-h-icon.png';
-    html += '<li class="collection-row' + (r.count === 0 ? ' zero' : '') + '">'
+    return '<li class="collection-row' + (r.count === 0 ? ' zero' : '') + '">'
       + '<img src="' + icon + '" alt="" loading="lazy">'
       + '<span class="collection-name">' + esc(r.name) + '</span>'
       + '<span class="collection-count">' + r.count + ' ' + (r.count === 1 ? 'piece' : 'pieces') + '</span>'
       + '</li>';
-  });
-  html += '</ul>';
+  }
+  var heldRows = rows.filter(function(r){ return r.count > 0; });
+  var zeroRows = rows.filter(function(r){ return r.count === 0; });
+  var html = '<ul class="collection-list">' + heldRows.map(rowHtml).join('') + '</ul>';
+  if (zeroRows.length) html += '<details><summary>Collections you do not hold yet (' + zeroRows.length + ')</summary><ul class="collection-list">' + zeroRows.map(rowHtml).join('') + '</ul></details>';
+  if (sbRow) html += '<p><a class="btn" href="profile.html">Your Horde profile is loaded, view it here</a></p>';
   inventoryEl.innerHTML = html;
   document.getElementById('switch-wallet-wrap').hidden = false;
 }
