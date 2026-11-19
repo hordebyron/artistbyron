@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Horde Roster</title>
+<meta name="description" content="Byron's roster of Horde profiles. Every member, both wallets, holdings on WAX and XRP counted together.">
+<link rel="stylesheet" href="style.css?v=9">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+.member{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;background:var(--panel)}
+.member h3{margin:.1em 0 .3em}
+.flag{color:var(--red);font-weight:700}
+.ok{color:#7fb069;font-weight:700}
+</style>
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a class="nav-cta" href="https://discord.gg/rA3UMEkpqc">Horde's Discord</a><a href="crypto.html">Blockchain</a></nav></div></header>
+<main class="wrap">
+  <h1>The Horde roster</h1>
+  <p>Every registered Horde profile, both wallets tied to one person, holdings on XRP and WAX counted live and added together. New signups land here on their own. Flagged badge names wait for Byron's check, Byron has the final say.</p>
+  <p class="small" id="roster-status">Loading the Horde…</p>
+  <div id="roster"></div>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Blockchain</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
+<script>
+var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
+var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+var ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+async function xrpCount(addr){
+  var total = 0, marker = null, pages = 0;
+  do {
+    var body = { method: 'account_nfts', params: [{ account: addr, limit: 400 }] };
+    if (marker) body.params[0].marker = marker;
+    var res = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    var j = await res.json();
+    ((j.result && j.result.account_nfts) || []).forEach(function(n){ var iss2 = n.Issuer || n.issuer; if (iss2 && ISSUERS[iss2]) total++; });
+    marker = j.result && j.result.marker; pages++;
+  } while (marker && pages < 10);
+  return total;
+}
+async function waxCount(acct){
+  var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(acct));
+  var j = await res.json();
+  var total = 0;
+  ((j.data && j.data.collections) || []).forEach(function(c){ if (c.collection_name === 'byronartset1' || c.collection_name === 'myhordeonwax') total += parseInt(c.assets, 10) || 0; });
+  return total;
+}
+(async function(){
+  var status = document.getElementById('roster-status');
+  var box = document.getElementById('roster');
+  try {
+    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&order=profile_no.asc', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    var rows = await res.json();
+    if (!rows.length) { status.textContent = 'No profiles yet. First signup starts the Horde.'; return; }
+    status.textContent = rows.length + ' Horde profile' + (rows.length === 1 ? '' : 's') + '. Counting holdings, give it a moment…';
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var div = document.createElement('div');
+      div.className = 'member';
+      div.innerHTML = '<h3>#' + r.profile_no + ' ' + esc(r.name) + (r.badge_name ? ' <span class="small">badge: ' + esc(r.badge_name) + '</span>' : '') + '</h3>'
+        + '<p class="small">' + (r.wax ? 'WAX: ' + esc(r.wax) + ' ' : '') + (r.xrp ? 'XRPL: ' + esc(r.xrp) : '') + '</p>'
+        + '<p class="small">' + (r.badge_flagged ? '<span class="flag">Badge name FLAGGED, waiting on Byron.</span> ' : '')
+        + (r.key_issued ? '<span class="ok">Profile key issued.</span>' : 'Profile key not issued yet.') + '</p>'
+        + '<p><strong>Holdings:</strong> <span class="hold">counting…</span></p>';
+      box.appendChild(div);
+      var parts = [], total = 0;
+      try { if (r.xrp) { var xc = await xrpCount(r.xrp); parts.push(xc + ' on XRP'); total += xc; } } catch (e) {}
+      try { if (r.wax) { var wc = await waxCount(r.wax); parts.push(wc + ' on WAX'); total += wc; } } catch (e) {}
+      div.querySelector('.hold').textContent = parts.length ? parts.join(' + ') + ' = ' + total + ' pieces, one Horde profile.' : 'No wallets on file.';
+    }
+    status.textContent = rows.length + ' Horde profile' + (rows.length === 1 ? '' : 's') + ', holdings counted live from both chains.';
+  } catch (e) {
+    status.textContent = 'The roster could not load just now. Try again in a moment.';
+  }
+})();
+</script>
+</body>
+</html>

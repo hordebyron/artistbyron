@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Horde Profile</title>
+<meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
+<link rel="stylesheet" href="style.css?v=9">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+.pfp-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.pfp{width:128px;height:128px;border-radius:50%;object-fit:cover;border:2px solid var(--line);background:#0f0f14}
+.pfp-fields{flex:1;min-width:240px}
+.profile-view{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.profile-view .pfp{width:96px;height:96px}
+.pieces{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px}
+.pieces figure{margin:0}
+.pieces img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#0f0f14}
+.pieces figcaption{font-size:.82rem;color:var(--muted);margin-top:4px;word-break:break-word}
+</style>
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a class="nav-cta" href="https://discord.gg/rA3UMEkpqc">Horde's Discord</a><a href="crypto.html">Blockchain</a></nav></div></header>
+<main class="wrap">
+  <h1>My Horde profile</h1>
+  <p>One person, one profile. Your WAX wallet and your XRPL wallet live here together, tied to one name, so the Horde knows both wallets are you. Add a picture, add your links, and this is the face you show the Horde.</p>
+  <p class="small">Saved on this device for now, same as Register. No password, no seed, ever. Wallet addresses are public on the chain already.</p>
+
+  <section class="card">
+    <h2>Join the Horde, the event</h2>
+    <ol class="tight">
+      <li>Register below and pick the name you want on your badge.</li>
+      <li>You get your Horde Profile Token, your key, on WAX or XRP. It cannot be sold or given away.</li>
+      <li>Later your key's picture mutates into your personal badge, with your badge name and profile number on it.</li>
+      <li>Use that badge as your profile picture, here and anywhere.</li>
+    </ol>
+    <p class="small">Badge names: nothing overly obscene. A filter flags rough names automatically, and Byron checks every flagged name himself. Byron has the final say, always.</p>
+  </section>
+
+  <section class="card">
+    <h2>Build your profile</h2>
+    <div class="pfp-wrap">
+      <div>
+        <img class="pfp" id="pfp-preview" src="art/horde-h-icon.png" alt="Your profile picture">
+        <p><label class="btn ghost" for="pfp-file" style="cursor:pointer">Pick a picture</label>
+        <input type="file" id="pfp-file" accept="image/*" hidden></p>
+        <p class="small">Square works best. If you hold a Horde face, use that.</p>
+      </div>
+      <div class="pfp-fields">
+        <form id="profile-form">
+          <p><label for="pf-name">Display name</label>
+          <input type="text" id="pf-name" placeholder="e.g. Tony" autocomplete="off" maxlength="40" required></p>
+          <p><label for="pf-badge">Name for your badge</label>
+          <input type="text" id="pf-badge" placeholder="The name printed on your badge" autocomplete="off" maxlength="24">
+          <span class="small">This exact name goes on your badge when it mutates. Keep it clean, flagged names wait for Byron to check them.</span></p>
+          <p><label for="pf-about">About you, one line</label>
+          <input type="text" id="pf-about" placeholder="e.g. Collector of zombie cats" autocomplete="off" maxlength="120"></p>
+          <p><label for="pf-wax">WAX account name</label>
+          <input type="text" id="pf-wax" placeholder="e.g. ylab4.wam" autocomplete="off" spellcheck="false">
+          <span class="small">Lower case, 12 characters max. Leave blank if you do not have one yet.</span></p>
+          <p><button class="btn ghost" type="button" id="wax-login-btn">Log in with WAX to prove it is yours</button></p>
+          <p class="small" id="wax-login-status">Optional. Proves the WAX name is yours, signs nothing.</p>
+          <p><label for="pf-xrp">XRPL address</label>
+          <input type="text" id="pf-xrp" placeholder="r..." autocomplete="off" spellcheck="false">
+          <span class="small">Starts with r. Leave blank if you do not have one yet.</span></p>
+          <p><label for="pf-discord">Discord name</label>
+          <input type="text" id="pf-discord" placeholder="Your Discord name" autocomplete="off" maxlength="40"></p>
+          <p><label for="pf-kofi">Ko-fi name</label>
+          <input type="text" id="pf-kofi" placeholder="Your Ko-fi name" autocomplete="off" maxlength="40"></p>
+          <p><label for="pf-x">X handle</label>
+          <input type="text" id="pf-x" placeholder="@yourname" autocomplete="off" maxlength="40"></p>
+          <p><button class="btn" type="submit">Save my profile</button>
+          <button class="btn ghost" type="button" id="pf-clear">Start over</button></p>
+        </form>
+        <p class="small" id="pf-status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="profile-view-card" hidden>
+    <h2>How the Horde sees you</h2>
+    <div class="profile-view">
+      <img class="pfp" id="view-pfp" src="art/horde-h-icon.png" alt="Your profile picture">
+      <div>
+        <p style="margin-top:0"><strong id="view-name" style="font-size:1.3rem"></strong></p>
+        <p id="view-about"></p>
+        <p id="view-wallets" class="small"></p>
+        <p id="view-links" class="small"></p>
+        <p id="view-holdings"><strong>Holdings:</strong> <span id="holdings-text">checking…</span></p>
+        <p id="view-key"><strong>Profile key:</strong> <span id="key-text">checking…</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="pieces-card" hidden>
+    <h2>Your Horde pieces</h2>
+    <p class="small">Only Horde pieces show here, from Byron's own collections on both chains. Nothing else from your wallets.</p>
+    <p class="small" id="pieces-status"></p>
+    <h3>On XRP</h3>
+    <div class="pieces" id="pieces-xrp"></div>
+    <h3>On WAX</h3>
+    <div class="pieces" id="pieces-wax"></div>
+  </section>
+
+  <section class="card">
+    <h2>How the tie works</h2>
+    <ul class="tight">
+      <li>Register once with both wallets, and both chains point at the same profile. A drop or a reward on either chain finds the same person.</li>
+      <li>Log in with WAX here, or with Xaman on the XRP page, and the site greets you by your profile name, not your wallet address.</li>
+      <li>Next piece, when Byron says go: a small shared database, so your profile follows you to any device. Right now it saves on this device, like Register does.</li>
+    </ul>
+    <p><a class="btn ghost" href="register.html">Register page</a> <a class="btn ghost" href="wallet.html">See my Horde Wallet</a></p>
+  </section>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Blockchain</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
+<script>
+/* Horde profile page. One profile ties a person's WAX and XRPL wallets
+   to one name. Saves on this device (localStorage horde_profile) and
+   mirrors name + wallets into horde_registration so the rest of the
+   site greets them by name. The pfp is shrunk to 256px before saving
+   so it fits in localStorage. Shared database comes later. */
+var PKEY = 'horde_profile', RKEY = 'horde_registration';
+/* Supabase shared profiles (Horde Profiles project). The publishable
+   key is public by design; row rules in the database say the site
+   can add a profile and read profiles, nothing else. */
+var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
+var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+async function sbFind(wax, xrp){
+  try {
+    var filters = [];
+    if (wax) filters.push('wax.eq.' + encodeURIComponent(wax));
+    if (xrp) filters.push('xrp.eq.' + encodeURIComponent(xrp));
+    if (!filters.length) return null;
+    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&or=(' + filters.join(',') + ')&limit=1', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    var rows = await res.json();
+    return (rows && rows.length) ? rows[0] : null;
+  } catch (e) { return null; }
+}
+async function sbSaveProfile(p){
+  try {
+    var existing = await sbFind(p.wax, p.xrp);
+    if (existing) return existing;
+    var res = await fetch(SB_URL + '/rest/v1/profiles', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify(p) });
+    var rows = await res.json();
+    return (rows && rows.length) ? rows[0] : null;
+  } catch (e) { return null; }
+}
+
+var FLAG_WORDS = ['fuck','shit','bitch','cunt','nigger','nigga','faggot','whore','slut','dick','cock','pussy','porn','rape','nazi','hitler','porno','xxx','anal','tits','boobs','penis','vagina','retard','spic','kike','chink','wank','jizz','cum','fag'];
+function badgeFlagged(name){
+  var n = name.toLowerCase();
+  for (var i = 0; i < FLAG_WORDS.length; i++) { if (n.indexOf(FLAG_WORDS[i]) !== -1) return true; }
+  return false;
+}
+
+var pfpData = '';
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function validWax(v){ return !v || /^[a-z1-5.]{1,12}$/.test(v); }
+function validXrp(v){ return !v || /^r[0-9a-zA-Z]{24,34}$/.test(v); }
+function load(key){ try { var r = localStorage.getItem(key); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+function save(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
+
+document.getElementById('pfp-file').addEventListener('change', function(){
+  var f = this.files && this.files[0];
+  if (!f) return;
+  var img = new Image();
+  img.onload = function(){
+    var c = document.createElement('canvas');
+    var size = 256, scale = Math.min(1, size / Math.max(img.width, img.height));
+    c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    pfpData = c.toDataURL('image/jpeg', 0.85);
+    document.getElementById('pfp-preview').src = pfpData;
+    URL.revokeObjectURL(img.src);
+  };
+  img.src = URL.createObjectURL(f);
+});
+
+
+var OUR_ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
+function ipfsUrl(u){
+  if (!u) return '';
+  if (u.indexOf('ipfs://') === 0) return 'https://ipfs.io/ipfs/' + u.slice(7).replace('ipfs/', '');
+  if (u.indexOf('ipfs/') === 0) return 'https://ipfs.io/' + u;
+  return u;
+}
+function addPiece(box, img, name){
+  var f = document.createElement('figure');
+  var im = document.createElement('img');
+  im.loading = 'lazy'; im.alt = name || 'Horde piece'; im.src = img;
+  im.onerror = function(){ if (img.indexOf('ipfs.io') !== -1) { im.onerror = null; im.src = img.replace('ipfs.io', 'gateway.pinata.cloud'); } else { f.style.display = 'none'; } };
+  var c = document.createElement('figcaption');
+  c.textContent = name || '';
+  f.appendChild(im); f.appendChild(c); box.appendChild(f);
+}
+async function loadPieces(p){
+  var card = document.getElementById('pieces-card');
+  var status = document.getElementById('pieces-status');
+  var xbox = document.getElementById('pieces-xrp');
+  var wbox = document.getElementById('pieces-wax');
+  if (!p.xrp && !p.wax) return;
+  card.hidden = false;
+  status.textContent = 'Loading your pieces from both chains…';
+  var shown = 0;
+  if (p.xrp) {
+    try {
+      var marker = null, pages = 0, mine = [];
+      do {
+        var b = { method: 'account_nfts', params: [{ account: p.xrp, limit: 400 }] };
+        if (marker) b.params[0].marker = marker;
+        var r = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+        var j = await r.json();
+        ((j.result && j.result.account_nfts) || []).forEach(function(n){ var iss = n.Issuer || n.issuer; if (iss && OUR_ISSUERS[iss]) mine.push(n); });
+        marker = j.result && j.result.marker; pages++;
+      } while (marker && pages < 10);
+      var capped = mine.slice(0, 60);
+      for (var i = 0; i < capped.length; i++) {
+        var n = capped[i], name = 'Horde piece', img = '';
+        try {
+          var uriHex = n.URI || n.uri; if (uriHex) {
+            var mu = ipfsUrl(uriHex.match(/.{2}/g).map(function(h){ return String.fromCharCode(parseInt(h, 16)); }).join(''));
+            var mr = await fetch(mu); var mj = await mr.json();
+            name = mj.name || name; img = ipfsUrl(mj.image || mj.image_url || '');
+          }
+        } catch (e) {}
+        if (img) { addPiece(xbox, img, name); shown++; }
+      }
+      if (!xbox.children.length) xbox.innerHTML = '<p class="small">No Horde pieces found on XRP for this wallet.</p>';
+      if (mine.length > capped.length) status.textContent = 'Showing first 60 of ' + mine.length + ' XRP pieces.';
+    } catch (e) { xbox.innerHTML = '<p class="small">XRP pieces could not load just now.</p>'; }
+  }
+  if (p.wax) {
+    try {
+      var cols = ['byronartset1', 'myhordeonwax'], any = false;
+      for (var ci = 0; ci < cols.length; ci++) {
+        var wr = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(p.wax) + '&collection_name=' + cols[ci] + '&limit=100&order_desc=false');
+        var wj = await wr.json();
+        (wj.data || []).forEach(function(a){
+          var cid = (a.data && a.data.img) || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
+          var nm = (a.data && a.data.name) || (a.template && a.template.immutable_data && a.template.immutable_data.name) || 'Horde piece';
+          if (cid) { addPiece(wbox, 'https://ipfs.atomichub.io/ipfs/' + cid, nm); any = true; shown++; }
+        });
+      }
+      if (!any) wbox.innerHTML = '<p class="small">No Horde pieces found on WAX for this wallet.</p>';
+    } catch (e) { wbox.innerHTML = '<p class="small">WAX pieces could not load just now.</p>'; }
+  }
+  if (!status.textContent || status.textContent.indexOf('Loading') === 0) status.textContent = shown + ' Horde pieces shown.';
+}
+var ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1 };
+async function xrpCount(addr){
+  var total = 0, marker = null, pages = 0;
+  do {
+    var body = { method: 'account_nfts', params: [{ account: addr, limit: 400 }] };
+    if (marker) body.params[0].marker = marker;
+    var res = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    var j = await res.json();
+    var list = (j.result && j.result.account_nfts) || [];
+    list.forEach(function(n){ var iss2 = n.Issuer || n.issuer; if (iss2 && ISSUERS[iss2]) total++; });
+    marker = j.result && j.result.marker; pages++;
+  } while (marker && pages < 10);
+  return total;
+}
+async function waxCount(acct){
+  var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(acct));
+  var j = await res.json();
+  var cols = (j.data && j.data.collections) || [];
+  var total = 0;
+  cols.forEach(function(c){ if (c.collection_name === 'byronartset1' || c.collection_name === 'myhordeonwax') total += parseInt(c.assets, 10) || 0; });
+  return total;
+}
+async function showProfile(p){
+  var card = document.getElementById('profile-view-card');
+  card.hidden = false;
+  if (p.pfp) document.getElementById('view-pfp').src = p.pfp;
+  document.getElementById('view-name').textContent = p.name + (p.badgename ? '  ·  badge name: ' + p.badgename : '');
+  document.getElementById('view-about').textContent = p.about || '';
+  var w = [];
+  if (p.wax) w.push('WAX: ' + p.wax);
+  if (p.xrp) w.push('XRPL: ' + p.xrp);
+  document.getElementById('view-wallets').textContent = w.join('  ·  ');
+  var l = [];
+  if (p.discord) l.push('Discord: ' + p.discord);
+  if (p.kofi) l.push('Ko-fi: ' + p.kofi);
+  if (p.x) l.push('X: ' + p.x);
+  document.getElementById('view-links').textContent = l.join('  ·  ');
+  var k = document.getElementById('key-text');
+  var keys = [];
+  try {
+    if (p.xrp) {
+      var marker2 = null, foundX = false, pages2 = 0;
+      do {
+        var b2 = { method: 'account_nfts', params: [{ account: p.xrp, limit: 400 }] };
+        if (marker2) b2.params[0].marker = marker2;
+        var r2 = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b2) });
+        var j2 = await r2.json();
+        ((j2.result && j2.result.account_nfts) || []).forEach(function(n){ if (n.Issuer === 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH' && n.NFTokenTaxon === 66602) foundX = true; });
+        marker2 = j2.result && j2.result.marker; pages2++;
+      } while (marker2 && pages2 < 10);
+      if (foundX) keys.push('found on XRP');
+    }
+  } catch (e) {}
+  try {
+    if (p.wax) {
+      var r3 = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(p.wax) + '&template_id=912283&limit=1');
+      var j3 = await r3.json();
+      if (j3.data && j3.data.length) keys.push('found on WAX');
+    }
+  } catch (e) {}
+  k.textContent = keys.length ? 'Horde Profile Token ' + keys.join(' and ') + '. This profile is unlocked.' : 'No Horde Profile Token found yet for these wallets.';
+  var h = document.getElementById('holdings-text');
+  var parts = [];
+  try { if (p.xrp) parts.push(await xrpCount(p.xrp) + ' pieces on XRP'); } catch (e) {}
+  try { if (p.wax) parts.push(await waxCount(p.wax) + ' pieces on WAX'); } catch (e) {}
+  h.textContent = parts.length ? parts.join('  ·  ') + ', all one Horde profile.' : 'Add a wallet and your holdings show here.';
+  loadPieces(p);
+}
+
+document.getElementById('profile-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var status = document.getElementById('pf-status');
+  var p = {
+    badgename: document.getElementById('pf-badge').value.trim(),
+    badge_flagged: badgeFlagged(document.getElementById('pf-badge').value.trim()),
+    name: document.getElementById('pf-name').value.trim(),
+    about: document.getElementById('pf-about').value.trim(),
+    wax: document.getElementById('pf-wax').value.trim().toLowerCase(),
+    xrp: document.getElementById('pf-xrp').value.trim(),
+    discord: document.getElementById('pf-discord').value.trim(),
+    kofi: document.getElementById('pf-kofi').value.trim(),
+    x: document.getElementById('pf-x').value.trim(),
+    pfp: pfpData || (load(PKEY) || {}).pfp || '',
+    updated: new Date().toISOString().slice(0,10)
+  };
+  if (!p.name) { status.textContent = 'Pick a display name first.'; return; }
+  if (!validWax(p.wax)) { status.textContent = 'That WAX name does not look right. Lower case, 12 characters max.'; return; }
+  if (!validXrp(p.xrp)) { status.textContent = 'That XRPL address does not look right. It should start with r.'; return; }
+  if (!p.wax && !p.xrp) { status.textContent = 'Add at least one wallet, WAX or XRPL, so the chains can find you.'; return; }
+  sbSaveProfile({ name: p.name, badge_name: p.badgename || null, badge_flagged: !!p.badge_flagged, wax: p.wax || null, xrp: p.xrp || null, discord: p.discord || null, kofi: p.kofi || null, x_handle: p.x || null, about: p.about || null });
+  save(PKEY, p);
+  var r = load(RKEY) || {};
+  r.name = p.name; r.wax = p.wax; r.xrp = p.xrp; r.discord = p.discord; r.kofi = p.kofi; r.badgename = p.badgename; r.badge_flagged = p.badge_flagged;
+  save(RKEY, r);
+  status.textContent = p.badge_flagged
+    ? 'Saved, but that badge name got flagged. Byron checks flagged names himself and has the final say, so your badge waits for his okay.'
+    : 'Saved. Both wallets now point at one Horde profile, ' + p.name + '.';
+  showProfile(p);
+});
+document.getElementById('pf-clear').addEventListener('click', function(){
+  try { localStorage.removeItem(PKEY); } catch (e) {}
+  pfpData = '';
+  document.getElementById('pfp-preview').src = 'art/horde-h-icon.png';
+  document.getElementById('profile-form').reset();
+  document.getElementById('profile-view-card').hidden = true;
+  document.getElementById('pf-status').textContent = 'Profile cleared on this device.';
+});
+(function(){
+  var p = load(PKEY);
+  if (!p) { var r = load(RKEY); if (r) { p = { name: r.name || '', badgename: r.badgename || '', wax: r.wax || '', xrp: r.xrp || '', discord: r.discord || '', kofi: r.kofi || '', about: '', x: '', pfp: '' }; } }
+  if (!p) return;
+  document.getElementById('pf-name').value = p.name || '';
+  document.getElementById('pf-badge').value = p.badgename || '';
+  document.getElementById('pf-about').value = p.about || '';
+  document.getElementById('pf-wax').value = p.wax || '';
+  document.getElementById('pf-xrp').value = p.xrp || '';
+  document.getElementById('pf-discord').value = p.discord || '';
+  document.getElementById('pf-kofi').value = p.kofi || '';
+  document.getElementById('pf-x').value = p.x || '';
+  if (p.pfp) { pfpData = p.pfp; document.getElementById('pfp-preview').src = p.pfp; }
+  if (p.name) showProfile(p);
+})();
+</script>
+<script>
+/* WAX login, same as register.html. Fills the WAX field, signs nothing. */
+(function () {
+  var statusEl = document.getElementById('wax-login-status');
+  var loginBtn = document.getElementById('wax-login-btn');
+  var waxInput = document.getElementById('pf-wax');
+  async function init() {
+    try {
+      var m = await Promise.all([
+        import('https://esm.sh/@wharfkit/session@4.0.2'),
+        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+      ]);
+      var sessionKit = new m[0].SessionKit({
+        appName: 'artistbyron',
+        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
+        ui: new m[1].WebRenderer(),
+        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
+      });
+      loginBtn.addEventListener('click', async function () {
+        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
+        try {
+          var res = await sessionKit.login();
+          waxInput.value = String(res.session.actor);
+          statusEl.textContent = 'Logged in as ' + String(res.session.actor) + ', proven by your wallet. Now hit Save my profile.';
+        } catch (err) {
+          statusEl.textContent = 'Login cancelled or failed, you can still type your WAX name in by hand.';
+        } finally { loginBtn.disabled = false; }
+      });
+      try {
+        var session = await sessionKit.restore();
+        if (session && !waxInput.value) { waxInput.value = String(session.actor); statusEl.textContent = 'Logged in as ' + String(session.actor) + ', proven by your wallet.'; }
+      } catch (err) {}
+    } catch (err) {
+      statusEl.textContent = 'WAX login could not load just now, you can still type your WAX name in by hand.';
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>
