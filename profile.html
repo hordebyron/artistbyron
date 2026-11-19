@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=15">
+<link rel="stylesheet" href="style.css?v=17">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -26,9 +26,11 @@
 <body>
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a class="nav-cta" href="https://discord.gg/rA3UMEkpqc">Horde's Discord</a><a href="crypto.html">Blockchain</a></nav></div></header>
 <main class="wrap">
+  <div id="profile-intro">
   <h1>My Horde profile</h1>
   <p>One person, one profile. Your WAX wallet and your XRPL wallet live here together, tied to one name, so the Horde knows both wallets are you. Add a picture, add your links, and this is the face you show the Horde.</p>
   <p class="small">Saved to the shared Horde list and this device. No password, no seed, ever. Wallet addresses are public on the chain already.</p>
+  </div>
 
   <section class="card" id="member-card" hidden>
     <h2 id="member-name">Welcome back</h2>
@@ -135,7 +137,7 @@
       <li>Log in with WAX here, or with Xaman on the XRP page, and the site greets you by your profile name, not your wallet address.</li>
       <li>Next piece, when Byron says go: a small shared database, so your profile follows you to any device. Right now it saves on this device, like Register does.</li>
     </ul>
-    <p><a class="btn ghost" href="register.html">Register page</a> <a class="btn ghost" href="wallet.html">See my Horde Wallet</a></p>
+    <p><a class="btn ghost" href="register.html">Register page</a> <a class="btn ghost" href="roster.html">See the Horde roster</a></p>
   </section>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="crypto.html">Blockchain</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
@@ -214,11 +216,23 @@ function ipfsUrl(u){
   if (u.indexOf('ipfs/') === 0) return 'https://ipfs.io/' + u;
   return u;
 }
+var pieceCounter = { shown: 0 };
 function addPiece(box, img, name){
   var f = document.createElement('figure');
   var im = document.createElement('img');
-  im.loading = 'lazy'; im.alt = name || 'Horde piece'; im.src = img;
-  im.onerror = function(){ if (img.indexOf('ipfs.io') !== -1) { im.onerror = null; im.src = img.replace('ipfs.io', 'gateway.pinata.cloud'); } else { f.style.display = 'none'; } };
+  im.loading = 'lazy'; im.alt = name || 'Horde piece';
+  var cid = '';
+  var m = String(img).match(/ipfs\/([A-Za-z0-9]+)/) || String(img).match(/^(Qm[A-Za-z0-9]+)$/);
+  if (m) cid = m[1];
+  var tries = [img];
+  if (cid) {
+    tries = ['https://ipfs.io/ipfs/' + cid, 'https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=600&output=webp'];
+    if (tries.indexOf(img) === -1) tries.unshift(img);
+  }
+  var ti = 0;
+  im.onload = function(){ pieceCounter.shown++; };
+  im.onerror = function(){ ti++; if (ti < tries.length) { im.src = tries[ti]; } else { f.style.display = 'none'; } };
+  im.src = tries[0];
   var c = document.createElement('figcaption');
   c.textContent = name || '';
   f.appendChild(im); f.appendChild(c); box.appendChild(f);
@@ -233,7 +247,7 @@ async function loadPieces(p){
   var sx = document.getElementById('side-xrp-wallet'); if (sx) sx.textContent = p.xrp ? 'Wallet: ' + p.xrp : 'No XRP wallet on this profile.';
   var sw = document.getElementById('side-wax-wallet'); if (sw) sw.textContent = p.wax ? 'Wallet: ' + p.wax : 'No WAX wallet on this profile.';
   status.textContent = 'Loading your pieces from both chains…';
-  var shown = 0;
+  pieceCounter.shown = 0;
   if (p.xrp) {
     try {
       var marker = null, pages = 0, mine = [];
@@ -255,7 +269,7 @@ async function loadPieces(p){
             name = mj.name || name; img = ipfsUrl(mj.image || mj.image_url || '');
           }
         } catch (e) {}
-        if (img) { addPiece(xbox, img, name); shown++; }
+        if (img) { addPiece(xbox, img, name); }
       }
       if (!xbox.children.length) xbox.innerHTML = '<p class="small">No Horde pieces found on XRP for this wallet.</p>';
       if (mine.length > capped.length) status.textContent = 'Showing first 60 of ' + mine.length + ' XRP pieces.';
@@ -270,13 +284,14 @@ async function loadPieces(p){
         (wj.data || []).forEach(function(a){
           var cid = (a.data && a.data.img) || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
           var nm = (a.data && a.data.name) || (a.template && a.template.immutable_data && a.template.immutable_data.name) || 'Horde piece';
-          if (cid) { addPiece(wbox, 'https://ipfs.atomichub.io/ipfs/' + cid, nm); any = true; shown++; }
+          if (cid) { addPiece(wbox, 'https://ipfs.io/ipfs/' + cid, nm); any = true; }
         });
       }
       if (!any) wbox.innerHTML = '<p class="small">No Horde pieces found on WAX for this wallet.</p>';
     } catch (e) { wbox.innerHTML = '<p class="small">WAX pieces could not load just now.</p>'; }
   }
-  if (!status.textContent || status.textContent.indexOf('Loading') === 0) status.textContent = shown + ' Horde pieces shown.';
+  await new Promise(function(r){ setTimeout(r, 2500); });
+  status.textContent = pieceCounter.shown + ' Horde pieces shown.';
 }
 
 /* Login loads the Horde profile from the shared list. */
@@ -391,7 +406,7 @@ async function waxCount(acct){
 }
 function setMember(p){
   var known = !!(p && (p.name || p.wax || p.xrp));
-  ['find-card','profile-login-card','event-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = known; });
+  ['find-card','profile-login-card','event-card','profile-intro'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = known; });
   var mc = document.getElementById('member-card');
   if (mc && known) {
     mc.hidden = false;
