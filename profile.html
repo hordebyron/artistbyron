@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=13">
+<link rel="stylesheet" href="style.css?v=15">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -16,6 +16,8 @@
 .profile-view{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
 .profile-view .pfp{width:96px;height:96px}
 .pieces{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px}
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:720px){.sides{grid-template-columns:1fr}}
 .pieces figure{margin:0}
 .pieces img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#0f0f14}
 .pieces figcaption{font-size:.82rem;color:var(--muted);margin-top:4px;word-break:break-word}
@@ -27,6 +29,20 @@
   <h1>My Horde profile</h1>
   <p>One person, one profile. Your WAX wallet and your XRPL wallet live here together, tied to one name, so the Horde knows both wallets are you. Add a picture, add your links, and this is the face you show the Horde.</p>
   <p class="small">Saved to the shared Horde list and this device. No password, no seed, ever. Wallet addresses are public on the chain already.</p>
+
+  <section class="card" id="member-card" hidden>
+    <h2 id="member-name">Welcome back</h2>
+    <p id="member-badge" class="small"></p>
+    <p>Thanks for joining the Horde. This is your page: your WAX side and your XRP side, one profile.</p>
+    <p><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button></p>
+  </section>
+
+  <section class="card" id="find-card">
+    <h2>Your Horde profile page</h2>
+    <p>Every member has a number. Yours is on the roster, and it is in the link you were given when your key was issued. Put your number in and go straight to your page, no login needed to view it.</p>
+    <p><input id="find-no" inputmode="numeric" placeholder="Your profile number" style="max-width:220px"> <button class="btn" type="button" id="find-go">Show my profile</button></p>
+    <p class="small" id="view-note" hidden></p>
+  </section>
 
   <section class="card" id="profile-login-card">
     <h2>Log in, and your profile loads itself</h2>
@@ -47,7 +63,7 @@
   </section>
 
 
-  <section class="card">
+  <section class="card" id="build-card">
     <h2>Build your profile</h2>
     <div class="pfp-wrap">
       <div>
@@ -106,10 +122,10 @@
     <h2>Your Horde pieces</h2>
     <p class="small">Only Horde pieces show here, from Byron's own collections on both chains. Nothing else from your wallets.</p>
     <p class="small" id="pieces-status"></p>
-    <h3>On XRP</h3>
-    <div class="pieces" id="pieces-xrp"></div>
-    <h3>On WAX</h3>
-    <div class="pieces" id="pieces-wax"></div>
+    <div class="sides">
+      <div><h3>Your XRP side</h3><p class="small" id="side-xrp-wallet"></p><div class="pieces" id="pieces-xrp"></div></div>
+      <div><h3>Your WAX side</h3><p class="small" id="side-wax-wallet"></p><div class="pieces" id="pieces-wax"></div></div>
+    </div>
   </section>
 
   <section class="card">
@@ -214,6 +230,8 @@ async function loadPieces(p){
   var wbox = document.getElementById('pieces-wax');
   if (!p.xrp && !p.wax) return;
   card.hidden = false;
+  var sx = document.getElementById('side-xrp-wallet'); if (sx) sx.textContent = p.xrp ? 'Wallet: ' + p.xrp : 'No XRP wallet on this profile.';
+  var sw = document.getElementById('side-wax-wallet'); if (sw) sw.textContent = p.wax ? 'Wallet: ' + p.wax : 'No WAX wallet on this profile.';
   status.textContent = 'Loading your pieces from both chains…';
   var shown = 0;
   if (p.xrp) {
@@ -307,9 +325,47 @@ async function loadProfileForWax(name){
     try {
       if (load(PKEY, null)) return;
       var reg = load(RKEY, null);
-      if (reg && (reg.wax || reg.xrp)) { var row = await sbFind(reg.wax || null, reg.xrp || null); if (row) applyRow(row); }
+      if (reg && (reg.wax || reg.xrp)) {
+        showProfile({ name: reg.name || '', badgename: reg.badgename || '', badge_flagged: !!reg.badge_flagged, wax: reg.wax || '', xrp: reg.xrp || '', discord: reg.discord || '', kofi: reg.kofi || '', x: '', about: '', pfp: '' });
+        var row = await sbFind(reg.wax || null, reg.xrp || null);
+        if (row) applyRow(row);
+      }
     } catch (e) {}
   })();
+})();
+
+document.getElementById('edit-toggle').addEventListener('click', function(){
+  var bc = document.getElementById('build-card');
+  if (bc) { bc.hidden = false; bc.scrollIntoView({ behavior: 'smooth' }); }
+});
+/* Public profile view: profile.html?n=1 loads that member straight
+   from the shared list. Viewing is public, the art and wallets are
+   public on chain already. Login is only for editing and keys. */
+async function sbByNo(n){
+  try {
+    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&profile_no=eq.' + encodeURIComponent(n), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    var rows = await res.json();
+    return (rows && rows.length) ? rows[0] : null;
+  } catch (e) { return null; }
+}
+function enterViewMode(row){
+  ['profile-login-card','build-card','event-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = true; });
+  var note = document.getElementById('view-note');
+  var fc = document.getElementById('find-card');
+  if (fc) fc.hidden = false;
+  if (note) { note.hidden = false; note.textContent = 'You are looking at Horde profile #' + row.profile_no + ', ' + (row.name || '') + '. This page is yours, bookmark it. Viewing needs no login. Your pieces and your key are below.'; }
+}
+document.getElementById('find-go').addEventListener('click', function(){
+  var v = document.getElementById('find-no').value.trim();
+  if (v) location.href = 'profile.html?n=' + encodeURIComponent(v);
+});
+(async function(){
+  try {
+    var n = new URLSearchParams(location.search).get('n');
+    if (!n) return;
+    var row = await sbByNo(n);
+    if (row) { applyRow(row); enterViewMode(row); }
+  } catch (e) {}
 })();
 var ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1 };
 async function xrpCount(addr){
@@ -333,16 +389,28 @@ async function waxCount(acct){
   cols.forEach(function(c){ if (c.collection_name === 'byronartset1' || c.collection_name === 'myhordeonwax') total += parseInt(c.assets, 10) || 0; });
   return total;
 }
+function setMember(p){
+  var known = !!(p && (p.name || p.wax || p.xrp));
+  ['find-card','profile-login-card','event-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = known; });
+  var mc = document.getElementById('member-card');
+  if (mc && known) {
+    mc.hidden = false;
+    document.getElementById('member-name').textContent = p.name ? 'Welcome back, ' + p.name : 'Welcome back';
+    document.getElementById('member-badge').textContent = p.badgename ? 'Badge name: ' + p.badgename + (p.badge_flagged ? ' (flagged, waiting on Byron)' : '') : '';
+    var bc = document.getElementById('build-card'); if (bc) bc.hidden = true;
+  }
+}
 async function showProfile(p){
+  setMember(p);
   var card = document.getElementById('profile-view-card');
   card.hidden = false;
   if (p.pfp) document.getElementById('view-pfp').src = p.pfp;
   document.getElementById('view-name').textContent = p.name + (p.badgename ? '  ·  badge name: ' + p.badgename : '');
   document.getElementById('view-about').textContent = p.about || '';
   var w = [];
-  if (p.wax) w.push('WAX: ' + p.wax);
-  if (p.xrp) w.push('XRPL: ' + p.xrp);
-  document.getElementById('view-wallets').textContent = w.join('  ·  ');
+  if (p.wax) w.push('<div><strong>WAX wallet:</strong> ' + esc(p.wax) + '</div>');
+  if (p.xrp) w.push('<div><strong>XRP wallet:</strong> ' + esc(p.xrp) + '</div>');
+  document.getElementById('view-wallets').innerHTML = w.length ? w.join('') : 'No wallets on this profile yet.';
   var l = [];
   if (p.discord) l.push('Discord: ' + p.discord);
   if (p.kofi) l.push('Ko-fi: ' + p.kofi);
