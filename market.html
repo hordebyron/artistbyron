@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=46">
+<link rel="stylesheet" href="style.css?v=47">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -18,6 +18,21 @@
 
   <section class="card">
     <h2>For sale right now</h2>
+    <p id="sales-filters" style="margin:10px 0">
+      <button class="btn" type="button" data-coll="">All</button>
+      <button class="btn ghost" type="button" data-coll="byronartset1">Art of Byron</button>
+      <button class="btn ghost" type="button" data-coll="myhordeonwax">HORDE on WAX</button>
+      <button class="btn ghost" type="button" data-coll="myzicklearmy">My Zickle Army</button>
+      <button class="btn ghost" type="button" data-coll="myzombiecats">My Zombie Cat Collection</button>
+    </p>
+    <p style="margin:6px 0">
+      <input type="text" id="sales-search" placeholder="Search by name or seller" autocomplete="off" style="max-width:240px">
+      <select id="sales-sort">
+        <option value="new">Newest first</option>
+        <option value="low">Price, low to high</option>
+        <option value="high">Price, high to low</option>
+      </select>
+    </p>
     <p class="small" id="sales-status">Loading the market…</p>
     <div id="sales-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px"></div>
     <p style="margin-top:12px"><button class="btn ghost" type="button" id="sales-refresh">Refresh the market</button></p>
@@ -95,13 +110,27 @@ async function loadSales(){
   allSales = out;
   renderSales();
 }
+var salesColl = '', salesQ = '', salesSort = 'new';
 function renderSales(){
   var grid = document.getElementById('sales-grid');
   var st = document.getElementById('sales-status');
   grid.innerHTML = '';
   if (!allSales.length) { st.textContent = 'Nothing is listed right now. When a holder lists a Horde piece, it shows up here.'; return; }
-  st.textContent = allSales.length + ' Horde piece' + (allSales.length === 1 ? '' : 's') + ' for sale, newest first.';
-  allSales.forEach(function(s){
+  var list = allSales.filter(function(s){
+    if (salesColl && s.collection_name !== salesColl) return false;
+    if (salesQ) {
+      var a = (s.assets || [])[0] || {};
+      var hay = ((a.name || '') + ' ' + (s.seller || '')).toLowerCase();
+      if (hay.indexOf(salesQ) === -1) return false;
+    }
+    return true;
+  });
+  if (salesSort === 'low') list.sort(function(a, b){ return (parseInt(a.price.amount, 10) || 0) - (parseInt(b.price.amount, 10) || 0); });
+  else if (salesSort === 'high') list.sort(function(a, b){ return (parseInt(b.price.amount, 10) || 0) - (parseInt(a.price.amount, 10) || 0); });
+  else list.sort(function(a, b){ return (b.sale_id || 0) - (a.sale_id || 0); });
+  st.textContent = list.length + ' of ' + allSales.length + ' Horde pieces for sale' + (salesColl ? ' in ' + (COLL_LABEL[salesColl] || salesColl) : '') + '.';
+  if (!list.length) { grid.innerHTML = '<p class="small">Nothing matches that filter right now.</p>'; return; }
+  list.forEach(function(s){
     var a = (s.assets || [])[0] || {};
     var img = (a.data && a.data.img) || '';
     var sym = (s.price && s.price.token_symbol) || 'WAX';
@@ -122,6 +151,16 @@ function renderSales(){
   });
 }
 document.getElementById('sales-refresh').addEventListener('click', loadSales);
+document.querySelectorAll('#sales-filters [data-coll]').forEach(function(b){
+  b.addEventListener('click', function(){
+    salesColl = b.getAttribute('data-coll');
+    document.querySelectorAll('#sales-filters [data-coll]').forEach(function(x){ x.className = 'btn ghost'; });
+    b.className = 'btn';
+    renderSales();
+  });
+});
+document.getElementById('sales-search').addEventListener('input', function(){ salesQ = this.value.trim().toLowerCase(); renderSales(); });
+document.getElementById('sales-sort').addEventListener('change', function(){ salesSort = this.value; renderSales(); });
 
 async function ensureLogin(){
   if (sess && actor) return true;
