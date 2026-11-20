@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=28">
+<link rel="stylesheet" href="style.css?v=33">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 
   <section class="card" id="profile-login-card">
     <h2>Log in, and your profile loads itself</h2>
-    <p>Log in with the wallet you registered with. The site finds your Horde profile in the shared list and loads it here, name, badge, both wallets, your pieces. Nothing to retype.</p>
+    <p>Log in with the wallet you registered with. The site finds your Horde profile in the shared list and loads it here, name, both wallets, your pieces. Nothing to retype.</p>
     <p><button class="btn" type="button" id="pf-wax-login">Log in with WAX</button> <a class="btn ghost" href="xrp.html">Log in with XRP instead</a></p>
     <p class="small" id="pf-login-status">Not logged in yet. New here? Build your profile below, that registers you.</p>
   </section>
@@ -57,12 +57,11 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
   <section class="card" id="event-card">
     <h2>Join the Horde, the event</h2>
     <ol class="tight">
-      <li>Register below and pick the name you want on your badge.</li>
+      <li>Register below and pick your name.</li>
       <li>You get your Horde Profile Token, your key, on WAX or XRP. It cannot be sold or given away.</li>
-      <li>Later your key's picture mutates into your personal badge, with your badge name and profile number on it.</li>
+      <li>Later your key's picture mutates into your personal badge, with your name and profile number on it.</li>
       <li>Use that badge as your profile picture, here and anywhere.</li>
     </ol>
-    <p class="small">Badge names: nothing overly obscene. A filter flags rough names automatically, and Byron checks every flagged name himself. Byron has the final say, always.</p>
   </section>
 
 
@@ -79,9 +78,6 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <form id="profile-form">
           <p><label for="pf-name">Display name</label>
           <input type="text" id="pf-name" placeholder="e.g. Tony" autocomplete="off" maxlength="40" required></p>
-          <p><label for="pf-badge">Name for your badge</label>
-          <input type="text" id="pf-badge" placeholder="The name printed on your badge" autocomplete="off" maxlength="24">
-          <span class="small">This exact name goes on your badge when it mutates. Keep it clean, flagged names wait for Byron to check them.</span></p>
           <p><label for="pf-about">About you, one line</label>
           <input type="text" id="pf-about" placeholder="e.g. Collector of zombie cats" autocomplete="off" maxlength="120"></p>
           <p><label for="pf-wax">WAX account name</label>
@@ -148,7 +144,14 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
     <div class="card" style="max-width:880px;margin:24px auto">
       <h3 id="modal-title">Collection</h3>
       <p class="small" id="modal-status"></p>
+      <p class="small">Sort: <select id="modal-sort" style="padding:8px;border-radius:8px;border:1px solid var(--line);background:#0f0f14;color:var(--ink)">
+        <option value="default">As found</option>
+        <option value="az">Name, A to Z</option>
+        <option value="za">Name, Z to A</option>
+        <option value="mint">Lowest mint first</option>
+      </select></p>
       <div class="pieces" id="modal-grid"></div>
+      <p style="margin-top:12px"><button class="btn ghost" type="button" id="modal-more" hidden>Show more pieces</button></p>
       <p style="margin-top:14px"><button class="btn" type="button" id="modal-close">Close</button></p>
     </div>
   </div>
@@ -179,7 +182,7 @@ async function sbFind(wax, xrp){
 }
 function sbMirrorLocal(row){
   if (!row) return;
-  try { localStorage.setItem(RKEY, JSON.stringify({ name: row.name, badgename: row.badge_name || '', badge_flagged: !!row.badge_flagged, wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
+  try { localStorage.setItem(RKEY, JSON.stringify({ name: row.name, wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
 }
 async function sbFindAny(p){
   try {
@@ -206,14 +209,6 @@ async function sbSaveProfile(p){
   } catch (e) { return null; }
 }
 
-var FLAG_WORDS = ['fuck','shit','bitch','cunt','nigger','nigga','faggot','whore','slut','dick','cock','pussy','porn','rape','nazi','hitler','porno','xxx','anal','tits','boobs','penis','vagina','retard','spic','kike','chink','wank','jizz','cum','fag'];
-function badgeFlagged(name){
-  var n = name.toLowerCase();
-  for (var i = 0; i < FLAG_WORDS.length; i++) { if (n.indexOf(FLAG_WORDS[i]) !== -1) return true; }
-  return false;
-}
-
-var pfpData = '';
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function validWax(v){ return !v || /^[a-z1-5.]{1,12}$/.test(v); }
 function validXrp(v){ return !v || /^r[0-9a-zA-Z]{24,34}$/.test(v); }
@@ -257,9 +252,17 @@ function addPiece(box, img, name){
     tries = ['https://ipfs.io/ipfs/' + cid, 'https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=600&output=webp'];
     if (tries.indexOf(img) === -1) tries.unshift(img);
   }
-  var ti = 0;
-  im.onload = function(){ pieceCounter.shown++; };
-  im.onerror = function(){ ti++; if (ti < tries.length) { im.src = tries[ti]; } else { f.style.display = 'none'; } };
+  var ti = 0, timer = null, done = false;
+  function next(){
+    if (done) return;
+    ti++;
+    if (ti < tries.length) { arm(); im.src = tries[ti]; }
+    else { done = true; f.style.display = 'none'; }
+  }
+  function arm(){ clearTimeout(timer); timer = setTimeout(next, 5000); }
+  im.onload = function(){ done = true; clearTimeout(timer); pieceCounter.shown++; };
+  im.onerror = function(){ next(); };
+  arm();
   im.src = tries[0];
   var c = document.createElement('figcaption');
   c.textContent = name || '';
@@ -295,17 +298,44 @@ function openModal(title){
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-grid').innerHTML = '';
   document.getElementById('modal-status').textContent = 'Loading…';
+  document.getElementById('modal-sort').value = 'default';
+  modalItems = []; modalShown = 0;
+  document.getElementById('modal-more').hidden = true;
   m.hidden = false; m.style.display = 'block';
 }
 function closeModal(){ var m = document.getElementById('piece-modal'); m.hidden = true; m.style.display = 'none'; }
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('piece-modal').addEventListener('click', function(e){ if (e.target === this) closeModal(); });
+var modalItems = [], modalShown = 0;
+var MODAL_PAGE = 24;
+function sortedModalItems(){
+  var mode = document.getElementById('modal-sort').value;
+  var list = modalItems.slice();
+  if (mode === 'az') list.sort(function(a, b){ return String(a.name).localeCompare(String(b.name)); });
+  if (mode === 'za') list.sort(function(a, b){ return String(b.name).localeCompare(String(a.name)); });
+  if (mode === 'mint') list.sort(function(a, b){ return (a.mint || 999999999) - (b.mint || 999999999); });
+  return list;
+}
+function renderModalMore(){
+  var grid = document.getElementById('modal-grid');
+  var list = sortedModalItems();
+  var end = Math.min(modalShown + MODAL_PAGE, list.length);
+  for (var i = modalShown; i < end; i++) addPiece(grid, list[i].img, list[i].name);
+  modalShown = end;
+  document.getElementById('modal-more').hidden = modalShown >= list.length;
+  document.getElementById('modal-status').textContent = list.length + ' pieces' + (modalShown < list.length ? ', showing ' + modalShown : '') + '.';
+}
+document.getElementById('modal-more').addEventListener('click', renderModalMore);
+document.getElementById('modal-sort').addEventListener('change', function(){
+  document.getElementById('modal-grid').innerHTML = '';
+  modalShown = 0;
+  renderModalMore();
+});
 async function openXrpCollection(key){
   var g = xrpGroups[key]; if (!g) return;
   openModal(g.name);
-  var grid = document.getElementById('modal-grid');
   var list = g.nfts.slice(0, 100);
-  document.getElementById('modal-status').textContent = list.length + ' pieces' + (g.nfts.length > list.length ? ' (first 100 shown)' : '') + ', loading pictures…';
+  document.getElementById('modal-status').textContent = 'Loading ' + list.length + ' pieces…';
   for (var i = 0; i < list.length; i += 6) {
     var batch = list.slice(i, i + 6);
     await Promise.all(batch.map(async function(n){
@@ -318,25 +348,27 @@ async function openXrpCollection(key){
           name = mj.name || name; img = ipfsUrl(mj.image || mj.image_url || '');
         }
       } catch (e) {}
-      if (img) addPiece(grid, img, name);
+      if (img) modalItems.push({ img: img, name: name, mint: 0 });
     }));
+    if (!modalShown) renderModalMore();
   }
-  document.getElementById('modal-status').textContent = list.length + ' pieces.';
+  modalShown = 0;
+  document.getElementById('modal-grid').innerHTML = '';
+  renderModalMore();
 }
 async function openWaxCollection(collName, displayName){
   openModal(displayName);
-  var grid = document.getElementById('modal-grid');
   try {
     var wr = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(profWallets.wax) + '&collection_name=' + collName + '&limit=100&order_desc=false');
     var wj = await wr.json();
     var data = wj.data || [];
-    document.getElementById('modal-status').textContent = data.length + ' pieces' + (data.length >= 100 ? ' (first 100 shown)' : '') + '.';
     data.forEach(function(a){
       var cid = (a.data && a.data.img) || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
       var nm = (a.data && a.data.name) || (a.template && a.template.immutable_data && a.template.immutable_data.name) || displayName;
-      if (cid) addPiece(grid, 'https://ipfs.io/ipfs/' + String(cid).replace(/^ipfs:\/\//, ''), nm);
+      if (cid) modalItems.push({ img: 'https://ipfs.io/ipfs/' + String(cid).replace(/^ipfs:\/\//, ''), name: nm, mint: parseInt(a.template_mint || '0', 10) || 999999999 });
     });
-    if (!grid.children.length) document.getElementById('modal-status').textContent = 'No pictures could load for this collection.';
+    if (!modalItems.length) { document.getElementById('modal-status').textContent = 'No pictures could load for this collection.'; return; }
+    renderModalMore();
   } catch (e) { document.getElementById('modal-status').textContent = 'Could not load this collection just now.'; }
 }
 async function loadPieces(p){
@@ -425,10 +457,10 @@ async function loadPieces(p){
 
 /* Login loads the Horde profile from the shared list. */
 function applyRow(row){
-  var p = { name: row.name || '', badgename: row.badge_name || '', badge_flagged: !!row.badge_flagged, wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: '', level: row.level || 0 };
+  var p = { name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: '', level: row.level || 0 };
   var old = load(PKEY, null);
   if (old && old.pfp) p.pfp = old.pfp;
-  save(PKEY, p); sbMirrorLocal(p.wax || p.xrp ? { name: p.name, badge_name: p.badgename, badge_flagged: p.badge_flagged, wax: p.wax, xrp: p.xrp, discord: p.discord, kofi: p.kofi } : null);
+  save(PKEY, p); sbMirrorLocal(p.wax || p.xrp ? { name: p.name, wax: p.wax, xrp: p.xrp, discord: p.discord, kofi: p.kofi } : null);
   fillForm(p); showProfile(p);
   return p;
 }
@@ -437,7 +469,7 @@ async function loadProfileForWax(name){
   st.textContent = 'Logged in as ' + name + ', proven by your wallet. Looking up your Horde profile…';
   var row = await sbFind(name, null);
   if (row) { applyRow(row); st.textContent = 'Logged in as ' + name + '. Your Horde profile is loaded, welcome back.'; }
-  else { document.getElementById('f-wax').value = name; st.textContent = 'Logged in as ' + name + '. No Horde profile for this wallet yet. Fill in your name and badge name below and save, that creates it.'; }
+  else { document.getElementById('f-wax').value = name; st.textContent = 'Logged in as ' + name + '. No Horde profile for this wallet yet. Fill in your name below and save, that creates it.'; }
 }
 (function(){
   var btn = document.getElementById('pf-wax-login');
@@ -470,7 +502,7 @@ async function loadProfileForWax(name){
       if (load(PKEY, null)) return;
       var reg = load(RKEY, null);
       if (reg && (reg.wax || reg.xrp)) {
-        showProfile({ name: reg.name || '', badgename: reg.badgename || '', badge_flagged: !!reg.badge_flagged, wax: reg.wax || '', xrp: reg.xrp || '', discord: reg.discord || '', kofi: reg.kofi || '', x: '', about: '', pfp: '' });
+        showProfile({ name: reg.name || '', wax: reg.wax || '', xrp: reg.xrp || '', discord: reg.discord || '', kofi: reg.kofi || '', x: '', about: '', pfp: '' });
         var row = await sbFind(reg.wax || null, reg.xrp || null);
         if (row) applyRow(row);
       }
@@ -580,7 +612,7 @@ async function showProfile(p){
   var card = document.getElementById('profile-view-card');
   card.hidden = false;
   if (p.pfp) document.getElementById('view-pfp').src = p.pfp;
-  document.getElementById('view-name').textContent = p.name + (p.badgename && p.badgename !== p.name ? '  ·  badge name: ' + p.badgename : '');
+  document.getElementById('view-name').textContent = p.name;
   var vh = document.getElementById('view-heading');
   if (vh) vh.textContent = window.__viewOnly ? (p.name ? p.name + "'s Horde profile" : 'Horde profile') : ('Welcome back' + (p.name ? ', ' + p.name : ''));
   document.getElementById('view-about').textContent = p.about || '';
@@ -629,8 +661,6 @@ document.getElementById('profile-form').addEventListener('submit', function(e){
   e.preventDefault();
   var status = document.getElementById('pf-status');
   var p = {
-    badgename: document.getElementById('pf-badge').value.trim(),
-    badge_flagged: badgeFlagged(document.getElementById('pf-badge').value.trim()),
     name: document.getElementById('pf-name').value.trim(),
     about: document.getElementById('pf-about').value.trim(),
     wax: document.getElementById('pf-wax').value.trim().toLowerCase(),
@@ -644,15 +674,13 @@ document.getElementById('profile-form').addEventListener('submit', function(e){
   if (!p.name) { status.textContent = 'Pick a display name first.'; return; }
   if (!validWax(p.wax)) { status.textContent = 'That WAX name does not look right. Lower case, 12 characters max.'; return; }
   if (!validXrp(p.xrp)) { status.textContent = 'That XRPL address does not look right. It should start with r.'; return; }
-  if (!p.wax && !p.xrp) { status.textContent = 'Add at least one wallet, WAX or XRPL, so the chains can find you.'; return; }
-  sbSaveProfile({ name: p.name, badge_name: p.badgename || null, badge_flagged: !!p.badge_flagged, wax: p.wax || null, xrp: p.xrp || null, discord: p.discord || null, kofi: p.kofi || null, x_handle: p.x || null, about: p.about || null });
+  if (!p.wax && !p.xrp && !p.kofi && !p.discord) { status.textContent = 'Add at least one way for us to know you: a WAX or XRP wallet, your Ko-fi name, or your Discord name.'; return; }
+  sbSaveProfile({ name: p.name, wax: p.wax || null, xrp: p.xrp || null, discord: p.discord || null, kofi: p.kofi || null, x_handle: p.x || null, about: p.about || null });
   save(PKEY, p);
   var r = load(RKEY) || {};
-  r.name = p.name; r.wax = p.wax; r.xrp = p.xrp; r.discord = p.discord; r.kofi = p.kofi; r.badgename = p.badgename; r.badge_flagged = p.badge_flagged;
+  r.name = p.name; r.wax = p.wax; r.xrp = p.xrp; r.discord = p.discord; r.kofi = p.kofi;
   save(RKEY, r);
-  status.textContent = p.badge_flagged
-    ? 'Saved, but that badge name got flagged. Byron checks flagged names himself and has the final say, so your badge waits for his okay.'
-    : 'Saved. Both wallets now point at one Horde profile, ' + p.name + '.';
+  status.textContent = 'Saved. Everything on this form now points at one Horde profile, ' + p.name + '.';
   showProfile(p);
 });
 document.getElementById('pf-clear').addEventListener('click', function(){
@@ -665,10 +693,9 @@ document.getElementById('pf-clear').addEventListener('click', function(){
 });
 (function(){
   var p = load(PKEY);
-  if (!p) { var r = load(RKEY); if (r) { p = { name: r.name || '', badgename: r.badgename || '', wax: r.wax || '', xrp: r.xrp || '', discord: r.discord || '', kofi: r.kofi || '', about: '', x: '', pfp: '' }; } }
+  if (!p) { var r = load(RKEY); if (r) { p = { name: r.name || '', wax: r.wax || '', xrp: r.xrp || '', discord: r.discord || '', kofi: r.kofi || '', about: '', x: '', pfp: '' }; } }
   if (!p) return;
   document.getElementById('pf-name').value = p.name || '';
-  document.getElementById('pf-badge').value = p.badgename || '';
   document.getElementById('pf-about').value = p.about || '';
   document.getElementById('pf-wax').value = p.wax || '';
   document.getElementById('pf-xrp').value = p.xrp || '';
