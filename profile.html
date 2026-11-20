@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=26">
+<link rel="stylesheet" href="style.css?v=27">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -118,6 +118,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <p id="view-wallets" class="small"></p>
         <p id="view-links" class="small"></p>
         <p id="view-holdings"><strong>Holdings:</strong> <span id="holdings-text">checking…</span></p>
+        <p id="view-balances"><strong>Balances:</strong> <span id="balances-text">checking…</span></p>
         <p id="view-key"><strong>Horde key:</strong> <span id="key-text">checking…</span></p>
         <p><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button></p>
       </div>
@@ -533,6 +534,28 @@ async function waxCount(acct){
   cols.forEach(function(c){ if (c.collection_name === 'byronartset1' || c.collection_name === 'myhordeonwax') total += parseInt(c.assets, 10) || 0; });
   return total;
 }
+
+async function chainPost(host, path, body){
+  var r = await fetch(host + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  return r.json();
+}
+async function loadBalances(p){
+  var el = document.getElementById('balances-text');
+  if (!el) return;
+  if (!p.wax) { el.textContent = 'no WAX wallet on this profile yet.'; return; }
+  var hosts = ['https://wax.greymass.com', 'https://wax.eosphere.io'];
+  for (var i = 0; i < hosts.length; i++) {
+    try {
+      var acc = await chainPost(hosts[i], '/v1/chain/get_account', { account_name: p.wax });
+      var waxBal = acc && acc.core_liquid_balance ? parseFloat(acc.core_liquid_balance) : 0;
+      var dhc = await chainPost(hosts[i], '/v1/chain/get_currency_balance', { code: 'dahordescoin', account: p.wax, symbol: 'DHC' });
+      var dhcBal = (dhc && dhc.length) ? parseFloat(dhc[0]) : 0;
+      el.textContent = Math.round(dhcBal).toLocaleString('en-US') + ' DHC · ' + waxBal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' WAX';
+      return;
+    } catch (e) {}
+  }
+  el.textContent = 'could not load just now.';
+}
 var RANKS = { 0: 'Initiate' };
 function rankName(l){ return RANKS[l] || 'Horde'; }
 function renderBadges(p, hasKey){
@@ -570,6 +593,7 @@ async function showProfile(p){
   if (p.kofi) l.push('Ko-fi: ' + p.kofi);
   if (p.x) l.push('X: ' + p.x);
   document.getElementById('view-links').textContent = l.join('  ·  ');
+  loadBalances(p);
   renderBadges(p, false);
   var k = document.getElementById('key-text');
   var keys = [];
