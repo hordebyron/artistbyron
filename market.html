@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horde Market · Artist Byron</title>
+<meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
+<link rel="stylesheet" href="style.css?v=45">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>The Horde Market</h1>
+  <p>Horde pieces, sold by the people who hold them. Every sale runs through the AtomicMarket contract, which holds the piece and settles the payment itself. Nobody here holds your money or your art.</p>
+
+  <section class="card">
+    <h2>For sale right now</h2>
+    <p class="small" id="sales-status">Loading the market…</p>
+    <div id="sales-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px"></div>
+    <p style="margin-top:12px"><button class="btn ghost" type="button" id="sales-refresh">Refresh the market</button></p>
+  </section>
+
+  <section class="card">
+    <h2>Sell your Horde pieces</h2>
+    <p>Log in with the WAX wallet that holds your pieces. Listing moves the piece into the market contract until it sells or you cancel, and the contract sends your WAX when it sells. The market fee and the collection fee come out of the sale price on their own.</p>
+    <p><button class="btn" type="button" id="mkt-login-btn">Log in with WAX</button> <button class="btn ghost" type="button" id="mkt-logout-btn" hidden>Log out</button></p>
+    <p class="small" id="mkt-status">Not logged in.</p>
+    <div id="sell-area" hidden>
+      <h3>Your listings</h3>
+      <p class="small" id="your-sales-status">None yet.</p>
+      <div id="your-sales"></div>
+      <h3>Your pieces</h3>
+      <p><input type="text" id="piece-filter" placeholder="Type to filter by name" autocomplete="off" style="max-width:320px"></p>
+      <p class="small" id="your-pieces-status">Loading your pieces…</p>
+      <div id="your-pieces" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px"></div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="profile.html">My Horde Profile</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
+
+<script>
+var COLLS = [
+  { id: 'byronartset1', label: 'Art of Byron' },
+  { id: 'myhordeonwax', label: 'HORDE on WAX' },
+  { id: 'myzicklearmy', label: 'My Zickle Army' },
+  { id: 'myzombiecats', label: 'My Zombie Cat Collection' }
+];
+var COLL_LABEL = {}; COLLS.forEach(function(c){ COLL_LABEL[c.id] = c.label; });
+var AM = 'https://wax.api.atomicassets.io/atomicmarket/v2';
+var AA = 'https://wax.api.atomicassets.io/atomicassets/v1';
+var actor = null, kit = null, sess = null;
+
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function imgTag(cid, alt){
+  if (!cid) return '';
+  if (/^https:/.test(cid)) return '<img src="' + esc(cid) + '" alt="' + esc(alt || '') + '" loading="lazy" style="width:100%;border-radius:8px">';
+  return '<img src="https://ipfs.io/ipfs/' + esc(cid) + '" data-cid="' + esc(cid) + '" data-step="0" alt="' + esc(alt || '') + '" loading="lazy" style="width:100%;border-radius:8px" onerror="imgFallback(this)">';
+}
+function imgFallback(im){
+  var step = parseInt(im.getAttribute('data-step') || '0', 10) + 1;
+  im.setAttribute('data-step', step);
+  var cid = im.getAttribute('data-cid');
+  if (step === 1) im.src = 'https://gateway.pinata.cloud/ipfs/' + cid;
+  else if (step === 2) im.src = 'https://resizer.atomichub.io/images/v2/image/' + cid;
+  else im.onerror = null;
+}
+function fmtWax(raw){
+  var v = parseInt(raw, 10) / 100000000;
+  if (!isFinite(v)) return '?';
+  return (Math.round(v * 100) / 100).toString();
+}
+function qtyFromRaw(raw){
+  var s = String(raw).replace(/\D/g, '');
+  while (s.length < 9) s = '0' + s;
+  return s.slice(0, -8) + '.' + s.slice(-8) + ' WAX';
+}
+
+/* ---------- the market wall ---------- */
+var allSales = [];
+async function loadSales(){
+  var st = document.getElementById('sales-status');
+  st.textContent = 'Loading the market…';
+  var out = [];
+  for (var i = 0; i < COLLS.length; i++) {
+    try {
+      var r = await fetch(AM + '/sales?state=1&collection_name=' + COLLS[i].id + '&page=1&limit=100&order_desc=true&sort=created');
+      var j = await r.json();
+      (j.data || []).forEach(function(s){ out.push(s); });
+    } catch (e) {}
+  }
+  out.sort(function(a, b){ return (b.sale_id || 0) - (a.sale_id || 0); });
+  allSales = out;
+  renderSales();
+}
+function renderSales(){
+  var grid = document.getElementById('sales-grid');
+  var st = document.getElementById('sales-status');
+  grid.innerHTML = '';
+  if (!allSales.length) { st.textContent = 'Nothing is listed right now. When a holder lists a Horde piece, it shows up here.'; return; }
+  st.textContent = allSales.length + ' Horde piece' + (allSales.length === 1 ? '' : 's') + ' for sale, newest first.';
+  allSales.forEach(function(s){
+    var a = (s.assets || [])[0] || {};
+    var img = (a.data && a.data.img) || '';
+    var sym = (s.price && s.price.token_symbol) || 'WAX';
+    var card = document.createElement('div');
+    card.style.border = '1px solid var(--line)'; card.style.borderRadius = '12px'; card.style.padding = '10px';
+    var html = imgTag(img, a.name)
+      + '<p style="margin:8px 0 2px"><strong>' + esc(a.name || 'Horde piece') + '</strong></p>'
+      + '<p class="small" style="margin:2px 0">' + esc(COLL_LABEL[s.collection_name] || s.collection_name || '') + '</p>'
+      + '<p class="small" style="margin:2px 0">Seller: ' + esc(s.seller || '') + '</p>'
+      + '<p style="margin:6px 0"><strong>' + (sym === 'WAX' ? fmtWax(s.price.amount) : esc(((parseInt(s.price.amount, 10) / Math.pow(10, s.price.token_precision || 8)) || 0).toString())) + ' ' + esc(sym) + '</strong></p>';
+    if (sym === 'WAX') html += '<button class="btn" type="button" data-buy="' + s.sale_id + '">Buy</button>';
+    else html += '<a class="btn ghost" href="https://wax.atomichub.io/market/sale/' + s.sale_id + '" target="_blank" rel="noopener">Buy on AtomicHub</a>';
+    card.innerHTML = html;
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll('[data-buy]').forEach(function(b){
+    b.addEventListener('click', function(){ buySale(b.getAttribute('data-buy'), b); });
+  });
+}
+document.getElementById('sales-refresh').addEventListener('click', loadSales);
+
+async function ensureLogin(){
+  if (sess && actor) return true;
+  var st = document.getElementById('mkt-status');
+  st.textContent = 'Opening your wallet…';
+  try {
+    var res = await kit.login();
+    sess = res.session; actor = String(sess.actor);
+    onLogin();
+    return true;
+  } catch (e) { st.textContent = 'Login cancelled or failed. ' + (e && e.message ? e.message : ''); return false; }
+}
+async function buySale(saleId, btn){
+  var st = document.getElementById('mkt-status');
+  if (!await ensureLogin()) return;
+  var sale = null;
+  allSales.forEach(function(s){ if (String(s.sale_id) === String(saleId)) sale = s; });
+  if (!sale) { st.textContent = 'That listing is gone. Refresh the market.'; return; }
+  if (sale.seller === actor) { st.textContent = 'That one is yours. Cancel the listing below if you want it back.'; return; }
+  btn.disabled = true;
+  st.textContent = 'Your wallet is asking you to approve the buy…';
+  try {
+    await sess.transact({ actions: [
+      { account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: '' } },
+      { account: 'atomicmarket', name: 'purchasesale', authorization: [sess.authorization], data: { buyer: actor, sale_id: sale.sale_id, intended_delisting_memo: '', taker_marketplace: '' } }
+    ] });
+    st.textContent = 'Bought. The piece is in your wallet now. Refreshing the market…';
+    loadSales(); loadYourStuff();
+  } catch (e) { st.textContent = 'Buy did not go through. ' + (e && e.message ? e.message : ''); }
+  btn.disabled = false;
+}
+
+/* ---------- selling ---------- */
+function onLogin(){
+  document.getElementById('mkt-login-btn').hidden = true;
+  document.getElementById('mkt-logout-btn').hidden = false;
+  document.getElementById('mkt-status').textContent = 'Logged in as ' + actor + '.';
+  document.getElementById('sell-area').hidden = false;
+  try { localStorage.setItem('horde_proven', actor); } catch (e) {}
+  loadYourStuff();
+}
+async function loadYourStuff(){
+  if (!actor) return;
+  var ys = document.getElementById('your-sales-status');
+  var ybox = document.getElementById('your-sales');
+  ybox.innerHTML = '';
+  try {
+    var r = await fetch(AM + '/sales?state=1&seller=' + encodeURIComponent(actor) + '&page=1&limit=100');
+    var j = await r.json();
+    var mine = (j.data || []).filter(function(s){ return COLL_LABEL[s.collection_name]; });
+    if (!mine.length) ys.textContent = 'You have nothing listed right now.';
+    else {
+      ys.textContent = 'You have ' + mine.length + ' piece' + (mine.length === 1 ? '' : 's') + ' listed.';
+      mine.forEach(function(s){
+        var a = (s.assets || [])[0] || {};
+        var row = document.createElement('p');
+        row.innerHTML = esc(a.name || 'Horde piece') + ' · <strong>' + fmtWax(s.price.amount) + ' WAX</strong> ';
+        var b = document.createElement('button');
+        b.className = 'btn ghost'; b.type = 'button'; b.textContent = 'Cancel listing';
+        b.addEventListener('click', function(){ cancelSale(s.sale_id, b); });
+        row.appendChild(b);
+        ybox.appendChild(row);
+      });
+    }
+  } catch (e) { ys.textContent = 'Your listings could not load just now.'; }
+  loadYourPieces();
+}
+var yourPieces = [];
+async function loadYourPieces(){
+  var st = document.getElementById('your-pieces-status');
+  st.textContent = 'Loading your pieces…';
+  yourPieces = [];
+  for (var i = 0; i < COLLS.length; i++) {
+    try {
+      var r = await fetch(AA + '/assets?owner=' + encodeURIComponent(actor) + '&collection_name=' + COLLS[i].id + '&page=1&limit=100&order_desc=false&sort=asset_id');
+      var j = await r.json();
+      (j.data || []).forEach(function(a){ yourPieces.push(a); });
+    } catch (e) {}
+  }
+  renderYourPieces();
+}
+function renderYourPieces(){
+  var st = document.getElementById('your-pieces-status');
+  var box = document.getElementById('your-pieces');
+  var f = (document.getElementById('piece-filter').value || '').toLowerCase();
+  box.innerHTML = '';
+  var shown = 0;
+  yourPieces.forEach(function(a){
+    var name = a.name || (a.data && a.data.name) || 'Horde piece';
+    if (f && name.toLowerCase().indexOf(f) === -1) return;
+    if (shown >= 100) return;
+    shown++;
+    var img = (a.data && a.data.img) || '';
+    var card = document.createElement('div');
+    card.style.border = '1px solid var(--line)'; card.style.borderRadius = '12px'; card.style.padding = '10px';
+    card.innerHTML = imgTag(img, name)
+      + '<p style="margin:8px 0 2px"><strong>' + esc(name) + '</strong></p>'
+      + '<p class="small" style="margin:2px 0">' + esc(COLL_LABEL[a.collection && a.collection.collection_name] || '') + '</p>'
+      + '<p style="margin:6px 0"><input type="number" min="0" step="any" placeholder="Price in WAX" id="price-' + a.asset_id + '" style="width:110px"></p>';
+    var b = document.createElement('button');
+    b.className = 'btn'; b.type = 'button'; b.textContent = 'List for sale';
+    b.addEventListener('click', function(){ listPiece(a.asset_id, b); });
+    card.appendChild(b);
+    box.appendChild(card);
+  });
+  st.textContent = yourPieces.length
+    ? 'You hold ' + yourPieces.length + ' Horde pieces in the market collections' + (shown < yourPieces.length ? ', showing ' + shown + '. Type in the filter to find the rest.' : '.')
+    : 'No Horde pieces found in this wallet for the market collections.';
+}
+document.getElementById('piece-filter').addEventListener('input', renderYourPieces);
+
+async function listPiece(assetId, btn){
+  var st = document.getElementById('mkt-status');
+  var inp = document.getElementById('price-' + assetId);
+  var price = parseFloat(inp && inp.value);
+  if (!price || price <= 0) { st.textContent = 'Type a price in WAX first, then hit List for sale.'; return; }
+  var qty = price.toFixed(8) + ' WAX';
+  btn.disabled = true;
+  st.textContent = 'Your wallet is asking you to approve the listing…';
+  try {
+    await sess.transact({ actions: [
+      { account: 'atomicmarket', name: 'announcesale', authorization: [sess.authorization], data: { seller: actor, asset_ids: [assetId], listing_price: qty, settlement_symbol: '8,WAX', maker_marketplace: '' } },
+      { account: 'atomicassets', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', asset_ids: [assetId], memo: 'sale' } }
+    ] });
+    st.textContent = 'Listed. It is on the market wall now.';
+    loadSales(); loadYourStuff();
+  } catch (e) { st.textContent = 'Listing did not go through. ' + (e && e.message ? e.message : ''); }
+  btn.disabled = false;
+}
+async function cancelSale(saleId, btn){
+  var st = document.getElementById('mkt-status');
+  btn.disabled = true;
+  st.textContent = 'Your wallet is asking you to approve the cancel…';
+  try {
+    await sess.transact({ actions: [
+      { account: 'atomicmarket', name: 'declinesale', authorization: [sess.authorization], data: { sale_id: saleId } }
+    ] });
+    st.textContent = 'Listing cancelled. The piece is back in your wallet.';
+    loadSales(); loadYourStuff();
+  } catch (e) { st.textContent = 'Cancel did not go through. ' + (e && e.message ? e.message : ''); }
+  btn.disabled = false;
+}
+
+/* ---------- wallet kit, same loader as the profile page ---------- */
+(async function init(){
+  var st = document.getElementById('mkt-status');
+  try {
+    var m = await Promise.all([
+      import('https://esm.sh/@wharfkit/session@4.0.2'),
+      import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+      import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+      import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+    ]);
+    kit = new m[0].SessionKit({ appName: 'artistbyron', chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }], ui: new m[1].WebRenderer(), walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()] });
+    window.__mktKit = kit;
+    document.getElementById('mkt-login-btn').addEventListener('click', ensureLogin);
+    document.getElementById('mkt-logout-btn').addEventListener('click', async function(){
+      try { await kit.logout(); } catch (e) {}
+      sess = null; actor = null;
+      document.getElementById('sell-area').hidden = true;
+      document.getElementById('mkt-login-btn').hidden = false;
+      document.getElementById('mkt-logout-btn').hidden = true;
+      st.textContent = 'Logged out.';
+    });
+    try { var restored = await kit.restore(); if (restored) { sess = restored; actor = String(restored.actor); onLogin(); } } catch (e) {}
+  } catch (e) { st.textContent = 'WAX login could not load just now. The market wall above still works for looking.'; }
+})();
+loadSales();
+</script>
+<script>
+(function(){
+  var a = document.getElementById('nav-login'); if (!a) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__mktKit) await window.__mktKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+})();
+</script>
+</body>
+</html>
