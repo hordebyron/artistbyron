@@ -9,7 +9,7 @@
 
 
 
-<link rel="stylesheet" href="style.css?v=22">
+<link rel="stylesheet" href="style.css?v=25">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@
     <ul class="tight">
       <li>Come back here, or to My Horde Wallet, and the page greets you by name and shows what you hold.</li>
       <li>Your rank comes from what you hold. Points and ranks stay quiet until after Monday 16 Nov, then they show on your Horde card.</li>
-      <li>If you only have one wallet, register that one. You can add the other one later, same name, same page.</li>
+      <li>If you only have one wallet, register that one. No wallet yet? Your Ko-fi name or Discord name works too. You can add a wallet later, same name, same profile.</li>
     </ul>
   </section>
 </main>
@@ -97,9 +97,24 @@ async function sbFind(wax, xrp){
     return (rows && rows.length) ? rows[0] : null;
   } catch (e) { return null; }
 }
+async function sbFindAny(p){
+  try {
+    var tries = [];
+    if (p.wax) tries.push(['wax', p.wax]);
+    if (p.xrp) tries.push(['xrp', p.xrp]);
+    if (p.kofi) tries.push(['kofi', p.kofi]);
+    if (p.discord) tries.push(['discord', p.discord]);
+    for (var i = 0; i < tries.length; i++) {
+      var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&' + tries[i][0] + '=eq.' + encodeURIComponent(tries[i][1]), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+      var rows = await res.json();
+      if (rows && rows.length) return rows[0];
+    }
+  } catch (e) {}
+  return null;
+}
 async function sbSaveProfile(p){
   try {
-    var existing = await sbFind(p.wax, p.xrp);
+    var existing = await sbFindAny(p);
     if (existing) return existing;
     var res = await fetch(SB_URL + '/rest/v1/profiles', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify(p) });
     var rows = await res.json();
@@ -166,7 +181,7 @@ form.addEventListener('submit', function(e){
   if (!r.name) { resultEl.hidden = false; resultEl.innerHTML = '<p>Pick a name first, that is the only required bit.</p>'; return; }
   if (!validWax(r.wax)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That WAX name does not look right. WAX names are lower case, 12 characters max, like ylab4.wam.</p>'; return; }
   if (!validXrp(r.xrp)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That XRPL address does not look right. It should start with r.</p>'; return; }
-  if (!r.wax && !r.xrp) { resultEl.hidden = false; resultEl.innerHTML = '<p>Add at least one wallet, WAX or XRPL, so we know it is you.</p>'; return; }
+  if (!r.wax && !r.xrp && !r.kofi && !r.discord) { resultEl.hidden = false; resultEl.innerHTML = '<p>Add at least one way for us to know you: a WAX or XRP wallet, your Ko-fi name, or your Discord name.</p>'; return; }
   try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (err) {}
   showReg(r);
   sbSaveProfile({ name: r.name, badge_name: r.badgename || null, badge_flagged: !!r.badge_flagged, wax: r.wax || null, xrp: r.xrp || null, discord: r.discord || null, kofi: r.kofi || null });

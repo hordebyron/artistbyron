@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=24">
+<link rel="stylesheet" href="style.css?v=25">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -176,9 +176,24 @@ function sbMirrorLocal(row){
   if (!row) return;
   try { localStorage.setItem(RKEY, JSON.stringify({ name: row.name, badgename: row.badge_name || '', badge_flagged: !!row.badge_flagged, wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
 }
+async function sbFindAny(p){
+  try {
+    var tries = [];
+    if (p.wax) tries.push(['wax', p.wax]);
+    if (p.xrp) tries.push(['xrp', p.xrp]);
+    if (p.kofi) tries.push(['kofi', p.kofi]);
+    if (p.discord) tries.push(['discord', p.discord]);
+    for (var i = 0; i < tries.length; i++) {
+      var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&' + tries[i][0] + '=eq.' + encodeURIComponent(tries[i][1]), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+      var rows = await res.json();
+      if (rows && rows.length) return rows[0];
+    }
+  } catch (e) {}
+  return null;
+}
 async function sbSaveProfile(p){
   try {
-    var existing = await sbFind(p.wax, p.xrp);
+    var existing = await sbFindAny(p);
     if (existing) return existing;
     var res = await fetch(SB_URL + '/rest/v1/profiles', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify(p) });
     var rows = await res.json();
@@ -324,7 +339,7 @@ async function loadPieces(p){
   var status = document.getElementById('pieces-status');
   var xbox = document.getElementById('coll-xrp');
   var wbox = document.getElementById('coll-wax');
-  if (!p.xrp && !p.wax) return;
+  if (!p.xrp && !p.wax) { var ht0 = document.getElementById('holdings-text'); if (ht0) ht0.textContent = 'No wallets on this profile yet. Add one any time and your pieces and key show here.'; return; }
   card.hidden = false;
   profWallets = { xrp: p.xrp || '', wax: p.wax || '' };
   var sx = document.getElementById('side-xrp-wallet'); if (sx) sx.textContent = p.xrp ? 'Wallet: ' + p.xrp : 'No XRP wallet on this profile.';
