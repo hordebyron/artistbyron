@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=40">
+<link rel="stylesheet" href="style.css?v=43">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -510,6 +510,11 @@ async function loadProfileForWax(name){
   st.textContent = 'Logged in as ' + name + ', proven by your wallet. Looking up your Horde profile…';
   var row = await sbFind(name, null);
   try { localStorage.setItem('horde_proven', name); } catch (e) {}
+  if (row && window.__viewOnly && isProvenFor(row)) {
+    window.__viewOnly = false; window.__viewMine = true;
+    var et2 = document.getElementById('edit-toggle'); if (et2) et2.hidden = false;
+    var vn = document.getElementById('view-note'); if (vn) vn.hidden = true;
+  }
   if (row) { applyRow(row); st.textContent = 'Logged in as ' + name + '. Your Horde profile is loaded, welcome back.'; }
   else { document.getElementById('f-wax').value = name; st.textContent = 'Logged in as ' + name + '. No Horde profile for this wallet yet. Fill in your name below and save, that creates it.'; }
 }
@@ -590,7 +595,10 @@ document.getElementById('find-go').addEventListener('click', function(){
     var n = new URLSearchParams(location.search).get('n');
     if (!n) return;
     var row = await sbByNo(n);
-    if (row) { enterViewMode(row); applyRow(row, true); }
+    if (row) {
+      if (isProvenFor(row)) { applyRow(row); }
+      else { enterViewMode(row); applyRow(row, true); }
+    }
   } catch (e) {}
 })();
 var ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1 };

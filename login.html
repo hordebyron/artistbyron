@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=42">
+<link rel="stylesheet" href="style.css?v=43">
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -88,7 +88,7 @@ async function goProfile(wax){
   var st = document.getElementById('login-wax-status');
   st.textContent = 'Logged in as ' + wax + '. Looking up your Horde profile…';
   var row = await sbFind(wax, null);
-  if (row) { try { localStorage.setItem('horde_proven', wax); } catch (e) {} sbMirrorLocal(row); location.href = 'profile.html?n=' + row.profile_no; return; }
+  if (row) { try { localStorage.setItem('horde_proven', wax); } catch (e) {} sbMirrorLocal(row); location.href = 'profile.html'; return; }
   st.textContent = 'Logged in as ' + wax + ', but no Horde profile has that wallet yet. If that is news to you, register below and this wallet ties to your profile.';
 }
 document.getElementById('login-no-btn').addEventListener('click', async function(){

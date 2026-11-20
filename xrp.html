@@ -21,7 +21,7 @@
 }
 </style>
 
-<link rel="stylesheet" href="style.css?v=36">
+<link rel="stylesheet" href="style.css?v=43">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -271,7 +271,7 @@ async function showHorde(addr, proven) {
   var html = '<ul class="collection-list">' + heldRows.map(rowHtml).join('') + '</ul>';
   if (zeroRows.length) html += '<details><summary>Collections you do not hold yet (' + zeroRows.length + ')</summary><ul class="collection-list">' + zeroRows.map(rowHtml).join('') + '</ul></details>';
   if (sbRow) html += '<p><a class="btn" href="profile.html?n=' + sbRow.profile_no + '">Your Horde profile is loaded, view it here</a></p>';
-  if (sbRow && proven) setTimeout(function(){ location.href = 'profile.html?n=' + sbRow.profile_no; }, 600);
+  if (sbRow && proven) setTimeout(function(){ location.href = 'profile.html'; }, 600);
   inventoryEl.innerHTML = html;
   document.getElementById('switch-wallet-wrap').hidden = false;
 }
