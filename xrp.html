@@ -21,7 +21,7 @@
 }
 </style>
 
-<link rel="stylesheet" href="style.css?v=22">
+<link rel="stylesheet" href="style.css?v=36">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -123,7 +123,7 @@ async function tryAutoReconnect() {
     var addr = normAddr(acct);
     if (addr) {
       statusEl.textContent = 'Logged in with Xaman as ' + shortAddr(addr) + '.';
-      showHorde(addr);
+      showHorde(addr, true);
     }
   } catch (e) {}
 }
@@ -137,7 +137,7 @@ async function loginWithExtension(adapterId, label) {
     var addr = normAddr(res && res.account);
     if (addr) {
       statusEl.textContent = 'Logged in with ' + label + ' as ' + shortAddr(addr) + '.';
-      showHorde(addr);
+      showHorde(addr, true);
     } else {
       statusEl.textContent = label + ' did not return an address. Make sure the extension is installed and unlocked, or paste your address below.';
     }
@@ -155,7 +155,7 @@ async function loginWithXaman() {
     hideXamanQr();
     if (addr) {
       statusEl.textContent = 'Logged in with Xaman as ' + shortAddr(addr) + '.';
-      showHorde(addr);
+      showHorde(addr, true);
     } else {
       statusEl.textContent = 'Xaman did not return an address. Try again, or paste your address below.';
     }
@@ -229,7 +229,7 @@ async function liveByronHoldings(addr) {
     return { total: total, byKey: byKey };
   } catch (e) { return null; }
 }
-async function showHorde(addr) {
+async function showHorde(addr, proven) {
   /* After login, the login card goes away. Just the welcome, the count, and the list. */
   loginCard.hidden = true;
   hideXamanQr();
@@ -239,7 +239,7 @@ async function showHorde(addr) {
   inventoryEl.innerHTML = '';
   document.getElementById('switch-wallet-wrap').hidden = true;
   var sbRow = await sbFind(null, addr);
-  if (sbRow) sbMirrorLocal(sbRow);
+  if (sbRow) { sbMirrorLocal(sbRow); if (proven) { try { localStorage.setItem('horde_proven', addr); } catch (e) {} } }
   var name = await getRegisteredName(addr);
   var data = await loadCollections();
   var holdings = await liveByronHoldings(addr);
@@ -309,7 +309,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
   a.href = '#';
   a.addEventListener('click', async function(e){
     e.preventDefault();
-    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); } catch (err) {}
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';

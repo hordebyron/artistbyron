@@ -56,7 +56,7 @@
   a.href = '#';
   a.addEventListener('click', async function(e){
     e.preventDefault();
-    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); } catch (err) {}
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';

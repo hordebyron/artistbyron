@@ -9,7 +9,7 @@
 
 
 
-<link rel="stylesheet" href="style.css?v=22">
+<link rel="stylesheet" href="style.css?v=36">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -176,7 +176,7 @@ async function showHorde(name) {
   welcomeText.textContent = 'Checking your WAX inventory…';
   inventoryEl.innerHTML = '';
   var sbRow = await sbFind(name, null);
-  if (sbRow) { sbMirrorLocal(sbRow); var pl = document.getElementById('wax-profile-link'); if (pl && sbRow.profile_no) pl.href = 'profile.html?n=' + sbRow.profile_no; if (proven) { welcomeText.textContent = 'Taking you to your Horde profile…'; setTimeout(function(){ location.href = 'profile.html?n=' + sbRow.profile_no; }, 600); return; } }
+  if (sbRow) { sbMirrorLocal(sbRow); if (proven) { try { localStorage.setItem('horde_proven', name); } catch (e) {} } var pl = document.getElementById('wax-profile-link'); if (pl && sbRow.profile_no) pl.href = 'profile.html?n=' + sbRow.profile_no; if (proven) { welcomeText.textContent = 'Taking you to your Horde profile…'; setTimeout(function(){ location.href = 'profile.html?n=' + sbRow.profile_no; }, 600); return; } }
   var displayName = await getRegisteredName(name);
   if (displayName) welcomeTitle.textContent = 'Welcome to the Horde, ' + displayName;
   try {
@@ -264,7 +264,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
   a.href = '#';
   a.addEventListener('click', async function(e){
     e.preventDefault();
-    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); } catch (err) {}
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Horde Roster</title>
 <meta name="description" content="Byron's roster of Horde profiles. Every member, both wallets, holdings on WAX and XRP counted together.">
-<link rel="stylesheet" href="style.css?v=28">
+<link rel="stylesheet" href="style.css?v=31">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <h1>The Horde roster</h1>
-  <p>Every registered Horde profile, both wallets tied to one person, holdings on XRP and WAX counted live and added together. New signups land here on their own. Flagged badge names wait for Byron's check, Byron has the final say.</p>
+  <p>Every registered Horde profile, both wallets tied to one person, holdings on XRP and WAX counted live and added together. New signups land here on their own.</p>
   <p class="small" id="roster-status">Loading the Horde…</p>
   <div id="roster"></div>
 </main>
@@ -61,12 +61,11 @@ async function waxCount(acct){
       var r = rows[i];
       var div = document.createElement('div');
       div.className = 'member';
-      div.innerHTML = '<h3>#' + r.profile_no + ' ' + esc(r.name) + (r.badge_name ? ' <span class="small">badge: ' + esc(r.badge_name) + '</span>' : '') + '</h3>'
+      div.innerHTML = '<h3>#' + r.profile_no + ' ' + esc(r.name) + '</h3>'
         + '<p class="small">' + (r.wax ? 'WAX: ' + esc(r.wax) + ' ' : '') + (r.xrp ? 'XRPL: ' + esc(r.xrp) : '') + '</p>'
         + '<p class="small">Level ' + (r.level || 0) + ' · ' + (r.level ? 'Horde' : 'Initiate') + ' · Badges: '
         + [r.wax ? 'WAX' : null, r.xrp ? 'XRP' : null, r.kofi ? 'Ko-fi' : null, r.discord ? 'Discord' : null].filter(Boolean).join(', ') + '</p>'
-        + '<p class="small">' + (r.badge_flagged ? '<span class="flag">Badge name FLAGGED, waiting on Byron.</span> ' : '')
-        + (r.key_issued ? '<span class="ok">Key holder.</span>' : 'Not a key holder yet.') + '</p>'
+        + '<p class="small">' + (r.key_issued ? '<span class="ok">Key holder.</span>' : 'Not a key holder yet.') + '</p>'
         + '<p><strong>Holdings:</strong> <span class="hold">counting…</span></p>';
       box.appendChild(div);
       var parts = [], total = 0;
@@ -91,7 +90,7 @@ async function waxCount(acct){
   a.href = '#';
   a.addEventListener('click', async function(e){
     e.preventDefault();
-    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); } catch (err) {}
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';

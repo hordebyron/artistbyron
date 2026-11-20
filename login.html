@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=35">
+<link rel="stylesheet" href="style.css?v=36">
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -67,7 +67,9 @@ function sbMirrorLocal(r){
     var prof = JSON.parse(localStorage.getItem('horde_profile') || 'null');
     var reg = JSON.parse(localStorage.getItem('horde_registration') || 'null');
     var who = prof || reg;
-    if (who && (who.name || who.wax || who.xrp)) {
+    var proven = '';
+    try { proven = localStorage.getItem('horde_proven') || ''; } catch (e) {}
+    if (who && proven && (proven === (who.wax || '') || proven === (who.xrp || ''))) {
       var card = document.getElementById('known-card');
       card.hidden = false;
       document.getElementById('doors-card').hidden = true;
@@ -86,7 +88,7 @@ async function goProfile(wax){
   var st = document.getElementById('login-wax-status');
   st.textContent = 'Logged in as ' + wax + '. Looking up your Horde profile…';
   var row = await sbFind(wax, null);
-  if (row) { sbMirrorLocal(row); location.href = 'profile.html?n=' + row.profile_no; return; }
+  if (row) { try { localStorage.setItem('horde_proven', wax); } catch (e) {} sbMirrorLocal(row); location.href = 'profile.html?n=' + row.profile_no; return; }
   st.textContent = 'Logged in as ' + wax + ', but no Horde profile has that wallet yet. If that is news to you, register below and this wallet ties to your profile.';
 }
 document.getElementById('login-no-btn').addEventListener('click', async function(){
@@ -134,7 +136,7 @@ document.getElementById('login-wax-btn').addEventListener('click', async () => {
   a.href = '#';
   a.addEventListener('click', async function(e){
     e.preventDefault();
-    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); } catch (err) {}
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';
