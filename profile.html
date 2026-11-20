@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=52">
+<link rel="stylesheet" href="style.css?v=54">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -580,12 +580,12 @@ function enterViewMode(row){
   window.__viewOnly = true;
   var mine = isProvenFor(row);
   window.__viewMine = mine;
-  ['profile-login-card','build-card','event-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = true; });
+  ['profile-login-card','build-card','event-card','profile-intro','find-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = true; });
   var et = document.getElementById('edit-toggle');
   if (et && !mine) et.hidden = true;
   var note = document.getElementById('view-note');
   var fc = document.getElementById('find-card');
-  if (fc) fc.hidden = false;
+  if (fc) fc.hidden = true;
   if (note) { note.hidden = false; note.textContent = mine
     ? 'You are looking at Horde profile #' + row.profile_no + ', ' + (row.name || '') + '. This page is yours, bookmark it. Viewing needs no login. Your pieces and your key are below.'
     : 'You are looking at Horde profile #' + row.profile_no + ', ' + (row.name || '') + '. Viewing needs no login, and viewing is not editing. Their pieces and their key are below.'; }
@@ -637,6 +637,7 @@ async function loadBalances(p){
   if (!el) return;
   if (!p.wax && !p.xrp) { el.textContent = 'no wallets on this profile yet.'; return; }
   var parts = [];
+  var hasHorde = false;
   if (p.wax) {
     var hosts = ['https://wax.greymass.com', 'https://wax.eosphere.io'];
     for (var i = 0; i < hosts.length; i++) {
@@ -660,6 +661,7 @@ async function loadBalances(p){
       var lines = (al && al.result && al.result.lines) || [];
       for (var k = 0; k < lines.length; k++) {
         if (lines[k].account === 'rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR') {
+          hasHorde = true;
           parts.push(Math.round(parseFloat(lines[k].balance) || 0).toLocaleString('en-US') + ' $HORDE');
           break;
         }
@@ -667,6 +669,15 @@ async function loadBalances(p){
     } catch (e) {}
   }
   el.textContent = parts.length ? parts.join(' · ') : 'could not load just now.';
+  if (p.xrp && !hasHorde) {
+    var a = document.createElement('a');
+    a.href = 'https://xrpl.services/?issuer=rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR&currency=24484F5244450000000000000000000000000000&limit=100000000000';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = 'Set the $HORDE trustline';
+    el.appendChild(document.createTextNode(' · '));
+    el.appendChild(a);
+  }
 }
 var RANKS = ['Initiate', 'Crosschain Curious', 'Shambler', 'Ghoul', 'Night Stalker', 'Horde Warden', 'Legend of the Horde', 'Horde Lord'];
 function rankName(l){ return RANKS[l] || 'Initiate'; }
