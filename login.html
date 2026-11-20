@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=29">
+<link rel="stylesheet" href="style.css?v=30">
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -27,30 +27,13 @@
   </section>
 
   <section class="card" id="doors-card">
-    <h2>This device does not know you yet</h2>
-    <p>Pick your door. Any one of them proves who you are, and this device remembers you after.</p>
-
-    <div class="door-row">
-      <div class="dt"><b>Log in with WAX</b><span>Anchor or My Cloud Wallet. Signs nothing, just proves the wallet is yours.</span></div>
-      <button class="btn" type="button" id="login-wax-btn">Log in</button>
-    </div>
-    <p class="small" id="login-wax-status"></p>
-
-    <div class="door-row">
-      <div class="dt"><b>Log in with XRP</b><span>Through Xaman or Joey, on the XRP page.</span></div>
-      <a class="btn" href="xrp.html">Log in</a>
-    </div>
-
-    <div class="door-row">
-      <div class="dt"><b>My profile number</b><span>Already a member? Your number is on your profile link and on the roster.</span></div>
-      <span><input id="login-no" inputmode="numeric" placeholder="No." style="width:84px"> <button class="btn" type="button" id="login-no-btn">Go</button></span>
-    </div>
+    <h2>You are not logged in on this device</h2>
+    <p>Not yet a member? <a class="btn" href="register.html">Click here to register</a></p>
+    <p>Already registered? Enter your ID: <input id="login-no" inputmode="numeric" placeholder="No." style="width:84px"> <button class="btn" type="button" id="login-no-btn">Go</button></p>
     <p class="small" id="login-no-status"></p>
-
-    <div class="door-row">
-      <div class="dt"><b>New here?</b><span>Register once, name plus one anchor, wallet, Ko-fi or Discord. That makes your Horde profile.</span></div>
-      <a class="btn" href="register.html">Register</a>
-    </div>
+    <p>or log in with a wallet:</p>
+    <p><button class="btn" type="button" id="login-wax-btn">Log in with WAX</button> <a class="btn ghost" href="xrp.html">Log in with XRP</a></p>
+    <p class="small" id="login-wax-status"></p>
   </section>
 
   <p class="small">No password, no seed, ever. Wallet addresses are public on the chain already.</p>
