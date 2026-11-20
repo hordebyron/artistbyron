@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Horde Roster</title>
 <meta name="description" content="Byron's roster of Horde profiles. Every member, both wallets, holdings on WAX and XRP counted together.">
-<link rel="stylesheet" href="style.css?v=22">
+<link rel="stylesheet" href="style.css?v=26">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -63,6 +63,8 @@ async function waxCount(acct){
       div.className = 'member';
       div.innerHTML = '<h3>#' + r.profile_no + ' ' + esc(r.name) + (r.badge_name ? ' <span class="small">badge: ' + esc(r.badge_name) + '</span>' : '') + '</h3>'
         + '<p class="small">' + (r.wax ? 'WAX: ' + esc(r.wax) + ' ' : '') + (r.xrp ? 'XRPL: ' + esc(r.xrp) : '') + '</p>'
+        + '<p class="small">Level ' + (r.level || 0) + ' · ' + (r.level ? 'Horde' : 'Initiate') + ' · Badges: '
+        + [r.wax ? 'WAX' : null, r.xrp ? 'XRP' : null, r.kofi ? 'Ko-fi' : null, r.discord ? 'Discord' : null].filter(Boolean).join(', ') + '</p>'
         + '<p class="small">' + (r.badge_flagged ? '<span class="flag">Badge name FLAGGED, waiting on Byron.</span> ' : '')
         + (r.key_issued ? '<span class="ok">Profile key issued.</span>' : 'Profile key not issued yet.') + '</p>'
         + '<p><strong>Holdings:</strong> <span class="hold">counting…</span></p>';

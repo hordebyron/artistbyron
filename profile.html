@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=25">
+<link rel="stylesheet" href="style.css?v=26">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -17,6 +17,8 @@
 .profile-view .pfp{width:96px;height:96px}
 .pieces{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px}
 .sides{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pbadge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 11px;margin:0 6px 6px 0;font-size:.85rem;color:var(--muted);opacity:.45}
+.pbadge.on{opacity:1;color:var(--ink);border-color:var(--red)}
 .collrow{display:flex;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid var(--line);cursor:pointer}
 .collrow img{width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#0f0f14}
 .collrow .cname{font-weight:700}
@@ -110,6 +112,8 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
       <img class="pfp" id="view-pfp" src="art/horde-h-icon.png" alt="Your profile picture">
       <div>
         <p style="margin-top:0"><strong id="view-name" style="font-size:1.3rem"></strong></p>
+        <p id="view-level" style="margin:2px 0"></p>
+        <p id="view-badges" style="margin:2px 0"></p>
         <p id="view-about"></p>
         <p id="view-wallets" class="small"></p>
         <p id="view-links" class="small"></p>
@@ -420,7 +424,7 @@ async function loadPieces(p){
 
 /* Login loads the Horde profile from the shared list. */
 function applyRow(row){
-  var p = { name: row.name || '', badgename: row.badge_name || '', badge_flagged: !!row.badge_flagged, wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: '' };
+  var p = { name: row.name || '', badgename: row.badge_name || '', badge_flagged: !!row.badge_flagged, wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: '', level: row.level || 0 };
   var old = load(PKEY, null);
   if (old && old.pfp) p.pfp = old.pfp;
   save(PKEY, p); sbMirrorLocal(p.wax || p.xrp ? { name: p.name, badge_name: p.badgename, badge_flagged: p.badge_flagged, wax: p.wax, xrp: p.xrp, discord: p.discord, kofi: p.kofi } : null);
@@ -529,6 +533,20 @@ async function waxCount(acct){
   cols.forEach(function(c){ if (c.collection_name === 'byronartset1' || c.collection_name === 'myhordeonwax') total += parseInt(c.assets, 10) || 0; });
   return total;
 }
+var RANKS = { 0: 'Initiate' };
+function rankName(l){ return RANKS[l] || 'Horde'; }
+function renderBadges(p, hasKey){
+  var defs = [
+    { label: 'WAX', on: !!p.wax },
+    { label: 'XRP', on: !!p.xrp },
+    { label: 'Ko-fi', on: !!p.kofi },
+    { label: 'Discord', on: !!p.discord },
+    { label: 'Key holder', on: !!hasKey }
+  ];
+  document.getElementById('view-badges').innerHTML = defs.map(function(d){ return '<span class="pbadge' + (d.on ? ' on' : '') + '">' + d.label + '</span>'; }).join('');
+  var lvl = p.level || 0;
+  document.getElementById('view-level').innerHTML = '<strong>Level ' + lvl + ' · ' + rankName(lvl) + '</strong>';
+}
 function setMember(p){
   var known = !!(p && (p.name || p.wax || p.xrp));
   ['find-card','profile-login-card','event-card','profile-intro','tie-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = known; });
@@ -552,6 +570,7 @@ async function showProfile(p){
   if (p.kofi) l.push('Ko-fi: ' + p.kofi);
   if (p.x) l.push('X: ' + p.x);
   document.getElementById('view-links').textContent = l.join('  ·  ');
+  renderBadges(p, false);
   var k = document.getElementById('key-text');
   var keys = [];
   try {
@@ -576,6 +595,7 @@ async function showProfile(p){
     }
   } catch (e) {}
   k.textContent = keys.length ? 'held on ' + keys.join(' and ') + '.' : 'not issued yet. Byron sends the key by hand after you register.';
+  if (keys.length) renderBadges(p, true);
   var h = document.getElementById('holdings-text');
   h.textContent = 'Counting your pieces on both chains…';
   loadPieces(p);

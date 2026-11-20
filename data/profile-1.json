@@ -13,7 +13,11 @@
     },
     {
       "trait_type": "Level",
-      "value": "1"
+      "value": "0"
+    },
+    {
+      "trait_type": "Rank",
+      "value": "Initiate"
     },
     {
       "trait_type": "Type",
