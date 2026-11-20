@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Horde Roster</title>
 <meta name="description" content="Byron's roster of Horde profiles. Every member, both wallets, holdings on WAX and XRP counted together.">
-<link rel="stylesheet" href="style.css?v=39">
+<link rel="stylesheet" href="style.css?v=50">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
 </style>
 </head>
 <body>
-<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <h1>The Horde roster</h1>
   <p>Every registered Horde profile, both wallets tied to one person, holdings on XRP and WAX counted live and added together. New signups land here on their own.</p>
@@ -41,6 +41,18 @@ async function xrpCount(addr){
     marker = j.result && j.result.marker; pages++;
   } while (marker && pages < 10);
   return total;
+}
+var RANKS = ['Initiate', 'Crosschain Curious', 'Shambler', 'Ghoul', 'Night Stalker', 'Horde Warden', 'Legend of the Horde', 'Horde Lord'];
+function hordeLevel(w, x){
+  var t = (w || 0) + (x || 0);
+  if (t >= 1500) return 7;
+  if (t >= 1000) return 6;
+  if (t >= 500) return 5;
+  if (t >= 100) return 4;
+  if (t >= 50) return 3;
+  if (t >= 20) return 2;
+  if ((w || 0) >= 1 && (x || 0) >= 1) return 1;
+  return 0;
 }
 var MUSE_XRP = 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH';
 async function keyHeldXrp(addr){
@@ -92,15 +104,18 @@ async function waxCount(acct){
       div.className = 'member';
       div.innerHTML = '<h3>#' + r.profile_no + ' ' + esc(r.name) + '</h3>'
         + '<p class="small">' + (r.wax ? 'WAX: ' + esc(r.wax) + ' ' : '') + (r.xrp ? 'XRPL: ' + esc(r.xrp) : '') + '</p>'
-        + '<p class="small">Level ' + (r.level || 0) + ' · ' + (r.level ? 'Horde' : 'Initiate') + ' · Badges: '
+        + '<p class="small"><span class="lvl">Level 0 · Initiate</span> · Badges: '
         + [r.wax ? 'WAX' : null, r.xrp ? 'XRP' : null, r.kofi ? 'Ko-fi' : null, r.discord ? 'Discord' : null].filter(Boolean).join(', ') + '</p>'
         + '<p class="small"><span class="keystat">Checking keys…</span></p>'
         + '<p><strong>Holdings:</strong> <span class="hold">counting…</span></p>';
       box.appendChild(div);
       var parts = [], total = 0;
+      var xc = 0, wc = 0;
       try { if (r.xrp) { var xc = await xrpCount(r.xrp); parts.push(xc + ' on XRP'); total += xc; } } catch (e) {}
       try { if (r.wax) { var wc = await waxCount(r.wax); parts.push(wc + ' on WAX'); total += wc; } } catch (e) {}
       div.querySelector('.hold').textContent = parts.length ? parts.join(' + ') + ' = ' + total + ' pieces, one Horde profile.' : 'No wallets on file.';
+      var L = hordeLevel(wc, xc);
+      var lvel = div.querySelector('.lvl'); if (lvel) lvel.textContent = 'Level ' + L + ' · ' + RANKS[L];
       var ks = div.querySelector('.keystat');
       try {
         var held = [];

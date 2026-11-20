@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=44">
+<link rel="stylesheet" href="style.css?v=50">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 </style>
 </head>
 <body>
-<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><a href="shop.html">Shop</a><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <div id="profile-intro">
   <h1>My Horde profile</h1>
@@ -420,6 +420,7 @@ async function loadPieces(p){
   var sw = document.getElementById('side-wax-wallet'); if (sw) sw.textContent = p.wax ? 'Wallet: ' + p.wax : 'No WAX wallet on this profile.';
   status.textContent = 'Counting your collections on both chains…';
   var totals = [];
+  var piecesW = 0, piecesX = 0;
   xrpGroups = {};
   if (p.xrp) {
     try {
@@ -457,6 +458,7 @@ async function loadPieces(p){
         document.getElementById('unheld-xrp-summary').textContent = 'Collections you do not hold yet (' + unheld.length + ')';
         document.getElementById('unheld-xrp').textContent = unheld.join(' · ');
       }
+      piecesX = mine.length;
       totals.push(mine.length + ' pieces on XRP in ' + keys.length + (keys.length === 1 ? ' collection' : ' collections'));
     } catch (e) { xbox.innerHTML = '<p class="small">XRP collections could not load just now.</p>'; }
   }
@@ -484,12 +486,14 @@ async function loadPieces(p){
         document.getElementById('unheld-wax-summary').textContent = 'Collections you do not hold yet (' + unheldW.length + ')';
         document.getElementById('unheld-wax').textContent = unheldW.join(' · ');
       }
+      piecesW = totalW;
       totals.push(totalW + ' pieces on WAX in ' + Object.keys(heldW).length + (Object.keys(heldW).length === 1 ? ' collection' : ' collections'));
     } catch (e) { wbox.innerHTML = '<p class="small">WAX collections could not load just now.</p>'; }
   }
   status.textContent = totals.length ? totals.join(' · ') + '.' : '';
   var ht = document.getElementById('holdings-text');
   if (ht && totals.length) ht.textContent = totals.join(' · ') + ', all one Horde profile.';
+  setLevel(piecesW, piecesX);
 }
 
 /* Login loads the Horde profile from the shared list. */
@@ -645,8 +649,25 @@ async function loadBalances(p){
   }
   el.textContent = 'could not load just now.';
 }
-var RANKS = { 0: 'Initiate' };
-function rankName(l){ return RANKS[l] || 'Horde'; }
+var RANKS = ['Initiate', 'Crosschain Curious', 'Shambler', 'Ghoul', 'Night Stalker', 'Horde Warden', 'Legend of the Horde', 'Horde Lord'];
+function rankName(l){ return RANKS[l] || 'Initiate'; }
+function hordeLevel(w, x){
+  var t = (w || 0) + (x || 0);
+  if (t >= 1500) return 7;
+  if (t >= 1000) return 6;
+  if (t >= 500) return 5;
+  if (t >= 100) return 4;
+  if (t >= 50) return 3;
+  if (t >= 20) return 2;
+  if ((w || 0) >= 1 && (x || 0) >= 1) return 1;
+  return 0;
+}
+function setLevel(w, x){
+  var l = hordeLevel(w, x);
+  window.__levelSet = true;
+  var el = document.getElementById('view-level');
+  if (el) el.innerHTML = '<strong>Level ' + l + ' · ' + rankName(l) + '</strong>';
+}
 function renderBadges(p, hasKey){
   var defs = [
     { label: 'WAX', on: !!p.wax },
@@ -656,8 +677,7 @@ function renderBadges(p, hasKey){
     { label: 'Key holder', on: !!hasKey }
   ];
   document.getElementById('view-badges').innerHTML = defs.map(function(d){ return '<span class="pbadge' + (d.on ? ' on' : '') + '">' + d.label + '</span>'; }).join('');
-  var lvl = p.level || 0;
-  document.getElementById('view-level').innerHTML = '<strong>Level ' + lvl + ' · ' + rankName(lvl) + '</strong>';
+  if (!window.__levelSet) document.getElementById('view-level').innerHTML = '<strong>Level 0 · Initiate</strong>';
 }
 function setMember(p){
   if (window.__viewOnly) return;
@@ -666,6 +686,7 @@ function setMember(p){
   if (known) { var bc = document.getElementById('build-card'); if (bc) bc.hidden = true; }
 }
 async function showProfile(p){
+  window.__levelSet = false;
   setMember(p);
   var card = document.getElementById('profile-view-card');
   card.hidden = false;
