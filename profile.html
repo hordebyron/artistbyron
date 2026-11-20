@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=22">
+<link rel="stylesheet" href="style.css?v=23">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -37,12 +37,6 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
   <p class="small">Saved to the shared Horde list and this device. No password, no seed, ever. Wallet addresses are public on the chain already.</p>
   </div>
 
-  <section class="card" id="member-card" hidden>
-    <h2 id="member-name">Welcome back</h2>
-    <p id="member-badge" class="small"></p>
-    <p>Thanks for joining the Horde. This is your page: your WAX side and your XRP side, one profile.</p>
-    <p><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button></p>
-  </section>
 
   <section class="card" id="find-card">
     <h2>Your Horde profile page</h2>
@@ -111,7 +105,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
   </section>
 
   <section class="card" id="profile-view-card" hidden>
-    <h2>How the Horde sees you</h2>
+    <h2 id="view-heading">How the Horde sees you</h2>
     <div class="profile-view">
       <img class="pfp" id="view-pfp" src="art/horde-h-icon.png" alt="Your profile picture">
       <div>
@@ -120,7 +114,8 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <p id="view-wallets" class="small"></p>
         <p id="view-links" class="small"></p>
         <p id="view-holdings"><strong>Holdings:</strong> <span id="holdings-text">checking…</span></p>
-        <p id="view-key"><strong>Profile key:</strong> <span id="key-text">checking…</span></p>
+        <p id="view-key"><strong>Horde key:</strong> <span id="key-text">checking…</span></p>
+        <p><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button></p>
       </div>
     </div>
   </section>
@@ -478,6 +473,7 @@ async function sbByNo(n){
   } catch (e) { return null; }
 }
 function enterViewMode(row){
+  window.__viewOnly = true;
   ['profile-login-card','build-card','event-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = true; });
   var note = document.getElementById('view-note');
   var fc = document.getElementById('find-card');
@@ -521,20 +517,16 @@ async function waxCount(acct){
 function setMember(p){
   var known = !!(p && (p.name || p.wax || p.xrp));
   ['find-card','profile-login-card','event-card','profile-intro','tie-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = known; });
-  var mc = document.getElementById('member-card');
-  if (mc && known) {
-    mc.hidden = false;
-    document.getElementById('member-name').textContent = p.name ? 'Welcome back, ' + p.name : 'Welcome back';
-    document.getElementById('member-badge').textContent = p.badgename ? 'Badge name: ' + p.badgename + (p.badge_flagged ? ' (flagged, waiting on Byron)' : '') : '';
-    var bc = document.getElementById('build-card'); if (bc) bc.hidden = true;
-  }
+  if (known) { var bc = document.getElementById('build-card'); if (bc) bc.hidden = true; }
 }
 async function showProfile(p){
   setMember(p);
   var card = document.getElementById('profile-view-card');
   card.hidden = false;
   if (p.pfp) document.getElementById('view-pfp').src = p.pfp;
-  document.getElementById('view-name').textContent = p.name + (p.badgename ? '  ·  badge name: ' + p.badgename : '');
+  document.getElementById('view-name').textContent = p.name + (p.badgename && p.badgename !== p.name ? '  ·  badge name: ' + p.badgename : '');
+  var vh = document.getElementById('view-heading');
+  if (vh) vh.textContent = window.__viewOnly ? (p.name ? p.name + "'s Horde profile" : 'Horde profile') : ('Welcome back' + (p.name ? ', ' + p.name : ''));
   document.getElementById('view-about').textContent = p.about || '';
   var w = [];
   if (p.wax) w.push('<div><strong>WAX wallet:</strong> ' + esc(p.wax) + '</div>');
@@ -558,17 +550,17 @@ async function showProfile(p){
         ((j2.result && j2.result.account_nfts) || []).forEach(function(n){ if (n.Issuer === 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH' && n.NFTokenTaxon === 66602) foundX = true; });
         marker2 = j2.result && j2.result.marker; pages2++;
       } while (marker2 && pages2 < 10);
-      if (foundX) keys.push('found on XRP');
+      if (foundX) keys.push('XRP');
     }
   } catch (e) {}
   try {
     if (p.wax) {
       var r3 = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(p.wax) + '&template_id=912283&limit=1');
       var j3 = await r3.json();
-      if (j3.data && j3.data.length) keys.push('found on WAX');
+      if (j3.data && j3.data.length) keys.push('WAX');
     }
   } catch (e) {}
-  k.textContent = keys.length ? 'Horde Profile Token ' + keys.join(' and ') + '. This profile is unlocked.' : 'No Horde Profile Token found yet for these wallets.';
+  k.textContent = keys.length ? 'held on ' + keys.join(' and ') + '.' : 'not issued yet. Byron sends the key by hand after you register.';
   var h = document.getElementById('holdings-text');
   h.textContent = 'Counting your pieces on both chains…';
   loadPieces(p);
