@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=38">
+<link rel="stylesheet" href="style.css?v=40">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -98,6 +98,13 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
           <button class="btn ghost" type="button" id="pf-clear">Start over</button></p>
         </form>
         <p class="small" id="pf-status" aria-live="polite"></p>
+        <div id="proof-box" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px">
+          <p style="margin-top:0"><strong>Prove it is you, and these edits go on the shared list for everyone.</strong></p>
+          <p class="small" id="proof-text"></p>
+          <p style="font-size:1.6rem;letter-spacing:.2em;margin:8px 0" id="proof-code"></p>
+          <p class="small" id="proof-status" aria-live="polite"></p>
+          <p><button class="btn ghost" type="button" id="proof-cancel">Cancel</button></p>
+        </div>
       </div>
     </div>
   </section>
@@ -238,6 +245,13 @@ document.getElementById('pfp-file').addEventListener('change', function(){
 
 
 var OUR_ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
+function pfpSrc(v){
+  if (!v) return 'art/horde-h-icon.png';
+  if (/^(https:|data:)/.test(v)) return v;
+  var m = String(v).match(/^(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[0-9a-z]+)$/) || String(v).match(/ipfs\/([A-Za-z0-9]+)/);
+  if (m) return 'https://ipfs.io/ipfs/' + m[1];
+  return v;
+}
 function ipfsUrl(u){
   if (!u) return '';
   if (u.indexOf('ipfs://') === 0) return 'https://ipfs.io/ipfs/' + u.slice(7).replace('ipfs/', '');
@@ -271,7 +285,25 @@ function addPiece(box, img, name){
   im.src = tries[0];
   var c = document.createElement('figcaption');
   c.textContent = name || '';
-  f.appendChild(im); f.appendChild(c); box.appendChild(f);
+  f.appendChild(im); f.appendChild(c);
+  if (window.__pfpPick) {
+    var b = document.createElement('button');
+    b.className = 'btn ghost'; b.type = 'button'; b.textContent = 'Make this my picture';
+    b.style.marginTop = '6px';
+    b.addEventListener('click', function(){
+      var raw = img;
+      var mm = String(img).match(/ipfs\/([A-Za-z0-9]+)/);
+      if (mm) raw = mm[1];
+      window.__pendingPfp = raw;
+      var pv = document.getElementById('pfp-preview'); if (pv) pv.src = pfpSrc(raw);
+      closeModal();
+      var bc = document.getElementById('build-card'); if (bc) { bc.hidden = false; bc.scrollIntoView({ behavior: 'smooth' }); }
+      var st = document.getElementById('pf-status');
+      if (st) st.textContent = 'Picture picked from your pieces. Hit Save my profile and prove it is you, and it goes on the shared list for everyone.';
+    });
+    f.appendChild(b);
+  }
+  box.appendChild(f);
 }
 var profWallets = { xrp: '', wax: '' };
 var xrpGroups = {};
@@ -462,9 +494,10 @@ async function loadPieces(p){
 
 /* Login loads the Horde profile from the shared list. */
 function applyRow(row, viewOnly){
-  var p = { name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: '', level: row.level || 0 };
+  var p = { name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', level: row.level || 0 };
+  window.__rowSnapshot = row;
   var old = load(PKEY, null);
-  if (old && old.pfp) p.pfp = old.pfp;
+  if (!p.pfp && old && old.pfp) p.pfp = old.pfp;
   if (!viewOnly) {
     save(PKEY, p); sbMirrorLocal(p.wax || p.xrp ? { name: p.name, wax: p.wax, xrp: p.xrp, discord: p.discord, kofi: p.kofi } : null);
     fillForm(p);
@@ -628,7 +661,9 @@ async function showProfile(p){
   setMember(p);
   var card = document.getElementById('profile-view-card');
   card.hidden = false;
-  if (p.pfp) document.getElementById('view-pfp').src = p.pfp;
+  window.__pfpPick = isProvenFor(p);
+  window.__currentP = p;
+  if (p.pfp) document.getElementById('view-pfp').src = pfpSrc(p.pfp);
   document.getElementById('view-name').textContent = p.name;
   var vh = document.getElementById('view-heading');
   if (vh) vh.textContent = (window.__viewOnly || !isProvenFor(p)) ? (p.name ? p.name + "'s Horde profile" : 'Horde profile') : ('Welcome back' + (p.name ? ', ' + p.name : ''));
@@ -696,12 +731,78 @@ document.getElementById('profile-form').addEventListener('submit', function(e){
   if (!p.wax && !p.xrp && !p.kofi && !p.discord) { status.textContent = 'Add at least one way for us to know you: a WAX or XRP wallet, your Ko-fi name, or your Discord name.'; return; }
   sbSaveProfile({ name: p.name, wax: p.wax || null, xrp: p.xrp || null, discord: p.discord || null, kofi: p.kofi || null, x_handle: p.x || null, about: p.about || null });
   save(PKEY, p);
+  maybeCheckerSave(p, status);
   var r = load(RKEY) || {};
   r.name = p.name; r.wax = p.wax; r.xrp = p.xrp; r.discord = p.discord; r.kofi = p.kofi;
   save(RKEY, r);
   status.textContent = 'Saved. Everything on this form now points at one Horde profile, ' + p.name + '.';
   showProfile(p);
 });
+var CHECKER_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co/functions/v1/update-profile';
+var checkerTimer = null;
+async function checkerPost(payload){
+  var r = await fetch(CHECKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }, body: JSON.stringify(payload) });
+  return r.json();
+}
+function stopChecker(){ if (checkerTimer) { clearInterval(checkerTimer); checkerTimer = null; } }
+document.getElementById('proof-cancel').addEventListener('click', function(){
+  stopChecker();
+  document.getElementById('proof-box').hidden = true;
+  document.getElementById('pf-status').textContent = 'Proof cancelled. Your edits are saved on this device only.';
+});
+async function maybeCheckerSave(p, status){
+  var snap = window.__rowSnapshot;
+  if (!snap || !isProvenFor(p)) return;
+  var fields = {};
+  if ((snap.x_handle || '') !== p.x) fields.x_handle = p.x;
+  if ((snap.about || '') !== p.about) fields.about = p.about;
+  if ((snap.discord || '') !== p.discord) fields.discord = p.discord;
+  if ((snap.kofi || '') !== p.kofi) fields.kofi = p.kofi;
+  if (window.__pendingPfp && window.__pendingPfp !== (snap.pfp || '')) fields.pfp = window.__pendingPfp;
+  if (!Object.keys(fields).length) return;
+  var proven = provenWallet();
+  var chain = proven === p.wax ? 'wax' : 'xrp';
+  var address = proven;
+  var box = document.getElementById('proof-box');
+  var ptext = document.getElementById('proof-text');
+  var pcode = document.getElementById('proof-code');
+  var pstat = document.getElementById('proof-status');
+  var ch;
+  try { ch = await checkerPost({ action: 'challenge', chain: chain, address: address }); }
+  catch (e) { status.textContent = 'Saved on this device. The shared-list checker could not be reached just now.'; return; }
+  if (!ch || !ch.nonce) { status.textContent = 'Saved on this device only. The shared-list checker is not switched on yet.'; return; }
+  box.hidden = false;
+  pcode.textContent = ch.nonce;
+  ptext.textContent = chain === 'wax'
+    ? 'From your WAX wallet ' + address + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.'
+    : 'From your XRP wallet ' + address + ', send 1 drop (0.000001 XRP) to ' + ch.send_to + ' with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.';
+  pstat.textContent = 'Watching the chain for your proof…';
+  box.scrollIntoView({ behavior: 'smooth' });
+  var tries = 0;
+  stopChecker();
+  checkerTimer = setInterval(async function(){
+    tries++;
+    if (tries > 72) { stopChecker(); pstat.textContent = 'No proof showed up in time. Your edits are saved on this device. Try saving again when ready.'; return; }
+    try {
+      var ck = await checkerPost({ action: 'check', nonce: ch.nonce });
+      if (ck.status === 'proven') {
+        stopChecker();
+        pstat.textContent = 'Proof found. Saving to the shared list…';
+        var up = await checkerPost({ action: 'update', nonce: ch.nonce, fields: fields });
+        if (up && up.ok) {
+          window.__pendingPfp = '';
+          pstat.textContent = 'Saved to the shared list. It now shows on every device.';
+          status.textContent = 'Profile saved, on this device and on the shared list.';
+          var row = await sbByNo(snap.profile_no);
+          if (row) applyRow(row, true);
+        } else { pstat.textContent = 'Proof worked, but the save did not go through. Your edits are safe on this device.'; }
+      } else if (ck.status === 'expired' || ck.status === 'used') {
+        stopChecker();
+        pstat.textContent = 'That code is done. Save again for a fresh one.';
+      }
+    } catch (e) {}
+  }, 5000);
+}
 document.getElementById('pf-clear').addEventListener('click', function(){
   try { localStorage.removeItem(PKEY); } catch (e) {}
   pfpData = '';
