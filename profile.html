@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=50">
+<link rel="stylesheet" href="style.css?v=51">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -635,19 +635,38 @@ async function chainPost(host, path, body){
 async function loadBalances(p){
   var el = document.getElementById('balances-text');
   if (!el) return;
-  if (!p.wax) { el.textContent = 'no WAX wallet on this profile yet.'; return; }
-  var hosts = ['https://wax.greymass.com', 'https://wax.eosphere.io'];
-  for (var i = 0; i < hosts.length; i++) {
+  if (!p.wax && !p.xrp) { el.textContent = 'no wallets on this profile yet.'; return; }
+  var parts = [];
+  if (p.wax) {
+    var hosts = ['https://wax.greymass.com', 'https://wax.eosphere.io'];
+    for (var i = 0; i < hosts.length; i++) {
+      try {
+        var acc = await chainPost(hosts[i], '/v1/chain/get_account', { account_name: p.wax });
+        var waxBal = acc && acc.core_liquid_balance ? parseFloat(acc.core_liquid_balance) : 0;
+        var dhc = await chainPost(hosts[i], '/v1/chain/get_currency_balance', { code: 'dahordescoin', account: p.wax, symbol: 'DHC' });
+        var dhcBal = (dhc && dhc.length) ? parseFloat(dhc[0]) : 0;
+        parts.push(Math.round(dhcBal).toLocaleString('en-US') + ' DHC');
+        parts.push(waxBal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' WAX');
+        break;
+      } catch (e) {}
+    }
+  }
+  if (p.xrp) {
     try {
-      var acc = await chainPost(hosts[i], '/v1/chain/get_account', { account_name: p.wax });
-      var waxBal = acc && acc.core_liquid_balance ? parseFloat(acc.core_liquid_balance) : 0;
-      var dhc = await chainPost(hosts[i], '/v1/chain/get_currency_balance', { code: 'dahordescoin', account: p.wax, symbol: 'DHC' });
-      var dhcBal = (dhc && dhc.length) ? parseFloat(dhc[0]) : 0;
-      el.textContent = Math.round(dhcBal).toLocaleString('en-US') + ' DHC · ' + waxBal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' WAX';
-      return;
+      var ai = await chainPost('https://xrplcluster.com', '/', { method: 'account_info', params: [{ account: p.xrp }] });
+      var drops = ai && ai.result && ai.result.account_data && ai.result.account_data.Balance;
+      if (drops !== undefined && drops !== null) parts.push((parseInt(drops, 10) / 1000000).toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' XRP');
+      var al = await chainPost('https://xrplcluster.com', '/', { method: 'account_lines', params: [{ account: p.xrp, limit: 400 }] });
+      var lines = (al && al.result && al.result.lines) || [];
+      for (var k = 0; k < lines.length; k++) {
+        if (lines[k].account === 'rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR') {
+          parts.push(Math.round(parseFloat(lines[k].balance) || 0).toLocaleString('en-US') + ' $HORDE');
+          break;
+        }
+      }
     } catch (e) {}
   }
-  el.textContent = 'could not load just now.';
+  el.textContent = parts.length ? parts.join(' · ') : 'could not load just now.';
 }
 var RANKS = ['Initiate', 'Crosschain Curious', 'Shambler', 'Ghoul', 'Night Stalker', 'Horde Warden', 'Legend of the Horde', 'Horde Lord'];
 function rankName(l){ return RANKS[l] || 'Initiate'; }
