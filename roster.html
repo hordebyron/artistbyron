@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Horde Roster</title>
 <meta name="description" content="Byron's roster of Horde profiles. Every member, both wallets, holdings on WAX and XRP counted together.">
-<link rel="stylesheet" href="style.css?v=38">
+<link rel="stylesheet" href="style.css?v=39">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -42,6 +42,34 @@ async function xrpCount(addr){
   } while (marker && pages < 10);
   return total;
 }
+var MUSE_XRP = 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH';
+async function keyHeldXrp(addr){
+  var marker = null, pages = 0;
+  do {
+    var body = { method: 'account_nfts', params: [{ account: addr, limit: 400 }] };
+    if (marker) body.params[0].marker = marker;
+    var res = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    var j = await res.json();
+    var list = (j.result && j.result.account_nfts) || [];
+    for (var i = 0; i < list.length; i++) { if (list[i].Issuer === MUSE_XRP && list[i].NFTokenTaxon === 66602) return true; }
+    marker = j.result && j.result.marker; pages++;
+  } while (marker && pages < 10);
+  return false;
+}
+async function keyHeldWax(acct){
+  var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(acct) + '&template_id=912283&limit=1');
+  var j = await res.json();
+  return !!(j.data && j.data.length);
+}
+async function museOffers(){
+  var map = {};
+  try {
+    var res = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'account_objects', params: [{ account: MUSE_XRP, type: 'nft_offer', limit: 100 }] }) });
+    var j = await res.json();
+    ((j.result && j.result.account_objects) || []).forEach(function(o){ if (o.Destination) map[o.Destination] = true; });
+  } catch (e) {}
+  return map;
+}
 async function waxCount(acct){
   var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(acct));
   var j = await res.json();
@@ -57,6 +85,7 @@ async function waxCount(acct){
     var rows = await res.json();
     if (!rows.length) { status.textContent = 'No profiles yet. First signup starts the Horde.'; return; }
     status.textContent = rows.length + ' Horde profile' + (rows.length === 1 ? '' : 's') + '. Counting holdings, give it a moment…';
+    var offers = await museOffers();
     for (var i = 0; i < rows.length; i++) {
       var r = rows[i];
       var div = document.createElement('div');
@@ -65,13 +94,22 @@ async function waxCount(acct){
         + '<p class="small">' + (r.wax ? 'WAX: ' + esc(r.wax) + ' ' : '') + (r.xrp ? 'XRPL: ' + esc(r.xrp) : '') + '</p>'
         + '<p class="small">Level ' + (r.level || 0) + ' · ' + (r.level ? 'Horde' : 'Initiate') + ' · Badges: '
         + [r.wax ? 'WAX' : null, r.xrp ? 'XRP' : null, r.kofi ? 'Ko-fi' : null, r.discord ? 'Discord' : null].filter(Boolean).join(', ') + '</p>'
-        + '<p class="small">' + (r.key_issued ? '<span class="ok">Key holder.</span>' : 'Not a key holder yet.') + '</p>'
+        + '<p class="small"><span class="keystat">Checking keys…</span></p>'
         + '<p><strong>Holdings:</strong> <span class="hold">counting…</span></p>';
       box.appendChild(div);
       var parts = [], total = 0;
       try { if (r.xrp) { var xc = await xrpCount(r.xrp); parts.push(xc + ' on XRP'); total += xc; } } catch (e) {}
       try { if (r.wax) { var wc = await waxCount(r.wax); parts.push(wc + ' on WAX'); total += wc; } } catch (e) {}
       div.querySelector('.hold').textContent = parts.length ? parts.join(' + ') + ' = ' + total + ' pieces, one Horde profile.' : 'No wallets on file.';
+      var ks = div.querySelector('.keystat');
+      try {
+        var held = [];
+        if (r.wax && await keyHeldWax(r.wax)) held.push('WAX');
+        if (r.xrp && await keyHeldXrp(r.xrp)) held.push('XRP');
+        if (held.length) ks.innerHTML = '<span class="ok">Key holder, ' + held.join(' and ') + '.</span>';
+        else if (r.xrp && offers[r.xrp]) ks.textContent = 'Key sent, waiting on their tap to accept.';
+        else ks.textContent = 'Not a key holder yet.';
+      } catch (e) { ks.textContent = 'Key check could not load just now.'; }
     }
     status.textContent = rows.length + ' Horde profile' + (rows.length === 1 ? '' : 's') + ', holdings counted live from both chains.';
   } catch (e) {
