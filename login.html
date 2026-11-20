@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=30">
+<link rel="stylesheet" href="style.css?v=32">
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -34,6 +34,7 @@
     <p>or log in with a wallet:</p>
     <p><button class="btn" type="button" id="login-wax-btn">Log in with WAX</button> <a class="btn ghost" href="xrp.html">Log in with XRP</a></p>
     <p class="small" id="login-wax-status"></p>
+    <p class="small">Note: wallet login only works if you registered first with that wallet. New here counts as not registered, use the register button above first, then the wallet login will know you.</p>
   </section>
 
   <p class="small">No password, no seed, ever. Wallet addresses are public on the chain already.</p>
@@ -58,7 +59,7 @@ async function sbByNo(n){
   } catch (e) { return null; }
 }
 function sbMirrorLocal(r){
-  try { localStorage.setItem('horde_registration', JSON.stringify({ name: r.name || '', badgename: r.badge_name || '', badge_flagged: !!r.badge_flagged, wax: r.wax || '', xrp: r.xrp || '', discord: r.discord || '', kofi: r.kofi || '' })); } catch (e) {}
+  try { localStorage.setItem('horde_registration', JSON.stringify({ name: r.name || '', wax: r.wax || '', xrp: r.xrp || '', discord: r.discord || '', kofi: r.kofi || '' })); } catch (e) {}
 }
 (function(){
   try {
