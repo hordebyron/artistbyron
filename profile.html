@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=33">
+<link rel="stylesheet" href="style.css?v=35">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -511,6 +511,7 @@ async function loadProfileForWax(name){
 })();
 
 document.getElementById('edit-toggle').addEventListener('click', function(){
+  if (window.__viewOnly && !window.__viewMine) return;
   var bc = document.getElementById('build-card');
   if (bc) { bc.hidden = false; bc.scrollIntoView({ behavior: 'smooth' }); }
 });
@@ -526,11 +527,21 @@ async function sbByNo(n){
 }
 function enterViewMode(row){
   window.__viewOnly = true;
+  var mine = false;
+  try {
+    var sp = JSON.parse(localStorage.getItem(PKEY) || 'null') || JSON.parse(localStorage.getItem(RKEY) || 'null');
+    if (sp && ((sp.wax && row.wax && sp.wax === row.wax) || (sp.xrp && row.xrp && sp.xrp === row.xrp))) mine = true;
+  } catch (e) {}
+  window.__viewMine = mine;
   ['profile-login-card','build-card','event-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = true; });
+  var et = document.getElementById('edit-toggle');
+  if (et && !mine) et.hidden = true;
   var note = document.getElementById('view-note');
   var fc = document.getElementById('find-card');
   if (fc) fc.hidden = false;
-  if (note) { note.hidden = false; note.textContent = 'You are looking at Horde profile #' + row.profile_no + ', ' + (row.name || '') + '. This page is yours, bookmark it. Viewing needs no login. Your pieces and your key are below.'; }
+  if (note) { note.hidden = false; note.textContent = mine
+    ? 'You are looking at Horde profile #' + row.profile_no + ', ' + (row.name || '') + '. This page is yours, bookmark it. Viewing needs no login. Your pieces and your key are below.'
+    : 'You are looking at Horde profile #' + row.profile_no + ', ' + (row.name || '') + '. Viewing needs no login, and viewing is not editing. Their pieces and their key are below.'; }
 }
 document.getElementById('find-go').addEventListener('click', function(){
   var v = document.getElementById('find-no').value.trim();

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=32">
+<link rel="stylesheet" href="style.css?v=35">
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -34,6 +34,7 @@
     <p>or log in with a wallet:</p>
     <p><button class="btn" type="button" id="login-wax-btn">Log in with WAX</button> <a class="btn ghost" href="xrp.html">Log in with XRP</a></p>
     <p class="small" id="login-wax-status"></p>
+    <p class="small">Your profile number only views a profile, it does not log you in. The wallet login is what makes this device yours.</p>
     <p class="small">Note: wallet login only works if you registered first with that wallet. New here counts as not registered, use the register button above first, then the wallet login will know you.</p>
   </section>
 
@@ -94,7 +95,7 @@ document.getElementById('login-no-btn').addEventListener('click', async function
   if (!v) { st.textContent = 'Type your profile number first.'; return; }
   st.textContent = 'Looking up profile #' + v + '…';
   var row = await sbByNo(v);
-  if (row) { sbMirrorLocal(row); location.href = 'profile.html?n=' + row.profile_no; return; }
+  if (row) { st.textContent = 'Opening profile #' + row.profile_no + ' to view. Viewing is not logging in: to make this device yours, use a wallet login below.'; location.href = 'profile.html?n=' + row.profile_no; return; }
   st.textContent = 'No profile with that number yet. If you are new, register below.';
 });
 </script>
