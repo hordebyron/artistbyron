@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Holdings · Artist Byron</title>
 <meta name="description" content="One Horde collection, piece by piece.">
-<link rel="stylesheet" href="style.css?v=61">
+<link rel="stylesheet" href="style.css?v=68">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -28,7 +28,8 @@
     <option value="az">Name, A to Z</option>
     <option value="za">Name, Z to A</option>
     <option value="mint">Lowest mint first</option>
-  </select></p>
+  </select>
+  Search: <input id="h-search" type="text" placeholder="Type part of a name" autocomplete="off" style="padding:8px;border-radius:8px;border:1px solid var(--line);background:#0f0f14;color:var(--ink)"></p>
   <div class="pieces" id="h-grid"></div>
   <p style="margin-top:12px"><button class="btn ghost" type="button" id="h-more" hidden>Show more pieces</button></p>
 </main>
@@ -36,7 +37,7 @@
 <script>
 var q = new URLSearchParams(location.search);
 var SIDE = q.get('side') || '', WALLET = q.get('wallet') || '', CNAME = q.get('cname') || 'Collection', WHO = q.get('who') || '';
-var PAGE = 20, shown = 0, items = [], loadingDone = false;
+var PAGE = 20, shown = 0, items = [], loadingDone = false, searchFilter = '';
 document.getElementById('h-title').textContent = (WHO ? WHO + ' · ' : '') + CNAME;
 document.getElementById('h-sub').textContent = (SIDE === 'wax' ? 'On WAX · wallet ' : 'On XRP · wallet ') + WALLET;
 var backN = q.get('n'); if (backN) document.getElementById('back-link').href = 'profile.html?n=' + encodeURIComponent(backN);
@@ -68,6 +69,7 @@ function addPiece(box, img, name){
 function sortedItems(){
   var mode = document.getElementById('h-sort').value;
   var list = items.slice();
+  if (searchFilter) list = list.filter(function(it){ return String(it.name || '').toLowerCase().indexOf(searchFilter) >= 0; });
   if (mode === 'az') list.sort(function(a, b){ return String(a.name).localeCompare(String(b.name)); });
   if (mode === 'za') list.sort(function(a, b){ return String(b.name).localeCompare(String(a.name)); });
   if (mode === 'mint') list.sort(function(a, b){ return (a.mint || 999999999) - (b.mint || 999999999); });
@@ -80,11 +82,12 @@ function renderMore(){
   for (var i = shown; i < end; i++) addPiece(grid, list[i].img, list[i].name);
   shown = end;
   document.getElementById('h-more').hidden = !(shown < list.length || !loadingDone);
-  document.getElementById('h-status').textContent = list.length + (list.length === 1 ? ' piece' : ' pieces') + ', showing ' + shown + '.' + (loadingDone ? '' : ' Still loading…');
+  document.getElementById('h-status').textContent = searchFilter && !list.length ? 'No pieces match that search.' : list.length + (list.length === 1 ? ' piece' : ' pieces') + (searchFilter ? ' match your search' : '') + ', showing ' + shown + '.' + (loadingDone ? '' : ' Still loading…');
 }
 function rerender(){ shown = 0; document.getElementById('h-grid').innerHTML = ''; renderMore(); }
 document.getElementById('h-more').addEventListener('click', renderMore);
 document.getElementById('h-sort').addEventListener('change', rerender);
+document.getElementById('h-search').addEventListener('input', function(){ searchFilter = this.value.trim().toLowerCase(); rerender(); });
 async function loadWax(){
   var coll = q.get('coll'); var page = 1;
   while (page <= 20) {

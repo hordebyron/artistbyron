@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=66">
+<link rel="stylesheet" href="style.css?v=68">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -40,85 +40,39 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 <main class="wrap">
   <div id="profile-intro">
   <h1>My Horde profile</h1>
-  <p>One person, one profile. Your WAX wallet and your XRPL wallet live here together, tied to one name, so the Horde knows both wallets are you. Add a picture, add your links, and this is the face you show the Horde.</p>
-  <p class="small">Saved to the shared Horde list and this device. No password, no seed, ever. Wallet addresses are public on the chain already.</p>
+  <p>One person, one profile, one Horde number. Your profile lives on the shared Horde list, and that list is the only copy. Your wallet is just the key that unlocks your number on a device.</p>
+  <p class="small">No password, no seed, ever. Wallet addresses are public on the chain already.</p>
   </div>
 
-
   <section class="card" id="find-card">
-    <h2>Your Horde profile page</h2>
-    <p>Every member has a number. Yours is on the roster, and it is in the link you were given when your key was issued. Put your number in and go straight to your page, no login needed to view it.</p>
-    <p><input id="find-no" inputmode="numeric" placeholder="Your profile number" style="max-width:220px"> <button class="btn" type="button" id="find-go">Show my profile</button></p>
+    <h2>Look up a profile</h2>
+    <p>Every member has a number. Put a number in and go straight to that page. Viewing is public and needs no login.</p>
+    <p><input id="find-no" inputmode="numeric" placeholder="Profile number" style="max-width:220px"> <button class="btn" type="button" id="find-go">Show profile</button></p>
     <p class="small" id="view-note" hidden></p>
   </section>
 
-  <section class="card" id="profile-login-card">
-    <h2>Log in, and your profile loads itself</h2>
-    <p>Log in with the wallet you registered with. The site finds your Horde profile in the shared list and loads it here, name, both wallets, your pieces. Nothing to retype.</p>
-    <p><button class="btn" type="button" id="pf-wax-login">Log in with WAX</button> <a class="btn ghost" href="xrp.html">Log in with XRP instead</a></p>
-    <p class="small" id="pf-login-status">Not logged in yet. New here? Build your profile below, that registers you.</p>
-  </section>
-
-  <section class="card" id="event-card">
-    <h2>Join the Horde, the event</h2>
-    <ol class="tight">
-      <li>Register below and pick your name.</li>
-      <li>You get your Horde Profile Token, your key, on WAX or XRP. It cannot be sold or given away.</li>
-      <li>Later your key's picture mutates into your personal badge, with your name and profile number on it.</li>
-      <li>Use that badge as your profile picture, here and anywhere.</li>
-    </ol>
-  </section>
-
-
-  <section class="card" id="build-card">
-    <h2>Build your profile</h2>
-    <div class="pfp-wrap">
-      <div>
-        <img class="pfp" id="pfp-preview" src="art/horde-h-icon.png" alt="Your profile picture">
-        <p><label class="btn ghost" for="pfp-file" style="cursor:pointer">Pick a picture</label>
-        <input type="file" id="pfp-file" accept="image/*" hidden></p>
-        <p class="small">Square works best. If you hold a Horde face, use that.</p>
-      </div>
-      <div class="pfp-fields">
-        <form id="profile-form">
-          <p><label for="pf-name">Display name</label>
-          <input type="text" id="pf-name" placeholder="e.g. Tony" autocomplete="off" maxlength="40" required></p>
-          <p><label for="pf-about">About you, one line</label>
-          <input type="text" id="pf-about" placeholder="e.g. Collector of zombie cats" autocomplete="off" maxlength="120"></p>
-          <p><label for="pf-wax">WAX account name</label>
-          <input type="text" id="pf-wax" placeholder="e.g. ylab4.wam" autocomplete="off" spellcheck="false">
-          <span class="small">Lower case, 12 characters max. Leave blank if you do not have one yet.</span></p>
-          <p><button class="btn ghost" type="button" id="wax-login-btn">Log in with WAX to prove it is yours</button></p>
-          <p class="small" id="wax-login-status">Optional. Proves the WAX name is yours, signs nothing.</p>
-          <p><label for="pf-xrp">XRPL address</label>
-          <input type="text" id="pf-xrp" placeholder="r..." autocomplete="off" spellcheck="false">
-          <span class="small">Starts with r. Leave blank if you do not have one yet.</span></p>
-          <p><label for="pf-discord">Discord name</label>
-          <input type="text" id="pf-discord" placeholder="Your Discord name" autocomplete="off" maxlength="40"></p>
-          <p><label for="pf-kofi">Ko-fi name</label>
-          <input type="text" id="pf-kofi" placeholder="Your Ko-fi name" autocomplete="off" maxlength="40"></p>
-          <p><label for="pf-x">X handle</label>
-          <input type="text" id="pf-x" placeholder="@yourname" autocomplete="off" maxlength="40"></p>
-          <p><button class="btn" type="submit">Save my profile</button>
-          <button class="btn ghost" type="button" id="pf-clear">Start over</button></p>
-        </form>
-        <p class="small" id="pf-status" aria-live="polite"></p>
-        <div id="proof-box" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px">
-          <p style="margin-top:0"><strong>Prove it is you, and these edits go on the shared list for everyone.</strong></p>
-          <p class="small" id="proof-text"></p>
-          <p style="font-size:1.6rem;letter-spacing:.2em;margin:8px 0" id="proof-code"></p>
-          <p class="small" id="proof-status" aria-live="polite"></p>
-          <p><button class="btn ghost" type="button" id="proof-cancel">Cancel</button></p>
-        </div>
-      </div>
+  <section class="card" id="unlock-card" hidden>
+    <h2>Unlock your profile on this device</h2>
+    <p>Prove your wallet once and this device stays unlocked for 30 days. After that, saving just writes to the shared list. No code and no dust for every little edit, ever again.</p>
+    <p><button class="btn" type="button" id="unlock-wax">Unlock with WAX</button></p>
+    <p class="small" id="unlock-wax-status">Works with Anchor or the WAX Cloud Wallet. The wallet will ask you to send a tiny proof, 0.0001 WAX, with a code in the memo. That one proof is the unlock.</p>
+    <p><label for="unlock-xrp-addr">Or unlock with XRP: your XRPL address</label>
+    <input type="text" id="unlock-xrp-addr" placeholder="r..." autocomplete="off" spellcheck="false">
+    <button class="btn ghost" type="button" id="unlock-xrp">Unlock with XRP</button></p>
+    <div id="unlock-box" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px">
+      <p style="margin-top:0"><strong>One small proof, then you are unlocked.</strong></p>
+      <p class="small" id="unlock-text"></p>
+      <p style="font-size:1.6rem;letter-spacing:.2em;margin:8px 0" id="unlock-code"></p>
+      <p class="small" id="unlock-status" aria-live="polite"></p>
     </div>
+    <p class="small">Typing an address or a number lets you look, never edit. Only the wallet proof unlocks.</p>
   </section>
 
   <section class="card" id="profile-view-card" hidden>
-    <h2 id="view-heading">How the Horde sees you</h2>
+    <h2 id="view-heading">Horde profile</h2>
     <div class="profile-view">
       <div class="char-card">
-        <img class="pfp" id="view-pfp" src="art/horde-h-icon.png" alt="Your profile picture">
+        <img class="pfp" id="view-pfp" src="art/horde-h-icon.png" alt="Profile picture">
         <p class="char-level" id="view-level"></p>
         <p id="view-badges" style="margin:2px 0"></p>
         <div class="more-badges">More badges are coming</div>
@@ -131,7 +85,33 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <p id="view-key"><strong>Key holder:</strong> <span id="key-text">checking…</span></p>
         <p id="view-wallets" class="small"></p>
         <p id="view-links" class="small"></p>
-        <p><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button></p>
+        <p id="edit-row" hidden><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button> <button class="btn ghost" type="button" id="session-logout">Log out of this device</button></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="edit-card" hidden>
+    <h2>Edit your profile</h2>
+    <div class="pfp-wrap">
+      <div>
+        <img class="pfp" id="pfp-preview" src="art/horde-h-icon.png" alt="Your profile picture">
+        <p class="small">Your picture comes from your own pieces. Open a collection below, tap a piece, and choose Make this my picture.</p>
+      </div>
+      <div class="pfp-fields">
+        <p class="small" id="edit-who"></p>
+        <form id="profile-form">
+          <p><label for="pf-about">About you, one line</label>
+          <input type="text" id="pf-about" placeholder="e.g. Collector of zombie cats" autocomplete="off" maxlength="120"></p>
+          <p><label for="pf-discord">Discord name</label>
+          <input type="text" id="pf-discord" placeholder="Your Discord name" autocomplete="off" maxlength="40"></p>
+          <p><label for="pf-kofi">Ko-fi name</label>
+          <input type="text" id="pf-kofi" placeholder="Your Ko-fi name" autocomplete="off" maxlength="40"></p>
+          <p><label for="pf-x">X handle</label>
+          <input type="text" id="pf-x" placeholder="@yourname" autocomplete="off" maxlength="40"></p>
+          <p><button class="btn" type="submit">Save</button></p>
+        </form>
+        <p class="small" id="pf-status" aria-live="polite"></p>
+        <p class="small">Your name and your wallets are set when you register and are not edited here. If one is wrong, tell Byron and he will fix it.</p>
       </div>
     </div>
   </section>
@@ -147,11 +127,11 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
   </section>
 
   <section class="card" id="tie-card">
-    <h2>How the tie works</h2>
+    <h2>How this page works</h2>
     <ul class="tight">
-      <li>Register once with both wallets, and both chains point at the same profile. A drop or a reward on either chain finds the same person.</li>
-      <li>Log in with WAX here, or with Xaman on the XRP page, and the site greets you by your profile name, not your wallet address.</li>
-      <li>Your profile lives on the shared Horde list, so it follows you to any device. Log in with either wallet, or open your own profile link, and it is you.</li>
+      <li>Your profile is one row on the shared Horde list, under your Horde number. That row is the only copy. This page reads it fresh every time.</li>
+      <li>Your wallet is the key. Prove it once and this device stays unlocked for 30 days, then saving writes straight to your row.</li>
+      <li>Anyone can view a profile by its number. Viewing is not editing, and editing is only ever unlocked by the wallet.</li>
     </ul>
     <p><a class="btn ghost" href="register.html">Register page</a> <a class="btn ghost" href="roster.html">See the Horde roster</a></p>
   </section>
@@ -164,7 +144,8 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <option value="az">Name, A to Z</option>
         <option value="za">Name, Z to A</option>
         <option value="mint">Lowest mint first</option>
-      </select></p>
+      </select>
+      Search: <input id="modal-search" type="text" placeholder="Type part of a name" autocomplete="off" style="padding:8px;border-radius:8px;border:1px solid var(--line);background:#0f0f14;color:var(--ink)"></p>
       <div class="pieces" id="modal-grid"></div>
       <p style="margin-top:12px"><button class="btn ghost" type="button" id="modal-more" hidden>Show more pieces</button></p>
       <p style="margin-top:14px"><button class="btn" type="button" id="modal-close">Close</button></p>
@@ -173,84 +154,39 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script>
-/* Horde profile page. One profile ties a person's WAX and XRPL wallets
-   to one name. Saves on this device (localStorage horde_profile) and
-   mirrors name + wallets into horde_registration so the rest of the
-   site greets them by name. The pfp is shrunk to 256px before saving
-   so it fits in localStorage. Shared database comes later. */
-var PKEY = 'horde_profile', RKEY = 'horde_registration';
-/* A device is only treated as a profile's owner when a real wallet
-   login proved that wallet on this device. Viewing a profile, typing
-   its number, or an old saved copy never proves anything. */
-function provenWallet(){ try { return localStorage.getItem('horde_proven') || ''; } catch (e) { return ''; } }
-function isProvenFor(pr){ var w = provenWallet(); return !!w && !!pr && (w === (pr.wax || '') || w === (pr.xrp || '')); }
-/* Supabase shared profiles (Horde Profiles project). The publishable
-   key is public by design; row rules in the database say the site
-   can add a profile and read profiles, nothing else. */
+/* Horde profile, clean build (live 21 Nov 2026, replaced the old page).
+   The model, decided 21 Nov 2026 after the old page's save saga:
+   - The profile is ONE row on the shared list, keyed by Horde number.
+     That row is the only copy. This page reads it fresh every load.
+   - The wallet is a key, not a storage place. One dust proof unlocks
+     this device for 30 days (a session token from the checker).
+   - Saving carries the token and writes straight to the row. No codes,
+     no dust, no device mirror that can drift or go missing.
+   - Viewing by number is public. Editing exists only when unlocked
+     and only on your own number. Every action says what it did. */
 var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
 var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
-async function sbFind(wax, xrp){
-  try {
-    var filters = [];
-    if (wax) filters.push('wax.eq.' + encodeURIComponent(wax));
-    if (xrp) filters.push('xrp.eq.' + encodeURIComponent(xrp));
-    if (!filters.length) return null;
-    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&or=(' + filters.join(',') + ')&limit=1', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
-    var rows = await res.json();
-    return (rows && rows.length) ? rows[0] : null;
-  } catch (e) { return null; }
-}
-function sbMirrorLocal(row){
-  if (!row) return;
-  try { localStorage.setItem(RKEY, JSON.stringify({ name: row.name, wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
-}
-async function sbFindAny(p){
-  try {
-    var tries = [];
-    if (p.wax) tries.push(['wax', p.wax]);
-    if (p.xrp) tries.push(['xrp', p.xrp]);
-    if (p.kofi) tries.push(['kofi', p.kofi]);
-    if (p.discord) tries.push(['discord', p.discord]);
-    for (var i = 0; i < tries.length; i++) {
-      var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&' + tries[i][0] + '=eq.' + encodeURIComponent(tries[i][1]), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
-      var rows = await res.json();
-      if (rows && rows.length) return rows[0];
-    }
-  } catch (e) {}
-  return null;
-}
-async function sbSaveProfile(p){
-  try {
-    var existing = await sbFindAny(p);
-    if (existing) return existing;
-    var res = await fetch(SB_URL + '/rest/v1/profiles', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify(p) });
-    var rows = await res.json();
-    return (rows && rows.length) ? rows[0] : null;
-  } catch (e) { return null; }
-}
+var CHECKER_URL = SB_URL + '/functions/v1/update-profile';
+var SESSION_KEY = 'horde_session';
+var state = { session: null, row: null, mine: false };
 
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
-function validWax(v){ return !v || /^[a-z1-5.]{1,12}$/.test(v); }
-function validXrp(v){ return !v || /^r[0-9a-zA-Z]{24,34}$/.test(v); }
-function load(key){ try { var r = localStorage.getItem(key); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
-function save(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
-
-document.getElementById('pfp-file').addEventListener('change', function(){
-  var f = this.files && this.files[0];
-  if (!f) return;
-  var img = new Image();
-  img.onload = function(){
-    var c = document.createElement('canvas');
-    var size = 256, scale = Math.min(1, size / Math.max(img.width, img.height));
-    c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
-    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-    pfpData = c.toDataURL('image/jpeg', 0.85);
-    document.getElementById('pfp-preview').src = pfpData;
-    URL.revokeObjectURL(img.src);
-  };
-  img.src = URL.createObjectURL(f);
-});
-
+function loadSession(){ try { var r = localStorage.getItem(SESSION_KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+function storeSession(s){ try { if (s) localStorage.setItem(SESSION_KEY, JSON.stringify(s)); else localStorage.removeItem(SESSION_KEY); } catch (e) {} }
+async function checkerPost(payload){
+  var r = await fetch(CHECKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }, body: JSON.stringify(payload) });
+  return r.json();
+}
+async function sbByNo(n){
+  try {
+    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&profile_no=eq.' + encodeURIComponent(n), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    var rows = await res.json();
+    return (rows && rows.length) ? rows[0] : null;
+  } catch (e) { return null; }
+}
+function rowToP(row){
+  return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '' };
+}
 
 var OUR_ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
 function pfpSrc(v){
@@ -266,394 +202,6 @@ function ipfsUrl(u){
   if (u.indexOf('ipfs/') === 0) return 'https://gateway.pinata.cloud/' + u;
   return u;
 }
-var pieceCounter = { shown: 0 };
-function addPiece(box, img, name){
-  var f = document.createElement('figure');
-  var im = document.createElement('img');
-  im.loading = 'lazy'; im.alt = name || 'Horde piece';
-  var cid = '';
-  var m = String(img).match(/ipfs\/([A-Za-z0-9]+)/) || String(img).match(/^(Qm[A-Za-z0-9]+)$/);
-  if (m) cid = m[1];
-  var tries = [img];
-  if (cid) {
-    tries = ['https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=600&output=webp', 'https://ipfs.io/ipfs/' + cid];
-  }
-  var ti = 0, timer = null, done = false;
-  function next(){
-    if (done) return;
-    ti++;
-    if (ti < tries.length) { arm(); im.src = tries[ti]; }
-    else { done = true; f.style.display = 'none'; }
-  }
-  function arm(){ clearTimeout(timer); timer = setTimeout(next, 5000); }
-  im.onload = function(){ done = true; clearTimeout(timer); pieceCounter.shown++; };
-  im.onerror = function(){ next(); };
-  arm();
-  im.src = tries[0];
-  var c = document.createElement('figcaption');
-  c.textContent = name || '';
-  f.appendChild(im); f.appendChild(c);
-  if (window.__pfpPick) {
-    var b = document.createElement('button');
-    b.className = 'btn ghost'; b.type = 'button'; b.textContent = 'Make this my picture';
-    b.style.marginTop = '6px';
-    b.addEventListener('click', function(){
-      var raw = img;
-      var mm = String(img).match(/ipfs\/([A-Za-z0-9]+)/);
-      if (mm) raw = mm[1];
-      window.__pendingPfp = raw;
-      var pv = document.getElementById('pfp-preview'); if (pv) pv.src = pfpSrc(raw);
-      closeModal();
-      var bc = document.getElementById('build-card'); if (bc) { bc.hidden = false; bc.scrollIntoView({ behavior: 'smooth' }); }
-      var st = document.getElementById('pf-status');
-      if (st) st.textContent = 'Picture picked from your pieces. Hit Save my profile and prove it is you, and it goes on the shared list for everyone.';
-    });
-    f.appendChild(b);
-  }
-  box.appendChild(f);
-}
-var profWallets = { xrp: '', wax: '' };
-var xrpGroups = {};
-function thumbInto(imgEl, src){
-  var cid = '';
-  var m = String(src || '').match(/ipfs\/([A-Za-z0-9]+)/) || String(src || '').match(/^(Qm[A-Za-z0-9]+)$/);
-  if (m) cid = m[1];
-  var tries = [src];
-  if (cid) tries = ['https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=200&output=webp', 'https://ipfs.io/ipfs/' + cid];
-  var ti = 0;
-  imgEl.onerror = function(){ ti++; if (ti < tries.length) imgEl.src = tries[ti]; else imgEl.style.visibility = 'hidden'; };
-  imgEl.src = tries[0];
-}
-function collRow(name, count, icon, onclick){
-  var row = document.createElement('div');
-  row.className = 'collrow';
-  var im = document.createElement('img'); im.alt = ''; im.loading = 'lazy';
-  thumbInto(im, icon || 'art/horde-h-icon.png');
-  var mid = document.createElement('div');
-  var n1 = document.createElement('div'); n1.className = 'cname'; n1.textContent = name;
-  var n2 = document.createElement('div'); n2.className = 'ccount'; n2.textContent = count + (count === 1 ? ' piece' : ' pieces') + ' · tap to see them';
-  mid.appendChild(n1); mid.appendChild(n2);
-  row.appendChild(im); row.appendChild(mid);
-  row.addEventListener('click', onclick);
-  return row;
-}
-function openModal(title){
-  var m = document.getElementById('piece-modal');
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal-grid').innerHTML = '';
-  document.getElementById('modal-status').textContent = 'Loading…';
-  document.getElementById('modal-sort').value = 'default';
-  modalItems = []; modalShown = 0;
-  document.getElementById('modal-more').hidden = true;
-  m.hidden = false; m.style.display = 'block';
-}
-function closeModal(){ var m = document.getElementById('piece-modal'); m.hidden = true; m.style.display = 'none'; }
-document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('piece-modal').addEventListener('click', function(e){ if (e.target === this) closeModal(); });
-var modalItems = [], modalShown = 0;
-var MODAL_PAGE = 20;
-function sortedModalItems(){
-  var mode = document.getElementById('modal-sort').value;
-  var list = modalItems.slice();
-  if (mode === 'az') list.sort(function(a, b){ return String(a.name).localeCompare(String(b.name)); });
-  if (mode === 'za') list.sort(function(a, b){ return String(b.name).localeCompare(String(a.name)); });
-  if (mode === 'mint') list.sort(function(a, b){ return (a.mint || 999999999) - (b.mint || 999999999); });
-  return list;
-}
-function renderModalMore(){
-  var grid = document.getElementById('modal-grid');
-  var list = sortedModalItems();
-  var end = Math.min(modalShown + MODAL_PAGE, list.length);
-  for (var i = modalShown; i < end; i++) addPiece(grid, list[i].img, list[i].name);
-  modalShown = end;
-  document.getElementById('modal-more').hidden = modalShown >= list.length;
-  document.getElementById('modal-status').textContent = list.length + ' pieces' + (modalShown < list.length ? ', showing ' + modalShown : '') + '.';
-}
-document.getElementById('modal-more').addEventListener('click', renderModalMore);
-document.getElementById('modal-sort').addEventListener('change', function(){
-  document.getElementById('modal-grid').innerHTML = '';
-  modalShown = 0;
-  renderModalMore();
-});
-async function openXrpCollection(key){
-  var g = xrpGroups[key]; if (!g) return;
-  openModal(g.name);
-  var list = g.nfts.slice(0, 100);
-  document.getElementById('modal-status').textContent = 'Loading ' + list.length + ' pieces…';
-  for (var i = 0; i < list.length; i += 12) {
-    var batch = list.slice(i, i + 6);
-    await Promise.all(batch.map(async function(n){
-      var name = g.name, img = '';
-      try {
-        var uriHex = n.URI || n.uri;
-        if (uriHex) {
-          var mu = ipfsUrl(uriHex.match(/.{2}/g).map(function(h){ return String.fromCharCode(parseInt(h, 16)); }).join(''));
-          var mr = await fetch(mu); var mj = await mr.json();
-          name = mj.name || name; img = ipfsUrl(mj.image || mj.image_url || '');
-        }
-      } catch (e) {}
-      if (img) modalItems.push({ img: img, name: name, mint: 0 });
-    }));
-    if (!modalShown) renderModalMore();
-  }
-  modalShown = 0;
-  document.getElementById('modal-grid').innerHTML = '';
-  renderModalMore();
-}
-async function openWaxCollection(collName, displayName){
-  openModal(displayName);
-  try {
-    var wr = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(profWallets.wax) + '&collection_name=' + collName + '&limit=100&order_desc=false');
-    var wj = await wr.json();
-    var data = wj.data || [];
-    data.forEach(function(a){
-      var cid = (a.data && a.data.img) || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
-      var nm = (a.data && a.data.name) || (a.template && a.template.immutable_data && a.template.immutable_data.name) || displayName;
-      if (cid) modalItems.push({ img: 'https://gateway.pinata.cloud/ipfs/' + String(cid).replace(/^ipfs:\/\//, ''), name: nm, mint: parseInt(a.template_mint || '0', 10) || 999999999 });
-    });
-    if (!modalItems.length) { document.getElementById('modal-status').textContent = 'No pictures could load for this collection.'; return; }
-    renderModalMore();
-  } catch (e) { document.getElementById('modal-status').textContent = 'Could not load this collection just now.'; }
-}
-async function loadPieces(p){
-  var card = document.getElementById('pieces-card');
-  var status = document.getElementById('pieces-status');
-  var xbox = document.getElementById('coll-xrp');
-  var wbox = document.getElementById('coll-wax');
-  if (!p.xrp && !p.wax) { var ht0 = document.getElementById('holdings-text'); if (ht0) ht0.textContent = 'No wallets on this profile yet. Add one any time and your pieces and key show here.'; return; }
-  card.hidden = false;
-  profWallets = { xrp: p.xrp || '', wax: p.wax || '' };
-  var sx = document.getElementById('side-xrp-wallet'); if (sx) sx.textContent = p.xrp ? 'Wallet: ' + p.xrp : 'No XRP wallet on this profile.';
-  var sw = document.getElementById('side-wax-wallet'); if (sw) sw.textContent = p.wax ? 'Wallet: ' + p.wax : 'No WAX wallet on this profile.';
-  status.textContent = 'Counting your collections on both chains…';
-  var totals = [];
-  var piecesW = 0, piecesX = 0;
-  xrpGroups = {};
-  if (p.xrp) {
-    try {
-      var meta = {};
-      try {
-        var cj = await (await fetch('data/collections.json')).json();
-        (cj.collections || []).forEach(function(c){ meta[(cj.issuers[c.issuer] || '') + '|' + c.taxon] = c; });
-      } catch (e) {}
-      var marker = null, pages = 0, mine = [];
-      do {
-        var b = { method: 'account_nfts', params: [{ account: p.xrp, limit: 400 }] };
-        if (marker) b.params[0].marker = marker;
-        var r = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
-        var j = await r.json();
-        ((j.result && j.result.account_nfts) || []).forEach(function(n){ var iss = n.Issuer || n.issuer; if (iss && OUR_ISSUERS[iss]) mine.push(n); });
-        marker = j.result && j.result.marker; pages++;
-      } while (marker && pages < 10);
-      mine.forEach(function(n){
-        var iss = n.Issuer || n.issuer, tax = (n.NFTokenTaxon !== undefined ? n.NFTokenTaxon : n.nftoken_taxon);
-        var key = iss + '|' + tax;
-        if (!xrpGroups[key]) {
-          var mc = meta[key];
-          xrpGroups[key] = { name: mc ? mc.name : (iss === 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH' && tax === 66602 ? 'with the Horde' : 'Collection ' + tax), icon: mc ? mc.icon : '', nfts: [] };
-        }
-        xrpGroups[key].nfts.push(n);
-      });
-      var keys = Object.keys(xrpGroups).sort(function(a, b){ return xrpGroups[b].nfts.length - xrpGroups[a].nfts.length; });
-      xbox.innerHTML = '';
-      keys.forEach(function(key){ var g = xrpGroups[key]; xbox.appendChild(collRow(g.name, g.nfts.length, g.icon, function(){ var parts = key.split('|'); var n = new URLSearchParams(location.search).get('n'); window.open('holdings.html?side=xrp&wallet=' + encodeURIComponent(p.xrp) + '&issuer=' + encodeURIComponent(parts[0]) + '&taxon=' + encodeURIComponent(parts[1]) + '&cname=' + encodeURIComponent(g.name) + '&who=' + encodeURIComponent(p.name || '') + (n ? '&n=' + encodeURIComponent(n) : ''), '_blank'); })); });
-      if (!keys.length) xbox.innerHTML = '<p class="small">No Horde pieces found on XRP for this wallet.</p>';
-      var heldKeys = {}; keys.forEach(function(k){ heldKeys[k] = true; });
-      var unheld = Object.keys(meta).filter(function(k){ return !heldKeys[k]; }).map(function(k){ return meta[k].name; }).sort();
-      if (unheld.length) {
-        document.getElementById('unheld-xrp-wrap').hidden = false;
-        document.getElementById('unheld-xrp-summary').textContent = 'Collections you do not hold yet (' + unheld.length + ')';
-        document.getElementById('unheld-xrp').textContent = unheld.join(' · ');
-      }
-      piecesX = mine.length;
-      totals.push(mine.length + ' pieces on XRP in ' + keys.length + (keys.length === 1 ? ' collection' : ' collections'));
-    } catch (e) { xbox.innerHTML = '<p class="small">XRP collections could not load just now.</p>'; }
-  }
-  if (p.wax) {
-    try {
-      var ar = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(p.wax));
-      var aj = await ar.json();
-      var ours = { byronartset1: 'Art of Byron', myhordeonwax: 'HORDE on WAX', myzicklearmy: 'My Zickle Army', myzombiecats: 'My Zombie Cat Collection' };
-      var heldW = {};
-      var totalW = 0;
-      wbox.innerHTML = '';
-      ((aj.data && aj.data.collections) || []).forEach(function(c){
-        var cn = c.collection && c.collection.collection_name;
-        if (!ours[cn]) return;
-        var count = parseInt(c.assets, 10) || 0;
-        heldW[cn] = true; totalW += count;
-        var nm = (c.collection && c.collection.name) || ours[cn];
-        var ic = (c.collection && c.collection.img) || '';
-        wbox.appendChild(collRow(nm, count, ic, function(){ var n = new URLSearchParams(location.search).get('n'); window.open('holdings.html?side=wax&wallet=' + encodeURIComponent(p.wax) + '&coll=' + encodeURIComponent(cn) + '&cname=' + encodeURIComponent(nm) + '&who=' + encodeURIComponent(p.name || '') + (n ? '&n=' + encodeURIComponent(n) : ''), '_blank'); }));
-      });
-      if (!Object.keys(heldW).length) wbox.innerHTML = '<p class="small">No Horde pieces found on WAX for this wallet.</p>';
-      var unheldW = Object.keys(ours).filter(function(k){ return !heldW[k]; }).map(function(k){ return ours[k]; });
-      if (unheldW.length) {
-        document.getElementById('unheld-wax-wrap').hidden = false;
-        document.getElementById('unheld-wax-summary').textContent = 'Collections you do not hold yet (' + unheldW.length + ')';
-        document.getElementById('unheld-wax').textContent = unheldW.join(' · ');
-      }
-      piecesW = totalW;
-      totals.push(totalW + ' pieces on WAX in ' + Object.keys(heldW).length + (Object.keys(heldW).length === 1 ? ' collection' : ' collections'));
-    } catch (e) { wbox.innerHTML = '<p class="small">WAX collections could not load just now.</p>'; }
-  }
-  status.textContent = totals.length ? totals.join(' · ') + '.' : '';
-  var ht = document.getElementById('holdings-text');
-  if (ht && totals.length) ht.textContent = totals.join(' · ') + ', all one Horde profile.';
-  setLevel(piecesW, piecesX);
-}
-
-/* Login loads the Horde profile from the shared list. */
-function applyRow(row, viewOnly){
-  var p = { name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', level: row.level || 0 };
-  window.__rowSnapshot = row;
-  var old = load(PKEY, null);
-  if (!p.pfp && old && old.pfp) p.pfp = old.pfp;
-  if (!viewOnly) {
-    save(PKEY, p); sbMirrorLocal(p.wax || p.xrp ? { name: p.name, wax: p.wax, xrp: p.xrp, discord: p.discord, kofi: p.kofi } : null);
-    fillForm(p);
-  }
-  showProfile(p);
-  if (!viewOnly) { try { resumePendingSave(); } catch (e) {} }
-  return p;
-}
-async function loadProfileForWax(name){
-  var st = document.getElementById('pf-login-status');
-  st.textContent = 'Logged in as ' + name + ', proven by your wallet. Looking up your Horde profile…';
-  var row = await sbFind(name, null);
-  try { localStorage.setItem('horde_proven', name); } catch (e) {}
-  if (row && window.__viewOnly && isProvenFor(row)) {
-    window.__viewOnly = false; window.__viewMine = true;
-    var et2 = document.getElementById('edit-toggle'); if (et2) et2.hidden = false;
-    var vn = document.getElementById('view-note'); if (vn) vn.hidden = true;
-  }
-  if (row) { applyRow(row); st.textContent = 'Logged in as ' + name + '. Your Horde profile is loaded, welcome back.'; }
-  else { document.getElementById('f-wax').value = name; st.textContent = 'Logged in as ' + name + '. No Horde profile for this wallet yet. Fill in your name below and save, that creates it.'; }
-}
-(function(){
-  var btn = document.getElementById('pf-wax-login');
-  var st = document.getElementById('pf-login-status');
-  if (!btn || !st) return;
-  var kit = null, sess = null;
-  async function init(){
-    try {
-      var m = await Promise.all([
-        import('https://esm.sh/@wharfkit/session@4.0.2'),
-        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
-      ]);
-      kit = new m[0].SessionKit({ appName: 'artistbyron', chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }], ui: new m[1].WebRenderer(), walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()] }); window.__waxKit = kit;
-      window.__sendWaxProof = async function(to, memo){
-        var s = sess;
-        if (!s) { try { s = await kit.restore(); } catch (e) {} }
-        if (!s) { var res = await kit.login(); s = res.session; }
-        sess = s;
-        var actor = String(s.actor);
-        var perm = null;
-        try { perm = s.permissionLevel || null; } catch (e) {}
-        if (!perm) perm = { actor: actor, permission: 'active' };
-        return await s.transact({ actions: [{ account: 'eosio.token', name: 'transfer', authorization: [perm], data: { from: actor, to: to, quantity: '0.00010000 WAX', memo: memo } }] });
-      };
-      btn.addEventListener('click', async function(){
-        btn.disabled = true; st.textContent = 'Opening your wallet…';
-        try { var res = await kit.login(); sess = res.session; await loadProfileForWax(String(sess.actor)); }
-        catch (e) { st.textContent = 'Login cancelled or failed. You can still build or edit your profile below.'; }
-        finally { btn.disabled = false; }
-      });
-      try { sess = await kit.restore(); if (sess) await loadProfileForWax(String(sess.actor)); } catch (e) {}
-    } catch (e) { st.textContent = 'WAX login could not load just now. You can still build or edit your profile below.'; }
-  }
-  init();
-  /* Cross device: registered on another device, nothing saved here yet?
-     Look the stored wallets up in the shared list and load the row. */
-  (async function(){
-    try {
-      if (load(PKEY, null)) return;
-      var reg = load(RKEY, null);
-      if (reg && (reg.wax || reg.xrp)) {
-        showProfile({ name: reg.name || '', wax: reg.wax || '', xrp: reg.xrp || '', discord: reg.discord || '', kofi: reg.kofi || '', x: '', about: '', pfp: '' });
-        var row = await sbFind(reg.wax || null, reg.xrp || null);
-        if (row) applyRow(row);
-      }
-    } catch (e) {}
-  })();
-})();
-
-document.getElementById('edit-toggle').addEventListener('click', function(){
-  // The button always answers. On somebody else's profile it points at
-  // the note instead of opening a form that is not theirs; on your own
-  // it opens the form, and saving is where proof is asked for. A dead
-  // or missing button just confuses people.
-  if (window.__viewOnly && !window.__viewMine) {
-    var vn = document.getElementById('view-note');
-    if (vn) { vn.hidden = false; vn.textContent = 'This is a public view, and editing is locked here. To edit your own profile, log in with your wallet first, then open your profile.'; vn.scrollIntoView({ behavior: 'smooth' }); }
-    return;
-  }
-  var bc = document.getElementById('build-card');
-  if (bc) { bc.hidden = false; bc.scrollIntoView({ behavior: 'smooth' }); }
-});
-/* Public profile view: profile.html?n=1 loads that member straight
-   from the shared list. Viewing is public, the art and wallets are
-   public on chain already. Login is only for editing and keys. */
-async function sbByNo(n){
-  try {
-    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&profile_no=eq.' + encodeURIComponent(n), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
-    var rows = await res.json();
-    return (rows && rows.length) ? rows[0] : null;
-  } catch (e) { return null; }
-}
-function enterViewMode(row){
-  window.__viewOnly = true;
-  var mine = isProvenFor(row);
-  window.__viewMine = mine;
-  ['profile-login-card','build-card','event-card','profile-intro','find-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = true; });
-  var et = document.getElementById('edit-toggle');
-  var note = document.getElementById('view-note');
-  var fc = document.getElementById('find-card');
-  if (fc) fc.hidden = true;
-  if (note) { note.hidden = false; note.textContent = mine
-    ? 'You are looking at Horde profile #' + row.profile_no + ', ' + (row.name || '') + '. This page is yours, bookmark it. Viewing needs no login. Your pieces and your key are below.'
-    : 'You are looking at Horde profile #' + row.profile_no + ', ' + (row.name || '') + '. Viewing needs no login, and viewing is not editing. Their pieces and their key are below.'; }
-}
-document.getElementById('find-go').addEventListener('click', function(){
-  var v = document.getElementById('find-no').value.trim();
-  if (v) location.href = 'profile.html?n=' + encodeURIComponent(v);
-});
-(async function(){
-  try {
-    var n = new URLSearchParams(location.search).get('n');
-    if (!n) return;
-    var row = await sbByNo(n);
-    if (row) {
-      if (isProvenFor(row)) { applyRow(row); }
-      else { enterViewMode(row); applyRow(row, true); }
-    }
-  } catch (e) {}
-})();
-var ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1 };
-async function xrpCount(addr){
-  var total = 0, marker = null, pages = 0;
-  do {
-    var body = { method: 'account_nfts', params: [{ account: addr, limit: 400 }] };
-    if (marker) body.params[0].marker = marker;
-    var res = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    var j = await res.json();
-    var list = (j.result && j.result.account_nfts) || [];
-    list.forEach(function(n){ var iss2 = n.Issuer || n.issuer; if (iss2 && ISSUERS[iss2]) total++; });
-    marker = j.result && j.result.marker; pages++;
-  } while (marker && pages < 10);
-  return total;
-}
-async function waxCount(acct){
-  var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(acct));
-  var j = await res.json();
-  var cols = (j.data && j.data.collections) || [];
-  var total = 0;
-  cols.forEach(function(c){ var nm = (c.collection && c.collection.collection_name) || c.collection_name || ''; if (nm === 'byronartset1' || nm === 'myhordeonwax' || nm === 'myzicklearmy' || nm === 'myzombiecats') total += parseInt(c.assets, 10) || 0; });
-  return total;
-}
-
 async function chainPost(host, path, body){
   var r = await fetch(host + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   return r.json();
@@ -735,25 +283,27 @@ function renderBadges(p, hasKey){
   document.getElementById('view-badges').innerHTML = defs.map(function(d){ return '<span class="pbadge' + (d.on ? ' on' : '') + '">' + d.label + '</span>'; }).join('');
   if (!window.__levelSet) document.getElementById('view-level').innerHTML = '<strong>Level 0 · Initiate</strong>';
 }
-function setMember(p){
-  if (window.__viewOnly) return;
-  var known = isProvenFor(p);
-  ['find-card','profile-login-card','event-card','profile-intro','tie-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = known; });
-  if (known) { var bc = document.getElementById('build-card'); if (bc) bc.hidden = true; }
+function fillForm(p){
+  document.getElementById('pf-about').value = p.about || '';
+  document.getElementById('pf-discord').value = p.discord || '';
+  document.getElementById('pf-kofi').value = p.kofi || '';
+  document.getElementById('pf-x').value = p.x || '';
+  document.getElementById('pfp-preview').src = pfpSrc(p.pfp);
+  document.getElementById('edit-who').textContent = 'You are editing Horde profile #' + p.no + ', ' + p.name + '. These are the same words everyone sees on the shared list.';
 }
-async function showProfile(p){
+async function renderProfile(row){
+  state.row = row;
+  var p = rowToP(row);
   window.__levelSet = false;
-  setMember(p);
+  state.mine = !!(state.session && state.session.profile_no === row.profile_no);
   var card = document.getElementById('profile-view-card');
   card.hidden = false;
-  window.__pfpPick = isProvenFor(p);
-  window.__currentP = p;
-  if (p.pfp) document.getElementById('view-pfp').src = pfpSrc(p.pfp);
+  window.__pfpPick = state.mine;
+  document.getElementById('view-pfp').src = pfpSrc(p.pfp);
   document.getElementById('view-name').textContent = p.name;
-  var vh = document.getElementById('view-heading');
-  if (vh) vh.textContent = (window.__viewOnly || !isProvenFor(p)) ? (p.name ? p.name + "'s Horde profile" : 'Horde profile') : ('Welcome back' + (p.name ? ', ' + p.name : ''));
-  var et0 = document.getElementById('edit-toggle');
-  if (et0) et0.hidden = false;
+  document.getElementById('view-heading').textContent = state.mine ? ('Welcome back' + (p.name ? ', ' + p.name : '')) : (p.name ? p.name + "'s Horde profile" : 'Horde profile');
+  document.getElementById('edit-row').hidden = !state.mine;
+  document.getElementById('edit-card').hidden = true;
   document.getElementById('view-about').textContent = p.about || '';
   var w = [];
   if (p.wax) w.push('<div><strong>WAX wallet:</strong> ' + esc(p.wax) + '</div>');
@@ -764,6 +314,18 @@ async function showProfile(p){
   if (p.kofi) l.push('Ko-fi: ' + p.kofi);
   if (p.x) l.push('X: ' + p.x);
   document.getElementById('view-links').textContent = l.join('  ·  ');
+  var note = document.getElementById('view-note');
+  if (state.session && !state.mine) {
+    note.hidden = false;
+    note.textContent = 'You are unlocked as Horde profile #' + state.session.profile_no + '. This page is #' + row.profile_no + ', so it is view only here.';
+  } else if (!state.session) {
+    note.hidden = false;
+    note.textContent = 'You are looking at Horde profile #' + row.profile_no + ', ' + (p.name || '') + '. Viewing needs no login, and viewing is not editing. If this is you, unlock below and it becomes yours on this device.';
+  } else {
+    note.hidden = true;
+  }
+  document.getElementById('unlock-card').hidden = !!state.session;
+  if (state.mine) fillForm(p);
   loadBalances(p);
   renderBadges(p, false);
   var k = document.getElementById('key-text');
@@ -791,222 +353,418 @@ async function showProfile(p){
   } catch (e) {}
   k.textContent = keys.length ? 'yes · ' + keys.join(' and ') : 'not yet. Keys are sent by hand for now: message Byron on X (@ArtistByron) or in the Discord and he will send yours.';
   if (keys.length) renderBadges(p, true);
-  var h = document.getElementById('holdings-text');
-  h.textContent = 'Counting your pieces on both chains…';
   loadPieces(p);
 }
 
-document.getElementById('profile-form').addEventListener('submit', function(e){
+var profWallets = { xrp: '', wax: '' };
+var xrpGroups = {};
+function thumbInto(imgEl, src){
+  var cid = '';
+  var m = String(src || '').match(/ipfs\/([A-Za-z0-9]+)/) || String(src || '').match(/^(Qm[A-Za-z0-9]+)$/);
+  if (m) cid = m[1];
+  var tries = [src];
+  if (cid) tries = ['https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=200&output=webp', 'https://ipfs.io/ipfs/' + cid];
+  var ti = 0;
+  imgEl.onerror = function(){ ti++; if (ti < tries.length) imgEl.src = tries[ti]; else imgEl.style.visibility = 'hidden'; };
+  imgEl.src = tries[0];
+}
+function collRow(name, count, icon, onclick){
+  var row = document.createElement('div');
+  row.className = 'collrow';
+  var im = document.createElement('img'); im.alt = ''; im.loading = 'lazy';
+  thumbInto(im, icon || 'art/horde-h-icon.png');
+  var mid = document.createElement('div');
+  var n1 = document.createElement('div'); n1.className = 'cname'; n1.textContent = name;
+  var n2 = document.createElement('div'); n2.className = 'ccount'; n2.textContent = count + (count === 1 ? ' piece' : ' pieces') + ' · tap to see them';
+  mid.appendChild(n1); mid.appendChild(n2);
+  row.appendChild(im); row.appendChild(mid);
+  row.addEventListener('click', onclick);
+  return row;
+}
+function addPiece(box, img, name){
+  var f = document.createElement('figure');
+  var im = document.createElement('img');
+  im.loading = 'lazy'; im.alt = name || 'Horde piece';
+  var cid = '';
+  var m = String(img).match(/ipfs\/([A-Za-z0-9]+)/) || String(img).match(/^(Qm[A-Za-z0-9]+)$/);
+  if (m) cid = m[1];
+  var tries = [img];
+  if (cid) {
+    tries = ['https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=600&output=webp', 'https://ipfs.io/ipfs/' + cid];
+  }
+  var ti = 0, timer = null, done = false;
+  function next(){
+    if (done) return;
+    ti++;
+    if (ti < tries.length) { arm(); im.src = tries[ti]; }
+    else { done = true; f.style.display = 'none'; }
+  }
+  function arm(){ clearTimeout(timer); timer = setTimeout(next, 5000); }
+  im.onload = function(){ done = true; clearTimeout(timer); };
+  im.onerror = function(){ next(); };
+  arm();
+  im.src = tries[0];
+  var c = document.createElement('figcaption');
+  c.textContent = name || '';
+  f.appendChild(im); f.appendChild(c);
+  if (window.__pfpPick) {
+    var b = document.createElement('button');
+    b.className = 'btn ghost'; b.type = 'button'; b.textContent = 'Make this my picture';
+    b.style.marginTop = '6px';
+    b.addEventListener('click', function(){
+      var raw = img;
+      var mm = String(img).match(/ipfs\/([A-Za-z0-9]+)/);
+      if (mm) raw = mm[1];
+      window.__pendingPfp = raw;
+      var pv = document.getElementById('pfp-preview'); if (pv) pv.src = pfpSrc(raw);
+      closeModal();
+      var ec = document.getElementById('edit-card'); if (ec) { ec.hidden = false; ec.scrollIntoView({ behavior: 'smooth' }); }
+      var st = document.getElementById('pf-status');
+      if (st) st.textContent = 'Picture picked from your pieces. Hit Save and it is on your profile for everyone.';
+    });
+    f.appendChild(b);
+  }
+  box.appendChild(f);
+}
+function openModal(title){
+  var m = document.getElementById('piece-modal');
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-grid').innerHTML = '';
+  document.getElementById('modal-status').textContent = 'Loading…';
+  document.getElementById('modal-sort').value = 'default';
+  modalFilter = '';
+  var ms = document.getElementById('modal-search'); if (ms) ms.value = '';
+  modalItems = []; modalShown = 0;
+  document.getElementById('modal-more').hidden = true;
+  m.hidden = false; m.style.display = 'block';
+}
+function closeModal(){ var m = document.getElementById('piece-modal'); m.hidden = true; m.style.display = 'none'; }
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('piece-modal').addEventListener('click', function(e){ if (e.target === this) closeModal(); });
+var modalItems = [], modalShown = 0, modalFilter = '';
+var MODAL_PAGE = 20;
+function sortedModalItems(){
+  var mode = document.getElementById('modal-sort').value;
+  var list = modalItems.slice();
+  if (modalFilter) list = list.filter(function(it){ return String(it.name || '').toLowerCase().indexOf(modalFilter) >= 0; });
+  if (mode === 'az') list.sort(function(a, b){ return String(a.name).localeCompare(String(b.name)); });
+  if (mode === 'za') list.sort(function(a, b){ return String(b.name).localeCompare(String(a.name)); });
+  if (mode === 'mint') list.sort(function(a, b){ return (a.mint || 999999999) - (b.mint || 999999999); });
+  return list;
+}
+function renderModalMore(){
+  var grid = document.getElementById('modal-grid');
+  var list = sortedModalItems();
+  var end = Math.min(modalShown + MODAL_PAGE, list.length);
+  for (var i = modalShown; i < end; i++) addPiece(grid, list[i].img, list[i].name);
+  modalShown = end;
+  document.getElementById('modal-more').hidden = modalShown >= list.length;
+  document.getElementById('modal-status').textContent = modalFilter && !list.length ? 'No pieces match that search.' : list.length + ' pieces' + (modalFilter ? ' match your search' : '') + (modalShown < list.length ? ', showing ' + modalShown : '') + '.';
+}
+document.getElementById('modal-more').addEventListener('click', renderModalMore);
+document.getElementById('modal-search').addEventListener('input', function(){
+  modalFilter = this.value.trim().toLowerCase();
+  document.getElementById('modal-grid').innerHTML = '';
+  modalShown = 0;
+  renderModalMore();
+});
+document.getElementById('modal-sort').addEventListener('change', function(){
+  document.getElementById('modal-grid').innerHTML = '';
+  modalShown = 0;
+  renderModalMore();
+});
+async function openXrpCollection(key){
+  var g = xrpGroups[key]; if (!g) return;
+  openModal(g.name);
+  var list = g.nfts.slice(0, 100);
+  document.getElementById('modal-status').textContent = 'Loading ' + list.length + ' pieces…';
+  for (var i = 0; i < list.length; i += 12) {
+    var batch = list.slice(i, i + 6);
+    await Promise.all(batch.map(async function(n){
+      var name = g.name, img = '';
+      try {
+        var uriHex = n.URI || n.uri;
+        if (uriHex) {
+          var mu = ipfsUrl(uriHex.match(/.{2}/g).map(function(h){ return String.fromCharCode(parseInt(h, 16)); }).join(''));
+          var mr = await fetch(mu); var mj = await mr.json();
+          name = mj.name || name; img = ipfsUrl(mj.image || mj.image_url || '');
+        }
+      } catch (e) {}
+      if (img) modalItems.push({ img: img, name: name, mint: 0 });
+    }));
+    if (!modalShown) renderModalMore();
+  }
+  modalShown = 0;
+  document.getElementById('modal-grid').innerHTML = '';
+  renderModalMore();
+}
+async function openWaxCollection(collName, displayName){
+  openModal(displayName);
+  try {
+    var wr = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(profWallets.wax) + '&collection_name=' + collName + '&limit=100&order_desc=false');
+    var wj = await wr.json();
+    var data = wj.data || [];
+    data.forEach(function(a){
+      var cid = (a.data && a.data.img) || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
+      var nm = (a.data && a.data.name) || (a.template && a.template.immutable_data && a.template.immutable_data.name) || displayName;
+      if (cid) modalItems.push({ img: 'https://gateway.pinata.cloud/ipfs/' + String(cid).replace(/^ipfs:\/\//, ''), name: nm, mint: parseInt(a.template_mint || '0', 10) || 999999999 });
+    });
+    if (!modalItems.length) { document.getElementById('modal-status').textContent = 'No pictures could load for this collection.'; return; }
+    renderModalMore();
+  } catch (e) { document.getElementById('modal-status').textContent = 'Could not load this collection just now.'; }
+}
+async function loadPieces(p){
+  var card = document.getElementById('pieces-card');
+  var status = document.getElementById('pieces-status');
+  var xbox = document.getElementById('coll-xrp');
+  var wbox = document.getElementById('coll-wax');
+  if (!p.xrp && !p.wax) { var ht0 = document.getElementById('holdings-text'); if (ht0) ht0.textContent = 'No wallets on this profile yet.'; return; }
+  card.hidden = false;
+  profWallets = { xrp: p.xrp || '', wax: p.wax || '' };
+  var sx = document.getElementById('side-xrp-wallet'); if (sx) sx.textContent = p.xrp ? 'Wallet: ' + p.xrp : 'No XRP wallet on this profile.';
+  var sw = document.getElementById('side-wax-wallet'); if (sw) sw.textContent = p.wax ? 'Wallet: ' + p.wax : 'No WAX wallet on this profile.';
+  status.textContent = 'Counting your collections on both chains…';
+  var totals = [];
+  var piecesW = 0, piecesX = 0;
+  xrpGroups = {};
+  if (p.xrp) {
+    try {
+      var meta = {};
+      try {
+        var cj = await (await fetch('data/collections.json')).json();
+        (cj.collections || []).forEach(function(c){ meta[(cj.issuers[c.issuer] || '') + '|' + c.taxon] = c; });
+      } catch (e) {}
+      var marker = null, pages = 0, mine = [];
+      do {
+        var b = { method: 'account_nfts', params: [{ account: p.xrp, limit: 400 }] };
+        if (marker) b.params[0].marker = marker;
+        var r = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+        var j = await r.json();
+        ((j.result && j.result.account_nfts) || []).forEach(function(n){ var iss = n.Issuer || n.issuer; if (iss && OUR_ISSUERS[iss]) mine.push(n); });
+        marker = j.result && j.result.marker; pages++;
+      } while (marker && pages < 10);
+      mine.forEach(function(n){
+        var iss = n.Issuer || n.issuer, tax = (n.NFTokenTaxon !== undefined ? n.NFTokenTaxon : n.nftoken_taxon);
+        var key = iss + '|' + tax;
+        if (!xrpGroups[key]) {
+          var mc = meta[key];
+          xrpGroups[key] = { name: mc ? mc.name : (iss === 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH' && tax === 66602 ? 'with the Horde' : 'Collection ' + tax), icon: mc ? mc.icon : '', nfts: [] };
+        }
+        xrpGroups[key].nfts.push(n);
+      });
+      var keys = Object.keys(xrpGroups).sort(function(a, b){ return xrpGroups[b].nfts.length - xrpGroups[a].nfts.length; });
+      xbox.innerHTML = '';
+      keys.forEach(function(key){ var g = xrpGroups[key]; xbox.appendChild(collRow(g.name, g.nfts.length, g.icon, function(){ openXrpCollection(key); })); });
+      if (!keys.length) xbox.innerHTML = '<p class="small">No Horde pieces found on XRP for this wallet.</p>';
+      var heldKeys = {}; keys.forEach(function(k){ heldKeys[k] = true; });
+      var unheld = Object.keys(meta).filter(function(k){ return !heldKeys[k]; }).map(function(k){ return meta[k].name; }).sort();
+      if (unheld.length) {
+        document.getElementById('unheld-xrp-wrap').hidden = false;
+        document.getElementById('unheld-xrp-summary').textContent = 'Collections you do not hold yet (' + unheld.length + ')';
+        document.getElementById('unheld-xrp').textContent = unheld.join(' · ');
+      }
+      piecesX = mine.length;
+      totals.push(mine.length + ' pieces on XRP in ' + keys.length + (keys.length === 1 ? ' collection' : ' collections'));
+    } catch (e) { xbox.innerHTML = '<p class="small">XRP collections could not load just now.</p>'; }
+  }
+  if (p.wax) {
+    try {
+      var ar = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(p.wax));
+      var aj = await ar.json();
+      var ours = { byronartset1: 'Art of Byron', myhordeonwax: 'HORDE on WAX', myzicklearmy: 'My Zickle Army', myzombiecats: 'My Zombie Cat Collection' };
+      var heldW = {};
+      var totalW = 0;
+      wbox.innerHTML = '';
+      ((aj.data && aj.data.collections) || []).forEach(function(c){
+        var cn = c.collection && c.collection.collection_name;
+        if (!ours[cn]) return;
+        var count = parseInt(c.assets, 10) || 0;
+        heldW[cn] = true; totalW += count;
+        var nm = (c.collection && c.collection.name) || ours[cn];
+        var ic = (c.collection && c.collection.img) || '';
+        wbox.appendChild(collRow(nm, count, ic, function(){ openWaxCollection(cn, nm); }));
+      });
+      if (!Object.keys(heldW).length) wbox.innerHTML = '<p class="small">No Horde pieces found on WAX for this wallet.</p>';
+      var unheldW = Object.keys(ours).filter(function(k){ return !heldW[k]; }).map(function(k){ return ours[k]; });
+      if (unheldW.length) {
+        document.getElementById('unheld-wax-wrap').hidden = false;
+        document.getElementById('unheld-wax-summary').textContent = 'Collections you do not hold yet (' + unheldW.length + ')';
+        document.getElementById('unheld-wax').textContent = unheldW.join(' · ');
+      }
+      piecesW = totalW;
+      totals.push(totalW + ' pieces on WAX in ' + Object.keys(heldW).length + (Object.keys(heldW).length === 1 ? ' collection' : ' collections'));
+    } catch (e) { wbox.innerHTML = '<p class="small">WAX collections could not load just now.</p>'; }
+  }
+  status.textContent = totals.length ? totals.join(' · ') + '.' : '';
+  var ht = document.getElementById('holdings-text');
+  if (ht && totals.length) ht.textContent = totals.join(' · ') + ', all one Horde profile.';
+  setLevel(piecesW, piecesX);
+}
+
+document.getElementById('edit-toggle').addEventListener('click', function(){
+  var ec = document.getElementById('edit-card');
+  if (ec) { ec.hidden = false; ec.scrollIntoView({ behavior: 'smooth' }); }
+});
+document.getElementById('session-logout').addEventListener('click', async function(){
+  var s = state.session;
+  state.session = null;
+  storeSession(null);
+  try { localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_profile'); } catch (e) {}
+  if (s && s.token) { try { await checkerPost({ action: 'logout', token: s.token }); } catch (e) {} }
+  location.href = 'profile.html';
+});
+document.getElementById('find-go').addEventListener('click', function(){
+  var v = document.getElementById('find-no').value.trim();
+  if (v) location.href = 'profile.html?n=' + encodeURIComponent(v);
+});
+document.getElementById('profile-form').addEventListener('submit', async function(e){
   e.preventDefault();
   var status = document.getElementById('pf-status');
-  var p = {
-    name: document.getElementById('pf-name').value.trim(),
+  if (!state.session || !state.mine) { status.textContent = 'This device is not unlocked for this profile. Unlock above first.'; return; }
+  var fields = {
     about: document.getElementById('pf-about').value.trim(),
-    wax: document.getElementById('pf-wax').value.trim().toLowerCase(),
-    xrp: document.getElementById('pf-xrp').value.trim(),
     discord: document.getElementById('pf-discord').value.trim(),
     kofi: document.getElementById('pf-kofi').value.trim(),
-    x: document.getElementById('pf-x').value.trim(),
-    pfp: pfpData || (load(PKEY) || {}).pfp || '',
-    updated: new Date().toISOString().slice(0,10)
+    x_handle: document.getElementById('pf-x').value.trim()
   };
-  // A blank box never erases a known value. If a field comes back empty
-  // but this device already knows it, the box was simply never refilled,
-  // so keep the known value. (A stale empty form once wiped a member's
-  // X handle from their device copy even though the shared list had it.)
-  var prevP = load(PKEY) || {};
-  ['x', 'about', 'discord', 'kofi'].forEach(function(k){ if (!p[k] && prevP[k]) p[k] = prevP[k]; });
-  if (!p.name) { status.textContent = 'Pick a display name first.'; return; }
-  if (!validWax(p.wax)) { status.textContent = 'That WAX name does not look right. Lower case, 12 characters max.'; return; }
-  if (!validXrp(p.xrp)) { status.textContent = 'That XRPL address does not look right. It should start with r.'; return; }
-  if (!p.wax && !p.xrp && !p.kofi && !p.discord) { status.textContent = 'Add at least one way for us to know you: a WAX or XRP wallet, your Ko-fi name, or your Discord name.'; return; }
-  sbSaveProfile({ name: p.name, wax: p.wax || null, xrp: p.xrp || null, discord: p.discord || null, kofi: p.kofi || null, x_handle: p.x || null, about: p.about || null });
-  save(PKEY, p);
-  maybeCheckerSave(p, status);
-  var r = load(RKEY) || {};
-  r.name = p.name; r.wax = p.wax; r.xrp = p.xrp; r.discord = p.discord; r.kofi = p.kofi;
-  save(RKEY, r);
-  status.textContent = 'Saved on this device, ' + p.name + '.';
-  showProfile(p);
+  if (window.__pendingPfp) fields.pfp = window.__pendingPfp;
+  status.textContent = 'Saving to the shared list…';
+  var res;
+  try { res = await checkerPost({ action: 'save', token: state.session.token, fields: fields }); }
+  catch (err) { status.textContent = 'The shared list could not be reached just now. Nothing was saved, try again in a minute.'; return; }
+  if (res && res.ok && res.status === 'saved') {
+    window.__pendingPfp = null;
+    var row = await sbByNo(state.session.profile_no);
+    if (row) { await renderProfile(row); document.getElementById('edit-card').hidden = false; }
+    status.textContent = 'Saved to the shared list. Everyone sees it now.';
+  } else if (res && res.ok && res.status === 'unchanged') {
+    status.textContent = 'Everything already matches the shared list. Nothing new to save.';
+  } else if (res && res.error === 'Not logged in.') {
+    state.session = null; storeSession(null);
+    status.textContent = 'Your unlock has expired on this device. Unlock again above, then save.';
+    document.getElementById('unlock-card').hidden = false;
+    document.getElementById('unlock-card').scrollIntoView({ behavior: 'smooth' });
+  } else {
+    status.textContent = 'Save did not go through: ' + ((res && res.error) || 'unknown error') + '. Nothing was changed.';
+  }
 });
-var CHECKER_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co/functions/v1/update-profile';
-var checkerTimer = null;
-async function checkerPost(payload){
-  var r = await fetch(CHECKER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }, body: JSON.stringify(payload) });
-  return r.json();
-}
-function stopChecker(){ if (checkerTimer) { clearInterval(checkerTimer); checkerTimer = null; } }
-document.getElementById('proof-cancel').addEventListener('click', function(){
-  stopChecker();
-  clearPending();
-  document.getElementById('proof-box').hidden = true;
-  document.getElementById('pf-status').textContent = 'Proof cancelled. Your edits are saved on this device only.';
-});
-var PENDING_KEY = 'horde_pending_save';
-function savePending(nonce, fields, sendTo){ try { localStorage.setItem(PENDING_KEY, JSON.stringify({ nonce: nonce, fields: fields, send_to: sendTo || '' })); } catch (e) {} }
-function loadPending(){ try { var r = localStorage.getItem(PENDING_KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
-function clearPending(){ try { localStorage.removeItem(PENDING_KEY); } catch (e) {} }
-function watchProof(nonce, fields){
-  var pstat = document.getElementById('proof-status');
-  var status = document.getElementById('pf-status');
+
+/* Unlock: one dust proof, one 30 day session. */
+var loginPollTimer = null;
+async function pollLogin(nonce){
+  var st = document.getElementById('unlock-status');
   var tries = 0;
-  stopChecker();
-  checkerTimer = setInterval(async function(){
+  clearInterval(loginPollTimer);
+  loginPollTimer = setInterval(async function(){
     tries++;
-    if (tries > 360) { stopChecker(); pstat.textContent = 'Stopped watching for now. Your edits are saved on this device, and this page picks the watch back up when you return.'; return; }
-    try {
-      var ck = await checkerPost({ action: 'check', nonce: nonce });
-      if (ck.status === 'proven') {
-        stopChecker();
-        pstat.textContent = 'Proof found. Saving to the shared list…';
-        var up = await checkerPost({ action: 'update', nonce: nonce, fields: fields });
-        if (up && up.ok) {
-          clearPending();
-          window.__pendingPfp = '';
-          pstat.textContent = 'Saved to the shared list. It now shows on every device.';
-          status.textContent = 'Profile saved, on this device and on the shared list.';
-          var snap = window.__rowSnapshot;
-          if (snap) { var row = await sbByNo(snap.profile_no); if (row) applyRow(row, true); }
-        } else { pstat.textContent = 'Proof worked, but the save did not go through. Your edits are safe on this device.'; }
-      } else if (ck.status === 'used') {
-        // The finisher already wrote this save (it runs on its own so
-        // nobody has to keep the page open). Refresh and call it saved.
-        stopChecker();
-        clearPending();
-        window.__pendingPfp = '';
-        pstat.textContent = 'Saved to the shared list. It now shows on every device.';
-        status.textContent = 'Profile saved, on this device and on the shared list.';
-        var snap2 = window.__rowSnapshot;
-        if (snap2) { var row2 = await sbByNo(snap2.profile_no); if (row2) applyRow(row2, true); }
-      } else if (ck.status === 'expired') {
-        stopChecker();
-        clearPending();
-        pstat.textContent = 'That proof code is done. Save your profile again for a fresh code, your edits are still in the form.';
+    var res;
+    try { res = await checkerPost({ action: 'login', nonce: nonce }); } catch (e) { return; }
+    if (res && res.status === 'logged_in' && res.token) {
+      clearInterval(loginPollTimer);
+      state.session = { token: res.token, profile_no: res.profile_no, name: res.name || '' };
+      storeSession(state.session);
+      if (st) st.textContent = 'Unlocked. Welcome back, ' + (res.name || '') + '.';
+      var row = await sbByNo(res.profile_no);
+      if (row) {
+        try { localStorage.setItem('horde_registration', JSON.stringify({ name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
+        await renderProfile(row);
       }
-    } catch (e) {}
-  }, 5000);
-}
-function resumePendingSave(){
-  var pend = loadPending();
-  if (!pend || !pend.nonce) return;
-  var snap = window.__rowSnapshot;
-  if (!snap || !isProvenFor(snap)) return;
-  var proven = provenWallet();
-  var chain = proven === (snap.wax || '') ? 'wax' : 'xrp';
-  var box = document.getElementById('proof-box');
-  var ptext = document.getElementById('proof-text');
-  var pcode = document.getElementById('proof-code');
-  var pstat = document.getElementById('proof-status');
-  box.hidden = false;
-  pcode.textContent = pend.nonce;
-  ptext.textContent = chain === 'wax'
-    ? 'You still have edits waiting to reach the shared list. From your WAX wallet ' + proven + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.'
-    : 'You still have edits waiting to reach the shared list. From your XRP wallet ' + proven + ', send 1 drop (0.000001 XRP) to ' + (pend.send_to || 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH') + ' with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.';
-  pstat.textContent = 'Watching the chain for your proof…';
-  watchProof(pend.nonce, pend.fields);
-}
-async function maybeCheckerSave(p, status){
-  function announce(msg){
-    var bx = document.getElementById('proof-box');
-    var pt = document.getElementById('proof-text');
-    var pc = document.getElementById('proof-code');
-    var ps = document.getElementById('proof-status');
-    if (!bx || !pt) return;
-    bx.hidden = false;
-    if (pc) pc.textContent = '';
-    pt.textContent = msg;
-    if (ps) ps.textContent = '';
-    bx.scrollIntoView({ behavior: 'smooth' });
-  }
-  var snap = window.__rowSnapshot;
-  if (!snap && isProvenFor(p)) { try { snap = await sbFind(p.wax, p.xrp); if (snap) window.__rowSnapshot = snap; } catch (e) {} }
-  if (!snap || !isProvenFor(p)) {
-    // Never leave a save unexplained: the device copy saved, the shared
-    // list did not, and the member deserves to hear why out loud.
-    announce('Saved on this device only. To put these edits on the shared list, log in with your wallet on this page first, then hit Save again.');
-    return;
-  }
-  var fields = {};
-  // Only stage a change when the new value is filled in. A blank value
-  // against a filled snapshot means the form was never refilled, not
-  // that the member wants the field erased from the shared list.
-  if ((snap.x_handle || '') !== p.x && p.x) fields.x_handle = p.x;
-  if ((snap.about || '') !== p.about && p.about) fields.about = p.about;
-  if ((snap.discord || '') !== p.discord && p.discord) fields.discord = p.discord;
-  if ((snap.kofi || '') !== p.kofi && p.kofi) fields.kofi = p.kofi;
-  var pfpCand = window.__pendingPfp || (p.pfp && !/^data:/.test(p.pfp) ? p.pfp : '');
-  if (pfpCand && pfpCand !== (snap.pfp || '')) fields.pfp = pfpCand;
-  if (!Object.keys(fields).length) {
-    if (p.pfp && /^data:/.test(p.pfp)) {
-      announce('Your picture is an uploaded photo, so it lives on this device only. To put a picture on the shared list, open one of your own pieces below and tap Make this my picture. Everything else here already matches the shared list.');
-    } else {
-      announce('Everything here already matches the shared list. Nothing new to save.');
+      var vc = document.getElementById('profile-view-card');
+      if (vc) vc.scrollIntoView({ behavior: 'smooth' });
+    } else if (res && (res.status === 'expired' || res.status === 'used' || res.status === 'unknown')) {
+      clearInterval(loginPollTimer);
+      if (st) st.textContent = 'That code is done. Start the unlock again and use the fresh code.';
+    } else if (tries > 60) {
+      clearInterval(loginPollTimer);
+      if (st) st.textContent = 'Still no proof seen after a few minutes. If you sent it, wait a bit and try the unlock again. Nothing is lost.';
     }
+  }, 4000);
+}
+window.__beginUnlock = async function(chain, address){
+  var box = document.getElementById('unlock-box');
+  var txt = document.getElementById('unlock-text');
+  var code = document.getElementById('unlock-code');
+  var st = document.getElementById('unlock-status');
+  box.hidden = false;
+  txt.textContent = 'Getting your one-time code…';
+  code.textContent = '';
+  st.textContent = '';
+  var ch;
+  try { ch = await checkerPost({ action: 'challenge', chain: chain, address: address }); }
+  catch (e) { txt.textContent = 'The checker could not be reached just now. Try again in a minute.'; return; }
+  if (!ch || !ch.nonce) {
+    txt.textContent = (ch && ch.error) ? ch.error : 'No Horde profile has that wallet. Register first, then unlock.';
     return;
   }
-  var proven = provenWallet();
-  var chain = proven === p.wax ? 'wax' : 'xrp';
-  var address = proven;
-  var box = document.getElementById('proof-box');
-  var ptext = document.getElementById('proof-text');
-  var pcode = document.getElementById('proof-code');
-  var pstat = document.getElementById('proof-status');
-  var ch;
-  try { ch = await checkerPost({ action: 'challenge', chain: chain, address: address, fields: fields }); }
-  catch (e) { status.textContent = 'Saved on this device. The shared-list checker could not be reached just now.'; return; }
-  if (!ch || !ch.nonce) { status.textContent = 'Saved on this device only. The shared-list checker is not switched on yet.'; return; }
-  savePending(ch.nonce, fields, ch.send_to);
-  box.hidden = false;
-  pcode.textContent = ch.nonce;
-  box.scrollIntoView({ behavior: 'smooth' });
-  watchProof(ch.nonce, fields);
+  code.textContent = ch.nonce;
   if (chain === 'wax' && window.__sendWaxProof) {
-    ptext.textContent = 'One tap left. Your wallet will pop up to send the tiny proof, 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ', with the code already filled in as the memo. Approve it and your edits save to the shared list for real.';
-    pstat.textContent = 'Opening your wallet…';
+    txt.textContent = 'One tap left. Your wallet will pop up to send the tiny proof, 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ', with the code already filled in as the memo. Approve it and this device unlocks.';
+    st.textContent = 'Opening your wallet…';
     try {
       await window.__sendWaxProof(ch.send_to || 'hordesmuse42', ch.nonce);
-      pstat.textContent = 'Proof sent. You can close this page now, the save finishes by itself in the next few minutes.';
+      st.textContent = 'Proof sent. Watching for it, this can take a minute or two.';
     } catch (e) {
-      ptext.textContent = 'No problem, you can send the proof by hand instead. From your WAX wallet ' + address + ', send 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ' with exactly this code as the memo. Once it is sent you can close this page, the save finishes by itself.';
-      pstat.textContent = 'Watching the chain for your proof.';
+      txt.textContent = 'No problem, send the proof by hand instead. From your WAX wallet ' + address + ', send 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ' with exactly this code as the memo.';
+      st.textContent = 'Watching the chain for your proof.';
     }
   } else {
-    ptext.textContent = chain === 'wax'
-      ? 'From your WAX wallet ' + address + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo. It proves the wallet is yours. Once it is sent you can close this page, the save finishes by itself.'
-      : 'From your XRP wallet ' + address + ', send 1 drop (0.000001 XRP) to ' + ch.send_to + ' with exactly this code as the memo. It proves the wallet is yours. Once it is sent you can close this page, the save finishes by itself.';
-    pstat.textContent = 'Watching the chain for your proof.';
+    txt.textContent = chain === 'wax'
+      ? 'From your WAX wallet ' + address + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo.'
+      : 'From your XRP wallet ' + address + ', send 1 drop (0.000001 XRP) to ' + ch.send_to + ' with exactly this code as the memo. In Xaman the memo is called a tag or note on some screens, use the one labelled memo.';
+    st.textContent = 'Watching the chain for your proof.';
   }
-}
-document.getElementById('pf-clear').addEventListener('click', function(){
-  try { localStorage.removeItem(PKEY); } catch (e) {}
-  pfpData = '';
-  document.getElementById('pfp-preview').src = 'art/horde-h-icon.png';
-  document.getElementById('profile-form').reset();
-  document.getElementById('profile-view-card').hidden = true;
-  document.getElementById('pf-status').textContent = 'Profile cleared on this device.';
+  box.scrollIntoView({ behavior: 'smooth' });
+  pollLogin(ch.nonce);
+};
+document.getElementById('unlock-xrp').addEventListener('click', function(){
+  var addr = document.getElementById('unlock-xrp-addr').value.trim();
+  var st = document.getElementById('unlock-status');
+  if (!/^r[0-9a-zA-Z]{24,34}$/.test(addr)) {
+    document.getElementById('unlock-box').hidden = false;
+    document.getElementById('unlock-text').textContent = 'That XRPL address does not look right. It should start with r.';
+    document.getElementById('unlock-code').textContent = '';
+    if (st) st.textContent = '';
+    return;
+  }
+  window.__beginUnlock('xrp', addr);
 });
-(function(){
-  var p = load(PKEY);
-  if (!p) { var r = load(RKEY); if (r) { p = { name: r.name || '', wax: r.wax || '', xrp: r.xrp || '', discord: r.discord || '', kofi: r.kofi || '', about: '', x: '', pfp: '' }; } }
-  if (!p) return;
-  document.getElementById('pf-name').value = p.name || '';
-  document.getElementById('pf-about').value = p.about || '';
-  document.getElementById('pf-wax').value = p.wax || '';
-  document.getElementById('pf-xrp').value = p.xrp || '';
-  document.getElementById('pf-discord').value = p.discord || '';
-  document.getElementById('pf-kofi').value = p.kofi || '';
-  document.getElementById('pf-x').value = p.x || '';
-  if (p.pfp) { pfpData = p.pfp; document.getElementById('pfp-preview').src = p.pfp; }
-  if (p.name) showProfile(p);
+
+/* Start: session first, then the number in the link, then your own. */
+(async function(){
+  var saved = loadSession();
+  if (saved && saved.token) {
+    try {
+      var sres = await checkerPost({ action: 'session', token: saved.token });
+      if (sres && sres.ok) state.session = { token: saved.token, profile_no: sres.profile_no, name: saved.name || '' };
+      else storeSession(null);
+    } catch (e) { state.session = saved; }
+  }
+  var n = new URLSearchParams(location.search).get('n');
+  var target = n ? parseInt(n, 10) : (state.session ? state.session.profile_no : null);
+  if (target) {
+    var row = await sbByNo(target);
+    if (row) { await renderProfile(row); return; }
+    var note = document.getElementById('view-note');
+    note.hidden = false;
+    note.textContent = 'No Horde profile has that number yet.';
+  }
+  document.getElementById('unlock-card').hidden = !!state.session;
+  if (state.session) {
+    var own = await sbByNo(state.session.profile_no);
+    if (own) await renderProfile(own);
+  }
 })();
 </script>
 <script>
-/* WAX login, same as register.html. Fills the WAX field, signs nothing. */
-(function () {
-  var statusEl = document.getElementById('wax-login-status');
-  var loginBtn = document.getElementById('wax-login-btn');
-  var waxInput = document.getElementById('pf-wax');
-  async function init() {
+/* WAX unlock. Classic script with a dynamic import, the pattern that
+   works on every page of this site: the esm.sh Wharfkit build inside
+   try/catch, errors written to the status line. */
+(function(){
+  var btn = document.getElementById('unlock-wax');
+  var st = document.getElementById('unlock-wax-status');
+  if (!btn || !st) return;
+  var kit = null, sess = null;
+  async function init(){
     try {
       var m = await Promise.all([
         import('https://esm.sh/@wharfkit/session@4.0.2'),
@@ -1014,47 +772,51 @@ document.getElementById('pf-clear').addEventListener('click', function(){
         import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
         import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
       ]);
-      var sessionKit = new m[0].SessionKit({
-        appName: 'artistbyron',
-        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
-        ui: new m[1].WebRenderer(),
-        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
-      });
-      loginBtn.addEventListener('click', async function () {
-        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
+      kit = new m[0].SessionKit({ appName: 'artistbyron', chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }], ui: new m[1].WebRenderer(), walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()] });
+      window.__waxKit = kit;
+      window.__sendWaxProof = async function(to, memo){
+        var s = sess;
+        if (!s) { try { s = await kit.restore(); } catch (e) {} }
+        if (!s) { var res = await kit.login(); s = res.session; }
+        sess = s;
+        var actor = String(s.actor);
+        var perm = null;
+        try { perm = s.permissionLevel || null; } catch (e) {}
+        if (!perm) perm = { actor: actor, permission: 'active' };
+        return await s.transact({ actions: [{ account: 'eosio.token', name: 'transfer', authorization: [perm], data: { from: actor, to: to, quantity: '0.00010000 WAX', memo: memo } }] });
+      };
+      btn.addEventListener('click', async function(){
+        btn.disabled = true; st.textContent = 'Opening your wallet…';
         try {
-          var res = await sessionKit.login();
-          waxInput.value = String(res.session.actor);
-          statusEl.textContent = 'Logged in as ' + String(res.session.actor) + ', proven by your wallet. Now hit Save my profile.';
-        } catch (err) {
-          statusEl.textContent = 'Login cancelled or failed, you can still type your WAX name in by hand.';
-        } finally { loginBtn.disabled = false; }
+          var res = await kit.login(); sess = res.session;
+          st.textContent = 'Wallet proven as ' + String(sess.actor) + '. Getting your unlock code…';
+          await window.__beginUnlock('wax', String(sess.actor));
+        } catch (e) { st.textContent = 'Unlock cancelled or failed. You can try again, nothing was changed.'; }
+        finally { btn.disabled = false; }
       });
-      try {
-        var session = await sessionKit.restore();
-        if (session && !waxInput.value) { waxInput.value = String(session.actor); statusEl.textContent = 'Logged in as ' + String(session.actor) + ', proven by your wallet.'; }
-      } catch (err) {}
-    } catch (err) {
-      statusEl.textContent = 'WAX login could not load just now, you can still type your WAX name in by hand.';
-    }
+      try { sess = await kit.restore(); if (sess) st.textContent = 'Your wallet is connected as ' + String(sess.actor) + '. Tap Unlock with WAX and approve the tiny proof to unlock this device.'; } catch (e) {}
+    } catch (e) { st.textContent = 'WAX login could not load just now. You can still view any profile by its number.'; }
   }
   init();
 })();
 </script>
-
 <script>
 (function(){
   var a = document.getElementById('nav-login'); if (!a) return;
   var known = false;
-  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  try { known = !!localStorage.getItem('horde_session'); } catch (e) {}
   if (!known) return;
   a.textContent = 'Log out';
   a.href = '#';
   a.addEventListener('click', async function(e){
     e.preventDefault();
-    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try {
+      var s = JSON.parse(localStorage.getItem('horde_session') || 'null');
+      localStorage.removeItem('horde_session');
+      localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_profile');
+      if (s && s.token) fetch('https://tuzzavnacfzveucwhdeq.supabase.co/functions/v1/update-profile', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', Authorization: 'Bearer sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-' }, body: JSON.stringify({ action: 'logout', token: s.token }) });
+    } catch (err) {}
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
-    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';
   });
 })();
