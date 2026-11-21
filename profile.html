@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=64">
+<link rel="stylesheet" href="style.css?v=65">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -803,6 +803,12 @@ document.getElementById('profile-form').addEventListener('submit', function(e){
     pfp: pfpData || (load(PKEY) || {}).pfp || '',
     updated: new Date().toISOString().slice(0,10)
   };
+  // A blank box never erases a known value. If a field comes back empty
+  // but this device already knows it, the box was simply never refilled,
+  // so keep the known value. (A stale empty form once wiped a member's
+  // X handle from their device copy even though the shared list had it.)
+  var prevP = load(PKEY) || {};
+  ['x', 'about', 'discord', 'kofi'].forEach(function(k){ if (!p[k] && prevP[k]) p[k] = prevP[k]; });
   if (!p.name) { status.textContent = 'Pick a display name first.'; return; }
   if (!validWax(p.wax)) { status.textContent = 'That WAX name does not look right. Lower case, 12 characters max.'; return; }
   if (!validXrp(p.xrp)) { status.textContent = 'That XRPL address does not look right. It should start with r.'; return; }
@@ -897,10 +903,13 @@ async function maybeCheckerSave(p, status){
   if (!snap && isProvenFor(p)) { try { snap = await sbFind(p.wax, p.xrp); if (snap) window.__rowSnapshot = snap; } catch (e) {} }
   if (!snap || !isProvenFor(p)) return;
   var fields = {};
-  if ((snap.x_handle || '') !== p.x) fields.x_handle = p.x;
-  if ((snap.about || '') !== p.about) fields.about = p.about;
-  if ((snap.discord || '') !== p.discord) fields.discord = p.discord;
-  if ((snap.kofi || '') !== p.kofi) fields.kofi = p.kofi;
+  // Only stage a change when the new value is filled in. A blank value
+  // against a filled snapshot means the form was never refilled, not
+  // that the member wants the field erased from the shared list.
+  if ((snap.x_handle || '') !== p.x && p.x) fields.x_handle = p.x;
+  if ((snap.about || '') !== p.about && p.about) fields.about = p.about;
+  if ((snap.discord || '') !== p.discord && p.discord) fields.discord = p.discord;
+  if ((snap.kofi || '') !== p.kofi && p.kofi) fields.kofi = p.kofi;
   var pfpCand = window.__pendingPfp || (p.pfp && !/^data:/.test(p.pfp) ? p.pfp : '');
   if (pfpCand && pfpCand !== (snap.pfp || '')) fields.pfp = pfpCand;
   if (!Object.keys(fields).length) return;
