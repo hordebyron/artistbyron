@@ -7,7 +7,7 @@
 <meta name="description" content="Artist Byron, Canadian horror artist in ink and paint for 20 years. Zombies, skulls, creepy portraits.">
 
 
-<link rel="stylesheet" href="style.css?v=52">
+<link rel="stylesheet" href="style.css?v=55">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -22,10 +22,8 @@
     <h1>I draw<br>zombies.</h1>
     <p class="hero-tag">Ink and paint, 20 years in.</p>
     <p>Hello and welcome to the Horde. I'm Byron, a Canadian artist drawing and painting zombies with ink and paint, on a mission to spread zombie art across the world by any means available. You came for the art, now stay for the Horde.</p>
-    <p><a class="btn" href="gallery.html">Enter the Dark Art Gallery</a>
-    <a class="btn ghost" href="register.html">Join the Horde</a>
-    <a class="btn ghost" href="profile.html">My Horde Profile</a>
-    <a class="btn ghost" href="login.html">Log in</a></p>
+    <p><a class="btn" href="gallery.html">See the art</a>
+    <a class="btn ghost" href="register.html" id="hero-join">Join the Horde</a></p>
   </div>
 </section>
 <div class="doors">
@@ -52,6 +50,7 @@
   var a = document.getElementById('nav-login'); if (!a) return;
   var known = false;
   try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (known) { var hj = document.getElementById('hero-join'); if (hj) hj.hidden = true; }
   if (!known) return;
   a.textContent = 'Log out';
   a.href = '#';
