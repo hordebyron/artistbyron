@@ -1,0 +1,258 @@
+{
+ "generated_at": "2026-11-21 03:02 UTC",
+ "count": 18,
+ "offers": [
+  {
+   "token": "001932C8DCA1279CEDC5E2C3FDC71C26C3652B682AC1BBE716C6A4A505E38605",
+   "offer": "65BA45BFC30C8859B2BB57942629E37680DC9977E15D35F439EA7CB61CDE60A7",
+   "seller": "rpoqVwAhjdXY4DaBf6VB712u7YDgcPnz4H",
+   "price": {
+    "currency": "XRP",
+    "value": 1.0
+   },
+   "issuer_name": "Horde",
+   "issuer": "rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf",
+   "taxon": 5,
+   "name": "Lost in Contemplation",
+   "img": "https://ipfs.io/ipfs/bafybeigyfgmsjobjpqlwdawt7azyeh65upkp5us7e6zzmhxjkwy3zbre6e/thecontemplation.png"
+  },
+  {
+   "token": "00192328DCA1279CEDC5E2C3FDC71C26C3652B682AC1BBE74492454505E38607",
+   "offer": "F7D2366E8C4893A04449AE175E3F72114813CA73F719BCD54D56ED62B6CDED53",
+   "seller": "rpoqVwAhjdXY4DaBf6VB712u7YDgcPnz4H",
+   "price": {
+    "currency": "XRP",
+    "value": 1.2
+   },
+   "issuer_name": "Horde",
+   "issuer": "rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf",
+   "taxon": 999,
+   "name": "Big Paws",
+   "img": "https://ipfs.io/ipfs/bafybeibgjvjn6csmj2k2zpkczg74wo4jhsqexsudadjsczmd5rsdql5qb4/bigpaws.png"
+  },
+  {
+   "token": "00192328DCA1279CEDC5E2C3FDC71C26C3652B682AC1BBE73DC11E1D05E3855F",
+   "offer": "80D04E40B4C680738B9017CD7B3B102BE0012C5FCFE228478B9ABA431DA758BA",
+   "seller": "rBFc5zLYkem8yTykWtkdMmNHVNi7GG7Bgg",
+   "price": {
+    "currency": "XRP",
+    "value": 1.49
+   },
+   "issuer_name": "Horde",
+   "issuer": "rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf",
+   "taxon": 999,
+   "name": "Big Paws",
+   "img": "https://ipfs.io/ipfs/bafybeibgjvjn6csmj2k2zpkczg74wo4jhsqexsudadjsczmd5rsdql5qb4/bigpaws.png"
+  },
+  {
+   "token": "00192328DCA1279CEDC5E2C3FDC71C26C3652B682AC1BBE7EA69E00705E38545",
+   "offer": "75D561F54B539790F06F7C18B912C6903EF43345FBD1D5EDD253C839BA2810D2",
+   "seller": "rEd2PoxRUTnGNhNFoZQzdaeiZWeys9R8NU",
+   "price": {
+    "currency": "XRP",
+    "value": 1.49
+   },
+   "issuer_name": "Horde",
+   "issuer": "rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf",
+   "taxon": 999,
+   "name": "Big Paws",
+   "img": "https://ipfs.io/ipfs/bafybeibgjvjn6csmj2k2zpkczg74wo4jhsqexsudadjsczmd5rsdql5qb4/bigpaws.png"
+  },
+  {
+   "token": "001932C8DCA1279CEDC5E2C3FDC71C26C3652B682AC1BBE739A1190005E3856A",
+   "offer": "C0E03129B20B2ADC925FE5D04D6E3F84D12347DE691A0A97220D1149228895FF",
+   "seller": "rBFc5zLYkem8yTykWtkdMmNHVNi7GG7Bgg",
+   "price": {
+    "currency": "XRP",
+    "value": 1.923077
+   },
+   "issuer_name": "Horde",
+   "issuer": "rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf",
+   "taxon": 5,
+   "name": "Lost in Contemplation",
+   "img": "https://ipfs.io/ipfs/bafybeigyfgmsjobjpqlwdawt7azyeh65upkp5us7e6zzmhxjkwy3zbre6e/thecontemplation.png"
+  },
+  {
+   "token": "001932C8DCA1279CEDC5E2C3FDC71C26C3652B682AC1BBE7634CB61705E38577",
+   "offer": "0A37D076002A5B6ED6F0C3279A60ABD477922606138F3CDC2343C8BDD48073E5",
+   "seller": "rEd2PoxRUTnGNhNFoZQzdaeiZWeys9R8NU",
+   "price": {
+    "currency": "XRP",
+    "value": 1.923077
+   },
+   "issuer_name": "Horde",
+   "issuer": "rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf",
+   "taxon": 5,
+   "name": "Lost in Contemplation",
+   "img": "https://ipfs.io/ipfs/bafybeigyfgmsjobjpqlwdawt7azyeh65upkp5us7e6zzmhxjkwy3zbre6e/thecontemplation.png"
+  },
+  {
+   "token": "0018232831346F7B6FD99EA36D22F150F896E0F68C5D44A602FE533106152582",
+   "offer": "EA8DFC11F8D276D318A18DA4DEF4D4D94440D83A1C16FFE4E660C2654FA72658",
+   "seller": "rUobVBpvRwZ7k73QJ7ZURWxcPsNyhTy6xN",
+   "price": {
+    "currency": "XRP",
+    "value": 3.0
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 556,
+   "name": "Simple Pumpkin Spice #114",
+   "img": "https://ipfs.io/ipfs/Qmd96ddvCebJC1yQBVWrC6XDdFSQvZ9X7RAPRu8pvC9AkE"
+  },
+  {
+   "token": "0018232831346F7B6FD99EA36D22F150F896E0F68C5D44A6D532AD3706152580",
+   "offer": "9956390694E404A32045C4BF6C2A46FE08019999740ED8BCCF9E12EEAF30F246",
+   "seller": "rHqkREFPruXpBTdnqup4GQ8eUFLcJk2Ung",
+   "price": {
+    "currency": "XRP",
+    "value": 5.0
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 556,
+   "name": "Simple Pumpkin Spice #112",
+   "img": "https://ipfs.io/ipfs/QmRNx7spdtjP8aBATeazYVCEUoWxpBCcb6arpLaZH4NVB2"
+  },
+  {
+   "token": "00082710DCA1279CEDC5E2C3FDC71C26C3652B682AC1BBE7E03D5F9705E380C5",
+   "offer": "F6F279FA12B75A7FCE5DEC49AF32D90CD8A6E07F473F65DCD98B9D75BC9C8A0D",
+   "seller": "rM2prBiYmQPKgdTdKPtqRzUEc4WLCrjiXm",
+   "price": {
+    "currency": "XRP",
+    "value": 5.0
+   },
+   "issuer_name": "Horde",
+   "issuer": "rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf",
+   "taxon": 247,
+   "name": "GN Moon #5",
+   "img": "https://ipfs.io/ipfs/QmaFGgWcBdtEY4SgceZYuXG9Fkzj9LqxoorwU59122cbYa"
+  },
+  {
+   "token": "0018232831346F7B6FD99EA36D22F150F896E0F68C5D44A6C68CEA2806152569",
+   "offer": "7E6C7FC263E5325A7FAB1599867570F0519EA55E0479FD41B8C133807350A609",
+   "seller": "rLPoFx1nGjr8f94e9bzfhsC9squSPoojpY",
+   "price": {
+    "currency": "XRP",
+    "value": 6.5
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 556,
+   "name": "Simple Pumpkin Spice #89",
+   "img": "https://ipfs.io/ipfs/QmWKoMCzApRX1Rg65dAoGFswfLYSga23UoKmvsTwSkwePJ"
+  },
+  {
+   "token": "0018232831346F7B6FD99EA36D22F150F896E0F68C5D44A61BBE6CF706152540",
+   "offer": "D02F776AF0D5EA045A5F37D1BA9AE5AF30B020C74248ABCC395BBA3EEA9C8D1D",
+   "seller": "rEVJjdQttzexwUNCZMmP6qD6fF9HDxJBQw",
+   "price": {
+    "currency": "XRP",
+    "value": 7.0
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 556,
+   "name": "Simple Pumpkin Spice #48",
+   "img": "https://ipfs.io/ipfs/QmWxSWyM1wFWEyZHAo6vugGqf54WNR5epNHzYzYjAU63EE"
+  },
+  {
+   "token": "0018232831346F7B6FD99EA36D22F150F896E0F68C5D44A60B3E592B0615256C",
+   "offer": "2D4E383608106A37891540E7C760440D1CABF5317691C8057C83541AF9E2BECC",
+   "seller": "rLPoFx1nGjr8f94e9bzfhsC9squSPoojpY",
+   "price": {
+    "currency": "XRP",
+    "value": 7.2
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 556,
+   "name": "Simple Pumpkin Spice #92",
+   "img": "https://ipfs.io/ipfs/QmY3w9UhYZgmMVs2aPZ6VM5pHkr9cEhD286Hz1pXiJY8gF"
+  },
+  {
+   "token": "0018232831346F7B6FD99EA36D22F150F896E0F68C5D44A604D89FF60615253F",
+   "offer": "68CDBE83397ACED9702B6FBF8238457C525FB399C0205475BB84065414C7641E",
+   "seller": "rEVJjdQttzexwUNCZMmP6qD6fF9HDxJBQw",
+   "price": {
+    "currency": "XRP",
+    "value": 7.5
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 556,
+   "name": "Simple Pumpkin Spice #47",
+   "img": "https://ipfs.io/ipfs/QmQjwhduWP89kBiVfY1G7z65raGivH62CgGQvYF4zw45Df"
+  },
+  {
+   "token": "0018232831346F7B6FD99EA36D22F150F896E0F68C5D44A622242E240615256D",
+   "offer": "9798C6D8AB61D666E286442AC366B017389569A35B0C77F1EEB6EC662A16DD20",
+   "seller": "rLPoFx1nGjr8f94e9bzfhsC9squSPoojpY",
+   "price": {
+    "currency": "XRP",
+    "value": 8.8
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 556,
+   "name": "Simple Pumpkin Spice #93",
+   "img": "https://ipfs.io/ipfs/QmVPzjNYG8VTnRe3u8aztEmbd4kWSAymsJYaGg8q5JiLic"
+  },
+  {
+   "token": "0018271031346F7B6FD99EA36D22F150F896E0F68C5D44A69F2701B506152594",
+   "offer": "D746B41149B6FBFE5288B6D850B1D39D12D1D5489D9359D2AA926B57FF424A41",
+   "seller": "rHy4tTeLuV1ZXnGE88ZMfGWrhNNdFF8fba",
+   "price": {
+    "currency": "XRP",
+    "value": 10.0
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 666,
+   "name": "Mushroom Cap Collection #107",
+   "img": "https://ipfs.io/ipfs/QmVqNAuUuz6mynZ7xCtX6juzdz7hXJYXFvTAxSL1AFSnbk"
+  },
+  {
+   "token": "00082710DCA1279CEDC5E2C3FDC71C26C3652B682AC1BBE70D0DCE4D05E3761F",
+   "offer": "B91D1DF4BB5CC46158BA39FFBA750F81AEF5668639B1BA911A650301201FA1A3",
+   "seller": "rLKFMUVzFMmruWiffdxoei1t83AuuCDRoP",
+   "price": {
+    "currency": "XRP",
+    "value": 10.0
+   },
+   "issuer_name": "Horde",
+   "issuer": "rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf",
+   "taxon": 247,
+   "name": "King Corn #9",
+   "img": "https://ipfs.io/ipfs/Qmf854upEJ46GgEh8Vyo8DqacfeB8oqjqRxnpF2uRs3AQp"
+  },
+  {
+   "token": "0018232831346F7B6FD99EA36D22F150F896E0F68C5D44A6498A12F106152542",
+   "offer": "0937DE45D41B00D7659F3F091257EAF11710D2F45A26D5478DDBDF8A21A2C630",
+   "seller": "rEVJjdQttzexwUNCZMmP6qD6fF9HDxJBQw",
+   "price": {
+    "currency": "XRP",
+    "value": 12.0
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 556,
+   "name": "Simple Pumpkin Spice #50",
+   "img": "https://ipfs.io/ipfs/QmZXFGZPrt2VbgHYpfeSjS6UFQ9qSS3vrJgFsCtbL7T69v"
+  },
+  {
+   "token": "001832C831346F7B6FD99EA36D22F150F896E0F68C5D44A6E8908124061523D8",
+   "offer": "D8E6032D1EB65EBFFEBC0B3D61C1A8FDD7C9C1709EAAC100AF4BE185A28D08C8",
+   "seller": "rp1ZMHmZUJxdbePkbYLKHG6qXmjv3YHCeg",
+   "price": {
+    "currency": "XRP",
+    "value": 25.0
+   },
+   "issuer_name": "ArtistByron",
+   "issuer": "rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney",
+   "taxon": 1111,
+   "name": "HORDE Glitch #1 #2",
+   "img": "https://ipfs.io/ipfs/QmNvXAhZW5SkydUEWmbgLmXmZGw9eo1XDeQZoDFAo7brhc"
+  }
+ ]
+}

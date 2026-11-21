@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XRP Market · Artist Byron</title>
+<meta name="description" content="The Horde secondary market on XRP. Byron pieces, offered for sale by the people who hold them, gathered into one wall.">
+<link rel="stylesheet" href="style.css?v=56">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>The XRP Market</h1>
+  <p>Byron pieces on XRP, offered for sale by the people who hold them. On XRP a sale is an offer sitting on the ledger itself. This wall gathers every live offer for Byron's art into one place. Buying settles wallet to wallet on the ledger, nobody here holds your money or your art.</p>
+
+  <section class="card">
+    <h2>For sale right now</h2>
+    <p id="sales-filters" style="margin:10px 0">
+      <button class="btn" type="button" data-iss="">All</button>
+      <button class="btn ghost" type="button" data-iss="ArtistByron">ArtistByron</button>
+      <button class="btn ghost" type="button" data-iss="Horde">Horde</button>
+      <button class="btn ghost" type="button" data-iss="with the Horde">with the Horde</button>
+    </p>
+    <p style="margin:6px 0">
+      <input type="text" id="sales-search" placeholder="Search by name or seller" autocomplete="off" style="max-width:240px">
+      <select id="sales-sort">
+        <option value="low">Price, low to high</option>
+        <option value="high">Price, high to low</option>
+      </select>
+    </p>
+    <p class="small" id="sales-status">Loading the market…</p>
+    <div id="sales-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px"></div>
+    <p class="small" id="sales-updated"></p>
+  </section>
+
+  <section class="card">
+    <h2>How buying works</h2>
+    <p>Tap a piece and it opens on Bithomp, where the live offer sits. Accept the offer in Xaman and the piece moves to your wallet and the payment moves to the seller, settled by the ledger itself.</p>
+    <p>Selling is just as open: list any Byron piece you hold for sale from your own wallet, and it shows up on this wall the next time the wall is gathered. No account here, no listing fee here.</p>
+    <p class="small">Buys and sells of Byron pieces earn game points for both sides. The points design is in Byron's hands and goes live with the game.</p>
+  </section>
+</main>
+<footer class="foot"><div class="wrap small">
+  <p>Artist Byron · Morden, Manitoba · <a href="https://ko-fi.com/artistbyron" target="_blank" rel="noopener">Ko-fi</a> · <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">Discord, The House of the Horde</a></p>
+</div></footer>
+<script>
+(function(){
+  var a = document.getElementById('nav-login'); if (!a) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
+    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+})();
+</script>
+<script>
+(function(){
+  var grid = document.getElementById('sales-grid');
+  var statusEl = document.getElementById('sales-status');
+  var updatedEl = document.getElementById('sales-updated');
+  var searchEl = document.getElementById('sales-search');
+  var sortEl = document.getElementById('sales-sort');
+  var offers = [], fIss = '';
+  function esc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function priceText(o){
+    var p = o.price || {};
+    if (p.currency === 'XRP') return p.value + ' XRP';
+    var cur = p.currency || '';
+    try { if (/^[0-9A-F]{40}$/.test(cur)) cur = Buffer.from(cur.replace(/0+$/,''), 'hex').toString() || cur; } catch (e) {}
+    if (cur === '24484F5244450000000000000000000000000000') cur = '$HORDE';
+    return p.value + ' ' + cur;
+  }
+  function render(){
+    var q = (searchEl.value || '').toLowerCase();
+    var list = offers.filter(function(o){
+      if (fIss && o.issuer_name !== fIss) return false;
+      if (q && (o.name || '').toLowerCase().indexOf(q) === -1 && (o.seller || '').toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+    list.sort(function(a, b){
+      var av = a.price && a.price.currency === 'XRP' ? a.price.value : Infinity;
+      var bv = b.price && b.price.currency === 'XRP' ? b.price.value : Infinity;
+      return sortEl.value === 'high' ? bv - av : av - bv;
+    });
+    statusEl.textContent = list.length + ' Byron piece' + (list.length === 1 ? '' : 's') + ' offered for sale on XRP right now.';
+    grid.innerHTML = list.map(function(o, i){
+      var img = o.img ? '<img src="' + esc(o.img) + '" alt="" loading="' + (i < 24 ? 'eager' : 'lazy') + '" style="width:100%;height:104px;object-fit:contain;background:#141210;border-radius:8px" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src=this.src.replace(\'https://ipfs.io/ipfs/\',\'https://gateway.pinata.cloud/ipfs/\');}else{this.style.visibility=\'hidden\';}">' : '<div style="width:100%;height:104px;background:#141210;border-radius:8px"></div>';
+      return '<div class="card" style="padding:8px;margin:0">'
+        + img
+        + '<p style="margin:6px 0 2px;font-weight:600;font-size:.85rem;line-height:1.25">' + esc(o.name || 'Untitled piece') + '</p>'
+        + '<p style="margin:0 0 2px;font-size:.8rem">' + esc(priceText(o)) + '</p>'
+        + '<p class="small" style="margin:0 0 6px">seller ' + esc((o.seller || '').slice(0, 10)) + '… · ' + esc(o.issuer_name) + '</p>'
+        + '<a class="btn" style="padding:4px 10px;font-size:.8rem" target="_blank" rel="noopener" href="https://bithomp.com/en/nft/' + esc(o.token) + '">View and buy</a>'
+        + '</div>';
+    }).join('');
+  }
+  document.getElementById('sales-filters').addEventListener('click', function(e){
+    var b = e.target.closest('button[data-iss]'); if (!b) return;
+    fIss = b.getAttribute('data-iss');
+    this.querySelectorAll('button').forEach(function(x){ x.className = 'btn ghost'; });
+    b.className = 'btn';
+    render();
+  });
+  searchEl.addEventListener('input', render);
+  sortEl.addEventListener('change', render);
+  fetch('data/xrp-sales.json', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(function(j){
+    offers = j.offers || [];
+    if (j.generated_at) updatedEl.textContent = 'Wall gathered ' + j.generated_at + '. Offers can be accepted or cancelled by their sellers at any time, the piece page always shows the live truth.';
+    render();
+  }).catch(function(){ statusEl.textContent = 'The market could not load just now. Try again in a bit.'; });
+})();
+</script>
+</body>
+</html>
