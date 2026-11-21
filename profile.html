@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=59">
+<link rel="stylesheet" href="style.css?v=60">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -257,13 +257,13 @@ function pfpSrc(v){
   if (!v) return 'art/horde-h-icon.png';
   if (/^(https:|data:)/.test(v)) return v;
   var m = String(v).match(/^(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[0-9a-z]+)$/) || String(v).match(/ipfs\/([A-Za-z0-9]+)/);
-  if (m) return 'https://ipfs.io/ipfs/' + m[1];
+  if (m) return 'https://gateway.pinata.cloud/ipfs/' + m[1];
   return v;
 }
 function ipfsUrl(u){
   if (!u) return '';
-  if (u.indexOf('ipfs://') === 0) return 'https://ipfs.io/ipfs/' + u.slice(7).replace('ipfs/', '');
-  if (u.indexOf('ipfs/') === 0) return 'https://ipfs.io/' + u;
+  if (u.indexOf('ipfs://') === 0) return 'https://gateway.pinata.cloud/ipfs/' + u.slice(7).replace('ipfs/', '');
+  if (u.indexOf('ipfs/') === 0) return 'https://gateway.pinata.cloud/' + u;
   return u;
 }
 var pieceCounter = { shown: 0 };
@@ -276,8 +276,7 @@ function addPiece(box, img, name){
   if (m) cid = m[1];
   var tries = [img];
   if (cid) {
-    tries = ['https://ipfs.io/ipfs/' + cid, 'https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=600&output=webp'];
-    if (tries.indexOf(img) === -1) tries.unshift(img);
+    tries = ['https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=600&output=webp', 'https://ipfs.io/ipfs/' + cid];
   }
   var ti = 0, timer = null, done = false;
   function next(){
@@ -320,7 +319,7 @@ function thumbInto(imgEl, src){
   var m = String(src || '').match(/ipfs\/([A-Za-z0-9]+)/) || String(src || '').match(/^(Qm[A-Za-z0-9]+)$/);
   if (m) cid = m[1];
   var tries = [src];
-  if (cid) tries = ['https://ipfs.io/ipfs/' + cid, 'https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=200&output=webp'];
+  if (cid) tries = ['https://gateway.pinata.cloud/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=200&output=webp', 'https://ipfs.io/ipfs/' + cid];
   var ti = 0;
   imgEl.onerror = function(){ ti++; if (ti < tries.length) imgEl.src = tries[ti]; else imgEl.style.visibility = 'hidden'; };
   imgEl.src = tries[0];
@@ -381,7 +380,7 @@ async function openXrpCollection(key){
   openModal(g.name);
   var list = g.nfts.slice(0, 100);
   document.getElementById('modal-status').textContent = 'Loading ' + list.length + ' pieces…';
-  for (var i = 0; i < list.length; i += 6) {
+  for (var i = 0; i < list.length; i += 12) {
     var batch = list.slice(i, i + 6);
     await Promise.all(batch.map(async function(n){
       var name = g.name, img = '';
@@ -410,7 +409,7 @@ async function openWaxCollection(collName, displayName){
     data.forEach(function(a){
       var cid = (a.data && a.data.img) || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
       var nm = (a.data && a.data.name) || (a.template && a.template.immutable_data && a.template.immutable_data.name) || displayName;
-      if (cid) modalItems.push({ img: 'https://ipfs.io/ipfs/' + String(cid).replace(/^ipfs:\/\//, ''), name: nm, mint: parseInt(a.template_mint || '0', 10) || 999999999 });
+      if (cid) modalItems.push({ img: 'https://gateway.pinata.cloud/ipfs/' + String(cid).replace(/^ipfs:\/\//, ''), name: nm, mint: parseInt(a.template_mint || '0', 10) || 999999999 });
     });
     if (!modalItems.length) { document.getElementById('modal-status').textContent = 'No pictures could load for this collection.'; return; }
     renderModalMore();
