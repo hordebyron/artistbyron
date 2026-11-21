@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=63">
+<link rel="stylesheet" href="style.css?v=64">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -855,7 +855,17 @@ function watchProof(nonce, fields){
           var snap = window.__rowSnapshot;
           if (snap) { var row = await sbByNo(snap.profile_no); if (row) applyRow(row, true); }
         } else { pstat.textContent = 'Proof worked, but the save did not go through. Your edits are safe on this device.'; }
-      } else if (ck.status === 'expired' || ck.status === 'used') {
+      } else if (ck.status === 'used') {
+        // The finisher already wrote this save (it runs on its own so
+        // nobody has to keep the page open). Refresh and call it saved.
+        stopChecker();
+        clearPending();
+        window.__pendingPfp = '';
+        pstat.textContent = 'Saved to the shared list. It now shows on every device.';
+        status.textContent = 'Profile saved, on this device and on the shared list.';
+        var snap2 = window.__rowSnapshot;
+        if (snap2) { var row2 = await sbByNo(snap2.profile_no); if (row2) applyRow(row2, true); }
+      } else if (ck.status === 'expired') {
         stopChecker();
         clearPending();
         pstat.textContent = 'That proof code is done. Save your profile again for a fresh code, your edits are still in the form.';
@@ -891,7 +901,8 @@ async function maybeCheckerSave(p, status){
   if ((snap.about || '') !== p.about) fields.about = p.about;
   if ((snap.discord || '') !== p.discord) fields.discord = p.discord;
   if ((snap.kofi || '') !== p.kofi) fields.kofi = p.kofi;
-  if (window.__pendingPfp && window.__pendingPfp !== (snap.pfp || '')) fields.pfp = window.__pendingPfp;
+  var pfpCand = window.__pendingPfp || (p.pfp && !/^data:/.test(p.pfp) ? p.pfp : '');
+  if (pfpCand && pfpCand !== (snap.pfp || '')) fields.pfp = pfpCand;
   if (!Object.keys(fields).length) return;
   var proven = provenWallet();
   var chain = proven === p.wax ? 'wax' : 'xrp';
@@ -901,7 +912,7 @@ async function maybeCheckerSave(p, status){
   var pcode = document.getElementById('proof-code');
   var pstat = document.getElementById('proof-status');
   var ch;
-  try { ch = await checkerPost({ action: 'challenge', chain: chain, address: address }); }
+  try { ch = await checkerPost({ action: 'challenge', chain: chain, address: address, fields: fields }); }
   catch (e) { status.textContent = 'Saved on this device. The shared-list checker could not be reached just now.'; return; }
   if (!ch || !ch.nonce) { status.textContent = 'Saved on this device only. The shared-list checker is not switched on yet.'; return; }
   savePending(ch.nonce, fields, ch.send_to);
@@ -914,16 +925,16 @@ async function maybeCheckerSave(p, status){
     pstat.textContent = 'Opening your wallet…';
     try {
       await window.__sendWaxProof(ch.send_to || 'hordesmuse42', ch.nonce);
-      pstat.textContent = 'Proof sent. Watching the chain, your save lands in a few seconds…';
+      pstat.textContent = 'Proof sent. You can close this page now, the save finishes by itself in the next few minutes.';
     } catch (e) {
-      ptext.textContent = 'No problem, you can send the proof by hand instead. From your WAX wallet ' + address + ', send 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ' with exactly this code as the memo.';
-      pstat.textContent = 'Watching the chain for your proof. You can leave this page and come back, the watch picks up where it left off.';
+      ptext.textContent = 'No problem, you can send the proof by hand instead. From your WAX wallet ' + address + ', send 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ' with exactly this code as the memo. Once it is sent you can close this page, the save finishes by itself.';
+      pstat.textContent = 'Watching the chain for your proof.';
     }
   } else {
     ptext.textContent = chain === 'wax'
-      ? 'From your WAX wallet ' + address + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.'
-      : 'From your XRP wallet ' + address + ', send 1 drop (0.000001 XRP) to ' + ch.send_to + ' with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.';
-    pstat.textContent = 'Watching the chain for your proof. You can leave this page and come back, the watch picks up where it left off.';
+      ? 'From your WAX wallet ' + address + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo. It proves the wallet is yours. Once it is sent you can close this page, the save finishes by itself.'
+      : 'From your XRP wallet ' + address + ', send 1 drop (0.000001 XRP) to ' + ch.send_to + ' with exactly this code as the memo. It proves the wallet is yours. Once it is sent you can close this page, the save finishes by itself.';
+    pstat.textContent = 'Watching the chain for your proof.';
   }
 }
 document.getElementById('pf-clear').addEventListener('click', function(){
