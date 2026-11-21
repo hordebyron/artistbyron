@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=65">
+<link rel="stylesheet" href="style.css?v=66">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -581,7 +581,15 @@ async function loadProfileForWax(name){
 })();
 
 document.getElementById('edit-toggle').addEventListener('click', function(){
-  if (window.__viewOnly && !window.__viewMine) return;
+  // The button always answers. On somebody else's profile it points at
+  // the note instead of opening a form that is not theirs; on your own
+  // it opens the form, and saving is where proof is asked for. A dead
+  // or missing button just confuses people.
+  if (window.__viewOnly && !window.__viewMine) {
+    var vn = document.getElementById('view-note');
+    if (vn) { vn.hidden = false; vn.textContent = 'This is a public view, and editing is locked here. To edit your own profile, log in with your wallet first, then open your profile.'; vn.scrollIntoView({ behavior: 'smooth' }); }
+    return;
+  }
   var bc = document.getElementById('build-card');
   if (bc) { bc.hidden = false; bc.scrollIntoView({ behavior: 'smooth' }); }
 });
@@ -601,7 +609,6 @@ function enterViewMode(row){
   window.__viewMine = mine;
   ['profile-login-card','build-card','event-card','profile-intro','find-card'].forEach(function(id){ var el = document.getElementById(id); if (el) el.hidden = true; });
   var et = document.getElementById('edit-toggle');
-  if (et && !mine) et.hidden = true;
   var note = document.getElementById('view-note');
   var fc = document.getElementById('find-card');
   if (fc) fc.hidden = true;
@@ -746,7 +753,7 @@ async function showProfile(p){
   var vh = document.getElementById('view-heading');
   if (vh) vh.textContent = (window.__viewOnly || !isProvenFor(p)) ? (p.name ? p.name + "'s Horde profile" : 'Horde profile') : ('Welcome back' + (p.name ? ', ' + p.name : ''));
   var et0 = document.getElementById('edit-toggle');
-  if (et0) et0.hidden = !isProvenFor(p);
+  if (et0) et0.hidden = false;
   document.getElementById('view-about').textContent = p.about || '';
   var w = [];
   if (p.wax) w.push('<div><strong>WAX wallet:</strong> ' + esc(p.wax) + '</div>');
@@ -899,9 +906,26 @@ function resumePendingSave(){
   watchProof(pend.nonce, pend.fields);
 }
 async function maybeCheckerSave(p, status){
+  function announce(msg){
+    var bx = document.getElementById('proof-box');
+    var pt = document.getElementById('proof-text');
+    var pc = document.getElementById('proof-code');
+    var ps = document.getElementById('proof-status');
+    if (!bx || !pt) return;
+    bx.hidden = false;
+    if (pc) pc.textContent = '';
+    pt.textContent = msg;
+    if (ps) ps.textContent = '';
+    bx.scrollIntoView({ behavior: 'smooth' });
+  }
   var snap = window.__rowSnapshot;
   if (!snap && isProvenFor(p)) { try { snap = await sbFind(p.wax, p.xrp); if (snap) window.__rowSnapshot = snap; } catch (e) {} }
-  if (!snap || !isProvenFor(p)) return;
+  if (!snap || !isProvenFor(p)) {
+    // Never leave a save unexplained: the device copy saved, the shared
+    // list did not, and the member deserves to hear why out loud.
+    announce('Saved on this device only. To put these edits on the shared list, log in with your wallet on this page first, then hit Save again.');
+    return;
+  }
   var fields = {};
   // Only stage a change when the new value is filled in. A blank value
   // against a filled snapshot means the form was never refilled, not
@@ -912,7 +936,14 @@ async function maybeCheckerSave(p, status){
   if ((snap.kofi || '') !== p.kofi && p.kofi) fields.kofi = p.kofi;
   var pfpCand = window.__pendingPfp || (p.pfp && !/^data:/.test(p.pfp) ? p.pfp : '');
   if (pfpCand && pfpCand !== (snap.pfp || '')) fields.pfp = pfpCand;
-  if (!Object.keys(fields).length) return;
+  if (!Object.keys(fields).length) {
+    if (p.pfp && /^data:/.test(p.pfp)) {
+      announce('Your picture is an uploaded photo, so it lives on this device only. To put a picture on the shared list, open one of your own pieces below and tap Make this my picture. Everything else here already matches the shared list.');
+    } else {
+      announce('Everything here already matches the shared list. Nothing new to save.');
+    }
+    return;
+  }
   var proven = provenWallet();
   var chain = proven === p.wax ? 'wax' : 'xrp';
   var address = proven;
