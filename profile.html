@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=62">
+<link rel="stylesheet" href="style.css?v=63">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -544,6 +544,17 @@ async function loadProfileForWax(name){
         import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
       ]);
       kit = new m[0].SessionKit({ appName: 'artistbyron', chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }], ui: new m[1].WebRenderer(), walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()] }); window.__waxKit = kit;
+      window.__sendWaxProof = async function(to, memo){
+        var s = sess;
+        if (!s) { try { s = await kit.restore(); } catch (e) {} }
+        if (!s) { var res = await kit.login(); s = res.session; }
+        sess = s;
+        var actor = String(s.actor);
+        var perm = null;
+        try { perm = s.permissionLevel || null; } catch (e) {}
+        if (!perm) perm = { actor: actor, permission: 'active' };
+        return await s.transact({ actions: [{ account: 'eosio.token', name: 'transfer', authorization: [perm], data: { from: actor, to: to, quantity: '0.00010000 WAX', memo: memo } }] });
+      };
       btn.addEventListener('click', async function(){
         btn.disabled = true; st.textContent = 'Opening your wallet…';
         try { var res = await kit.login(); sess = res.session; await loadProfileForWax(String(sess.actor)); }
@@ -896,12 +907,24 @@ async function maybeCheckerSave(p, status){
   savePending(ch.nonce, fields, ch.send_to);
   box.hidden = false;
   pcode.textContent = ch.nonce;
-  ptext.textContent = chain === 'wax'
-    ? 'From your WAX wallet ' + address + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.'
-    : 'From your XRP wallet ' + address + ', send 1 drop (0.000001 XRP) to ' + ch.send_to + ' with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.';
-  pstat.textContent = 'Watching the chain for your proof. You can leave this page and come back, the watch picks up where it left off.';
   box.scrollIntoView({ behavior: 'smooth' });
   watchProof(ch.nonce, fields);
+  if (chain === 'wax' && window.__sendWaxProof) {
+    ptext.textContent = 'One tap left. Your wallet will pop up to send the tiny proof, 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ', with the code already filled in as the memo. Approve it and your edits save to the shared list for real.';
+    pstat.textContent = 'Opening your wallet…';
+    try {
+      await window.__sendWaxProof(ch.send_to || 'hordesmuse42', ch.nonce);
+      pstat.textContent = 'Proof sent. Watching the chain, your save lands in a few seconds…';
+    } catch (e) {
+      ptext.textContent = 'No problem, you can send the proof by hand instead. From your WAX wallet ' + address + ', send 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ' with exactly this code as the memo.';
+      pstat.textContent = 'Watching the chain for your proof. You can leave this page and come back, the watch picks up where it left off.';
+    }
+  } else {
+    ptext.textContent = chain === 'wax'
+      ? 'From your WAX wallet ' + address + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.'
+      : 'From your XRP wallet ' + address + ', send 1 drop (0.000001 XRP) to ' + ch.send_to + ' with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.';
+    pstat.textContent = 'Watching the chain for your proof. You can leave this page and come back, the watch picks up where it left off.';
+  }
 }
 document.getElementById('pf-clear').addEventListener('click', function(){
   try { localStorage.removeItem(PKEY); } catch (e) {}
