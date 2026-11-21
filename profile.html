@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=61">
+<link rel="stylesheet" href="style.css?v=62">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -514,6 +514,7 @@ function applyRow(row, viewOnly){
     fillForm(p);
   }
   showProfile(p);
+  if (!viewOnly) { try { resumePendingSave(); } catch (e) {} }
   return p;
 }
 async function loadProfileForWax(name){
@@ -801,7 +802,7 @@ document.getElementById('profile-form').addEventListener('submit', function(e){
   var r = load(RKEY) || {};
   r.name = p.name; r.wax = p.wax; r.xrp = p.xrp; r.discord = p.discord; r.kofi = p.kofi;
   save(RKEY, r);
-  status.textContent = 'Saved. Everything on this form now points at one Horde profile, ' + p.name + '.';
+  status.textContent = 'Saved on this device, ' + p.name + '.';
   showProfile(p);
 });
 var CHECKER_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co/functions/v1/update-profile';
@@ -813,11 +814,66 @@ async function checkerPost(payload){
 function stopChecker(){ if (checkerTimer) { clearInterval(checkerTimer); checkerTimer = null; } }
 document.getElementById('proof-cancel').addEventListener('click', function(){
   stopChecker();
+  clearPending();
   document.getElementById('proof-box').hidden = true;
   document.getElementById('pf-status').textContent = 'Proof cancelled. Your edits are saved on this device only.';
 });
+var PENDING_KEY = 'horde_pending_save';
+function savePending(nonce, fields, sendTo){ try { localStorage.setItem(PENDING_KEY, JSON.stringify({ nonce: nonce, fields: fields, send_to: sendTo || '' })); } catch (e) {} }
+function loadPending(){ try { var r = localStorage.getItem(PENDING_KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+function clearPending(){ try { localStorage.removeItem(PENDING_KEY); } catch (e) {} }
+function watchProof(nonce, fields){
+  var pstat = document.getElementById('proof-status');
+  var status = document.getElementById('pf-status');
+  var tries = 0;
+  stopChecker();
+  checkerTimer = setInterval(async function(){
+    tries++;
+    if (tries > 360) { stopChecker(); pstat.textContent = 'Stopped watching for now. Your edits are saved on this device, and this page picks the watch back up when you return.'; return; }
+    try {
+      var ck = await checkerPost({ action: 'check', nonce: nonce });
+      if (ck.status === 'proven') {
+        stopChecker();
+        pstat.textContent = 'Proof found. Saving to the shared list…';
+        var up = await checkerPost({ action: 'update', nonce: nonce, fields: fields });
+        if (up && up.ok) {
+          clearPending();
+          window.__pendingPfp = '';
+          pstat.textContent = 'Saved to the shared list. It now shows on every device.';
+          status.textContent = 'Profile saved, on this device and on the shared list.';
+          var snap = window.__rowSnapshot;
+          if (snap) { var row = await sbByNo(snap.profile_no); if (row) applyRow(row, true); }
+        } else { pstat.textContent = 'Proof worked, but the save did not go through. Your edits are safe on this device.'; }
+      } else if (ck.status === 'expired' || ck.status === 'used') {
+        stopChecker();
+        clearPending();
+        pstat.textContent = 'That proof code is done. Save your profile again for a fresh code, your edits are still in the form.';
+      }
+    } catch (e) {}
+  }, 5000);
+}
+function resumePendingSave(){
+  var pend = loadPending();
+  if (!pend || !pend.nonce) return;
+  var snap = window.__rowSnapshot;
+  if (!snap || !isProvenFor(snap)) return;
+  var proven = provenWallet();
+  var chain = proven === (snap.wax || '') ? 'wax' : 'xrp';
+  var box = document.getElementById('proof-box');
+  var ptext = document.getElementById('proof-text');
+  var pcode = document.getElementById('proof-code');
+  var pstat = document.getElementById('proof-status');
+  box.hidden = false;
+  pcode.textContent = pend.nonce;
+  ptext.textContent = chain === 'wax'
+    ? 'You still have edits waiting to reach the shared list. From your WAX wallet ' + proven + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.'
+    : 'You still have edits waiting to reach the shared list. From your XRP wallet ' + proven + ', send 1 drop (0.000001 XRP) to ' + (pend.send_to || 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH') + ' with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.';
+  pstat.textContent = 'Watching the chain for your proof…';
+  watchProof(pend.nonce, pend.fields);
+}
 async function maybeCheckerSave(p, status){
   var snap = window.__rowSnapshot;
+  if (!snap && isProvenFor(p)) { try { snap = await sbFind(p.wax, p.xrp); if (snap) window.__rowSnapshot = snap; } catch (e) {} }
   if (!snap || !isProvenFor(p)) return;
   var fields = {};
   if ((snap.x_handle || '') !== p.x) fields.x_handle = p.x;
@@ -837,37 +893,15 @@ async function maybeCheckerSave(p, status){
   try { ch = await checkerPost({ action: 'challenge', chain: chain, address: address }); }
   catch (e) { status.textContent = 'Saved on this device. The shared-list checker could not be reached just now.'; return; }
   if (!ch || !ch.nonce) { status.textContent = 'Saved on this device only. The shared-list checker is not switched on yet.'; return; }
+  savePending(ch.nonce, fields, ch.send_to);
   box.hidden = false;
   pcode.textContent = ch.nonce;
   ptext.textContent = chain === 'wax'
     ? 'From your WAX wallet ' + address + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.'
     : 'From your XRP wallet ' + address + ', send 1 drop (0.000001 XRP) to ' + ch.send_to + ' with exactly this code as the memo. It proves the wallet is yours, then your edits save themselves.';
-  pstat.textContent = 'Watching the chain for your proof…';
+  pstat.textContent = 'Watching the chain for your proof. You can leave this page and come back, the watch picks up where it left off.';
   box.scrollIntoView({ behavior: 'smooth' });
-  var tries = 0;
-  stopChecker();
-  checkerTimer = setInterval(async function(){
-    tries++;
-    if (tries > 72) { stopChecker(); pstat.textContent = 'No proof showed up in time. Your edits are saved on this device. Try saving again when ready.'; return; }
-    try {
-      var ck = await checkerPost({ action: 'check', nonce: ch.nonce });
-      if (ck.status === 'proven') {
-        stopChecker();
-        pstat.textContent = 'Proof found. Saving to the shared list…';
-        var up = await checkerPost({ action: 'update', nonce: ch.nonce, fields: fields });
-        if (up && up.ok) {
-          window.__pendingPfp = '';
-          pstat.textContent = 'Saved to the shared list. It now shows on every device.';
-          status.textContent = 'Profile saved, on this device and on the shared list.';
-          var row = await sbByNo(snap.profile_no);
-          if (row) applyRow(row, true);
-        } else { pstat.textContent = 'Proof worked, but the save did not go through. Your edits are safe on this device.'; }
-      } else if (ck.status === 'expired' || ck.status === 'used') {
-        stopChecker();
-        pstat.textContent = 'That code is done. Save again for a fresh one.';
-      }
-    } catch (e) {}
-  }, 5000);
+  watchProof(ch.nonce, fields);
 }
 document.getElementById('pf-clear').addEventListener('click', function(){
   try { localStorage.removeItem(PKEY); } catch (e) {}
