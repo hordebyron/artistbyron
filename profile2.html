@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile (test)</title>
 <meta name="description" content="Test version of the Horde profile page. Same look, new code under the hood.">
-<link rel="stylesheet" href="style.css?v=67">
+<link rel="stylesheet" href="style.css?v=69">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -88,7 +88,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <p id="view-key"><strong>Key holder:</strong> <span id="key-text">checking…</span></p>
         <p id="view-wallets" class="small"></p>
         <p id="view-links" class="small"></p>
-        <p id="edit-row" hidden><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button> <button class="btn ghost" type="button" id="session-logout">Log out of this device</button></p>
+        <p id="edit-row" hidden><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button> <button class="btn ghost" type="button" id="session-logout">Log out of this device</button> <button class="btn ghost" type="button" id="unlock-edit" hidden>Unlock to edit this profile</button></p>
       </div>
     </div>
   </section>
@@ -304,7 +304,14 @@ async function renderProfile(row){
   document.getElementById('view-pfp').src = pfpSrc(p.pfp);
   document.getElementById('view-name').textContent = p.name;
   document.getElementById('view-heading').textContent = state.mine ? ('Welcome back' + (p.name ? ', ' + p.name : '')) : (p.name ? p.name + "'s Horde profile" : 'Horde profile');
-  document.getElementById('edit-row').hidden = !state.mine;
+  // The edit row always shows on a loaded profile. On your own unlocked
+  // profile it carries Edit and Log out; on any other view it carries
+  // the road to editing, an Unlock button, so the button is never
+  // simply missing (Sasha hunted for it, 21 Nov).
+  document.getElementById('edit-row').hidden = false;
+  document.getElementById('edit-toggle').hidden = !state.mine;
+  document.getElementById('session-logout').hidden = !state.mine;
+  document.getElementById('unlock-edit').hidden = state.mine;
   document.getElementById('edit-card').hidden = true;
   document.getElementById('view-about').textContent = p.about || '';
   var w = [];
@@ -598,6 +605,10 @@ document.getElementById('edit-toggle').addEventListener('click', function(){
   var ec = document.getElementById('edit-card');
   if (ec) { ec.hidden = false; ec.scrollIntoView({ behavior: 'smooth' }); }
 });
+document.getElementById('unlock-edit').addEventListener('click', function(){
+  var uc = document.getElementById('unlock-card');
+  if (uc) { uc.hidden = false; uc.scrollIntoView({ behavior: 'smooth' }); }
+});
 document.getElementById('session-logout').addEventListener('click', async function(){
   var s = state.session;
   state.session = null;
@@ -736,6 +747,11 @@ document.getElementById('unlock-xrp').addEventListener('click', function(){
     var note = document.getElementById('view-note');
     note.hidden = false;
     note.textContent = 'No Horde profile has that number yet.';
+  }
+  if (!target) {
+    var note2 = document.getElementById('view-note');
+    note2.hidden = false;
+    note2.textContent = 'No profile loaded yet. Put your number in above, or unlock with your wallet below and your own profile loads itself.';
   }
   document.getElementById('unlock-card').hidden = !!state.session;
   if (state.session) {
