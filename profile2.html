@@ -111,7 +111,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
           <input type="text" id="pf-kofi" placeholder="Your Ko-fi name" autocomplete="off" maxlength="40"></p>
           <p><label for="pf-x">X handle</label>
           <input type="text" id="pf-x" placeholder="@yourname" autocomplete="off" maxlength="40"></p>
-          <p><button class="btn" type="submit">Save to the shared list</button></p>
+          <p><button class="btn" type="submit">Save</button></p>
         </form>
         <p class="small" id="pf-status" aria-live="polite"></p>
         <p class="small">Your name and your wallets are set when you register and are not edited here. If one is wrong, tell Byron and he will fix it.</p>
@@ -422,7 +422,7 @@ function addPiece(box, img, name){
       closeModal();
       var ec = document.getElementById('edit-card'); if (ec) { ec.hidden = false; ec.scrollIntoView({ behavior: 'smooth' }); }
       var st = document.getElementById('pf-status');
-      if (st) st.textContent = 'Picture picked from your pieces. Hit Save to the shared list and it is on your profile for everyone.';
+      if (st) st.textContent = 'Picture picked from your pieces. Hit Save and it is on your profile for everyone.';
     });
     f.appendChild(b);
   }
