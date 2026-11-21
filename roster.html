@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Horde Roster</title>
 <meta name="description" content="Byron's roster of Horde profiles. Every member, both wallets, holdings on WAX and XRP counted together.">
-<link rel="stylesheet" href="style.css?v=56">
+<link rel="stylesheet" href="style.css?v=70">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -113,7 +113,7 @@ async function waxCount(acct){
       var xc = 0, wc = 0;
       try { if (r.xrp) { var xc = await xrpCount(r.xrp); parts.push(xc + ' on XRP'); total += xc; } } catch (e) {}
       try { if (r.wax) { var wc = await waxCount(r.wax); parts.push(wc + ' on WAX'); total += wc; } } catch (e) {}
-      div.querySelector('.hold').textContent = parts.length ? parts.join(' + ') + ' = ' + total + ' pieces, one Horde profile.' : 'No wallets on file.';
+      div.querySelector('.hold').textContent = parts.length ? parts.join(' + ') + ' = ' + total + ' pieces.' : 'No wallets on file.';
       var L = hordeLevel(wc, xc);
       var lvel = div.querySelector('.lvl'); if (lvel) lvel.textContent = 'Level ' + L + ' · ' + RANKS[L];
       var ks = div.querySelector('.keystat');
