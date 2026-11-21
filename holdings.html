@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Holdings · Artist Byron</title>
 <meta name="description" content="One Horde collection, piece by piece.">
-<link rel="stylesheet" href="style.css?v=68">
+<link rel="stylesheet" href="style.css?v=71">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -14,6 +14,7 @@
 .pieces figure{margin:0}
 .pieces img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#0f0f14}
 .pieces figcaption{font-size:.82rem;color:var(--muted);margin-top:4px;word-break:break-word}
+.nopic{display:flex;align-items:center;justify-content:center;aspect-ratio:1;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:.85rem;text-align:center;padding:8px}
 </style>
 </head>
 <body>
@@ -47,23 +48,35 @@ function ipfsUrl(u){
   if (u.indexOf('ipfs/') === 0) return 'https://gateway.pinata.cloud/' + u;
   return u;
 }
+function cidOf(src){
+  var m = String(src || '').match(/ipfs\/([A-Za-z0-9]+)/) || String(src || '').match(/^(Qm[A-Za-z0-9]+|bafy[0-9a-z]+)$/);
+  return m ? m[1] : '';
+}
+function raceImg(imgEl, src, onFail){
+  var cid = cidOf(src);
+  var urls = cid ? ['https://gateway.pinata.cloud/ipfs/' + cid, 'https://ipfs.filebase.io/ipfs/' + cid, 'https://ipfs.io/ipfs/' + cid] : [src];
+  var done = false, left = urls.length;
+  var timer = setTimeout(function(){ if (!done) { done = true; if (onFail) onFail(); } }, 25000);
+  urls.forEach(function(u){
+    var probe = new Image();
+    probe.onload = function(){ if (done) return; done = true; clearTimeout(timer); imgEl.src = u; };
+    probe.onerror = function(){ left--; if (!done && left <= 0) { done = true; clearTimeout(timer); if (onFail) onFail(); } };
+    probe.src = u;
+  });
+}
 function addPiece(box, img, name){
   var f = document.createElement('figure');
   var im = document.createElement('img');
   im.loading = 'lazy'; im.alt = name || 'Horde piece';
-  var cid = '';
-  var m = String(img || '').match(/ipfs\/([A-Za-z0-9]+)/) || String(img || '').match(/^(Qm[A-Za-z0-9]+|bafy[0-9a-z]+)$/);
-  if (m) cid = m[1];
-  var tries = [img];
-  if (cid) tries = ['https://gateway.pinata.cloud/ipfs/' + cid, 'https://ipfs.io/ipfs/' + cid, 'https://resizer.atomichub.io/images/v1/preview?ipfs=' + cid + '&size=600&output=webp'];
-  var ti = 0, timer = null, done = false;
-  function next(){ if (done) return; ti++; if (ti < tries.length) { arm(); im.src = tries[ti]; } else { done = true; f.style.display = 'none'; } }
-  function arm(){ clearTimeout(timer); timer = setTimeout(next, 8000); }
-  im.onload = function(){ done = true; clearTimeout(timer); };
-  im.onerror = function(){ next(); };
-  arm(); im.src = tries[0];
   var c = document.createElement('figcaption'); c.textContent = name || '';
   f.appendChild(im); f.appendChild(c);
+  raceImg(im, img, function(){
+    im.style.display = 'none';
+    var d = document.createElement('div');
+    d.className = 'nopic';
+    d.textContent = 'Picture could not load';
+    f.insertBefore(d, c);
+  });
   box.appendChild(f);
 }
 function sortedItems(){

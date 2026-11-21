@@ -9,7 +9,7 @@
 
 
 
-<link rel="stylesheet" href="style.css?v=56">
+<link rel="stylesheet" href="style.css?v=71">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
 <main class="wrap">
 <main class="wrap">
   <h1>Hey, welcome to the Horde</h1>
-  <p>Register once, and we will know you when you come back. Your name, your Ko-fi or Discord, and your wallets only if you hold Horde art. No password, no seed, ever.</p>
+  <p>Register once, and we will know you when you come back. Your name, your Ko-fi or Discord, and your wallets only if you hold Horde art.</p>
   <p class="small">Wallet addresses are public on the chain already, anyone can see them. Your name here is your choice, use a nickname if you like. We never ask for a seed, a private key, or a wallet password.</p>
 
   <section class="card" id="register-card">
@@ -68,13 +68,13 @@
   <section class="card">
     <h2>What happens next</h2>
     <ul class="tight">
-      <li>Come back here, or to My Horde Wallet, and the page greets you by name and shows what you hold.</li>
-      <li>Your rank comes from what you hold. Points and ranks stay quiet until after Monday 16 Nov, then they show on your Horde card.</li>
+      <li>Come back here, or to your Horde profile, and the page greets you by name and shows what you hold.</li>
+      <li>Your rank comes from what you hold.</li>
       <li>If you only have one wallet, register that one. No wallet yet? Your Ko-fi name or Discord name works too. You can add a wallet later, same name, same profile.</li>
     </ul>
   </section>
 </main>
-<p class="small">ArtistByron · The Horde · Register, no seed, ever. Saved on this device for now, shared list via Marrow in Discord.</p>
+<p class="small">ArtistByron · The Horde · Register.</p>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script>
@@ -148,7 +148,7 @@ function showReg(r){
     + ((r.wax || r.xrp)
       ? '<p><strong>Want your Horde profile key NFTs?</strong> They are sent by hand for now. Message Byron on <a href="https://x.com/ArtistByron" target="_blank" rel="noopener">X (@ArtistByron)</a> or in <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">the Discord</a> and say you registered, and he will send your keys.</p>'
       : '<p><strong>Want your Horde profile key NFTs?</strong> Add a WAX or XRP wallet to your profile first, then message Byron on <a href="https://x.com/ArtistByron" target="_blank" rel="noopener">X (@ArtistByron)</a> or in <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">the Discord</a> and he will send your keys.</p>')
-    + '<p class="small">Saved on this device. Come back here and we will know you.</p>';
+    + '<p class="small">You are on the shared Horde list. Come back on any device and we will know you.</p>';
   cardEl.hidden = false;
   cardBody.innerHTML = '<p><strong>Hey ' + esc(r.name) + ', welcome to the Horde.</strong></p>'
     + (r.wax ? '<p>WAX: <strong>' + esc(r.wax) + '</strong></p>' : '<p>WAX: not added yet.</p>')
@@ -251,10 +251,11 @@ document.getElementById('reg-clear').addEventListener('click', function(){
 
 <script>
 (function(){
-  var a = document.getElementById('nav-login'); if (!a) return;
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
   var known = false;
   try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
   if (!known) return;
+  links.forEach(function(a){
   a.textContent = 'Log out';
   a.href = '#';
   a.addEventListener('click', async function(e){
@@ -263,6 +264,7 @@ document.getElementById('reg-clear').addEventListener('click', function(){
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';
+  });
   });
 })();
 </script>

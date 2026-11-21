@@ -7,7 +7,7 @@
 <meta name="description" content="Artist Byron, Canadian horror artist in ink and paint for 20 years. Zombies, skulls, creepy portraits.">
 
 
-<link rel="stylesheet" href="style.css?v=56">
+<link rel="stylesheet" href="style.css?v=71">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -36,8 +36,7 @@
 </div>
 <section class="card">
   <h2>About Byron</h2>
-  <p>I am Byron from Canada and I draw zombies. I have been painting and drawing zombies, zombie portraits, zombie cats and zombie all the other things for nearly twenty years. All artwork is created with ink and paint on paper, canvas or wood.</p>
-  <p>Now I am shifting back to the physical art and the real collectors who love it, with the Horde, the community around the art, at the centre. Come for the art, stay for the Horde.</p>
+  <p>Now I am shifting back to the physical art and the real collectors who love it, with the Horde, the community around the art, at the centre.</p>
   <p><a class="btn ghost" href="about.html">More about Byron</a></p>
 </section>
 
@@ -47,11 +46,12 @@
 
 <script>
 (function(){
-  var a = document.getElementById('nav-login'); if (!a) return;
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
   var known = false;
   try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
   if (known) { var hj = document.getElementById('hero-join'); if (hj) hj.hidden = true; }
   if (!known) return;
+  links.forEach(function(a){
   a.textContent = 'Log out';
   a.href = '#';
   a.addEventListener('click', async function(e){
@@ -60,6 +60,7 @@
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';
+  });
   });
 })();
 </script>

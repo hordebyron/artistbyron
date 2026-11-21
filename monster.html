@@ -29,7 +29,7 @@
 .rule-list b{color:#fff}
 </style>
 
-<link rel="stylesheet" href="style.css?v=56">
+<link rel="stylesheet" href="style.css?v=71">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -425,7 +425,7 @@ async function loadRealFood(name) {
         var d = a.data || {};
         var img = d.img || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
         var issued = a.template ? parseInt(a.template.issued_supply || '0', 10) : 0;
-        out.push({ id: String(a.asset_id), name: (d.name || ('Asset ' + a.asset_id)), value: feedValueFor(issued), img: img ? ('https://resizer.atomichub.io/images/v1/preview?ipfs=' + img + '&size=300&output=webp') : '' });
+        out.push({ id: String(a.asset_id), name: (d.name || ('Asset ' + a.asset_id)), value: feedValueFor(issued), img: img ? ('https://gateway.pinata.cloud/ipfs/' + img) : '' });
       });
     }
     realFood = out.slice(0, 24);
@@ -505,10 +505,11 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
 
 <script>
 (function(){
-  var a = document.getElementById('nav-login'); if (!a) return;
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
   var known = false;
   try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
   if (!known) return;
+  links.forEach(function(a){
   a.textContent = 'Log out';
   a.href = '#';
   a.addEventListener('click', async function(e){
@@ -517,6 +518,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';
+  });
   });
 })();
 </script>
