@@ -5,11 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Holiday Loot Crate Token - Artist Byron</title>
 <meta name="description" content="The Horde Holiday Loot Crate as a token on WAX and XRP. Claim the physical crate, or hold the token as a credit for what you paid.">
-<link rel="stylesheet" href="style.css?v=79">
+<link rel="stylesheet" href="style.css?v=80">
 <style>
-main.wrap{max-width:780px}
+main.wrap{max-width:900px}
 main.wrap h1{font-size:2rem}
 main.wrap .card{padding:14px;margin:14px 0}
+.chain-grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media (min-width:700px){.chain-grid{grid-template-columns:1fr 1fr}}
+.chain{text-align:center}
+.chain img{width:100%;max-width:250px;display:block;margin:0 auto}
+.chain h3{font-size:1.3rem;margin:.5em 0 .2em}
+.buy-btn{display:block;max-width:300px;margin:10px auto;padding:10px 14px}
+.buy-btn .bb-top{display:block;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.buy-btn .bb-price{display:block;font-size:1.3rem;font-weight:700;margin-top:2px}
 </style>
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
@@ -22,19 +30,25 @@ main.wrap .card{padding:14px;margin:14px 0}
   <p>The Horde Holiday Loot Crate, sold as a token on WAX and on XRP. The token IS the crate. Claim it and the physical crate ships to you. Or never claim it, and the token stands as a credit toward future purchases from Byron, for the full amount you paid for it.</p>
 
   <section class="card">
-    <img src="art/loot-crate-wax.png" alt="Horde Holiday Loot Crate token, WAX version" style="width:100%;max-width:300px;display:block;margin:0 auto;">
-    <p><strong>Price, shipping included, pick your country:</strong><br>
-    US: 7,500 WAX or 27 XRP (about $25 US)<br>
-    Canada: 9,000 WAX or 32 XRP (about $30 US)<br>
-    Overseas: not yet. It is coming later.</p>
+    <div class="chain-grid">
+      <div class="chain">
+        <img src="art/loot-crate-wax.png" alt="Horde Holiday Loot Crate token, WAX version">
+        <h3>Buy with WAX</h3>
+        <a class="btn buy-btn" href="https://wax.atomichub.io/drops/92672"><span class="bb-top">USA shipping</span><span class="bb-price">7,500 WAX</span></a>
+        <a class="btn buy-btn" href="https://wax.atomichub.io/drops/92673"><span class="bb-top">Canada shipping</span><span class="bb-price">9,000 WAX</span></a>
+        <p class="small" id="wax-stock">Checking how many are left on WAX…</p>
+      </div>
+      <div class="chain">
+        <img src="art/loot-crate-xrp.png" alt="Horde Holiday Loot Crate token, XRP version">
+        <h3>Buy with XRP</h3>
+        <a class="btn buy-btn" href="xrp-market.html"><span class="bb-top">USA shipping</span><span class="bb-price">27 XRP</span></a>
+        <a class="btn buy-btn" href="xrp-market.html"><span class="bb-top">Canada shipping</span><span class="bb-price">32 XRP</span></a>
+        <p class="small">Sold from the Horde's own XRP market page.</p>
+      </div>
+    </div>
+    <p>The price includes shipping, and the USA price is about $25 US, Canada about $30 US. Overseas is not offered yet, it is coming later.</p>
     <p>Pick your own country honestly. When you claim, your shipping address is the check: if the address does not match the tier you bought, the difference comes due before the crate ships.</p>
-    <p>
-      <a class="btn" href="https://wax.atomichub.io/drops/92672">Buy on WAX, US</a>
-      <a class="btn" href="https://wax.atomichub.io/drops/92673">Buy on WAX, Canada</a>
-      <a class="btn" href="xrp-market.html">Buy on XRP</a>
-    </p>
-    <p class="small" id="wax-stock">Checking how many are left on WAX…</p>
-    <p class="small">On XRP there are 25 tokens, sold from the Horde's own market page. On WAX there are 25 per country tier. When they are gone, they are gone.</p>
+    <p class="small">25 tokens on each chain. On WAX, 25 claims for the USA tier and 25 for Canada. On XRP, 15 tokens are priced for the USA and 10 for Canada. When they are gone, they are gone.</p>
   </section>
 
   <section class="card">
