@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mental Shifting · The Daily Zombie · Artist Byron</title>
+<meta name="description" content="Mental Shifting, a Daily Zombie post by Byron: changing attitudes and perception, and shifting from 100% crypto focused to less than 5%.">
+<link rel="stylesheet" href="style.css?v=73">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <p class="small"><a href="blog.html">The Daily Zombie</a></p>
+  <h1>Mental Shifting</h1>
+  <section class="card">
+    <p>Welcome back to another new episode of the almost Daily Zombie. Not quite there yet, but getting closer all the time. In todays post I'm going to talk briefly about changing attitudes and perception. Mostly mine but maybe others over time.</p>
+    <p>For the last 5 years I have been making art and mostly posting it to the blockchain. I wasn't a crypto artist but I was an artist using crypto as a platform for selling. It was great and I learned a lot of different things. I fell in love with crypto because it connected me to a huge and hungry for art audience, it was easy to accept micro transactions that helped pay my bills, and most of all it allowed me to connect with and reward and engage with the people that liked my art.</p>
+    <p>As everyone knows the entire crypto scene went downhill pretty quickly but I hung on and continued to interact with my audience of collectors. Hopium is a helluva drug.</p>
+    <p>It took a recent interaction online within the crypto community for me to realize that this space has actually been slowly suffocating me in ways that are hard to express properly. Hopium and desperation and desolation. It was happening in slow motion and killing me little by little.</p>
+    <p>In fact it caused me to stop valuing myself and stop valuing my work.</p>
+    <p>But this isn't a pity party, because believe me if I started that there would be no end lol</p>
+    <p>Instead this is a message that I'm changing my life starting today and valuing the work I do and finding those that find the value too. Shifting gears from 100% crypto focused to less than 5%</p>
+    <p>The time to find my actual collectors of physical artwork has begun.</p>
+    <p>It is time to unleash the power of the Horde to the world at large. I have a team that is boosting my confidence every day and my eyes are starting to realize what exactly I have built. We're starting with the <strong>Horde Loot Crates</strong> so they can learn all about global shipping and then we continue to expand.</p>
+    <p>I'm never going to stop drawing and painting and now I have a team that is dedicated to helping me achieve my goals, things are starting to get fun again and more importantly I'm starting to value myself again.</p>
+    <p class="small">By Byron. First posted on The Daily Zombie on Blogspot. The blog lives here now.</p>
+  </section>
+  <p><a class="btn ghost" href="blog.html">Back to The Daily Zombie</a></p>
+</main>
+<footer class="foot"><div class="wrap small">
+  <p>Artist Byron · Morden, Manitoba · <a href="https://ko-fi.com/artistbyron" target="_blank" rel="noopener">Ko-fi</a> · <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">Discord, The House of the Horde</a></p>
+</div></footer>
+<script>
+(function(){
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  links.forEach(function(a){
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
+    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+  });
+})();
+</script>
+</body>
+</html>
