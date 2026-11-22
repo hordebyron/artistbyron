@@ -1,6 +1,6 @@
 {
- "generated_at": "2026-11-22 01:41 UTC",
- "count": 18,
+ "generated_at": "2026-11-22 18:59 UTC",
+ "count": 43,
  "offers": [
   {
    "token": "001932C8DCA1279CEDC5E2C3FDC71C26C3652B682AC1BBE716C6A4A505E38605",
@@ -253,6 +253,356 @@
    "taxon": 1111,
    "name": "HORDE Glitch #1 #2",
    "img": "https://ipfs.io/ipfs/QmNvXAhZW5SkydUEWmbgLmXmZGw9eo1XDeQZoDFAo7brhc"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F86D65D67B067503B5",
+   "offer": "0419B208F68806157EF94B719550D093094B70DD994EABC8480AE029EB88C226",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8525FF871067503BF",
+   "offer": "0D80F8A4288FA7999B7EA178136B0323A776A5B839DE31C93711FFA3F41B257C",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F811CC8A67067503B1",
+   "offer": "0F1AC02106F4370AB6126792231B11D87679A08900228E9643960B9CC8992E8A",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F820725148067503C8",
+   "offer": "17BDFCEB0623F2573A3DCF72DAD4C03FBDFFD96F25B86D4A59117DAD9D8A907C",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F828B25B66067503B2",
+   "offer": "1BA609FA94C7DBAA12B423AF5335C22B33217AB3ADE58C0F55AE237DDC1C30ED",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8567E0564067503B4",
+   "offer": "3B7B0A9D4B29658604AC5AEA68F7588FBDEE3C9C5427728303BA83DE770BF2DE",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F83B782F72067503BE",
+   "offer": "5B2A7EA053062DBAAED5D33DF0BE5C2C63739640A984C093C6C87A01024AABFC",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F86945C970067503C0",
+   "offer": "6C755F98C9A32E40CD9C74861EA7A1763385AB54BFB5A2620CA112A20AB2D146",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F824925E73067503BD",
+   "offer": "84F21639CF5E1D45B2E5A162D379605C23C9CCBDD9DA6698C05BE4F86E4D866F",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8098C8049067503C7",
+   "offer": "C3FBCCCB2E5495BFF79F5EDDF7E8E17B1AAD27DABC621B3E09C7DF98C2B61554",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F83758224F067503C9",
+   "offer": "C72B1319787CEE7143CD01CE965B6779B276A9105E854268E38B54611799EBC4",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F83F983465067503B3",
+   "offer": "D2F2BB8EE309E3EB290012D82C32D7E217B6085DBDB1CC1C360D161B8E81C9A1",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F80DAC8D7C067503BC",
+   "offer": "F4C723CC08B86F4056DC3B6542EBEAD76CC0CD15FE858FCE08DDF3ABB4FCFF24",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8844BA77A067503B6",
+   "offer": "F76D909B327AA61CBD1CEBD3E25163FA1471922E9217A355517AACD02CA0DBF2",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8802B9A77067503C1",
+   "offer": "FBC49A03F279FB49C96B480DDFEF4A709D62C7504FD96BD7B44B2BC46893F27F",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 27.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8DBC0E64B067503C5",
+   "offer": "0A0F3644BA8BFF1245181B76EE3E0836B6CC371C6F469C39C8E1F437FD110FA2",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8F6C6BC7D067503BB",
+   "offer": "27C9F57EE8CADA1F9FFCFEE0D159E308B05E34AFFBA6D7A61C53034D755D7B8B",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8C8FD127F067503B9",
+   "offer": "555844482C5F99B1832C5450025FF4917D985B7899AC56A09C4A9F9171AAE9ED",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8C4DD1574067503C4",
+   "offer": "595C1F2799F61D9806D1650E61BE67F8CE4A7F27D8B629CDDD72C4D7D3FAE3A5",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F897116B76067503C2",
+   "offer": "5D46845B1595E6396C3B677D2ADE35315A2B7A78CB614F7C8E91223E7C7B2302",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8B2174178067503B8",
+   "offer": "61440857FD73468B57173324AB422AEAC56D6822DCF8D0C8E9E6018A13BBFBC8",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8ADF74475067503C3",
+   "offer": "A0FA52ACA1B9F44BD352FED5CB479CEB0BD649455E4E6D4DC841408E1500103B",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8DFE0E37E067503BA",
+   "offer": "A276AB55046C1B45C06D1A4E9F6E06878437446ED5E072C107821B53A6B371EF",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F89B317079067503B7",
+   "offer": "B528FD32304242DE0E3BE2A9E32C9FA77543CA83A7415874287A4B59040F1AFF",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
+  },
+  {
+   "token": "001832C8AEA4DD10C96DF6447F51C45C666B0F453A7B11F8F2A6B74A067503C6",
+   "offer": "D0EF54C3421D98B4EDC09DE1878F3DD43EFF16695D4A4B781149694F79ECB609",
+   "seller": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "price": {
+    "currency": "XRP",
+    "value": 32.0
+   },
+   "issuer_name": "with the Horde",
+   "issuer": "rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH",
+   "taxon": 66603,
+   "name": "Horde Holiday Loot Crate",
+   "img": "https://ipfs.io/ipfs/QmVAUjKJjQYcQm5J5ZKpExNtiTU1MUfHHALSXkRvJudwpD"
   }
  ]
 }
