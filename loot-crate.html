@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Holiday Loot Crate Token - Artist Byron</title>
 <meta name="description" content="The Horde Holiday Loot Crate as a token on WAX and XRP. Claim the physical crate, or hold the token as a credit for what you paid.">
-<link rel="stylesheet" href="style.css?v=85">
+<link rel="stylesheet" href="style.css?v=87">
 <style>
 main.wrap{max-width:900px}
 main.wrap h1{font-size:2rem}
@@ -60,13 +60,119 @@ main.wrap .card{padding:14px;margin:14px 0}
 
   <section class="card" id="claim">
     <h2>Already hold one? Claim it here</h2>
-    <p>Log in so we know the token holder is you, then message Byron on Discord with your chain (WAX or XRP) and, if you are claiming the crate, your shipping address. Claiming the credit instead? Say so in the same message, and the amount you paid goes on your tab.</p>
-    <p>
-      <a class="btn" href="login.html">Log in</a>
-      <a class="btn" href="https://discord.gg/rA3UMEkpqc">Message on Discord</a>
-    </p>
+    <p>Fill this in and Byron gets it from a private box that only he can open. Nobody can read these back from the website. If you bought the token, use the same wallet that holds it, so he can match your address to your token.</p>
+    <form id="claim-form" class="claim-form">
+      <label>Your name
+        <input name="full_name" required autocomplete="name">
+      </label>
+      <label>Your email, so Byron can reply
+        <input name="email" type="email" required autocomplete="email">
+      </label>
+      <label>I want to
+        <select name="claim_type" id="claim-type">
+          <option value="crate">Send me the crate</option>
+          <option value="credit">Take the credit instead, do not ship</option>
+        </select>
+      </label>
+      <div id="address-fields">
+        <label>Street address
+          <input name="street" autocomplete="street-address">
+        </label>
+        <label>City
+          <input name="city" autocomplete="address-level2">
+        </label>
+        <label>State or province
+          <input name="region" autocomplete="address-level1">
+        </label>
+        <label>ZIP or postal code
+          <input name="postal" autocomplete="postal-code">
+        </label>
+        <label>Country
+          <select name="country">
+            <option value="USA">United States</option>
+            <option value="Canada">Canada</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+      </div>
+      <label>I bought the token on
+        <select name="chain">
+          <option value="WAX">WAX</option>
+          <option value="XRP">XRP</option>
+        </select>
+      </label>
+      <label>The wallet that holds my token
+        <input name="wallet" required>
+      </label>
+      <label>Which tier I bought
+        <select name="tier">
+          <option value="USA">USA shipping tier</option>
+          <option value="Canada">Canada shipping tier</option>
+        </select>
+      </label>
+      <label>Anything Byron should know (optional)
+        <input name="note">
+      </label>
+      <input name="website" class="hp" tabindex="-1" autocomplete="off">
+      <button class="btn" type="submit" id="claim-send">Send it to Byron</button>
+      <p class="small" id="claim-status"></p>
+    </form>
+    <p class="small">Rather do it the old way? <a href="https://discord.gg/rA3UMEkpqc">Message Byron on Discord</a>.</p>
     <p><a href="shop.html">&larr; Back to the Shop</a></p>
   </section>
+  <style>
+    .claim-form label{display:block;margin:.7rem 0;font-weight:600}
+    .claim-form input,.claim-form select{display:block;width:100%;margin-top:.3rem;padding:.6rem;border-radius:8px;border:1px solid #3a3230;background:#14100d;color:#fff;font-size:1rem}
+    .claim-form .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+    .claim-form button{margin-top:.8rem}
+  </style>
+  <script>
+  (function(){
+    var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
+    var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+    var form = document.getElementById('claim-form');
+    var typeSel = document.getElementById('claim-type');
+    var addr = document.getElementById('address-fields');
+    function syncType(){
+      var credit = typeSel.value === 'credit';
+      addr.style.display = credit ? 'none' : 'block';
+      addr.querySelectorAll('input').forEach(function(i){ i.required = false; });
+    }
+    typeSel.addEventListener('change', syncType); syncType();
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      var st = document.getElementById('claim-status');
+      var btn = document.getElementById('claim-send');
+      var fd = new FormData(form);
+      if (fd.get('website')) { st.textContent = 'Got it. Byron has it now.'; form.reset(); return; }
+      var credit = fd.get('claim_type') === 'credit';
+      if (!credit) {
+        var need = ['street','city','region','postal'];
+        for (var i = 0; i < need.length; i++) {
+          if (!String(fd.get(need[i]) || '').trim()) { st.textContent = 'Please fill in your full address, or pick the credit instead.'; return; }
+        }
+      }
+      btn.disabled = true; st.textContent = 'Sending...';
+      var row = {
+        full_name: fd.get('full_name'), email: fd.get('email'),
+        claim_type: fd.get('claim_type'),
+        street: credit ? '' : fd.get('street'), city: credit ? '' : fd.get('city'),
+        region: credit ? '' : fd.get('region'), postal: credit ? '' : fd.get('postal'),
+        country: credit ? '' : fd.get('country'),
+        chain: fd.get('chain'), wallet: fd.get('wallet'), tier: fd.get('tier'),
+        note: fd.get('note') || null
+      };
+      try {
+        var res = await fetch(SB_URL + '/rest/v1/crate_claims', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(row) });
+        if (!res.ok) throw new Error('bad');
+        form.innerHTML = '<p><strong>Got it.</strong> Byron has it now. Crates ship in the first two weeks of December, and he will email you if anything is unclear.</p>';
+      } catch (err) {
+        btn.disabled = false;
+        st.textContent = 'Something went wrong sending that. Please message Byron on Discord instead, the link is just below the form.';
+      }
+    });
+  })();
+  </script>
 
   <section class="card">
     <h2>What past buyers said</h2>
