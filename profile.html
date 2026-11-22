@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=73">
+<link rel="stylesheet" href="style.css?v=74">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 <main class="wrap">
   <div id="profile-intro">
   <h1>My Horde profile</h1>
-  <p>One person, one profile, one Horde number. Your profile lives on the shared Horde list, and that list is the only copy. Your wallet is just the key that unlocks your number on a device.</p>
+  <p>One person, one profile, one Horde number. Your profile lives on the shared Horde list, and that list is the only copy. Your wallet is just how you unlock your number on a device.</p>
   <p class="small">No password, no seed, ever. Wallet addresses are public on the chain already.</p>
   </div>
 
@@ -83,7 +83,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <p id="view-about"></p>
         <p id="view-holdings"><strong>Holdings:</strong> <span id="holdings-text">checking…</span></p>
         <p id="view-balances"><strong>Balances:</strong> <span id="balances-text">checking…</span></p>
-        <p id="view-key"><strong>Key holder:</strong> <span id="key-text">checking…</span></p>
+        <p id="view-key"><strong>HODLer:</strong> <span id="key-text">checking…</span></p>
         <p id="view-wallets" class="small"></p>
         <p id="view-links" class="small"></p>
         <p id="edit-row" hidden><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button> <button class="btn ghost" type="button" id="session-logout">Log out of this device</button> <button class="btn ghost" type="button" id="unlock-edit" hidden>Unlock to edit this profile</button></p>
@@ -279,7 +279,7 @@ function renderBadges(p, hasKey){
     { label: 'XRP', on: !!p.xrp },
     { label: 'Ko-fi', on: !!p.kofi },
     { label: 'Discord', on: !!p.discord },
-    { label: 'Key holder', on: !!hasKey }
+    { label: 'HODLer', on: !!hasKey }
   ];
   document.getElementById('view-badges').innerHTML = defs.map(function(d){ return '<span class="pbadge' + (d.on ? ' on' : '') + '">' + d.label + '</span>'; }).join('');
   if (!window.__levelSet) document.getElementById('view-level').innerHTML = '<strong>Level 0 · Initiate</strong>';
@@ -366,7 +366,7 @@ async function renderProfile(row){
       if (j3.data && j3.data.length) keys.push('WAX');
     }
   } catch (e) {}
-  k.textContent = keys.length ? 'yes · ' + keys.join(' and ') : 'not yet. Keys are sent by hand for now: message Byron on X (@ArtistByron) or in the Discord and he will send yours.';
+  k.textContent = keys.length ? 'yes · ' + keys.join(' and ') : 'not yet. HODLers are sent by hand for now: message Byron on X (@ArtistByron) or in the Discord and he will send yours.';
   if (keys.length) renderBadges(p, true);
   loadPieces(p);
 }

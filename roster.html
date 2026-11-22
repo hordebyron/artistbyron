@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Horde Roster</title>
 <meta name="description" content="Byron's roster of Horde profiles. Every member, both wallets, holdings on WAX and XRP counted together.">
-<link rel="stylesheet" href="style.css?v=73">
+<link rel="stylesheet" href="style.css?v=74">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -106,7 +106,7 @@ async function waxCount(acct){
         + '<p class="small">' + (r.wax ? 'WAX: ' + esc(r.wax) + ' ' : '') + (r.xrp ? 'XRPL: ' + esc(r.xrp) : '') + '</p>'
         + '<p class="small"><span class="lvl">Level 0 · Initiate</span> · Badges: '
         + [r.wax ? 'WAX' : null, r.xrp ? 'XRP' : null, r.kofi ? 'Ko-fi' : null, r.discord ? 'Discord' : null].filter(Boolean).join(', ') + '</p>'
-        + '<p class="small"><span class="keystat">Checking keys…</span></p>'
+        + '<p class="small"><span class="keystat">Checking HODLers…</span></p>'
         + '<p><strong>Holdings:</strong> <span class="hold">counting…</span></p>';
       box.appendChild(div);
       var parts = [], total = 0;
@@ -121,9 +121,9 @@ async function waxCount(acct){
         var held = [];
         if (r.wax && await keyHeldWax(r.wax)) held.push('WAX');
         if (r.xrp && await keyHeldXrp(r.xrp)) held.push('XRP');
-        if (held.length) ks.innerHTML = '<span class="ok">Key holder, ' + held.join(' and ') + '.</span>';
+        if (held.length) ks.innerHTML = '<span class="ok">HODLer, ' + held.join(' and ') + '.</span>';
         else if (r.xrp && offers[r.xrp]) ks.textContent = 'Key sent, waiting on their tap to accept.';
-        else ks.textContent = 'Not a key holder yet.';
+        else ks.textContent = 'Not a HODLer yet.';
       } catch (e) { ks.textContent = 'Key check could not load just now.'; }
     }
     status.textContent = rows.length + ' Horde profile' + (rows.length === 1 ? '' : 's') + ', holdings counted live from both chains.';
