@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
-<meta name="description" content="The Horde secondary market on XRP. Byron pieces, offered for sale by the people who hold them, gathered into one wall.">
-<link rel="stylesheet" href="style.css?v=71">
+<meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
+<link rel="stylesheet" href="style.css?v=72">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -14,7 +14,26 @@
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <h1>The XRP Market</h1>
-  <p>Byron pieces on XRP, offered for sale by the people who hold them. On XRP a sale is an offer sitting on the ledger itself. This wall gathers every live offer for Byron's art into one place. Buying settles wallet to wallet on the ledger, nobody here holds your money or your art.</p>
+  <p>This is the Horde's own market. Byron pieces on XRP, offered for sale by the people who hold them, bought and sold right here on this page. You sign in your own wallet, the ledger settles it wallet to wallet, and nobody takes a marketplace cut. Not us, not anyone.</p>
+
+  <section class="card" id="wallet-card">
+    <h2>Your wallet</h2>
+    <p id="wallet-status">Connect your wallet to buy a piece or list one of yours for sale. Looking at the wall needs no wallet at all.</p>
+    <p id="wallet-buttons">
+      <button class="btn" type="button" id="btn-xaman">Connect with Xaman</button>
+      <button class="btn ghost" type="button" id="btn-joey">Connect with Joey</button>
+    </p>
+    <div id="xaman-qr" hidden>
+      <p>Scan this with your Xaman app to connect.</p>
+      <p><img id="xaman-qr-img" src="" alt="Scan this QR code with Xaman" style="max-width:220px;width:100%;background:#fff;padding:8px;border-radius:8px"></p>
+      <p><a class="btn" id="xaman-deeplink" href="#">Open in Xaman</a> <button class="btn ghost" type="button" id="xaman-cancel">Cancel</button></p>
+    </div>
+    <p id="wallet-connected" hidden>
+      <span id="wallet-addr"></span>
+      <button class="btn ghost" type="button" id="btn-disconnect">Disconnect</button>
+    </p>
+    <p class="small" id="tx-status"></p>
+  </section>
 
   <section class="card">
     <h2>For sale right now</h2>
@@ -33,14 +52,29 @@
       </select>
     </p>
     <p class="small" id="sales-status">Loading the market…</p>
-    <div id="sales-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px"></div>
+    <div id="sales-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px"></div>
     <p class="small" id="sales-updated"></p>
   </section>
 
+  <section class="card" id="sell-card">
+    <h2>Sell your pieces</h2>
+    <p id="sell-hint">Connect your wallet above and the Byron pieces you hold show up here, ready to list. You pick the price, in XRP or $HORDE. Your piece stays in your wallet until it sells, and you can cancel a listing any time. Listing costs you nothing but the tiny ledger fee, and there is no cut when it sells.</p>
+    <div id="my-listings-wrap" hidden>
+      <h3>Your listings</h3>
+      <div id="my-listings"></div>
+    </div>
+    <div id="my-pieces-wrap" hidden>
+      <h3>Your Byron pieces</h3>
+      <p class="small" id="my-pieces-status"></p>
+      <div id="my-pieces" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px"></div>
+    </div>
+  </section>
+
   <section class="card">
-    <h2>How buying works</h2>
-    <p>Tap a piece and it opens on Bithomp, where the live offer sits. Accept the offer in Xaman and the piece moves to your wallet and the payment moves to the seller, settled by the ledger itself.</p>
-    <p>Selling is just as open: list any Byron piece you hold for sale from your own wallet, and it shows up on this wall the next time the wall is gathered. No account here, no listing fee here.</p>
+    <h2>How it works</h2>
+    <p>On XRP a sale is an offer sitting on the ledger itself. This page gathers every live offer for Byron's art into one wall, and checks each one against the ledger when the page opens, so what you see is really for sale.</p>
+    <p>Tap Buy on a piece and your wallet asks you to approve accepting the offer. The piece moves to your wallet and the payment moves to the seller in the same moment, settled by the ledger itself. Selling works the same way in reverse: your listing is your own offer, signed by you, held by nobody.</p>
+    <p>Marketplaces like XRP Cafe take 1.589% off every sale. Here the cut is zero. The only cost is the ledger's own fee, about a ten thousandth of an XRP.</p>
     <p class="small">Buys and sells of Byron pieces earn game points for both sides. The points design is in Byron's hands and goes live with the game.</p>
   </section>
 </main>
@@ -66,24 +100,236 @@
   });
 })();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.2/dist/xrpl-wallet-kit.iife.js"></script>
 <script>
 (function(){
+  'use strict';
+  var ISSUERS = {
+    'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 'ArtistByron',
+    'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 'Horde',
+    'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 'with the Horde'
+  };
+  var TACO_ISSUER = 'rhy' + 'gvDyyaNSfPdsN8UzGTENBYXJyxy4eKw', TACO_TAXON = 476671391;
+  var HORDE_HEX = '24484F5244450000000000000000000000000000';
+  var HORDE_ISSUER = 'rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR';
+  var XAMAN_API_KEY = '09e6660d-6fce-4f1c-991f-7b0497ef709d';
+  var RPC_URLS = ['https://xrplcluster.com/', 'https://s1.ripple.com:51234/'];
+  var RIPPLE_EPOCH = 946684800;
+
   var grid = document.getElementById('sales-grid');
   var statusEl = document.getElementById('sales-status');
   var updatedEl = document.getElementById('sales-updated');
   var searchEl = document.getElementById('sales-search');
   var sortEl = document.getElementById('sales-sort');
-  var offers = [], fIss = '';
+  var walletStatus = document.getElementById('wallet-status');
+  var walletButtons = document.getElementById('wallet-buttons');
+  var walletConnected = document.getElementById('wallet-connected');
+  var walletAddr = document.getElementById('wallet-addr');
+  var txStatus = document.getElementById('tx-status');
+  var qrBox = document.getElementById('xaman-qr');
+  var qrImg = document.getElementById('xaman-qr-img');
+  var qrLink = document.getElementById('xaman-deeplink');
+  var sellHint = document.getElementById('sell-hint');
+  var listingsWrap = document.getElementById('my-listings-wrap');
+  var listingsEl = document.getElementById('my-listings');
+  var piecesWrap = document.getElementById('my-pieces-wrap');
+  var piecesEl = document.getElementById('my-pieces');
+  var piecesStatus = document.getElementById('my-pieces-status');
+
+  var offers = [], fIss = '', myAddr = null, myPieces = [], myListings = [], busy = false, gatheredAt = '';
+
   function esc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-  function priceText(o){
-    var p = o.price || {};
-    if (p.currency === 'XRP') return p.value + ' XRP';
-    var cur = p.currency || '';
-    try { if (/^[0-9A-F]{40}$/.test(cur)) cur = Buffer.from(cur.replace(/0+$/,''), 'hex').toString() || cur; } catch (e) {}
-    if (cur === '24484F5244450000000000000000000000000000') cur = '$HORDE';
-    return p.value + ' ' + cur;
+  function shortAddr(a){ return a && a.length > 12 ? a.slice(0, 6) + '...' + a.slice(-4) : (a || ''); }
+  function fmtNum(v){ var n = Math.round(Number(v) * 1000000) / 1000000; return String(n); }
+  function nowRipple(){ return Math.floor(Date.now() / 1000) - RIPPLE_EPOCH; }
+
+  async function rpc(method, params){
+    var lastErr = null;
+    for (var i = 0; i < RPC_URLS.length; i++) {
+      try {
+        var r = await fetch(RPC_URLS[i], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: method, params: [params] }) });
+        var j = await r.json();
+        if (!j.result) throw new Error('ledger did not answer');
+        if (j.result.error) throw new Error(j.result.error_message || j.result.error);
+        return j.result;
+      } catch (e) { lastErr = e; }
+    }
+    throw lastErr || new Error('ledger did not answer');
   }
-  function render(){
+  async function pool(items, n, fn){
+    var out = new Array(items.length), i = 0;
+    async function worker(){ while (i < items.length){ var k = i++; try { out[k] = await fn(items[k], k); } catch (e) { out[k] = null; } } }
+    var ws = []; for (var w = 0; w < Math.min(n, items.length); w++) ws.push(worker());
+    await Promise.all(ws);
+    return out;
+  }
+
+  function ipfsPathOf(url){
+    if (!url || typeof url !== 'string') return '';
+    if (url.indexOf('ipfs://') === 0) return url.slice(7);
+    var m = url.match(/\/ipfs\/(.+)$/);
+    return m ? m[1] : '';
+  }
+  var gwWinners = {};
+  function raceImg(imgEl, rawUrl){
+    var path = ipfsPathOf(rawUrl);
+    if (!path) { imgEl.onerror = function(){ imgEl.style.visibility = 'hidden'; }; imgEl.src = rawUrl; return; }
+    if (gwWinners[path]) { imgEl.src = gwWinners[path]; return; }
+    var gws = ['https://gateway.pinata.cloud/ipfs/', 'https://ipfs.filebase.io/ipfs/', 'https://ipfs.io/ipfs/'];
+    var done = false;
+    var timer = setTimeout(function(){ if (!done) { done = true; imgEl.style.visibility = 'hidden'; } }, 25000);
+    gws.forEach(function(g){
+      var probe = new Image();
+      probe.onload = function(){ if (!done) { done = true; clearTimeout(timer); gwWinners[path] = g + path; imgEl.src = g + path; } };
+      probe.src = g + path;
+    });
+  }
+  function hexToStr(hex){
+    try {
+      var bytes = new Uint8Array(hex.match(/.{1,2}/g).map(function(b){ return parseInt(b, 16); }));
+      return new TextDecoder().decode(bytes);
+    } catch (e) { return ''; }
+  }
+  async function fetchJson(url, ms){
+    var ctl = new AbortController();
+    var t = setTimeout(function(){ ctl.abort(); }, ms || 9000);
+    try { var r = await fetch(url, { signal: ctl.signal }); if (!r.ok) throw new Error('bad'); return await r.json(); }
+    finally { clearTimeout(t); }
+  }
+  async function fetchMeta(uriHex){
+    if (!uriHex) return {};
+    var url = hexToStr(uriHex);
+    if (!url) return {};
+    var path = ipfsPathOf(url);
+    var tries = [];
+    if (path) tries = ['https://gateway.pinata.cloud/ipfs/' + path, 'https://ipfs.filebase.io/ipfs/' + path, 'https://ipfs.io/ipfs/' + path];
+    else if (url.indexOf('http') === 0) tries = [url];
+    for (var i = 0; i < tries.length; i++) {
+      try {
+        var m = await fetchJson(tries[i]);
+        var img = m.image || m.image_url || '';
+        return { name: m.name || '', img: typeof img === 'string' ? img : '' };
+      } catch (e) {}
+    }
+    return {};
+  }
+
+  function priceFromAmount(amt){
+    if (typeof amt === 'string') return { currency: 'XRP', value: parseInt(amt, 10) / 1000000 };
+    if (amt && typeof amt === 'object') return { currency: amt.currency, value: parseFloat(amt.value || '0'), issuer: amt.issuer };
+    return { currency: 'XRP', value: 0 };
+  }
+  function priceText(p){
+    if (!p) return '';
+    if (p.currency === 'XRP') return fmtNum(p.value) + ' XRP';
+    if (p.currency === HORDE_HEX) return fmtNum(p.value) + ' $HORDE';
+    var cur = p.currency || '';
+    if (/^[0-9A-Fa-f]{40}$/.test(cur)) {
+      try { cur = hexToStr(cur.replace(/0+$/, '')) || cur.slice(0, 8); } catch (e) {}
+    }
+    return fmtNum(p.value) + ' ' + cur;
+  }
+
+  /* ---------- wallet ---------- */
+  var kit = null;
+  function showQr(ev){
+    if (!ev) return;
+    if (ev.qrPng) qrImg.src = ev.qrPng;
+    if (ev.deeplink) qrLink.href = ev.deeplink; else if (ev.uri) qrLink.href = ev.uri;
+    qrBox.hidden = false;
+  }
+  function hideQr(){ qrBox.hidden = true; qrImg.src = ''; }
+  function getKit(){
+    if (kit) return kit;
+    if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) return null;
+    kit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman', 'joey-wallet'], xamanClientId: XAMAN_API_KEY, autoReconnect: true });
+    var mgr = kit.manager || kit;
+    if (mgr && typeof mgr.on === 'function') mgr.on('qr', showQr);
+    return kit;
+  }
+  function mgr(){ var k = getKit(); return k ? (k.manager || k) : null; }
+  function normAddr(a){
+    if (!a) return null;
+    if (typeof a === 'string') return a;
+    if (typeof a === 'object') return a.address || a.account || a.id || null;
+    return null;
+  }
+  async function kitSign(txJson, hint){
+    var m = mgr();
+    if (!m || typeof m.signAndSubmit !== 'function') throw new Error('wallet cannot sign here');
+    var res = await m.signAndSubmit({ txJson: txJson, methodHint: hint });
+    if (res && res.rejected) throw new Error('cancelled in the wallet');
+    return res;
+  }
+  function setConnected(addr){
+    myAddr = addr;
+    hideQr();
+    walletStatus.textContent = 'Connected. You can buy from the wall and list your own pieces below.';
+    walletButtons.hidden = true;
+    walletConnected.hidden = false;
+    walletAddr.textContent = 'Your wallet: ' + shortAddr(addr) + ' ';
+    sellHint.textContent = 'These are the Byron pieces in your wallet. Pick a price, tap List, and approve in your wallet. Your piece stays with you until it sells.';
+    renderWall();
+    loadSellSide();
+  }
+  async function connect(which){
+    var k = getKit();
+    if (!k) { txStatus.textContent = 'The wallet tools could not load. You can still look at the wall, and any piece can be opened on Bithomp from its tile.'; return; }
+    txStatus.textContent = which === 'xaman' ? 'Opening Xaman. Scan the code with your Xaman app.' : 'Opening Joey. Approve it in Joey.';
+    try {
+      var res = await k.connect(which);
+      var addr = normAddr(res && res.account);
+      if (addr) { txStatus.textContent = ''; setConnected(addr); }
+      else { hideQr(); txStatus.textContent = 'The wallet did not return an address. Try again.'; }
+    } catch (e) {
+      hideQr();
+      txStatus.textContent = 'Connection was cancelled or failed. Tap connect to try again.';
+    }
+  }
+  document.getElementById('btn-xaman').addEventListener('click', function(){ connect('xaman'); });
+  document.getElementById('btn-joey').addEventListener('click', function(){ connect('joey-wallet'); });
+  document.getElementById('xaman-cancel').addEventListener('click', function(){ hideQr(); txStatus.textContent = 'Xaman connection cancelled.'; });
+  document.getElementById('btn-disconnect').addEventListener('click', async function(){
+    try { var m = mgr(); if (m && m.disconnect) await m.disconnect(); } catch (e) {}
+    location.reload();
+  });
+  (async function(){
+    var m = mgr();
+    if (!m || typeof m.autoReconnect !== 'function') return;
+    try {
+      await m.autoReconnect();
+      var acct = (typeof m.getAccount === 'function') ? m.getAccount() : null;
+      var addr = normAddr(acct);
+      if (addr) setConnected(addr);
+    } catch (e) {}
+  })();
+
+  /* ---------- the wall ---------- */
+  async function verifyOffer(o){
+    var res = null;
+    for (var attempt = 0; attempt < 2 && !res; attempt++) {
+      try { res = await rpc('nft_sell_offers', { nft_id: o.token }); }
+      catch (e) { if (attempt === 0) await new Promise(function(done){ setTimeout(done, 700); }); }
+    }
+    if (!res) return o;
+    var list = res.offers || [];
+    for (var i = 0; i < list.length; i++) {
+      var x = list[i];
+      if ((x.nft_offer_index || '').toUpperCase() !== (o.offer || '').toUpperCase()) continue;
+      if (x.destination) return null;
+      if (x.expiration && x.expiration < nowRipple()) return null;
+      return { token: o.token, offer: x.nft_offer_index, seller: x.owner, price: priceFromAmount(x.amount), issuer_name: o.issuer_name, issuer: o.issuer, taxon: o.taxon, name: o.name, img: o.img, live: true };
+    }
+    return null;
+  }
+  async function refreshWall(keepNote){
+    if (!offers.length) return;
+    var checked = await pool(offers, 6, verifyOffer);
+    offers = checked.filter(Boolean);
+    renderWall();
+    if (!keepNote) updatedEl.textContent = (gatheredAt ? 'Wall gathered ' + gatheredAt + '. ' : '') + 'Every offer on this wall was checked against the ledger just now, so what you see is really for sale.';
+  }
+  function renderWall(){
     var q = (searchEl.value || '').toLowerCase();
     var list = offers.filter(function(o){
       if (fIss && o.issuer_name !== fIss) return false;
@@ -96,31 +342,253 @@
       return sortEl.value === 'high' ? bv - av : av - bv;
     });
     statusEl.textContent = list.length + ' Byron piece' + (list.length === 1 ? '' : 's') + ' offered for sale on XRP right now.';
-    grid.innerHTML = list.map(function(o, i){
-      var img = o.img ? '<img src="' + esc(o.img) + '" alt="" loading="' + (i < 24 ? 'eager' : 'lazy') + '" style="width:100%;height:104px;object-fit:contain;background:#141210;border-radius:8px" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src=this.src.replace(\'https://ipfs.io/ipfs/\',\'https://gateway.pinata.cloud/ipfs/\');}else if(this.dataset.fb==1){this.dataset.fb=2;this.src.replace(\'https://gateway.pinata.cloud/ipfs/\',\'https://ipfs.filebase.io/ipfs/\');}else{this.style.visibility=\'hidden\';}">' : '<div style="width:100%;height:104px;background:#141210;border-radius:8px"></div>';
-      return '<div class="card" style="padding:8px;margin:0">'
-        + img
-        + '<p style="margin:6px 0 2px;font-weight:600;font-size:.85rem;line-height:1.25">' + esc(o.name || 'Untitled piece') + '</p>'
-        + '<p style="margin:0 0 2px;font-size:.8rem">' + esc(priceText(o)) + '</p>'
-        + '<p class="small" style="margin:0 0 6px">seller ' + esc((o.seller || '').slice(0, 10)) + '… · ' + esc(o.issuer_name) + '</p>'
-        + '<a class="btn" style="padding:4px 10px;font-size:.8rem" target="_blank" rel="noopener" href="https://bithomp.com/en/nft/' + esc(o.token) + '">View and buy</a>'
-        + '</div>';
-    }).join('');
+    grid.innerHTML = '';
+    list.forEach(function(o){
+      var card = document.createElement('div');
+      card.className = 'card'; card.style.padding = '8px'; card.style.margin = '0';
+      var img = document.createElement('img');
+      img.alt = ''; img.style.cssText = 'width:100%;height:130px;object-fit:contain;background:#141210;border-radius:8px';
+      if (o.img) raceImg(img, o.img); else img.style.visibility = 'hidden';
+      card.appendChild(img);
+      var nm = document.createElement('p');
+      nm.style.cssText = 'margin:6px 0 2px;font-weight:600;font-size:.85rem;line-height:1.25';
+      nm.textContent = o.name || 'Untitled piece';
+      card.appendChild(nm);
+      var pr = document.createElement('p');
+      pr.style.cssText = 'margin:0 0 2px;font-size:.85rem';
+      pr.textContent = priceText(o.price);
+      card.appendChild(pr);
+      var sl = document.createElement('p');
+      sl.className = 'small'; sl.style.margin = '0 0 6px';
+      sl.textContent = 'seller ' + shortAddr(o.seller) + ' · ' + o.issuer_name;
+      card.appendChild(sl);
+      if (myAddr && o.seller === myAddr) {
+        var mine = document.createElement('p');
+        mine.className = 'small'; mine.style.margin = '0';
+        mine.textContent = 'Your listing. Manage it under Sell your pieces.';
+        card.appendChild(mine);
+      } else {
+        var buy = document.createElement('button');
+        buy.className = 'btn'; buy.type = 'button';
+        buy.style.cssText = 'padding:4px 10px;font-size:.8rem';
+        buy.textContent = 'Buy';
+        buy.addEventListener('click', function(){ buyOffer(o, buy); });
+        card.appendChild(buy);
+        var alt = document.createElement('p');
+        alt.className = 'small'; alt.style.margin = '6px 0 0';
+        alt.innerHTML = 'or <a target="_blank" rel="noopener" href="https://bithomp.com/en/nft/' + esc(o.token) + '">view on Bithomp</a>';
+        card.appendChild(alt);
+      }
+      grid.appendChild(card);
+    });
+  }
+  async function buyOffer(o, btn){
+    if (busy) return;
+    if (!myAddr) {
+      txStatus.textContent = 'Connect your wallet at the top of this page first, then tap Buy.';
+      document.getElementById('wallet-card').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    busy = true; btn.disabled = true; btn.textContent = 'Opening wallet…';
+    txStatus.textContent = 'Your wallet is asking you to approve buying ' + (o.name || 'this piece') + ' for ' + priceText(o.price) + '.';
+    try {
+      await kitSign({ TransactionType: 'NFTokenAcceptOffer', Account: myAddr, NFTokenSellOffer: o.offer }, 'acceptNFTOffer');
+      txStatus.textContent = 'Bought. ' + (o.name || 'The piece') + ' is moving to your wallet now.';
+      offers = offers.filter(function(x){ return x.offer !== o.offer; });
+      renderWall();
+      setTimeout(function(){ refreshWall(true); loadSellSide(); }, 4000);
+    } catch (e) {
+      txStatus.textContent = 'The buy did not go through. Nothing was spent. ' + (e && e.message ? e.message : '');
+      btn.disabled = false; btn.textContent = 'Buy';
+    }
+    busy = false;
   }
   document.getElementById('sales-filters').addEventListener('click', function(e){
     var b = e.target.closest('button[data-iss]'); if (!b) return;
     fIss = b.getAttribute('data-iss');
     this.querySelectorAll('button').forEach(function(x){ x.className = 'btn ghost'; });
     b.className = 'btn';
-    render();
+    renderWall();
   });
-  searchEl.addEventListener('input', render);
-  sortEl.addEventListener('change', render);
-  fetch('data/xrp-sales.json', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(function(j){
+  searchEl.addEventListener('input', renderWall);
+  sortEl.addEventListener('change', renderWall);
+  fetch('data/xrp-sales.json', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(async function(j){
     offers = j.offers || [];
-    if (j.generated_at) updatedEl.textContent = 'Wall gathered ' + j.generated_at + '. Offers can be accepted or cancelled by their sellers at any time, the piece page always shows the live truth.';
-    render();
+    gatheredAt = j.generated_at || '';
+    if (gatheredAt) updatedEl.textContent = 'Wall gathered ' + gatheredAt + '. Checking every offer against the ledger…';
+    renderWall();
+    await refreshWall();
   }).catch(function(){ statusEl.textContent = 'The market could not load just now. Try again in a bit.'; });
+
+  /* ---------- sell side ---------- */
+  function issuerNameFor(nft){
+    if (ISSUERS[nft.Issuer]) return ISSUERS[nft.Issuer];
+    if (nft.Issuer === TACO_ISSUER && nft.NFTokenTaxon === TACO_TAXON) return 'Horde Tacos';
+    return '';
+  }
+  async function loadSellSide(){
+    if (!myAddr) return;
+    listingsWrap.hidden = false;
+    piecesWrap.hidden = false;
+    piecesStatus.textContent = 'Reading your wallet…';
+    try {
+      var mine = [], marker = null, guard = 0;
+      while (guard++ < 10) {
+        var p = { account: myAddr, limit: 400 };
+        if (marker) p.marker = marker;
+        var res = await rpc('account_nfts', p);
+        (res.account_nfts || []).forEach(function(n){
+          var label = issuerNameFor(n);
+          if (!label) return;
+          if (!((n.Flags || 0) & 8)) return;
+          mine.push({ token: n.NFTokenID, issuer: n.Issuer, taxon: n.NFTokenTaxon, uri: n.URI || '', issuer_name: label, name: '', img: '' });
+        });
+        marker = res.marker;
+        if (!marker) break;
+      }
+      myPieces = mine;
+      await loadMyListings();
+      var withMeta = await pool(myPieces.slice(0, 100), 6, async function(pc){
+        var m = await fetchMeta(pc.uri);
+        pc.name = m.name; pc.img = m.img;
+        return pc;
+      });
+      myPieces = withMeta.concat(myPieces.slice(100));
+      renderPieces();
+    } catch (e) {
+      piecesStatus.textContent = 'Your pieces could not be read just now. Try again in a bit.';
+    }
+  }
+  async function loadMyListings(){
+    var res = await rpc('account_objects', { account: myAddr, type: 'nft_offer', limit: 400 });
+    var out = [];
+    (res.account_objects || []).forEach(function(o){
+      if (!((o.Flags || 0) & 1)) return;
+      if (o.Destination) return;
+      var amt = priceFromAmount(o.Amount);
+      if (!(amt.value > 0)) return;
+      out.push({ token: o.NFTokenID, offer: o.index, price: amt });
+    });
+    myListings = out;
+    renderListings();
+  }
+  function nameForToken(token){
+    for (var i = 0; i < myPieces.length; i++) if (myPieces[i].token === token) return myPieces[i];
+    for (var j = 0; j < offers.length; j++) if (offers[j].token === token) return offers[j];
+    return null;
+  }
+  function renderListings(){
+    if (!myListings.length) { listingsEl.innerHTML = '<p class="small">You have nothing listed right now.</p>'; return; }
+    listingsEl.innerHTML = '';
+    myListings.forEach(function(l){
+      var info = nameForToken(l.token);
+      var row = document.createElement('p');
+      row.style.margin = '6px 0';
+      var label = (info && info.name) ? info.name : 'Piece ' + l.token.slice(0, 10) + '…';
+      row.innerHTML = esc(label) + ' · ' + esc(priceText(l.price)) + ' ';
+      var btn = document.createElement('button');
+      btn.className = 'btn ghost'; btn.type = 'button';
+      btn.style.cssText = 'padding:2px 8px;font-size:.8rem';
+      btn.textContent = 'Cancel listing';
+      btn.addEventListener('click', function(){ cancelListing(l, btn); });
+      row.appendChild(btn);
+      listingsEl.appendChild(row);
+    });
+  }
+  async function cancelListing(l, btn){
+    if (busy) return;
+    busy = true; btn.disabled = true; btn.textContent = 'Opening wallet…';
+    txStatus.textContent = 'Your wallet is asking you to approve cancelling this listing.';
+    try {
+      await kitSign({ TransactionType: 'NFTokenCancelOffer', Account: myAddr, NFTokenOffers: [l.offer] }, 'cancelNFTOffer');
+      txStatus.textContent = 'Listing cancelled.';
+      offers = offers.filter(function(x){ return x.offer !== l.offer; });
+      renderWall();
+      setTimeout(function(){ loadMyListings().then(renderPieces); refreshWall(true); }, 4000);
+    } catch (e) {
+      txStatus.textContent = 'The cancel did not go through. ' + (e && e.message ? e.message : '');
+      btn.disabled = false; btn.textContent = 'Cancel listing';
+    }
+    busy = false;
+  }
+  function renderPieces(){
+    var listed = {};
+    myListings.forEach(function(l){ listed[l.token] = l; });
+    var shown = myPieces.slice(0, 100);
+    piecesStatus.textContent = myPieces.length + ' Byron piece' + (myPieces.length === 1 ? '' : 's') + ' in your wallet.' + (myPieces.length > 100 ? ' Showing the first 100.' : '');
+    piecesEl.innerHTML = '';
+    shown.forEach(function(pc){
+      var card = document.createElement('div');
+      card.className = 'card'; card.style.padding = '8px'; card.style.margin = '0';
+      var img = document.createElement('img');
+      img.alt = ''; img.style.cssText = 'width:100%;height:130px;object-fit:contain;background:#141210;border-radius:8px';
+      if (pc.img) raceImg(img, pc.img); else img.style.visibility = 'hidden';
+      card.appendChild(img);
+      var nm = document.createElement('p');
+      nm.style.cssText = 'margin:6px 0 2px;font-weight:600;font-size:.85rem;line-height:1.25';
+      nm.textContent = pc.name || 'Untitled piece';
+      card.appendChild(nm);
+      var coll = document.createElement('p');
+      coll.className = 'small'; coll.style.margin = '0 0 6px';
+      coll.textContent = pc.issuer_name;
+      card.appendChild(coll);
+      if (listed[pc.token]) {
+        var lp = document.createElement('p');
+        lp.className = 'small'; lp.style.margin = '0';
+        lp.textContent = 'Listed for ' + priceText(listed[pc.token].price) + '. Cancel it above any time.';
+        card.appendChild(lp);
+      } else {
+        var row = document.createElement('p');
+        row.style.margin = '0';
+        var input = document.createElement('input');
+        input.type = 'number'; input.min = '0'; input.step = 'any'; input.placeholder = 'Price';
+        input.style.cssText = 'width:80px;margin-right:4px';
+        var sel = document.createElement('select');
+        sel.innerHTML = '<option value="XRP">XRP</option><option value="HORDE">$HORDE</option>';
+        var btn = document.createElement('button');
+        btn.className = 'btn'; btn.type = 'button';
+        btn.style.cssText = 'padding:4px 10px;font-size:.8rem;margin-top:4px';
+        btn.textContent = 'List for sale';
+        btn.addEventListener('click', function(){ listPiece(pc, input, sel, btn); });
+        row.appendChild(input); row.appendChild(sel);
+        card.appendChild(row);
+        card.appendChild(btn);
+      }
+      piecesEl.appendChild(card);
+    });
+  }
+  async function listPiece(pc, input, sel, btn){
+    if (busy) return;
+    var v = parseFloat(input.value);
+    if (!(v > 0)) { txStatus.textContent = 'Put a price in first, then tap List.'; input.focus(); return; }
+    var amount;
+    if (sel.value === 'XRP') amount = String(Math.round(v * 1000000));
+    else amount = { currency: HORDE_HEX, issuer: HORDE_ISSUER, value: String(v) };
+    busy = true; btn.disabled = true; btn.textContent = 'Opening wallet…';
+    txStatus.textContent = 'Your wallet is asking you to approve listing ' + (pc.name || 'this piece') + ' for ' + fmtNum(v) + ' ' + (sel.value === 'XRP' ? 'XRP' : '$HORDE') + '.';
+    try {
+      await kitSign({ TransactionType: 'NFTokenCreateOffer', Account: myAddr, NFTokenID: pc.token, Amount: amount, Flags: 1 }, 'createNFTOffer');
+      txStatus.textContent = 'Listed. ' + (pc.name || 'Your piece') + ' is on the wall now.';
+      setTimeout(async function(){
+        try {
+          var res = await rpc('nft_sell_offers', { nft_id: pc.token });
+          (res.offers || []).forEach(function(x){
+            if (x.destination) return;
+            var p = priceFromAmount(x.amount);
+            if (!(p.value > 0)) return;
+            if (offers.some(function(o){ return o.offer === x.nft_offer_index; })) return;
+            offers.push({ token: pc.token, offer: x.nft_offer_index, seller: x.owner, price: p, issuer_name: pc.issuer_name, issuer: pc.issuer, taxon: pc.taxon, name: pc.name, img: pc.img, live: true });
+          });
+          renderWall();
+        } catch (e) {}
+        loadSellSide();
+      }, 4000);
+    } catch (e) {
+      txStatus.textContent = 'The listing did not go through. ' + (e && e.message ? e.message : '');
+      btn.disabled = false; btn.textContent = 'List for sale';
+    }
+    busy = false;
+  }
 })();
 </script>
 </body>
