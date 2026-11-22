@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horde Holiday Loot Crate Token - Artist Byron</title>
+<meta name="description" content="The Horde Holiday Loot Crate as a token on WAX and XRP. Claim the physical crate, or hold the token as a credit for what you paid.">
+<link rel="stylesheet" href="style.css?v=76">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>The Holiday Loot Crate, as a token</h1>
+  <p>The Horde Holiday Loot Crate, sold as a token on WAX and on XRP. The token IS the crate. Claim it and the physical crate ships to you. Or never claim it, and the token stands as a credit toward future purchases from Byron, for the full amount you paid for it.</p>
+
+  <section class="card">
+    <img src="art/loot-crate-wax.png" alt="Horde Holiday Loot Crate token, WAX version" style="width:100%;max-width:520px;display:block;margin:0 auto;">
+    <p><strong>Price, shipping included, pick your country:</strong><br>
+    US: 7,500 WAX or 27 XRP (about $25 US)<br>
+    Canada: 9,000 WAX or 32 XRP (about $30 US)<br>
+    Overseas: not yet. It is coming later.</p>
+    <p>Pick your own country honestly. When you claim, your shipping address is the check: if the address does not match the tier you bought, the difference comes due before the crate ships.</p>
+    <p>
+      <a class="btn" href="https://wax.atomichub.io/drops/92672">Buy on WAX, US</a>
+      <a class="btn" href="https://wax.atomichub.io/drops/92673">Buy on WAX, Canada</a>
+      <a class="btn" href="xrp-market.html">Buy on XRP</a>
+    </p>
+    <p class="small" id="wax-stock">Checking how many are left on WAX…</p>
+    <p class="small">On XRP there are 25 tokens, sold from the Horde's own market page. On WAX there are 25 per country tier. When they are gone, they are gone.</p>
+  </section>
+
+  <section class="card">
+    <h2>Page two: the credit</h2>
+    <img src="art/loot-crate-credit.png" alt="Not claiming the crate? This token stands as a credit for the full amount you paid." style="width:100%;max-width:520px;display:block;margin:0 auto;">
+    <p>One token spends once: claim the crate, or spend the credit. When it is spent, it gets stamped SPENT and stays with you as a souvenir.</p>
+    <p>The art on the token right now is temporary. The crate contents are a secret until they ship, so once the crates ship, the art on every token updates to the final reveal.</p>
+  </section>
+
+  <section class="card" id="claim">
+    <h2>Already hold one? Claim it here</h2>
+    <p>Log in so we know the token holder is you, then message Byron on Discord with your chain (WAX or XRP) and, if you are claiming the crate, your shipping address. Claiming the credit instead? Say so in the same message, and the amount you paid goes on your tab.</p>
+    <p>
+      <a class="btn" href="login.html">Log in</a>
+      <a class="btn" href="https://discord.gg/rA3UMEkpqc">Message on Discord</a>
+    </p>
+    <p><a href="shop.html">&larr; Back to the Shop</a></p>
+  </section>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="profile.html">My Horde Profile</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
+<script>
+(function () {
+  var el = document.getElementById('wax-stock');
+  async function rowsFor(id) {
+    var res = await fetch('https://wax.greymass.com/v1/chain/get_table_rows', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ json: true, code: 'atomicdropsx', scope: 'atomicdropsx', table: 'drops', lower_bound: String(id), upper_bound: String(id), limit: 1 })
+    });
+    if (!res.ok) throw new Error('drops ' + res.status);
+    var json = await res.json();
+    return (json.rows || [])[0];
+  }
+  (async function () {
+    try {
+      var us = await rowsFor(92672);
+      var ca = await rowsFor(92673);
+      var usLeft = 25 - parseInt(us.current_claimed, 10);
+      var caLeft = 25 - parseInt(ca.current_claimed, 10);
+      el.textContent = 'Left on WAX right now: ' + usLeft + ' US tier, ' + caLeft + ' Canada tier.';
+    } catch (e) {
+      el.textContent = 'WAX stock: 25 US tier and 25 Canada tier.';
+    }
+  })();
+})();
+</script>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  links.forEach(function(a){
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
+    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+  });
+})();
+</script>
+</body>
+</html>
