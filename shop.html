@@ -3,21 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Horde's Shop</title>
-<meta name="description" content="Shop Artist Byron on Ko-fi: memberships, Loot Crates, and original art.">
-
-
-
+<title>Shop - Artist Byron</title>
+<meta name="description" content="Shop Artist Byron: the Holiday Loot Crate, original paintings, stickers, pins and memberships. Every card goes straight to that item on Ko-fi.">
 <style>
-.tier-list{display:flex;flex-direction:column;gap:10px;margin:16px 0}
-.tier{display:block;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;text-decoration:none;color:var(--ink)}
-.tier:hover{border-color:var(--red)}
-.tier b{display:block;font-size:1rem}
-.tier span{color:var(--muted);font-size:.88rem;display:block;margin-top:2px}
-.tier .game{color:var(--ink);font-size:.88rem;margin-top:6px}
+.price{font-size:1.15rem;font-weight:700;color:#fff;margin:.2em 0 .4em}
+.only{color:var(--red2);font-weight:600;font-size:.9rem}
+.prod img{width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);display:block;margin-bottom:10px}
+.prod h3{margin-top:0}
 </style>
-
-<link rel="stylesheet" href="style.css?v=77">
+<link rel="stylesheet" href="style.css?v=80">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -25,47 +19,151 @@
 <body>
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html" class="active">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
-<main class="wrap">
   <h1>Shop</h1>
-  <p>Everything you buy goes through Ko-fi, that is the cart. This page just points you to the right shelf. Click a card and it opens that thing on Ko-fi, where you check out.</p>
-  <p><a href="https://ko-fi.com/artistbyron/shop"><img src="art/kofi-banner.jpg" alt="The artwork of Artist Byron, come for the art, stay for the Horde, on Ko-fi" style="width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);display:block"></a></p>
-  <p><a class="btn" href="https://ko-fi.com/artistbyron/shop">Open the Ko-fi Shop</a></p>
+  <p>Everything here is physical and ships from Byron's desk. Checkout is on Ko-fi, and every card below goes straight to that one item, no hunting through the shop. Prices are Canadian dollars.</p>
 
-  <section>
-    <h2>Horde Holiday Loot Crate, last of the year</h2>
-    <p><a href="https://ko-fi.com/s/7c49d513a7"><img src="art/loot-crate-holiday.jpg" alt="Horde Holiday Loot Crate, stickers, prints and more" style="width:100%;max-width:520px;height:auto;border-radius:var(--radius);border:1px solid var(--line);display:block"></a></p>
-    <p>The 3rd crate, first holiday themed, last crate of the year. Orders until near the end of November, ships in the first 2 weeks of December. 50 crates a month, that is the limit.</p>
-    <p><a class="btn" href="https://ko-fi.com/s/7c49d513a7">Order a Loot Crate on Ko-fi</a></p>
+  <section class="card prod">
+    <img src="art/loot-crate-holiday.jpg" alt="Horde Holiday Loot Crate, stickers, prints and more" style="max-width:420px">
+    <h2>Horde's Holiday Loot Crate</h2>
+    <p class="price">CA$35, or CA$50 with a t-shirt</p>
+    <p>The third crate, first holiday themed, last crate of the year. A box of horror from Byron's desk, contents secret until it lands. Orders close at the end of November, crates ship in the first two weeks of December. Crate two sold out, and this one is the last of the year.</p>
+    <p>
+      <a class="btn" href="https://ko-fi.com/s/7c49d513a7">Order the Holiday crate on Ko-fi</a>
+      <a class="btn" href="loot-crate.html">Or get it as a token on WAX or XRP</a>
+    </p>
+    <p class="small">Past buyers on crates one and two: <a href="testimonials.html">see what they said</a>.</p>
   </section>
 
-  <section>
-    <h2>Memberships, CAD per month</h2>
-    <p>Memberships are the monthly draw, behind-the-scenes posts, and custom art at the higher tiers. Draw tickets are monthly, for subscribers only.</p>
-    <div class="tier-list">
-      <a class="tier" href="https://ko-fi.com/artistbyron/shop">
-        <b>$5, The Wanderer</b>
-        <span>Behind the scenes, 1 monthly draw ticket. Bonus sticker pack with a Loot Crate that month.</span>
-      </a>
-      <a class="tier" href="https://ko-fi.com/artistbyron/shop">
-        <b>$12, The Seeker</b>
-        <span>3 draw tickets, bigger Loot Crate bonus, 1 custom sketchbook ink sketch a month.</span>
-      </a>
-      <a class="tier" href="https://ko-fi.com/artistbyron/shop">
-        <b>$25, The Serious</b>
-        <span>5 draw tickets, even bigger bonus, custom sketch livestreamed, plus 1 ticket in a bonus draw.</span>
-      </a>
-      <a class="tier" href="https://ko-fi.com/artistbyron/shop">
-        <b>$125, The Assimilated</b>
-        <span>10 draw tickets, biggest bonus, custom 5x7 inch painting livestreamed and shipped, plus 2 tickets in a special draw.</span>
-      </a>
-    </div>
-  </section>
-</main>
-<p class="small">ArtistByron · The Horde · Shop is on Ko-fi, ko-fi.com/artistbyron/shop</p>
+  <h2>Merch</h2>
+  <div class="card-grid">
+    <section class="card prod">
+      <h3>STICKERS!!</h3>
+      <p class="price">from CA$6.90</p>
+      <p>One sticker, or packs of three, five or ten. Zombie and skull stickers from Byron's art.</p>
+      <p><a class="btn" href="https://ko-fi.com/s/558b938d5b">Buy stickers</a></p>
+    </section>
+    <section class="card prod">
+      <h3>Zombie Enamel Pin</h3>
+      <p class="price">from CA$23.95</p>
+      <p>The colourful green zombie, as a pin. Add the Horde lanyard on the same page if you want the pair. 19 left.</p>
+      <p><a class="btn" href="https://ko-fi.com/s/ae6a6bd773">Buy the zombie pin</a></p>
+    </section>
+    <section class="card prod">
+      <h3>Horde Logo Enamel Pin</h3>
+      <p class="price">CA$23.95</p>
+      <p>The red Horde H, as a pin. 20 left.</p>
+      <p><a class="btn" href="https://ko-fi.com/s/e80a5bfac1">Buy the H pin</a></p>
+    </section>
+    <section class="card prod">
+      <h3>The Horde Lanyard</h3>
+      <p class="price">CA$13</p>
+      <p>Black lanyard printed with red THE HORDE lettering.</p>
+      <p><a class="btn" href="https://ko-fi.com/s/6ee1ecdab5">Buy the lanyard</a></p>
+    </section>
+    <section class="card prod">
+      <h3>Custom T-Shirt</h3>
+      <p class="price">from CA$27</p>
+      <p>Pick the image, the shirt colour and your size, and Byron's zombie art goes on it.</p>
+      <p><a class="btn" href="https://ko-fi.com/s/327e3e77ee">Order a shirt</a></p>
+    </section>
+    <section class="card prod">
+      <h3>2026 Holiday Horror Cards</h3>
+      <p class="price">from CA$8</p>
+      <p>A digital download: 20 or more holiday horror card artworks to print at home.</p>
+      <p><a class="btn" href="https://ko-fi.com/s/edd2f15ce6">Get the cards</a></p>
+    </section>
+  </div>
+
+  <h2>Original paintings</h2>
+  <p>One of each. When a painting sells, it is gone, and the buyer owns the original. Free trackable shipping in Canada, CA$25 elsewhere.</p>
+  <div class="card-grid">
+    <section class="card prod">
+      <h3>Blazing</h3>
+      <p class="price">from CA$295</p>
+      <p>8x10 inch mixed media on stretched canvas. <span class="only">Only 1</span></p>
+      <p><a class="btn" href="https://ko-fi.com/s/455e0f2254">Buy Blazing</a></p>
+    </section>
+    <section class="card prod">
+      <h3>I Feel Fine</h3>
+      <p class="price">from CA$295</p>
+      <p>8x10 inch mixed media. <span class="only">Only 1</span></p>
+      <p><a class="btn" href="https://ko-fi.com/s/53f595ba57">Buy I Feel Fine</a></p>
+    </section>
+    <section class="card prod">
+      <h3>The Overthinking Brain</h3>
+      <p class="price">from CA$235</p>
+      <p>8x10 inch mixed media. <span class="only">Only 1</span></p>
+      <p><a class="btn" href="https://ko-fi.com/s/80f4632642">Buy The Overthinking Brain</a></p>
+    </section>
+    <section class="card prod">
+      <img src="art/gallery/spiral-eyes-skull-rainbow.jpg" alt="Skull with two big spiral eyes on a rainbow striped background, painting">
+      <h3>In Your Face</h3>
+      <p class="price">from CA$337</p>
+      <p>8x10 inch mixed media. <span class="only">Only 1</span></p>
+      <p><a class="btn" href="https://ko-fi.com/s/1937add86c">Buy In Your Face</a></p>
+    </section>
+    <section class="card prod">
+      <img src="art/gallery/gold-skull-blue-background.jpg" alt="Gold skull with a green eye on a deep blue background, painting">
+      <h3>Skull on Blue</h3>
+      <p class="price">from CA$295</p>
+      <p>8x10 inch mixed media. <span class="only">Only 1</span></p>
+      <p><a class="btn" href="https://ko-fi.com/s/2e6975f9ec">Buy Skull on Blue</a></p>
+    </section>
+    <section class="card prod">
+      <img src="art/gallery/green-skull-pink-background.jpg" alt="Green skull painting on a pink background">
+      <h3>Joy on Pink</h3>
+      <p class="price">from CA$289</p>
+      <p>9x12 inch stretched canvas. <span class="only">Only 1</span></p>
+      <p><a class="btn" href="https://ko-fi.com/s/a9d9340239">Buy Joy on Pink</a></p>
+    </section>
+    <section class="card prod">
+      <h3>The Gaze</h3>
+      <p class="price">from CA$295</p>
+      <p>9x12 inch stretched canvas. <span class="only">Only 1</span></p>
+      <p><a class="btn" href="https://ko-fi.com/s/19ced6bc4c">Buy The Gaze</a></p>
+    </section>
+    <section class="card prod">
+      <h3>Dark Slant</h3>
+      <p class="price">from CA$289</p>
+      <p>8x10 inch mixed media. <span class="only">Only 1</span></p>
+      <p><a class="btn" href="https://ko-fi.com/s/424d5956e5">Buy Dark Slant</a></p>
+    </section>
+  </div>
+
+  <h2>Memberships</h2>
+  <p>Monthly support with monthly draw tickets, behind-the-scenes posts, and custom art at the higher tiers. Join on Ko-fi:</p>
+  <div class="card-grid">
+    <section class="card prod">
+      <h3>The Wanderer</h3>
+      <p class="price">CA$5 / month</p>
+      <p>Behind the scenes, 1 monthly draw ticket, bonus sticker pack with a Loot Crate that month.</p>
+      <p><a class="btn" href="https://ko-fi.com/artistbyron/tiers">Join as Wanderer</a></p>
+    </section>
+    <section class="card prod">
+      <h3>The Seeker</h3>
+      <p class="price">CA$12 / month</p>
+      <p>3 draw tickets, bigger Loot Crate bonus, 1 custom sketchbook ink sketch a month.</p>
+      <p><a class="btn" href="https://ko-fi.com/artistbyron/tiers">Join as Seeker</a></p>
+    </section>
+    <section class="card prod">
+      <h3>The Serious</h3>
+      <p class="price">CA$25 / month</p>
+      <p>5 draw tickets, even bigger bonus, custom sketch livestreamed, plus 1 ticket in a bonus draw.</p>
+      <p><a class="btn" href="https://ko-fi.com/artistbyron/tiers">Join as Serious</a></p>
+    </section>
+    <section class="card prod">
+      <h3>The Assimilated</h3>
+      <p class="price">CA$125 / month</p>
+      <p>10 draw tickets, biggest bonus, custom 5x7 inch painting livestreamed and shipped, plus 2 tickets in a special draw.</p>
+      <p><a class="btn" href="https://ko-fi.com/artistbyron/tiers">Join as Assimilated</a></p>
+    </section>
+  </div>
+
+  <p>Just want to throw a few dollars in the hat? <a href="https://ko-fi.com/artistbyron">Buy Byron a coffee, CA$3</a>.</p>
+  <p class="small">Shipping, where it is not included: crates CA$5 in Canada, pins and lanyard CA$3 in Canada, shirts CA$10 worldwide and free in the USA, stickers CA$1 worldwide. Each Ko-fi page shows its own exact shipping before you pay.</p>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script src="script.js"></script>
-
 <script>
 (function(){
   var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
