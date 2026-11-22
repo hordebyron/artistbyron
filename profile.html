@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=74">
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="shortcut icon" href="favicon.ico">
+<link rel="stylesheet" href="style.css?v=75">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 .pfp-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
@@ -38,7 +38,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 </style>
 </head>
 <body>
-<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-icon.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <div id="profile-intro">
   <h1>My Horde profile</h1>
@@ -74,7 +74,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
     <h2 id="view-heading">Horde profile</h2>
     <div class="profile-view">
       <div class="char-card">
-        <img class="pfp" id="view-pfp" src="art/horde-h-icon.png" alt="Profile picture">
+        <img class="pfp" id="view-pfp" src="art/horde-h-black.png" alt="Profile picture">
         <p class="char-level" id="view-level"></p>
         <p id="view-badges" style="margin:2px 0"></p>
       </div>
@@ -95,7 +95,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
     <h2>Edit your profile</h2>
     <div class="pfp-wrap">
       <div>
-        <img class="pfp" id="pfp-preview" src="art/horde-h-icon.png" alt="Your profile picture">
+        <img class="pfp" id="pfp-preview" src="art/horde-h-black.png" alt="Your profile picture">
         <p class="small">Your picture comes from your own pieces. Open a collection below, tap a piece, and choose Make this my picture.</p>
       </div>
       <div class="pfp-fields">
@@ -191,7 +191,7 @@ function rowToP(row){
 
 var OUR_ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
 function pfpSrc(v){
-  if (!v) return 'art/horde-h-icon.png';
+  if (!v) return 'art/horde-h-black.png';
   if (/^(https:|data:)/.test(v)) return v;
   var m = String(v).match(/^(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[0-9a-z]+)$/) || String(v).match(/ipfs\/([A-Za-z0-9]+)/);
   if (m) return 'https://gateway.pinata.cloud/ipfs/' + m[1];
@@ -402,13 +402,13 @@ function raceImg(imgEl, src, onFail){
   });
 }
 function thumbInto(imgEl, src){
-  raceImg(imgEl, src || 'art/horde-h-icon.png', function(){ imgEl.style.visibility = 'hidden'; });
+  raceImg(imgEl, src || 'art/horde-h-black.png', function(){ imgEl.style.visibility = 'hidden'; });
 }
 function collRow(name, count, icon, onclick){
   var row = document.createElement('div');
   row.className = 'collrow';
   var im = document.createElement('img'); im.alt = ''; im.loading = 'lazy';
-  thumbInto(im, icon || 'art/horde-h-icon.png');
+  thumbInto(im, icon || 'art/horde-h-black.png');
   var mid = document.createElement('div');
   var n1 = document.createElement('div'); n1.className = 'cname'; n1.textContent = name;
   var n2 = document.createElement('div'); n2.className = 'ccount'; n2.textContent = count + (count === 1 ? ' piece' : ' pieces') + ' · tap to see them';
