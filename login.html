@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=77">
+<link rel="stylesheet" href="style.css?v=82">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -160,6 +160,7 @@ document.getElementById('login-no-btn').addEventListener('click', async function
     var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
     if (known && !crypto) {
       document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
+      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
     }
   } catch (e) {}
 })();

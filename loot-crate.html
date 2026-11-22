@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Holiday Loot Crate Token - Artist Byron</title>
 <meta name="description" content="The Horde Holiday Loot Crate as a token on WAX and XRP. Claim the physical crate, or hold the token as a credit for what you paid.">
-<link rel="stylesheet" href="style.css?v=80">
+<link rel="stylesheet" href="style.css?v=82">
 <style>
 main.wrap{max-width:900px}
 main.wrap h1{font-size:2rem}
@@ -132,6 +132,7 @@ main.wrap .card{padding:14px;margin:14px 0}
     var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
     if (known && !crypto) {
       document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
+      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
     }
   } catch (e) {}
 })();

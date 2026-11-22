@@ -10,8 +10,13 @@
 .only{color:var(--red2);font-weight:600;font-size:.9rem}
 .prod img{width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);display:block;margin-bottom:10px}
 .prod h3{margin-top:0}
+.feature-text h2{margin-top:0}
+@media (min-width:760px){
+  .feature{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+  .feature img{margin-bottom:0}
+}
 </style>
-<link rel="stylesheet" href="style.css?v=80">
+<link rel="stylesheet" href="style.css?v=82">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -22,16 +27,18 @@
   <h1>Shop</h1>
   <p>Everything here is physical and ships from Byron's desk. Checkout is on Ko-fi, and every card below goes straight to that one item, no hunting through the shop. Prices are Canadian dollars.</p>
 
-  <section class="card prod">
-    <img src="art/loot-crate-holiday.jpg" alt="Horde Holiday Loot Crate, stickers, prints and more" style="max-width:420px">
+  <section class="card prod feature">
+    <img src="art/loot-crate-holiday.jpg" alt="Horde Holiday Loot Crate, stickers, prints and more">
+    <div class="feature-text">
     <h2>Horde's Holiday Loot Crate</h2>
-    <p class="price">CA$35, or CA$50 with a t-shirt</p>
+    <p class="price">CA$35</p>
     <p>The third crate, first holiday themed, last crate of the year. A box of horror from Byron's desk, contents secret until it lands. Orders close at the end of November, crates ship in the first two weeks of December. Crate two sold out, and this one is the last of the year.</p>
     <p>
       <a class="btn" href="https://ko-fi.com/s/7c49d513a7">Order the Holiday crate on Ko-fi</a>
-      <a class="btn" href="loot-crate.html">Or get it as a token on WAX or XRP</a>
+      <a class="btn crypto-only" href="loot-crate.html">Or get it as a token on WAX or XRP</a>
     </p>
     <p class="small">Past buyers on crates one and two: <a href="testimonials.html">see what they said</a>.</p>
+    </div>
   </section>
 
   <h2>Merch</h2>
@@ -195,6 +202,7 @@
     var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
     if (known && !crypto) {
       document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
+      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
     }
   } catch (e) {}
 })();
