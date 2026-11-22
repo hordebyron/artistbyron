@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horde Members</title>
+<meta name="description" content="Every Horde member, on WAX or on XRP. Flip the switch to see each side, wallets, pieces and HODLers counted live.">
+<link rel="stylesheet" href="style.css?v=83">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+.member{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;background:var(--panel)}
+.member h3{margin:.1em 0 .3em}
+.flag{color:var(--red);font-weight:700}
+.ok{color:#7fb069;font-weight:700}
+.switch{display:flex;gap:10px;margin:16px 0}
+.switch button{flex:1;padding:14px 10px;font-size:1.15rem;font-weight:700;font-family:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.switch button.on{background:var(--red);border-color:var(--red);color:#fff}
+</style>
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>Horde members</h1>
+  <p>Every member of the Horde, one chain at a time. Flip the switch to see the WAX side or the XRP side. Wallets, piece counts and HODLers are read live from the chains.</p>
+  <div class="switch" role="group" aria-label="Choose a chain">
+    <button type="button" id="btn-wax" class="on">WAX</button>
+    <button type="button" id="btn-xrp">XRP</button>
+  </div>
+  <p class="small" id="members-status">Loading the Horde…</p>
+  <div id="members"></div>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
+<script>
+var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
+var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+var ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
+var MUSE_XRP = 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH';
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+async function xrpNfts(addr){
+  var out = [], marker = null, pages = 0;
+  do {
+    var body = { method: 'account_nfts', params: [{ account: addr, limit: 400 }] };
+    if (marker) body.params[0].marker = marker;
+    var res = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    var j = await res.json();
+    out = out.concat((j.result && j.result.account_nfts) || []);
+    marker = j.result && j.result.marker; pages++;
+  } while (marker && pages < 10);
+  return out;
+}
+var RANKS = ['Initiate', 'Crosschain Curious', 'Shambler', 'Ghoul', 'Night Stalker', 'Horde Warden', 'Legend of the Horde', 'Horde Lord'];
+function hordeLevel(w, x){
+  var t = (w || 0) + (x || 0);
+  if (t >= 1500) return 7;
+  if (t >= 1000) return 6;
+  if (t >= 500) return 5;
+  if (t >= 100) return 4;
+  if (t >= 50) return 3;
+  if (t >= 20) return 2;
+  if ((w || 0) >= 1 && (x || 0) >= 1) return 1;
+  return 0;
+}
+async function keyHeldWax(acct){
+  var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(acct) + '&template_id=912283&limit=1');
+  var j = await res.json();
+  return !!(j.data && j.data.length);
+}
+async function museOffers(){
+  var map = {};
+  try {
+    var res = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'account_objects', params: [{ account: MUSE_XRP, type: 'nft_offer', limit: 100 }] }) });
+    var j = await res.json();
+    ((j.result && j.result.account_objects) || []).forEach(function(o){ if (o.Destination) map[o.Destination] = true; });
+  } catch (e) {}
+  return map;
+}
+async function waxCount(acct){
+  var res = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(acct));
+  var j = await res.json();
+  var total = 0;
+  ((j.data && j.data.collections) || []).forEach(function(c){ var nm = (c.collection && c.collection.collection_name) || c.collection_name || ''; if (nm === 'byronartset1' || nm === 'myhordeonwax' || nm === 'myzicklearmy' || nm === 'myzombiecats') total += parseInt(c.assets, 10) || 0; });
+  return total;
+}
+var MEMBERS = [];
+var VIEW = 'wax';
+var OFFERS = {};
+function badges(r){
+  return [r.wax ? 'WAX' : null, r.xrp ? 'XRP' : null, r.kofi ? 'Ko-fi' : null, r.discord ? 'Discord' : null].filter(Boolean).join(', ');
+}
+function render(){
+  var box = document.getElementById('members');
+  var status = document.getElementById('members-status');
+  document.getElementById('btn-wax').className = VIEW === 'wax' ? 'on' : '';
+  document.getElementById('btn-xrp').className = VIEW === 'xrp' ? 'on' : '';
+  box.innerHTML = '';
+  var shown = MEMBERS.filter(function(m){ return VIEW === 'wax' ? !!m.r.wax : !!m.r.xrp; });
+  shown.forEach(function(m){
+    var r = m.r;
+    var div = document.createElement('div');
+    div.className = 'member';
+    var L = hordeLevel(m.wc, m.xc);
+    var walletLine, holdLine, keyLine;
+    if (VIEW === 'wax') {
+      walletLine = 'WAX wallet: ' + esc(r.wax);
+      holdLine = m.wc + ' pieces on WAX';
+      keyLine = m.keyWax ? '<span class="ok">HODLer held on WAX.</span>' : 'Not a HODLer on WAX yet.';
+    } else {
+      walletLine = 'XRP wallet: ' + esc(r.xrp);
+      holdLine = m.xc + ' pieces on XRP';
+      if (m.keyXrp) keyLine = '<span class="ok">HODLer held on XRP.</span>';
+      else if (OFFERS[r.xrp]) keyLine = 'HODLer sent, waiting on their tap to accept.';
+      else keyLine = 'Not a HODLer on XRP yet.';
+    }
+    div.innerHTML = '<h3>#' + r.profile_no + ' ' + esc(r.name) + '</h3>'
+      + '<p class="small">' + walletLine + '</p>'
+      + '<p><strong>' + holdLine + '</strong> · Horde level ' + L + ' · ' + RANKS[L] + ' (both chains)</p>'
+      + '<p class="small">' + keyLine + '</p>'
+      + '<p class="small">Badges: ' + badges(r) + '</p>';
+    box.appendChild(div);
+  });
+  status.textContent = MEMBERS.length + ' Horde members in all. Showing the ' + (VIEW === 'wax' ? 'WAX' : 'XRP') + ' side: ' + shown.length + ' member' + (shown.length === 1 ? '' : 's') + ' with a ' + (VIEW === 'wax' ? 'WAX' : 'XRP') + ' wallet.';
+}
+document.getElementById('btn-wax').addEventListener('click', function(){ VIEW = 'wax'; render(); });
+document.getElementById('btn-xrp').addEventListener('click', function(){ VIEW = 'xrp'; render(); });
+(async function(){
+  var status = document.getElementById('members-status');
+  try {
+    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&order=profile_no.asc', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    var rows = await res.json();
+    if (!rows.length) { status.textContent = 'No profiles yet. First signup starts the Horde.'; return; }
+    status.textContent = rows.length + ' Horde members. Counting holdings on both chains, give it a moment…';
+    OFFERS = await museOffers();
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var m = { r: r, wc: 0, xc: 0, keyWax: false, keyXrp: false };
+      try { if (r.wax) m.wc = await waxCount(r.wax); } catch (e) {}
+      try {
+        if (r.xrp) {
+          var nfts = await xrpNfts(r.xrp);
+          nfts.forEach(function(n){
+            var iss = n.Issuer || n.issuer;
+            if (iss && ISSUERS[iss]) m.xc++;
+            if (iss === MUSE_XRP && (n.NFTokenTaxon === 66602 || n.nft_taxon === 66602)) m.keyXrp = true;
+          });
+        }
+      } catch (e) {}
+      try { if (r.wax) m.keyWax = await keyHeldWax(r.wax); } catch (e) {}
+      MEMBERS.push(m);
+      render();
+    }
+  } catch (e) {
+    status.textContent = 'The members list could not load just now. Try again in a moment.';
+  }
+})();
+</script>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  links.forEach(function(a){
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
+    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+  });
+})();
+</script>
+<!-- horde-nav-trim: logged-in members with no wallet on their profile get the plain Shop door, no crypto dropdown -->
+<script>
+(function () {
+  try {
+    var w = null;
+    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+    if (!w) return;
+    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
+    var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
+    if (known && !crypto) {
+      document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
+      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+    }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
