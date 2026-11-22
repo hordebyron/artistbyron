@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crate Mail-Out List - Artist Byron</title>
+<meta name="description" content="Private mail-out list for Horde Loot Crate claims.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="style.css?v=89">
+<style>
+main.wrap{max-width:820px}
+.claim{border:1px solid #333;border-radius:10px;padding:14px;margin:12px 0;text-align:left}
+.claim .addr{font-size:1.15rem;line-height:1.45;white-space:pre-line}
+.claim .meta{opacity:.75;font-size:.9rem;margin-top:8px}
+.claim.done{opacity:.55}
+.stamp{display:inline-block;border:2px solid #4caf50;color:#4caf50;border-radius:6px;padding:1px 8px;font-weight:700;transform:rotate(-4deg);margin-left:8px}
+#code-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+#code{flex:1;min-width:200px;padding:10px;border-radius:8px;border:1px solid #444;background:#111;color:#eee}
+</style>
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>Crate mail-out list</h1>
+  <p>This page is just for mailing out Loot Crates. Type the code word Byron gave you and the claims appear, newest address ready to copy onto the parcel. When a crate goes in the mail, tap Mark mailed so it moves to the done pile and never gets mailed twice.</p>
+  <div id="code-row">
+    <input id="code" type="password" placeholder="Code word" autocomplete="off">
+    <button class="btn" id="go" type="button">Show the list</button>
+  </div>
+  <p id="status" class="small"></p>
+  <div id="list"></div>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p></div></footer>
+<script>
+var FN = 'https://tuzzavnacfzveucwhdeq.supabase.co/functions/v1/claims-view';
+var code = sessionStorage.getItem('mailout-code') || '';
+if (code) document.getElementById('code').value = code;
+
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+function call(body){
+  return fetch(FN, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) })
+    .then(function(r){ return r.json(); });
+}
+
+function addr(c){
+  var lines = [c.full_name, c.street, (c.city || '') + (c.region ? ', ' + c.region : '') + (c.postal ? '  ' + c.postal : ''), c.country];
+  return lines.filter(function(x){ return x && x.trim() && x.trim() !== ','; }).join('\n');
+}
+
+function card(c, kind){
+  var when = c.created_at ? new Date(c.created_at).toLocaleDateString() : '';
+  var meta = esc(c.tier || '') + ' tier &middot; ' + esc(c.chain || '') + ' &middot; wallet ' + esc(c.wallet || '') + ' &middot; claimed ' + when + (c.note ? '<br>Note: ' + esc(c.note) : '') + (c.email ? '<br>Email: ' + esc(c.email) : '');
+  var btn = '';
+  if (kind === 'mail') btn = '<p><button class="btn" type="button" data-ship="' + c.id + '">Mark mailed</button></p>';
+  if (kind === 'done') btn = '<p><button class="btn ghost" type="button" data-unship="' + c.id + '">Undo, not mailed yet</button></p>';
+  var stamp = kind === 'done' ? '<span class="stamp">MAILED</span>' : '';
+  return '<div class="claim' + (kind === 'done' ? ' done' : '') + '"><div class="addr">' + esc(addr(c)) + '</div>' + stamp + '<div class="meta">' + meta + '</div>' + btn + '</div>';
+}
+
+function render(claims){
+  var mail = claims.filter(function(c){ return c.claim_type !== 'credit' && !c.shipped; });
+  var credit = claims.filter(function(c){ return c.claim_type === 'credit'; });
+  var done = claims.filter(function(c){ return c.claim_type !== 'credit' && c.shipped; });
+  var h = '';
+  h += '<h2>To mail (' + mail.length + ')</h2>' + (mail.length ? mail.map(function(c){ return card(c, 'mail'); }).join('') : '<p>Nothing waiting. New claims land here on their own.</p>');
+  if (credit.length) h += '<h2>Took the credit instead (' + credit.length + ')</h2><p class="small">These people kept the token as a credit. Nothing to mail.</p>' + credit.map(function(c){ return card(c, 'credit'); }).join('');
+  if (done.length) h += '<h2>Mailed (' + done.length + ')</h2>' + done.map(function(c){ return card(c, 'done'); }).join('');
+  document.getElementById('list').innerHTML = h;
+  document.querySelectorAll('[data-ship]').forEach(function(b){ b.addEventListener('click', function(){ mark(b.getAttribute('data-ship'), 'ship'); }); });
+  document.querySelectorAll('[data-unship]').forEach(function(b){ b.addEventListener('click', function(){ mark(b.getAttribute('data-unship'), 'unship'); }); });
+}
+
+function load(){
+  var st = document.getElementById('status');
+  st.textContent = 'Loading...';
+  call({ code: code, action: 'list' }).then(function(r){
+    if (!r.ok) { st.textContent = r.error === 'Wrong code' ? 'That code word did not work. Check it with Byron and try again.' : 'Something went wrong: ' + (r.error || 'unknown'); document.getElementById('list').innerHTML = ''; return; }
+    sessionStorage.setItem('mailout-code', code);
+    st.textContent = '';
+    render(r.claims || []);
+  }).catch(function(){ st.textContent = 'Could not reach the list. Check your connection and try again.'; });
+}
+
+function mark(id, action){
+  call({ code: code, action: action, id: Number(id) }).then(function(r){ if (r.ok) load(); });
+}
+
+document.getElementById('go').addEventListener('click', function(){ code = document.getElementById('code').value.trim(); load(); });
+document.getElementById('code').addEventListener('keydown', function(e){ if (e.key === 'Enter') { code = e.target.value.trim(); load(); } });
+if (code) load();
+</script>
+</body>
+</html>
