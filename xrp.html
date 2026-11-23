@@ -293,7 +293,9 @@ async function showHorde(addr, proven) {
   var html = '<ul class="collection-list">' + heldRows.map(rowHtml).join('') + '</ul>';
   if (zeroRows.length) html += '<details><summary>Collections you do not hold yet (' + zeroRows.length + ')</summary><ul class="collection-list">' + zeroRows.map(rowHtml).join('') + '</ul></details>';
   if (sbRow) html += '<p><a class="btn" href="profile.html?n=' + sbRow.profile_no + '">Your Horde profile is loaded, view it here</a></p>';
-  if (sbRow && proven) setTimeout(function(){ location.href = 'profile.html'; }, 600);
+  /* Stay here after login: profile.html only treats this device as yours
+     once it is unlocked there, so sending you straight over looks like
+     the login failed. The button above takes you to your profile. */
   inventoryEl.innerHTML = html;
   document.getElementById('switch-wallet-wrap').hidden = false;
 }

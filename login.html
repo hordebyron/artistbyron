@@ -74,7 +74,9 @@ function sbMirrorLocal(r){
       card.hidden = false;
       document.getElementById('doors-card').hidden = true;
       if (who.name) document.getElementById('known-title').textContent = 'Welcome back, ' + who.name;
-      window.__knownTimer = setTimeout(function(){ location.href = 'profile.html'; }, 900);
+      /* No auto-redirect: profile.html only treats this device as yours
+         once it is unlocked there, so sending you straight over looks
+         like the login failed. The button above takes you there. */
     }
   } catch (e) {}
 })();
