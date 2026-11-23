@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Members</title>
-<meta name="description" content="Every member of the Horde, picture and name.">
-<link rel="stylesheet" href="style.css?v=101">
+<meta name="description" content="Every member of the Horde, with levels, badges and the leaderboard.">
+<link rel="stylesheet" href="style.css?v=102">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -14,13 +14,20 @@
 .mcard{border:1px solid var(--line);border-radius:12px;padding:16px 10px;background:var(--panel);text-align:center}
 .mcard img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:2px solid var(--line);background:#0f0f14}
 .mcard h3{margin:.5em 0 0;font-size:1.02rem;word-break:break-word}
+.mcard{position:relative}
+.mrank{position:absolute;top:8px;left:8px;background:var(--red,#b91c1c);color:#fff;font-weight:700;font-size:.85rem;border-radius:999px;padding:2px 10px}
+.mlevel{font-weight:700;margin:.45em 0 0}
+.mpieces{color:var(--muted);font-size:.9rem;margin:.15em 0 0}
+.mbadges{margin-top:8px}
+.pbadge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 11px;margin:0 4px 6px 0;font-size:.8rem;color:var(--muted);opacity:.45}
+.pbadge.on{opacity:1;color:var(--ink);border-color:var(--red,#b91c1c)}
 </style>
 </head>
 <body>
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <h1>Horde members</h1>
-  <p>Every member of the Horde.</p>
+  <p>Every member of the Horde, ranked on the leaderboard. Levels come from the Horde pieces a member holds on WAX and XRP, counted fresh from the chains.</p>
   <p class="small" id="members-status">Loading the Horde…</p>
   <div class="roster" id="members"></div>
 </main>
@@ -28,6 +35,9 @@
 <script>
 var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
 var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+var OUR_ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
+var OUR_WAX = { byronartset1: 1, myhordeonwax: 1, myzicklearmy: 1, myzombiecats: 1 };
+var RANKS = ['Initiate', 'Crosschain Curious', 'Shambler', 'Ghoul', 'Night Stalker', 'Horde Warden', 'Legend of the Horde', 'Horde Lord'];
 function pfpSrc(v){
   if (!v) return 'art/horde-h-black.png';
   if (/^(https:|data:)/.test(v)) return v;
@@ -41,38 +51,143 @@ function joinedText(ts){
   if (isNaN(d.getTime())) return '';
   return 'Joined ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
+function hordeLevel(w, x){
+  var t = (w || 0) + (x || 0);
+  if (t >= 1500) return 7;
+  if (t >= 1000) return 6;
+  if (t >= 500) return 5;
+  if (t >= 100) return 4;
+  if (t >= 50) return 3;
+  if (t >= 20) return 2;
+  if ((w || 0) >= 1 && (x || 0) >= 1) return 1;
+  return 0;
+}
+async function sbGet(path){
+  var res = await fetch(SB_URL + path, { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+  return res.json();
+}
+async function countWax(addr){
+  var r = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(addr));
+  var j = await r.json();
+  var total = 0;
+  ((j.data && j.data.collections) || []).forEach(function(c){
+    var cn = c.collection && c.collection.collection_name;
+    if (cn && OUR_WAX[cn]) total += parseInt(c.assets, 10) || 0;
+  });
+  return total;
+}
+async function hasWaxHodler(addr){
+  try {
+    var r = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(addr) + '&template_id=912283&limit=1');
+    var j = await r.json();
+    return !!(j.data && j.data.length);
+  } catch (e) { return false; }
+}
+async function scanXrp(addr){
+  var count = 0, hodler = false, mk = null, pg = 0;
+  do {
+    var b = { method: 'account_nfts', params: [{ account: addr, limit: 400 }] };
+    if (mk) b.params[0].marker = mk;
+    var r = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+    var j = await r.json();
+    ((j.result && j.result.account_nfts) || []).forEach(function(n){
+      var iss = n.Issuer || n.issuer;
+      if (iss && OUR_ISSUERS[iss]) count++;
+      if (iss === 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH' && (n.NFTokenTaxon === 66602 || n.nftoken_taxon === 66602)) hodler = true;
+    });
+    mk = j.result && j.result.marker; pg++;
+  } while (mk && pg < 10);
+  return { count: count, hodler: hodler };
+}
 (async function(){
   var status = document.getElementById('members-status');
   var box = document.getElementById('members');
+  var rows;
   try {
-    var res = await fetch(SB_URL + '/rest/v1/profiles?select=*&order=profile_no.asc', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
-    var rows = await res.json();
+    rows = await sbGet('/rest/v1/profiles?select=*&order=profile_no.asc');
     if (!rows.length) { status.textContent = 'No members yet. First signup starts the Horde.'; return; }
-    rows.forEach(function(r){
-      var card = document.createElement('div');
-      card.className = 'mcard';
-      var img = document.createElement('img');
-      img.src = pfpSrc(r.pfp);
-      img.alt = '';
-      img.loading = 'lazy';
-      img.addEventListener('error', function(){ img.src = 'art/horde-h-black.png'; });
-      var h = document.createElement('h3');
-      h.textContent = r.name || 'Member';
-      card.appendChild(img);
-      card.appendChild(h);
-      var j = joinedText(r.created_at);
-      if (j) {
-        var p = document.createElement('p');
-        p.className = 'small';
-        p.textContent = j;
-        card.appendChild(p);
-      }
-      box.appendChild(card);
-    });
-    status.textContent = rows.length + ' member' + (rows.length === 1 ? '' : 's') + ' of the Horde.';
   } catch (e) {
     status.textContent = 'The members list could not load just now. Try again in a moment.';
+    return;
   }
+  var extras = {};
+  try {
+    var ex = await sbGet('/rest/v1/profile_wallets?select=profile_no,chain,address');
+    (ex || []).forEach(function(w){
+      if (!extras[w.profile_no]) extras[w.profile_no] = { xrp: [], wax: [] };
+      if (extras[w.profile_no][w.chain]) extras[w.profile_no][w.chain].push(w.address);
+    });
+  } catch (e) {}
+  var members = rows.map(function(r){
+    var card = document.createElement('div');
+    card.className = 'mcard';
+    var rank = document.createElement('span');
+    rank.className = 'mrank'; rank.hidden = true;
+    card.appendChild(rank);
+    var img = document.createElement('img');
+    img.src = pfpSrc(r.pfp);
+    img.alt = '';
+    img.loading = 'lazy';
+    img.addEventListener('error', function(){ img.src = 'art/horde-h-black.png'; });
+    card.appendChild(img);
+    var h = document.createElement('h3');
+    h.textContent = r.name || 'Member';
+    card.appendChild(h);
+    var lvl = document.createElement('p');
+    lvl.className = 'mlevel';
+    lvl.textContent = 'Counting pieces…';
+    card.appendChild(lvl);
+    var pcs = document.createElement('p');
+    pcs.className = 'mpieces';
+    card.appendChild(pcs);
+    var bd = document.createElement('div');
+    bd.className = 'mbadges';
+    card.appendChild(bd);
+    var j = joinedText(r.created_at);
+    if (j) {
+      var jp = document.createElement('p');
+      jp.className = 'small';
+      jp.textContent = j;
+      card.appendChild(jp);
+    }
+    box.appendChild(card);
+    return { row: r, card: card, rankEl: rank, lvlEl: lvl, pcsEl: pcs, bdEl: bd, level: 0, total: 0, done: false };
+  });
+  status.textContent = rows.length + ' member' + (rows.length === 1 ? '' : 's') + ' of the Horde. Counting pieces for the leaderboard…';
+  await Promise.all(members.map(async function(m){
+    var r = m.row;
+    var ex = extras[r.profile_no] || { xrp: [], wax: [] };
+    var waxAddrs = (r.wax ? [r.wax] : []).concat(ex.wax.filter(function(a){ return a && a !== r.wax; }));
+    var xrpAddrs = (r.xrp ? [r.xrp] : []).concat(ex.xrp.filter(function(a){ return a && a !== r.xrp; }));
+    var w = 0, x = 0, hodler = false;
+    for (var i = 0; i < waxAddrs.length; i++) { try { w += await countWax(waxAddrs[i]); } catch (e) {} }
+    if (r.wax) { try { if (await hasWaxHodler(r.wax)) hodler = true; } catch (e) {} }
+    for (var k = 0; k < xrpAddrs.length; k++) { try { var s = await scanXrp(xrpAddrs[k]); x += s.count; if (s.hodler) hodler = true; } catch (e) {} }
+    m.level = hordeLevel(w, x);
+    m.total = w + x;
+    m.done = true;
+    m.lvlEl.textContent = 'Level ' + m.level + ' · ' + RANKS[m.level];
+    m.pcsEl.textContent = m.total.toLocaleString('en-US') + ' pieces';
+    var defs = [
+      { label: 'WAX', on: !!r.wax },
+      { label: 'XRP', on: !!r.xrp },
+      { label: 'Ko-fi', on: !!r.kofi },
+      { label: 'Discord', on: !!r.discord },
+      { label: 'HODLer', on: hodler }
+    ];
+    m.bdEl.innerHTML = defs.map(function(d){ return '<span class="pbadge' + (d.on ? ' on' : '') + '">' + d.label + '</span>'; }).join('');
+  }));
+  var ranked = members.slice().sort(function(a, b){
+    if (b.level !== a.level) return b.level - a.level;
+    if (b.total !== a.total) return b.total - a.total;
+    return (a.row.profile_no || 0) - (b.row.profile_no || 0);
+  });
+  ranked.forEach(function(m, i){
+    m.rankEl.textContent = '#' + (i + 1);
+    m.rankEl.hidden = false;
+    box.appendChild(m.card);
+  });
+  status.textContent = rows.length + ' member' + (rows.length === 1 ? '' : 's') + ' of the Horde, ranked by level.';
 })();
 </script>
 
