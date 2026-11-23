@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Holdings · Artist Byron</title>
-<meta name="description" content="One Horde collection, piece by piece.">
-<link rel="stylesheet" href="style.css?v=89">
+<title>My Inventory · Artist Byron</title>
+<meta name="description" content="Your Horde pieces, on WAX and on XRP, thirty at a time.">
+<link rel="stylesheet" href="style.css?v=91">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -15,35 +15,54 @@
 .pieces img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#0f0f14}
 .pieces figcaption{font-size:.82rem;color:var(--muted);margin-top:4px;word-break:break-word}
 .nopic{display:flex;align-items:center;justify-content:center;aspect-ratio:1;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:.85rem;text-align:center;padding:8px}
+.chain-tabs{display:flex;gap:8px;margin:10px 0}
+.chain-tabs a{padding:8px 16px;border-radius:8px;border:1px solid var(--line);color:var(--ink);text-decoration:none}
+.chain-tabs a.on{background:var(--accent,#b91c1c);color:#fff;border-color:transparent}
+#inv-more{width:100%;padding:14px;font-size:1rem;margin-top:14px}
 </style>
 </head>
 <body>
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
-  <p><a class="btn ghost" href="profile.html" id="back-link">Back to the profile</a></p>
-  <h1 id="h-title">Holdings</h1>
-  <p class="small" id="h-sub"></p>
-  <p class="small" id="h-status">Loading…</p>
-  <p class="small">Sort: <select id="h-sort" style="padding:8px;border-radius:8px;border:1px solid var(--line);background:#0f0f14;color:var(--ink)">
-    <option value="default">As found</option>
-    <option value="az">Name, A to Z</option>
-    <option value="za">Name, Z to A</option>
-    <option value="mint">Lowest mint first</option>
-  </select>
-  Search: <input id="h-search" type="text" placeholder="Type part of a name" autocomplete="off" style="padding:8px;border-radius:8px;border:1px solid var(--line);background:#0f0f14;color:var(--ink)"></p>
-  <div class="pieces" id="h-grid"></div>
-  <p style="margin-top:12px"><button class="btn ghost" type="button" id="h-more" hidden>Show more pieces</button></p>
+  <p><a class="btn ghost" href="market.html" id="back-link">Back to the market</a></p>
+  <h1>My Horde inventory</h1>
+  <p>Every Horde piece in your wallet, on the chain you pick. The first 30 load right away. Tap Load more and the next 30 land on this same page, same as AtomicHub does it.</p>
+  <div class="chain-tabs">
+    <a href="holdings.html?side=wax" id="tab-wax">WAX</a>
+    <a href="holdings.html?side=xrp" id="tab-xrp">XRP</a>
+  </div>
+  <p class="small">Wallet: <input id="inv-wallet" type="text" placeholder="Paste your wallet address" autocomplete="off" style="padding:8px;border-radius:8px;border:1px solid var(--line);background:#0f0f14;color:var(--ink);min-width:240px"> <button class="btn" type="button" id="inv-go">Show my pieces</button></p>
+  <p class="small" id="inv-status">Pick a chain and put your wallet in.</p>
+  <div class="pieces" id="inv-grid"></div>
+  <p><button class="btn" type="button" id="inv-more" hidden>Load more pieces</button></p>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script>
 var q = new URLSearchParams(location.search);
-var SIDE = q.get('side') || '', WALLET = q.get('wallet') || '', CNAME = q.get('cname') || 'Collection', WHO = q.get('who') || '';
-var PAGE = 20, shown = 0, items = [], loadingDone = false, searchFilter = '';
-document.getElementById('h-title').textContent = (WHO ? WHO + ' · ' : '') + CNAME;
-document.getElementById('h-sub').textContent = (SIDE === 'wax' ? 'On WAX · wallet ' : 'On XRP · wallet ') + WALLET;
-var backN = q.get('n'); if (backN) document.getElementById('back-link').href = 'profile.html?n=' + encodeURIComponent(backN);
+var SIDE = (q.get('side') || 'wax').toLowerCase() === 'xrp' ? 'xrp' : 'wax';
+var COLL = q.get('coll') || '';
+var ISSUER1 = q.get('issuer') || '', TAXON1 = q.get('taxon') || '';
+var PAGE = 30;
+var HORDE_COLLS = ['byronartset1', 'myhordeonwax', 'myzicklearmy', 'myzombiecats'];
+var HORDE_ISSUERS = ['rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney', 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf', 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH'];
+var WALLET = '', buffer = [], scanDone = false, shown = 0, busy = false;
+var waxPage = 1, xrpMarker = null;
+document.getElementById('tab-' + SIDE).classList.add('on');
+document.getElementById('back-link').href = SIDE === 'xrp' ? 'xrp-market.html' : 'market.html';
+document.getElementById('back-link').textContent = SIDE === 'xrp' ? 'Back to the XRP market' : 'Back to the WAX market';
+function savedWallet(){
+  try {
+    var p = JSON.parse(localStorage.getItem('horde_profile') || 'null');
+    var r = JSON.parse(localStorage.getItem('horde_registration') || 'null');
+    var w = p || r;
+    if (w) { var v = SIDE === 'xrp' ? w.xrp : w.wax; if (v && String(v).trim()) return String(v).trim(); }
+    if (SIDE === 'wax') { var proven = localStorage.getItem('horde_proven'); if (proven && proven.trim()) return proven.trim(); }
+  } catch (e) {}
+  return '';
+}
 function ipfsUrl(u){
   if (!u) return '';
+  u = String(u);
   if (u.indexOf('ipfs://') === 0) return 'https://gateway.pinata.cloud/ipfs/' + u.slice(7).replace('ipfs/', '');
   if (u.indexOf('ipfs/') === 0) return 'https://gateway.pinata.cloud/' + u;
   return u;
@@ -64,7 +83,8 @@ function raceImg(imgEl, src, onFail){
     probe.src = u;
   });
 }
-function addPiece(box, img, name){
+function addPiece(img, name){
+  var grid = document.getElementById('inv-grid');
   var f = document.createElement('figure');
   var im = document.createElement('img');
   im.loading = 'lazy'; im.alt = name || 'Horde piece';
@@ -77,87 +97,102 @@ function addPiece(box, img, name){
     d.textContent = 'Picture could not load';
     f.insertBefore(d, c);
   });
-  box.appendChild(f);
+  grid.appendChild(f);
 }
-function sortedItems(){
-  var mode = document.getElementById('h-sort').value;
-  var list = items.slice();
-  if (searchFilter) list = list.filter(function(it){ return String(it.name || '').toLowerCase().indexOf(searchFilter) >= 0; });
-  if (mode === 'az') list.sort(function(a, b){ return String(a.name).localeCompare(String(b.name)); });
-  if (mode === 'za') list.sort(function(a, b){ return String(b.name).localeCompare(String(a.name)); });
-  if (mode === 'mint') list.sort(function(a, b){ return (a.mint || 999999999) - (b.mint || 999999999); });
-  return list;
+function status(){
+  var el = document.getElementById('inv-status');
+  var more = document.getElementById('inv-more');
+  if (!WALLET) { el.textContent = 'Pick a chain and put your wallet in.'; more.hidden = true; return; }
+  el.textContent = 'Showing ' + shown + ' Horde piece' + (shown === 1 ? '' : 's') + ' in ' + WALLET + ' on ' + (SIDE === 'xrp' ? 'XRP' : 'WAX') + '.' + (scanDone && !buffer.length ? ' That is everything.' : '');
+  more.hidden = scanDone && !buffer.length;
+  more.textContent = busy ? 'Loading…' : 'Load more pieces';
 }
-function renderMore(){
-  var grid = document.getElementById('h-grid');
-  var list = sortedItems();
-  var end = Math.min(shown + PAGE, list.length);
-  for (var i = shown; i < end; i++) addPiece(grid, list[i].img, list[i].name);
-  shown = end;
-  document.getElementById('h-more').hidden = !(shown < list.length || !loadingDone);
-  document.getElementById('h-status').textContent = searchFilter && !list.length ? 'No pieces match that search.' : list.length + (list.length === 1 ? ' piece' : ' pieces') + (searchFilter ? ' match your search' : '') + ', showing ' + shown + '.' + (loadingDone ? '' : ' Still loading…');
-}
-function rerender(){ shown = 0; document.getElementById('h-grid').innerHTML = ''; renderMore(); }
-document.getElementById('h-more').addEventListener('click', renderMore);
-document.getElementById('h-sort').addEventListener('change', rerender);
-document.getElementById('h-search').addEventListener('input', function(){ searchFilter = this.value.trim().toLowerCase(); rerender(); });
-async function loadWax(){
-  var coll = q.get('coll'); var page = 1;
-  while (page <= 20) {
-    var r = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(WALLET) + '&collection_name=' + encodeURIComponent(coll) + '&limit=100&page=' + page + '&order_desc=false');
+async function fillWax(){
+  while (buffer.length < PAGE && !scanDone) {
+    var r = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(WALLET) + '&limit=100&page=' + waxPage + '&order_desc=false&sort=asset_id');
     var j = await r.json();
     var data = j.data || [];
     data.forEach(function(a){
+      if (COLL ? a.collection_name !== COLL : HORDE_COLLS.indexOf(a.collection_name) < 0) return;
       var d = a.data || {};
       var td = (a.template && a.template.immutable_data) || {};
       var nm = d.name || td.name || 'Piece';
+      var mint = parseInt(a.template_mint || '0', 10);
+      if (mint) nm += ' #' + mint;
       var cid = d.img || td.img || '';
-      items.push({ img: cid ? 'https://gateway.pinata.cloud/ipfs/' + String(cid).replace(/^ipfs:\/\//, '') : '', name: nm, mint: parseInt(a.template_mint || '0', 10) || 999999999 });
+      buffer.push({ img: cid ? 'https://gateway.pinata.cloud/ipfs/' + String(cid).replace(/^ipfs:\/\//, '') : '', name: nm });
     });
-    renderMore();
-    if (data.length < 100) break;
-    page++;
+    if (data.length < 100) scanDone = true;
+    waxPage++;
   }
-  loadingDone = true; renderMore();
 }
-async function loadXrp(){
-  var issuer = q.get('issuer'), taxon = q.get('taxon');
-  var marker = null, pages = 0, mine = [];
-  do {
-    var b = { method: 'account_nfts', params: [{ account: WALLET, limit: 400 }] };
-    if (marker) b.params[0].marker = marker;
+async function fillXrp(){
+  while (buffer.length < PAGE && !scanDone) {
+    var b = { method: 'account_nfts', params: [{ account: WALLET, limit: 200 }] };
+    if (xrpMarker) b.params[0].marker = xrpMarker;
     var r = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
     var j = await r.json();
     ((j.result && j.result.account_nfts) || []).forEach(function(n){
       var iss = n.Issuer || n.issuer, tax = (n.NFTokenTaxon !== undefined ? n.NFTokenTaxon : n.nftoken_taxon);
-      if (iss === issuer && String(tax) === String(taxon)) mine.push(n);
+      if (ISSUER1 ? !(iss === ISSUER1 && String(tax) === String(TAXON1)) : HORDE_ISSUERS.indexOf(iss) < 0) return;
+      buffer.push(n);
     });
-    marker = j.result && j.result.marker; pages++;
-  } while (marker && pages < 10);
-  for (var i = 0; i < mine.length; i += 12) {
-    var batch = mine.slice(i, i + 12);
-    await Promise.all(batch.map(async function(n){
-      var name = 'Piece', img = '';
-      try {
-        var uriHex = n.URI || n.uri || '';
-        var mu = ipfsUrl(uriHex.match(/.{2}/g).map(function(h){ return String.fromCharCode(parseInt(h, 16)); }).join(''));
-        if (mu) { var mr = await fetch(mu); var mj = await mr.json(); name = mj.name || name; img = ipfsUrl(mj.image || mj.image_url || ''); }
-      } catch (e) {}
-      items.push({ img: img, name: name, mint: 999999999 });
-    }));
-    renderMore();
+    xrpMarker = j.result && j.result.marker;
+    if (!xrpMarker) scanDone = true;
   }
-  loadingDone = true; renderMore();
 }
-(async function(){
+async function xrpMeta(n){
+  var name = 'Horde piece', img = '';
   try {
-    if (SIDE === 'wax') await loadWax();
-    else if (SIDE === 'xrp') await loadXrp();
-    else document.getElementById('h-status').textContent = 'Nothing to show. Open this page from a profile.';
+    var uriHex = n.URI || n.uri || '';
+    var mu = ipfsUrl(uriHex.match(/.{2}/g).map(function(h){ return String.fromCharCode(parseInt(h, 16)); }).join(''));
+    if (mu) {
+      var mr = await fetch(mu);
+      var mj = await mr.json();
+      name = mj.name || name;
+      img = ipfsUrl(mj.image || mj.image_url || '');
+    }
+  } catch (e) {}
+  return { img: img, name: name };
+}
+async function renderNext(){
+  if (busy || !WALLET) return;
+  busy = true; status();
+  try {
+    if (SIDE === 'wax') {
+      await fillWax();
+      var batchW = buffer.splice(0, PAGE);
+      batchW.forEach(function(it){ addPiece(it.img, it.name); shown++; });
+    } else {
+      await fillXrp();
+      var batchX = buffer.splice(0, PAGE);
+      for (var i = 0; i < batchX.length; i += 10) {
+        var metas = await Promise.all(batchX.slice(i, i + 10).map(xrpMeta));
+        metas.forEach(function(m){ addPiece(m.img, m.name); shown++; });
+      }
+    }
   } catch (e) {
-    loadingDone = true;
-    document.getElementById('h-status').textContent = 'This collection could not load just now. Close this window and try again in a bit.';
+    document.getElementById('inv-status').textContent = 'That wallet could not be read just now. Check the address and try again in a bit.';
+    busy = false;
+    return;
   }
+  busy = false; status();
+}
+function start(wallet){
+  WALLET = wallet;
+  buffer = []; scanDone = false; shown = 0; waxPage = 1; xrpMarker = null;
+  document.getElementById('inv-grid').innerHTML = '';
+  renderNext();
+}
+document.getElementById('inv-more').addEventListener('click', renderNext);
+document.getElementById('inv-go').addEventListener('click', function(){
+  var v = document.getElementById('inv-wallet').value.trim();
+  if (v) start(v);
+});
+(function(){
+  var w = q.get('wallet') || savedWallet();
+  if (w) { document.getElementById('inv-wallet').value = w; start(w); }
+  status();
 })();
 </script>
 <!-- horde-nav-trim: logged-in members with no wallet on their profile get the plain Shop door, no crypto dropdown -->
