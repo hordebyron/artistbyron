@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=97">
+<link rel="stylesheet" href="style.css?v=98">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -188,10 +188,11 @@ async function sbByNo(n){
 async function sbExtras(no){
   var out = { xrp: [], wax: [] };
   try {
-    var res = await fetch(SB_URL + '/rest/v1/profile_wallets?select=chain,address,visibility&profile_no=eq.' + encodeURIComponent(no), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    var res = await fetch(SB_URL + '/rest/v1/profile_wallets?select=chain,address,visibility,is_main&profile_no=eq.' + encodeURIComponent(no), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    if (!res.ok) { res = await fetch(SB_URL + '/rest/v1/profile_wallets?select=chain,address,visibility&profile_no=eq.' + encodeURIComponent(no), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } }); }
     if (!res.ok) return out;
     var rows = await res.json();
-    (rows || []).forEach(function(r){ if (r && out[r.chain]) out[r.chain].push({ address: r.address || '', visibility: r.visibility || 'public' }); });
+    (rows || []).forEach(function(r){ if (r && out[r.chain]) out[r.chain].push({ address: r.address || '', visibility: r.visibility || 'public', isMain: !!r.is_main }); });
   } catch (e) {}
   return out;
 }
@@ -589,10 +590,13 @@ async function loadPieces(p){
   extras.xrp.forEach(function(w){ if (w.address && w.address !== p.xrp) (w.visibility === 'private' ? xrpHide : xrpShow).push(w.address); });
   extras.wax.forEach(function(w){ if (w.address && w.address !== p.wax) (w.visibility === 'private' ? waxHide : waxShow).push(w.address); });
   profWallets.xrpList = xrpShow; profWallets.waxList = waxShow;
-  var sx = document.getElementById('side-xrp-wallet'); if (sx) sx.textContent = p.xrp ? 'Wallet: ' + p.xrp : 'No XRP wallet on this profile.';
-  var sw = document.getElementById('side-wax-wallet'); if (sw) sw.textContent = p.wax ? 'Wallet: ' + p.wax : 'No WAX wallet on this profile.';
-  if (sx && extras.xrp.length) sx.textContent += ' (+' + extras.xrp.length + (extras.xrp.length === 1 ? ' more wallet' : ' more wallets') + ' on this profile)';
-  if (sw && extras.wax.length) sw.textContent += ' (+' + extras.wax.length + (extras.wax.length === 1 ? ' more wallet' : ' more wallets') + ' on this profile)';
+  var mainX = extras.xrp.filter(function(w){ return w.isMain && w.address && w.address !== p.xrp; }).map(function(w){ return w.address; });
+  var mainW = extras.wax.filter(function(w){ return w.isMain && w.address && w.address !== p.wax; }).map(function(w){ return w.address; });
+  var sx = document.getElementById('side-xrp-wallet'); if (sx) sx.textContent = p.xrp ? (mainX.length ? 'Wallets: ' : 'Wallet: ') + [p.xrp].concat(mainX).join(' · ') : 'No XRP wallet on this profile.';
+  var sw = document.getElementById('side-wax-wallet'); if (sw) sw.textContent = p.wax ? (mainW.length ? 'Wallets: ' : 'Wallet: ') + [p.wax].concat(mainW).join(' · ') : 'No WAX wallet on this profile.';
+  var moreX = extras.xrp.length - mainX.length, moreW = extras.wax.length - mainW.length;
+  if (sx && moreX > 0) sx.textContent += ' (+' + moreX + (moreX === 1 ? ' more wallet' : ' more wallets') + ' on this profile)';
+  if (sw && moreW > 0) sw.textContent += ' (+' + moreW + (moreW === 1 ? ' more wallet' : ' more wallets') + ' on this profile)';
   status.textContent = 'Counting your collections on both chains…';
   var totals = [];
   var piecesW = 0, piecesX = 0;
