@@ -43,7 +43,9 @@ nav a:hover,nav a.active{border-color:var(--red);background:var(--red);color:#ff
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink) !important}
 .btn.paypal{background:#ffc439;color:#111 !important}
 .btn.paypal:hover{background:#f0b72a}
-.btn.paypal .pp{font-style:italic;font-weight:800;letter-spacing:-.02em}
+.btn.cardpay{background:#232323}
+.btn.cardpay:hover{background:#000}
+.btn.paypal .pp{font-style:italic;font-weight:800;letter-spacing:-.03em;font-size:1.18rem;line-height:1}
 .btn.paypal .pp-a{color:#003087}
 .btn.paypal .pp-b{color:#0079c1}
 .btn .card-ico{vertical-align:-3px;margin-right:7px}
