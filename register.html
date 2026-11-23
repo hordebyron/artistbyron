@@ -166,7 +166,7 @@ function showReg(r, saved){
     + ((r.wax || r.xrp)
       ? '<p><strong>Want your Horde HODLer NFTs?</strong> They are sent by hand for now. Message Byron on <a href="https://x.com/ArtistByron" target="_blank" rel="noopener">X (@ArtistByron)</a> or in <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">the Discord</a> and say you registered, and he will send your HODLers.</p>'
       : '<p><strong>Want your Horde HODLer NFTs?</strong> Add a WAX or XRP wallet to your profile first, then message Byron on <a href="https://x.com/ArtistByron" target="_blank" rel="noopener">X (@ArtistByron)</a> or in <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">the Discord</a> and he will send your HODLers.</p>')
-    + ((r.email && saved && saved.id && !saved.email_verified)
+    + ((r.email && saved && saved.profile_no && !saved.email_verified)
       ? '<div id="ev-box"><p><strong>One last step: prove the email is yours.</strong> Tap Send code, check your inbox for a 6-digit code, and type it here. Until then your email does not count as your way in yet.</p>'
         + '<p><button class="btn ghost" type="button" id="ev-send">Send code</button> '
         + '<input type="text" id="ev-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" style="padding:13px;border-radius:10px;border:1px solid var(--line);background:#0f0f14;color:var(--ink);font-size:1rem;width:150px"> '
@@ -189,7 +189,7 @@ function showReg(r, saved){
     document.getElementById('ev-confirm').addEventListener('click', function(){
       var code = document.getElementById('ev-code').value.trim();
       evStatus.textContent = 'Checking...';
-      evCall({ action: 'confirm', email: r.email, code: code, profile_id: saved.id }).then(function(j){
+      evCall({ action: 'confirm', email: r.email, code: code, profile_no: saved.profile_no }).then(function(j){
         if (j && j.ok) { document.getElementById('ev-box').innerHTML = '<p><strong>Email proven.</strong> ' + esc(r.email) + ' now counts as your way in. You are all set.</p>'; }
         else evStatus.textContent = (j && j.error) || 'That code did not work.';
       }).catch(function(){ evStatus.textContent = 'Could not check just now. Try again in a bit.'; });
