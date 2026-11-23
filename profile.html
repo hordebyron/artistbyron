@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=93">
+<link rel="stylesheet" href="style.css?v=97">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -184,6 +184,16 @@ async function sbByNo(n){
     var rows = await res.json();
     return (rows && rows.length) ? rows[0] : null;
   } catch (e) { return null; }
+}
+async function sbExtras(no){
+  var out = { xrp: [], wax: [] };
+  try {
+    var res = await fetch(SB_URL + '/rest/v1/profile_wallets?select=chain,address,visibility&profile_no=eq.' + encodeURIComponent(no), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+    if (!res.ok) return out;
+    var rows = await res.json();
+    (rows || []).forEach(function(r){ if (r && out[r.chain]) out[r.chain].push({ address: r.address || '', visibility: r.visibility || 'public' }); });
+  } catch (e) {}
+  return out;
 }
 function rowToP(row){
   return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '' };
@@ -548,9 +558,13 @@ async function openXrpCollection(key){
 async function openWaxCollection(collName, displayName){
   openModal(displayName);
   try {
-    var wr = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(profWallets.wax) + '&collection_name=' + collName + '&limit=100&order_desc=false');
-    var wj = await wr.json();
-    var data = wj.data || [];
+    var addrs = (profWallets && profWallets.waxList && profWallets.waxList.length) ? profWallets.waxList : [profWallets.wax];
+    var data = [];
+    for (var oi = 0; oi < addrs.length; oi++) {
+      var wr = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(addrs[oi]) + '&collection_name=' + collName + '&limit=100&order_desc=false');
+      var wj = await wr.json();
+      (wj.data || []).forEach(function(a){ data.push(a); });
+    }
     data.forEach(function(a){
       var cid = (a.data && a.data.img) || (a.template && a.template.immutable_data && a.template.immutable_data.img) || '';
       var nm = (a.data && a.data.name) || (a.template && a.template.immutable_data && a.template.immutable_data.name) || displayName;
@@ -568,28 +582,44 @@ async function loadPieces(p){
   if (!p.xrp && !p.wax) { var ht0 = document.getElementById('holdings-text'); if (ht0) ht0.textContent = 'No wallets on this profile yet.'; return; }
   card.hidden = false;
   profWallets = { xrp: p.xrp || '', wax: p.wax || '' };
+  var extras = await sbExtras(p.no);
+  var xrpShow = [], xrpHide = [], waxShow = [], waxHide = [];
+  if (p.xrp) xrpShow.push(p.xrp);
+  if (p.wax) waxShow.push(p.wax);
+  extras.xrp.forEach(function(w){ if (w.address && w.address !== p.xrp) (w.visibility === 'private' ? xrpHide : xrpShow).push(w.address); });
+  extras.wax.forEach(function(w){ if (w.address && w.address !== p.wax) (w.visibility === 'private' ? waxHide : waxShow).push(w.address); });
+  profWallets.xrpList = xrpShow; profWallets.waxList = waxShow;
   var sx = document.getElementById('side-xrp-wallet'); if (sx) sx.textContent = p.xrp ? 'Wallet: ' + p.xrp : 'No XRP wallet on this profile.';
   var sw = document.getElementById('side-wax-wallet'); if (sw) sw.textContent = p.wax ? 'Wallet: ' + p.wax : 'No WAX wallet on this profile.';
+  if (sx && extras.xrp.length) sx.textContent += ' (+' + extras.xrp.length + (extras.xrp.length === 1 ? ' more wallet' : ' more wallets') + ' on this profile)';
+  if (sw && extras.wax.length) sw.textContent += ' (+' + extras.wax.length + (extras.wax.length === 1 ? ' more wallet' : ' more wallets') + ' on this profile)';
   status.textContent = 'Counting your collections on both chains…';
   var totals = [];
   var piecesW = 0, piecesX = 0;
   xrpGroups = {};
-  if (p.xrp) {
+  if (xrpShow.length || xrpHide.length) {
     try {
       var meta = {};
       try {
         var cj = await (await fetch('data/collections.json')).json();
         (cj.collections || []).forEach(function(c){ meta[(cj.issuers[c.issuer] || '') + '|' + c.taxon] = c; });
       } catch (e) {}
-      var marker = null, pages = 0, mine = [];
-      do {
-        var b = { method: 'account_nfts', params: [{ account: p.xrp, limit: 400 }] };
-        if (marker) b.params[0].marker = marker;
-        var r = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
-        var j = await r.json();
-        ((j.result && j.result.account_nfts) || []).forEach(function(n){ var iss = n.Issuer || n.issuer; if (iss && OUR_ISSUERS[iss]) mine.push(n); });
-        marker = j.result && j.result.marker; pages++;
-      } while (marker && pages < 10);
+      var mine = [];
+      var hideCountX = 0, hideKeysX = {};
+      async function scanXrp(addr){
+        var mk = null, pg = 0, got = [];
+        do {
+          var b = { method: 'account_nfts', params: [{ account: addr, limit: 400 }] };
+          if (mk) b.params[0].marker = mk;
+          var r = await fetch('https://xrplcluster.com/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+          var j = await r.json();
+          ((j.result && j.result.account_nfts) || []).forEach(function(n){ var iss = n.Issuer || n.issuer; if (iss && OUR_ISSUERS[iss]) got.push(n); });
+          mk = j.result && j.result.marker; pg++;
+        } while (mk && pg < 10);
+        return got;
+      }
+      for (var xi = 0; xi < xrpShow.length; xi++) { var gotShow = await scanXrp(xrpShow[xi]); gotShow.forEach(function(n){ mine.push(n); }); }
+      for (var xh = 0; xh < xrpHide.length; xh++) { var gotHide = await scanXrp(xrpHide[xh]); hideCountX += gotHide.length; gotHide.forEach(function(n){ var iss2 = n.Issuer || n.issuer, tax2 = (n.NFTokenTaxon !== undefined ? n.NFTokenTaxon : n.nftoken_taxon); hideKeysX[iss2 + '|' + tax2] = true; }); }
       mine.forEach(function(n){
         var iss = n.Issuer || n.issuer, tax = (n.NFTokenTaxon !== undefined ? n.NFTokenTaxon : n.nftoken_taxon);
         var key = iss + '|' + tax;
@@ -604,42 +634,51 @@ async function loadPieces(p){
       keys.forEach(function(key){ var g = xrpGroups[key]; xbox.appendChild(collRow(g.name, g.nfts.length, g.icon, function(){ openXrpCollection(key); })); });
       if (!keys.length) xbox.innerHTML = '<p class="small">No Horde pieces found on XRP for this wallet.</p>';
       var heldKeys = {}; keys.forEach(function(k){ heldKeys[k] = true; });
+      Object.keys(hideKeysX).forEach(function(k){ heldKeys[k] = true; });
       var unheld = Object.keys(meta).filter(function(k){ return !heldKeys[k]; }).map(function(k){ return meta[k].name; }).sort();
       if (unheld.length) {
         document.getElementById('unheld-xrp-wrap').hidden = false;
         document.getElementById('unheld-xrp-summary').textContent = 'Collections you do not hold yet (' + unheld.length + ')';
         document.getElementById('unheld-xrp').textContent = unheld.join(' · ');
       }
-      piecesX = mine.length;
-      totals.push(mine.length + ' pieces on XRP in ' + keys.length + (keys.length === 1 ? ' collection' : ' collections'));
+      piecesX = mine.length + hideCountX;
+      totals.push(piecesX + ' pieces on XRP in ' + keys.length + (keys.length === 1 ? ' collection' : ' collections'));
     } catch (e) { xbox.innerHTML = '<p class="small">XRP collections could not load just now.</p>'; }
   }
-  if (p.wax) {
+  if (p.wax || waxShow.length || waxHide.length) {
     try {
-      var ar = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(p.wax));
-      var aj = await ar.json();
       var ours = { byronartset1: 'Art of Byron', myhordeonwax: 'HORDE on WAX', myzicklearmy: 'My Zickle Army', myzombiecats: 'My Zombie Cat Collection' };
       var heldW = {};
-      var totalW = 0;
+      var totalW = 0, hideW = 0;
+      var aggW = {};
+      async function scanWax(addr){
+        var ar2 = await fetch('https://wax.api.atomicassets.io/atomicassets/v1/accounts/' + encodeURIComponent(addr));
+        var aj2 = await ar2.json();
+        var out = {};
+        ((aj2.data && aj2.data.collections) || []).forEach(function(c){
+          var cn = c.collection && c.collection.collection_name;
+          if (!ours[cn]) return;
+          out[cn] = { count: parseInt(c.assets, 10) || 0, name: (c.collection && c.collection.name) || ours[cn], img: (c.collection && c.collection.img) || '' };
+        });
+        return out;
+      }
+      for (var wi = 0; wi < waxShow.length; wi++) { var gw = await scanWax(waxShow[wi]); Object.keys(gw).forEach(function(cn){ if (!aggW[cn]) aggW[cn] = gw[cn]; else aggW[cn].count += gw[cn].count; }); }
+      for (var wh = 0; wh < waxHide.length; wh++) { var gh = await scanWax(waxHide[wh]); Object.keys(gh).forEach(function(cn){ hideW += gh[cn].count; heldW[cn] = true; }); }
       wbox.innerHTML = '';
-      ((aj.data && aj.data.collections) || []).forEach(function(c){
-        var cn = c.collection && c.collection.collection_name;
-        if (!ours[cn]) return;
-        var count = parseInt(c.assets, 10) || 0;
-        heldW[cn] = true; totalW += count;
-        var nm = (c.collection && c.collection.name) || ours[cn];
-        var ic = (c.collection && c.collection.img) || '';
-        wbox.appendChild(collRow(nm, count, ic, function(){ openWaxCollection(cn, nm); }));
+      Object.keys(aggW).forEach(function(cn){
+        var g2 = aggW[cn];
+        heldW[cn] = true; totalW += g2.count;
+        wbox.appendChild(collRow(g2.name, g2.count, g2.img, function(){ openWaxCollection(cn, g2.name); }));
       });
-      if (!Object.keys(heldW).length) wbox.innerHTML = '<p class="small">No Horde pieces found on WAX for this wallet.</p>';
+      if (!Object.keys(aggW).length) wbox.innerHTML = '<p class="small">No Horde pieces found on WAX for this wallet.</p>';
       var unheldW = Object.keys(ours).filter(function(k){ return !heldW[k]; }).map(function(k){ return ours[k]; });
       if (unheldW.length) {
         document.getElementById('unheld-wax-wrap').hidden = false;
         document.getElementById('unheld-wax-summary').textContent = 'Collections you do not hold yet (' + unheldW.length + ')';
         document.getElementById('unheld-wax').textContent = unheldW.join(' · ');
       }
-      piecesW = totalW;
-      totals.push(totalW + ' pieces on WAX in ' + Object.keys(heldW).length + (Object.keys(heldW).length === 1 ? ' collection' : ' collections'));
+      piecesW = totalW + hideW;
+      totals.push(piecesW + ' pieces on WAX in ' + Object.keys(aggW).length + (Object.keys(aggW).length === 1 ? ' collection' : ' collections'));
     } catch (e) { wbox.innerHTML = '<p class="small">WAX collections could not load just now.</p>'; }
   }
   status.textContent = totals.length ? totals.join(' · ') + '.' : '';
