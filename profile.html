@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=101">
+<link rel="stylesheet" href="style.css?v=103">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -109,10 +109,16 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
           <input type="text" id="pf-kofi" placeholder="Your Ko-fi name" autocomplete="off" maxlength="40"></p>
           <p><label for="pf-x">X handle</label>
           <input type="text" id="pf-x" placeholder="@yourname" autocomplete="off" maxlength="40"></p>
+          <p><label for="pf-base">Base wallet</label>
+          <input type="text" id="pf-base" placeholder="0x..." autocomplete="off" spellcheck="false" maxlength="42">
+          <span class="small">Free mints on Base get sent to this wallet.</span></p>
+          <p><label for="pf-sol">Solana wallet</label>
+          <input type="text" id="pf-sol" placeholder="Your Solana address" autocomplete="off" spellcheck="false" maxlength="44">
+          <span class="small">Free mints on Solana get sent to this wallet.</span></p>
           <p><button class="btn" type="submit">Save</button></p>
         </form>
         <p class="small" id="pf-status" aria-live="polite"></p>
-        <p class="small">Your name and your wallets are set when you register and are not edited here. If one is wrong, tell Byron and he will fix it.</p>
+        <p class="small">Your name, WAX and XRP are set when you register and are not edited here. If one of those is wrong, tell Byron and he will fix it. Base and Solana you can change here any time.</p>
       </div>
     </div>
   </section>
@@ -197,7 +203,7 @@ async function sbExtras(no){
   return out;
 }
 function rowToP(row){
-  return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '' };
+  return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', base: row.base || '', sol: row.sol || '' };
 }
 
 var OUR_ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
@@ -300,6 +306,8 @@ function fillForm(p){
   document.getElementById('pf-discord').value = p.discord || '';
   document.getElementById('pf-kofi').value = p.kofi || '';
   document.getElementById('pf-x').value = p.x || '';
+  document.getElementById('pf-base').value = p.base || '';
+  document.getElementById('pf-sol').value = p.sol || '';
   document.getElementById('pfp-preview').src = pfpSrc(p.pfp);
   document.getElementById('edit-who').textContent = 'You are editing Horde profile #' + p.no + ', ' + p.name + '. These are the same words everyone sees on the shared list.';
 }
@@ -334,6 +342,8 @@ async function renderProfile(row){
   var w = [];
   if (p.wax) w.push('<div><strong>WAX wallet:</strong> ' + esc(p.wax) + '</div>');
   if (p.xrp) w.push('<div><strong>XRP wallet:</strong> ' + esc(p.xrp) + '</div>');
+  if (p.base) w.push('<div><strong>Base wallet:</strong> ' + esc(p.base) + '</div>');
+  if (p.sol) w.push('<div><strong>Solana wallet:</strong> ' + esc(p.sol) + '</div>');
   document.getElementById('view-wallets').innerHTML = w.length ? w.join('') : 'No wallets on this profile yet.';
   var l = [];
   if (p.discord) l.push('Discord: ' + p.discord);
@@ -719,7 +729,9 @@ document.getElementById('profile-form').addEventListener('submit', async functio
     about: document.getElementById('pf-about').value.trim(),
     discord: document.getElementById('pf-discord').value.trim(),
     kofi: document.getElementById('pf-kofi').value.trim(),
-    x_handle: document.getElementById('pf-x').value.trim()
+    x_handle: document.getElementById('pf-x').value.trim(),
+    base: document.getElementById('pf-base').value.trim(),
+    sol: document.getElementById('pf-sol').value.trim()
   };
   if (window.__pendingPfp) fields.pfp = window.__pendingPfp;
   status.textContent = 'Saving to the shared list…';
