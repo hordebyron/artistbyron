@@ -74,6 +74,7 @@ h1,h2{font-family:"Special Elite","Courier New",serif;font-weight:400}
 .prod-img{width:100%;aspect-ratio:1;object-fit:contain;background:var(--panel2);border-radius:10px}
 .prod h3{font-size:1.3rem}
 .prod>p:last-of-type{margin-top:auto}
+.sig{display:block;color:var(--muted);font-size:.88rem;margin-top:.25em}
 .btn-row{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:12px 0}
 .btn-row .btn{margin:0}
 .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
