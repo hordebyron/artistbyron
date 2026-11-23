@@ -55,10 +55,10 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 
   <section class="card" id="unlock-card" hidden>
     <h2>Unlock your profile on this device</h2>
-    <p>Prove your wallet once and this device stays unlocked for 30 days. After that, saving just writes to the shared list. No code and no dust for every little edit, ever again.</p>
-    <p><button class="btn" type="button" id="unlock-wax">Unlock with WAX</button></p>
+    <p>Prove your wallet once and this browser stays unlocked for 30 days. Each browser needs its own unlock, once. After that, saving just writes to the shared list. No code and no dust for every little edit, ever again.</p>
+    <p id="unlock-wax-row"><button class="btn" type="button" id="unlock-wax">Unlock with WAX</button></p>
     <p class="small" id="unlock-wax-status">Works with Anchor or the WAX Cloud Wallet. The wallet will ask you to send a tiny proof, 0.0001 WAX, with a code in the memo. That one proof is the unlock.</p>
-    <p><label for="unlock-xrp-addr">Or unlock with XRP: your XRPL address</label>
+    <p id="unlock-xrp-row"><label for="unlock-xrp-addr">Or unlock with XRP: your XRPL address</label>
     <input type="text" id="unlock-xrp-addr" placeholder="r..." autocomplete="off" spellcheck="false">
     <button class="btn ghost" type="button" id="unlock-xrp">Unlock with XRP</button></p>
     <div id="unlock-box" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px">
@@ -787,6 +787,7 @@ async function pollLogin(nonce){
   }, 4000);
 }
 window.__beginUnlock = async function(chain, address){
+  try { localStorage.setItem('horde_unlock_chain', chain); } catch (e) {}
   var box = document.getElementById('unlock-box');
   var txt = document.getElementById('unlock-text');
   var code = document.getElementById('unlock-code');
@@ -822,6 +823,22 @@ window.__beginUnlock = async function(chain, address){
   box.scrollIntoView({ behavior: 'smooth' });
   pollLogin(ch.nonce);
 };
+/* Lead with the chain this browser unlocked with last time, and fill in
+   the XRP address this browser already proved, so the card never pushes
+   WAX at someone who unlocks with XRP. */
+(function(){
+  try {
+    var last = localStorage.getItem('horde_unlock_chain') || '';
+    var proven = localStorage.getItem('horde_proven') || '';
+    var xr = document.getElementById('unlock-xrp-row');
+    var wx = document.getElementById('unlock-wax-row');
+    if (last === 'xrp' && xr && wx && xr.parentNode === wx.parentNode) xr.parentNode.insertBefore(xr, wx);
+    if (/^r[0-9a-zA-Z]{24,34}$/.test(proven)) {
+      var f = document.getElementById('unlock-xrp-addr');
+      if (f && !f.value) f.value = proven;
+    }
+  } catch (e) {}
+})();
 document.getElementById('unlock-xrp').addEventListener('click', function(){
   var addr = document.getElementById('unlock-xrp-addr').value.trim();
   var st = document.getElementById('unlock-status');
