@@ -299,3 +299,6 @@ h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial 
   .hero-bleed>img{max-height:340px}
 }
 @media (max-width:480px){.gallery-grid{grid-template-columns:repeat(3,1fr);gap:6px}}
+
+.announce{margin:14px auto 2px;max-width:860px;text-align:center;padding:9px 14px;border:1px solid var(--gold);border-radius:10px;background:var(--panel2);font-size:.95rem}
+.announce a{color:var(--gold);font-weight:600}
