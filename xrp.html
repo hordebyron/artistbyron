@@ -21,7 +21,7 @@
 }
 </style>
 
-<link rel="stylesheet" href="style.css?v=93">
+<link rel="stylesheet" href="style.css?v=95">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -102,13 +102,24 @@ var xamanDeeplink = document.getElementById('xaman-deeplink');
 /* Xaman public client key for the Horde app. This key is made to live in browser code, it only identifies the app. The API secret is never used here and stays private. */
 var XAMAN_API_KEY = '09e6660d-6fce-4f1c-991f-7b0497ef709d';
 var xamanKit = null;
+function isPhone(){ try { return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window); } catch (e) { return false; } }
 function showXamanQr(ev) {
   if (!ev) return;
   if (ev.qrPng) xamanQrImg.src = ev.qrPng;
-  if (ev.deeplink) { xamanDeeplink.href = ev.deeplink; } else if (ev.uri) { xamanDeeplink.href = ev.uri; }
+  var link = ev.deeplink || ev.uri || null;
+  if (link) {
+    xamanDeeplink.href = link;
+    /* On a phone you cannot scan your own screen, so open Xaman directly.
+       The QR stays as the desktop path and as a fallback if the jump is blocked. */
+    if (!window.__xamanAutoOpened && isPhone()) {
+      window.__xamanAutoOpened = true;
+      statusEl.textContent = 'Opening Xaman on this phone. Approve it there, then come back here.';
+      setTimeout(function(){ window.location.href = link; }, 400);
+    }
+  }
   xamanQrBox.hidden = false;
 }
-function hideXamanQr() { xamanQrBox.hidden = true; xamanQrImg.src = ''; }
+function hideXamanQr() { xamanQrBox.hidden = true; xamanQrImg.src = ''; window.__xamanAutoOpened = false; }
 function getXamanKit() {
   if (xamanKit) return xamanKit;
   if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) return null;
@@ -155,7 +166,7 @@ async function loginWithExtension(adapterId, label) {
 async function loginWithXaman() {
   var kit = getXamanKit();
   if (!kit) { statusEl.textContent = 'Xaman login could not load. Paste your address below instead, that still shows your real Horde.'; xrplInput.focus(); return; }
-  statusEl.textContent = 'Opening Xaman. Scan the code with your Xaman app.';
+  statusEl.textContent = isPhone() ? 'Opening Xaman on this phone. Approve it there, then come back here.' : 'Opening Xaman. Scan the code with your Xaman app.';
   try {
     var res = await kit.connect('xaman');
     var addr = normAddr(res && res.account);

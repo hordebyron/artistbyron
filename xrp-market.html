@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=93">
+<link rel="stylesheet" href="style.css?v=95">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -233,13 +233,24 @@
 
   /* ---------- wallet ---------- */
   var kit = null;
+  function isPhone(){ try { return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window); } catch (e) { return false; } }
   function showQr(ev){
     if (!ev) return;
     if (ev.qrPng) qrImg.src = ev.qrPng;
-    if (ev.deeplink) qrLink.href = ev.deeplink; else if (ev.uri) qrLink.href = ev.uri;
+    var link = ev.deeplink || ev.uri || null;
+    if (link) {
+      qrLink.href = link;
+      /* On a phone you cannot scan your own screen, so open Xaman directly.
+         The QR stays as the desktop path and as a fallback if the jump is blocked. */
+      if (!window.__xamanAutoOpened && isPhone()) {
+        window.__xamanAutoOpened = true;
+        txStatus.textContent = 'Opening Xaman on this phone. Approve it there, then come back here.';
+        setTimeout(function(){ window.location.href = link; }, 400);
+      }
+    }
     qrBox.hidden = false;
   }
-  function hideQr(){ qrBox.hidden = true; qrImg.src = ''; }
+  function hideQr(){ qrBox.hidden = true; qrImg.src = ''; window.__xamanAutoOpened = false; }
   function getKit(){
     if (kit) return kit;
     if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) return null;
@@ -276,7 +287,7 @@
   async function connect(which){
     var k = getKit();
     if (!k) { txStatus.textContent = 'The wallet tools could not load. You can still look at the wall, and any piece can be opened on Bithomp from its tile.'; return; }
-    txStatus.textContent = which === 'xaman' ? 'Opening Xaman. Scan the code with your Xaman app.' : 'Opening Joey. Approve it in Joey.';
+    txStatus.textContent = which === 'xaman' ? (isPhone() ? 'Opening Xaman on this phone. Approve it there, then come back here.' : 'Opening Xaman. Scan the code with your Xaman app.') : 'Opening Joey. Approve it in Joey.';
     try {
       var res = await k.connect(which);
       var addr = normAddr(res && res.account);
