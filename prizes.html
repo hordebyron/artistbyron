@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Prize Ladder - Artist Byron</title>
+<meta name="description" content="The Horde Prize Ladder: bank your wins, claim a rung, or let them ride toward a painting commission.">
+<link rel="stylesheet" href="style.css?v=110">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+.rungs{display:grid;gap:10px}
+.rung{display:flex;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px}
+.rung .n{font-family:"Special Elite","Courier New",serif;font-size:1.5rem;color:var(--gold);min-width:2.2em;text-align:center}
+.rung b{font-size:1.05rem}
+.rung .w{margin-left:auto;color:var(--gold);font-weight:800;white-space:nowrap}
+</style>
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>The Prize Ladder</h1>
+  <p>Win something in the Horde, a contest, a game, a drop event, and you earn a win. Every win banks as a credit on this ladder. Cash your credits in for the rung you have reached, or let them ride and stack toward something bigger.</p>
+  <p>Claiming spends the credits for that rung, and then you start climbing again. Banked is banked: wins do not expire.</p>
+  <p class="small">Prize Ladder wins are their own thing. They are not Ko-fi membership draw tickets, and the two never mix.</p>
+
+  <h2>The rungs</h2>
+  <div class="rungs">
+    <div class="rung"><span class="n">1</span><span><b>Horde sticker pack</b></span><span class="w">1 win</span></div>
+    <div class="rung"><span class="n">2</span><span><b>Horde magnet</b></span><span class="w">2 wins</span></div>
+    <div class="rung"><span class="n">3</span><span><b>Art print</b></span><span class="w">3 wins</span></div>
+    <div class="rung"><span class="n">4</span><span><b>Horde t-shirt</b></span><span class="w">5 wins</span></div>
+    <div class="rung"><span class="n">5</span><span><b>Art commission, ink sketch</b><br><span class="small">Byron's own hand, made for you.</span></span><span class="w">8 wins</span></div>
+    <div class="rung"><span class="n">6</span><span><b>Art commission, painting</b><br><span class="small">The top of the ladder. A painting, yours.</span></span><span class="w">13 wins</span></div>
+  </div>
+
+  <h2>Won something?</h2>
+  <p>When you win, your name goes on the win list Muse keeps. To claim a rung, or to check your stack, say the word in the Discord or email Muse:</p>
+  <p class="btn-row">
+    <a class="btn" href="mailto:hordemuse@muse.ai?subject=Prize%20Ladder">Email Muse</a>
+    <a class="btn ghost" href="https://discord.gg/rA3UMEkpqc">The Horde Discord</a>
+  </p>
+</main>
+
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="profile.html">My Horde Profile</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
+<script>
+var CONTRACT = 'hordedrop421';
+var DROP_ID = 2;
+var START_TIME = 1795201200;
+var END_TIME = 1795731300;
+var MAX_CLAIMABLE = 7;
+var WHITELIST = ['ylab4.wam','q52aw.wam','fzyr.wam','grkx.wam','kylinvaderme','mpvee.wam','pzyas.wam'];
+var dropStatusEl = document.getElementById('drop-status');
+var statusEl = document.getElementById('login-status');
+var claimBtn = document.getElementById('claim-btn');
+var claimStatusEl = document.getElementById('claim-status');
+var loginBtn = document.getElementById('wax-login-btn');
+var logoutBtn = document.getElementById('wax-logout-btn');
+var sessionKit = null, session = null, dropLive = false, claimedCount = null;
+
+async function tableRows(code, scope, table) {
+  var res = await fetch('https://wax.greymass.com/v1/chain/get_table_rows', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ json: true, code: code, scope: scope, table: table, limit: 100 })
+  });
+  if (!res.ok) throw new Error('table ' + table + ' ' + res.status);
+  var json = await res.json();
+  return json.rows || [];
+}
+async function refreshDrop() {
+  try {
+    var rows = await tableRows(CONTRACT, CONTRACT, 'drops');
+    var drop = null;
+    for (var i = 0; i < rows.length; i++) { if (rows[i].drop_id === DROP_ID) drop = rows[i]; }
+    if (!drop) { dropStatusEl.textContent = 'Drop not found on chain yet.'; return; }
+    claimedCount = parseInt(drop.claimed, 10);
+    var now = Math.floor(Date.now() / 1000);
+    dropLive = now >= drop.start_time && now <= drop.end_time && claimedCount < MAX_CLAIMABLE;
+    var state = now < drop.start_time ? 'Opens Fri 20 Nov 2026, 1pm CST.' : now > drop.end_time ? 'This drop has ended.' : claimedCount >= MAX_CLAIMABLE ? 'All 7 claimed.' : 'Live now.';
+    dropStatusEl.textContent = claimedCount + ' of 7 claimed. ' + state;
+    updateClaimBtn();
+  } catch (e) {
+    var now2 = Math.floor(Date.now() / 1000);
+    dropLive = now2 >= START_TIME && now2 <= END_TIME;
+    dropStatusEl.textContent = now2 < START_TIME ? 'Opens Fri 20 Nov 2026, 1pm CST. 0 of 7 claimed.' : now2 > END_TIME ? 'This drop has ended.' : 'Live now. 0 of 7 claimed.';
+    updateClaimBtn();
+  }
+}
+function updateClaimBtn() {
+  if (!session) { claimBtn.disabled = true; return; }
+  var name = String(session.actor);
+  if (WHITELIST.indexOf(name) === -1) {
+    claimBtn.disabled = true;
+    claimStatusEl.textContent = name + ' is not on the whitelist for this drop. It is free for Tony and the founders only.';
+    return;
+  }
+  if (!dropLive) {
+    claimBtn.disabled = true;
+    claimStatusEl.textContent = 'The drop is not live right now. It opens Fri 20 Nov 2026, 1pm CST.';
+    return;
+  }
+  claimBtn.disabled = false;
+  claimStatusEl.textContent = 'You are on the whitelist. Tap Claim, then approve it in your wallet.';
+}
+(function () {
+  refreshDrop();
+  setInterval(refreshDrop, 60000);
+  async function init() {
+    try {
+      var m = await Promise.all([
+        import('https://esm.sh/@wharfkit/session@4.0.2'),
+        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+      ]);
+      sessionKit = new m[0].SessionKit({
+        appName: 'artistbyron',
+        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
+        ui: new m[1].WebRenderer(),
+        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
+      });
+      loginBtn.addEventListener('click', async function () {
+        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
+        try {
+          var res = await sessionKit.login();
+          session = res.session;
+          var name = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + name + ', proven by your wallet.';
+          logoutBtn.hidden = false;
+          loginBtn.disabled = true;
+          updateClaimBtn();
+        } catch (e) {
+          statusEl.textContent = 'Login cancelled or failed. Try again.';
+          loginBtn.disabled = false;
+        }
+      });
+      logoutBtn.addEventListener('click', async function () {
+        try { await sessionKit.logout(session); } catch (e) {}
+        session = null;
+        loginBtn.disabled = false;
+        logoutBtn.hidden = true;
+        statusEl.textContent = 'Logged out.';
+        claimBtn.disabled = true;
+        claimStatusEl.textContent = '';
+      });
+      claimBtn.addEventListener('click', async function () {
+        if (!session) return;
+        var name = String(session.actor);
+        claimBtn.disabled = true;
+        claimStatusEl.textContent = 'Sending your claim, approve it in your wallet…';
+        try {
+          var r = await session.transact({ actions: [{ account: CONTRACT, name: 'claim', authorization: [{ actor: name, permission: 'active' }], data: { claimer: name, drop_id: DROP_ID } }] }, { broadcast: true });
+          var tx = r.response && r.response.transaction_id ? r.response.transaction_id : '';
+          claimStatusEl.textContent = 'Claimed! a thing is on its way to ' + name + (tx ? ' Transaction: ' + tx : '');
+          refreshDrop();
+        } catch (e) {
+          var msg = (e && e.message) ? e.message : String(e);
+          claimStatusEl.textContent = 'Claim did not go through: ' + msg + ' If you already claimed one, that is why, 1 per wallet.';
+          updateClaimBtn();
+        }
+      });
+      try {
+        session = await sessionKit.restore();
+        if (session) {
+          var name = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + name + '.';
+          loginBtn.disabled = true;
+          logoutBtn.hidden = false;
+          updateClaimBtn();
+        }
+      } catch (e) {}
+    } catch (e) {
+      statusEl.textContent = 'WAX login could not load just now. Reload the page and try again.';
+    }
+  }
+  init();
+})();
+</script>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  links.forEach(function(a){
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
+    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+  });
+})();
+</script>
+<!-- horde-nav-trim: logged-in members with no wallet on their profile get the plain Shop door, no crypto dropdown -->
+<script>
+(function () {
+  try {
+    var w = null;
+    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+    if (!w) return;
+    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
+    var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
+    if (known && !crypto) {
+      document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
+      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+    }
+  } catch (e) {}
+})();
+</script>
+<!-- horde-feedback: floating bug report / suggestion box -->
+<style>
+#fb-btn{position:fixed;right:14px;bottom:14px;z-index:9998;background:#b91c1c;color:#fff;border:none;border-radius:999px;padding:8px 13px;font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+#fb-panel{position:fixed;right:14px;bottom:60px;z-index:9998;width:min(330px,calc(100vw - 28px));background:#14141b;border:1px solid #33333f;border-radius:12px;padding:16px;color:#f2f2f2;box-shadow:0 10px 34px rgba(0,0,0,.55)}
+#fb-panel h3{margin:.1em 0 .4em;font-size:1.05rem}
+#fb-panel p{font-size:.88rem;color:#b9b9c4;margin:.2em 0 .6em}
+#fb-panel textarea,#fb-panel input[type=text]{width:100%;box-sizing:border-box;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;margin:0 0 8px}
+#fb-panel .fb-kinds{display:flex;gap:8px;margin:0 0 8px}
+#fb-panel .fb-kinds button{flex:1;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-panel .fb-kinds button.on{background:#b91c1c;border-color:#b91c1c;color:#fff}
+#fb-send{width:100%;padding:11px;border:none;border-radius:8px;background:#b91c1c;color:#fff;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-msg{font-size:.88rem;min-height:1.2em;margin:.5em 0 0}
+</style>
+<button id="fb-btn" type="button">See a bug? Tell me</button>
+<div id="fb-panel" hidden>
+  <h3>Report a bug, or make a suggestion</h3>
+  <p>Muse reads every one of these, and we fix what we can.</p>
+  <div class="fb-kinds">
+    <button type="button" id="fb-kind-bug" class="on">Bug</button>
+    <button type="button" id="fb-kind-sug">Suggestion</button>
+  </div>
+  <textarea id="fb-text" rows="4" maxlength="2000" placeholder="What happened, or what would make this better?"></textarea>
+  <input type="text" id="fb-name" maxlength="80" placeholder="Your name (optional)">
+  <button id="fb-send" type="button">Send it</button>
+  <p id="fb-msg"></p>
+</div>
+<script>
+(function(){
+  var btn = document.getElementById('fb-btn'), panel = document.getElementById('fb-panel');
+  var kind = 'bug';
+  var kb = document.getElementById('fb-kind-bug'), ks = document.getElementById('fb-kind-sug');
+  function setKind(k){ kind = k; kb.className = k === 'bug' ? 'on' : ''; ks.className = k === 'suggestion' ? 'on' : ''; }
+  kb.addEventListener('click', function(){ setKind('bug'); });
+  ks.addEventListener('click', function(){ setKind('suggestion'); });
+  btn.addEventListener('click', function(){ panel.hidden = !panel.hidden; });
+  document.getElementById('fb-send').addEventListener('click', async function(){
+    var msg = document.getElementById('fb-msg');
+    var text = document.getElementById('fb-text').value.trim();
+    if (!text) { msg.textContent = 'Type a few words first.'; return; }
+    var send = document.getElementById('fb-send');
+    send.disabled = true; msg.textContent = 'Sending…';
+    try {
+      var r = await fetch('https://tuzzavnacfzveucwhdeq.supabase.co/rest/v1/site_feedback', {
+        method: 'POST',
+        headers: { apikey: 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', Authorization: 'Bearer sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
+      });
+      if (!r.ok) throw new Error('bad');
+      msg.textContent = 'Got it, thank you. Muse will read it.';
+      document.getElementById('fb-text').value = '';
+    } catch (e) {
+      msg.textContent = 'Could not send just now. Try again in a bit.';
+    }
+    send.disabled = false;
+  });
+})();
+</script>
+
+<script data-goatcounter="https://artistbyron.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
