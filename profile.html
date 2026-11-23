@@ -203,7 +203,7 @@ async function sbExtras(no){
   return out;
 }
 function rowToP(row){
-  return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', base: row.base || '', sol: row.sol || '' };
+  return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', email_verified: row.email_verified || false, x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', base: row.base || '', sol: row.sol || '' };
 }
 
 var OUR_ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
@@ -294,7 +294,7 @@ function renderBadges(p, hasKey){
   var defs = [
     { label: 'WAX', on: !!p.wax },
     { label: 'XRP', on: !!p.xrp },
-    { label: 'Ko-fi', on: !!p.kofi },
+    { label: 'Email Verified', on: !!p.email_verified },
     { label: 'Discord', on: !!p.discord },
     { label: 'HODLer', on: !!hasKey }
   ];

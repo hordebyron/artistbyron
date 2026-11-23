@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Join the Horde</title>
-<meta name="description" content="Join the Horde. One name plus one way to know you, a Ko-fi name, Discord, or a wallet if you hold Horde art. No seed, ever.">
+<meta name="description" content="Join the Horde. One name plus one way to know you: an email, a Ko-fi or Discord name, or a wallet if you hold Horde art. No seed, ever.">
 
 
 
@@ -18,7 +18,7 @@
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <h1>Hey, welcome to the Horde</h1>
-  <p>Register once, and we will know you when you come back. Your name, your Ko-fi or Discord, and your wallets only if you hold Horde art.</p>
+  <p>Register once, and we will know you when you come back. Your name, your email or Discord, and your wallets only if you hold Horde art.</p>
   <p class="small">Wallet addresses are public on the chain already, anyone can see them. Your name here is your choice, use a nickname if you like. We never ask for a seed, a private key, or a wallet password.</p>
   <p class="small">Already in the Horde? <a href="login.html">Log in instead</a>, no need to register twice.</p>
   <p class="announce">You are in the right place: the first 100 people to register are entered to win a Horde Reward.</p>
@@ -38,9 +38,10 @@
     <form id="register-form">
       <p><label for="reg-name">What should we call you?</label>
       <input type="text" id="reg-name" placeholder="e.g. Tony" autocomplete="off" maxlength="40" required></p>
-      <p class="small" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px">Have none of these yet? No wallet, no Ko-fi, no Discord? Make a free Ko-fi account first, it takes a minute with just an email: <a href="https://ko-fi.com" target="_blank" rel="noopener">ko-fi.com</a>. Then come back and register with that name.</p>
-      <p><label for="reg-kofi">Ko-fi name, if you are a member</label>
-      <input type="text" id="reg-kofi" placeholder="Your Ko-fi name" autocomplete="off" maxlength="40"></p>
+      <p><label for="reg-email">Email, the easiest way to prove it is you</label>
+      <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email" maxlength="80">
+      <span class="small">After you register we send one short code to this inbox to prove it is yours. No spam, and it does not sign you up for any list.</span></p>
+      <p class="small" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px">Have none of these yet? No wallet, no Discord? Your email works: register with it below, we send a short code to that inbox, you type it back, done. That proves the mailbox is yours.</p>
       <p><label for="reg-discord">Discord name, if you are in the Horde server</label>
       <input type="text" id="reg-discord" placeholder="Your Discord name" autocomplete="off" maxlength="40"></p>
       <p><label for="reg-holder">Are you a holder? Do you hold any of Byron's art, or have a wallet, on WAX, XRP, Base or Solana?</label>
@@ -159,13 +160,41 @@ function syncProve(){
   }
   return false;
 }
-function showReg(r){
+function showReg(r, saved){
   resultEl.hidden = false;
   resultEl.innerHTML = '<p><strong>Registered. Hey ' + esc(r.name) + ', welcome to the Horde.</strong></p>'
     + ((r.wax || r.xrp)
       ? '<p><strong>Want your Horde HODLer NFTs?</strong> They are sent by hand for now. Message Byron on <a href="https://x.com/ArtistByron" target="_blank" rel="noopener">X (@ArtistByron)</a> or in <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">the Discord</a> and say you registered, and he will send your HODLers.</p>'
       : '<p><strong>Want your Horde HODLer NFTs?</strong> Add a WAX or XRP wallet to your profile first, then message Byron on <a href="https://x.com/ArtistByron" target="_blank" rel="noopener">X (@ArtistByron)</a> or in <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">the Discord</a> and he will send your HODLers.</p>')
+    + ((r.email && saved && saved.id && !saved.email_verified)
+      ? '<div id="ev-box"><p><strong>One last step: prove the email is yours.</strong> Tap Send code, check your inbox for a 6-digit code, and type it here. Until then your email does not count as your way in yet.</p>'
+        + '<p><button class="btn ghost" type="button" id="ev-send">Send code</button> '
+        + '<input type="text" id="ev-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" style="padding:13px;border-radius:10px;border:1px solid var(--line);background:#0f0f14;color:var(--ink);font-size:1rem;width:150px"> '
+        + '<button class="btn" type="button" id="ev-confirm">Prove it</button></p>'
+        + '<p class="small" id="ev-status"></p></div>'
+      : (r.email && saved && saved.email_verified ? '<p><strong>Email proven.</strong> ' + esc(r.email) + ' counts as your way in.</p>' : ''))
     + '<p class="small">You are on the shared Horde list. Come back on any device and we will know you.</p>';
+  var evSend = document.getElementById('ev-send');
+  if (evSend) {
+    var evStatus = document.getElementById('ev-status');
+    var evCall = function(payload){
+      return fetch(SB_URL + '/functions/v1/email-verify', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(function(x){ return x.json(); });
+    };
+    evSend.addEventListener('click', function(){
+      evStatus.textContent = 'Sending your code...';
+      evCall({ action: 'request', email: r.email }).then(function(j){
+        evStatus.textContent = j && j.ok ? 'Code sent. Check your inbox, it lives for 10 minutes.' : ((j && j.error) || 'The code could not be sent just now.');
+      }).catch(function(){ evStatus.textContent = 'The code could not be sent just now. Try again in a bit.'; });
+    });
+    document.getElementById('ev-confirm').addEventListener('click', function(){
+      var code = document.getElementById('ev-code').value.trim();
+      evStatus.textContent = 'Checking...';
+      evCall({ action: 'confirm', email: r.email, code: code, profile_id: saved.id }).then(function(j){
+        if (j && j.ok) { document.getElementById('ev-box').innerHTML = '<p><strong>Email proven.</strong> ' + esc(r.email) + ' now counts as your way in. You are all set.</p>'; }
+        else evStatus.textContent = (j && j.error) || 'That code did not work.';
+      }).catch(function(){ evStatus.textContent = 'Could not check just now. Try again in a bit.'; });
+    });
+  }
   cardEl.hidden = false;
   cardBody.innerHTML = '<p><strong>Hey ' + esc(r.name) + ', welcome to the Horde.</strong></p>'
     + (r.wax ? '<p>WAX: <strong>' + esc(r.wax) + '</strong></p>' : '<p>WAX: not added yet.</p>')
@@ -195,7 +224,7 @@ form.addEventListener('submit', function(e){
     xrp: document.getElementById('reg-holder').value === 'yes' ? document.getElementById('reg-xrp').value.trim() : '',
     base: document.getElementById('reg-holder').value === 'yes' ? document.getElementById('reg-base').value.trim() : '',
     sol: document.getElementById('reg-holder').value === 'yes' ? document.getElementById('reg-sol').value.trim() : '',
-    kofi: document.getElementById('reg-kofi').value.trim(),
+    email: document.getElementById('reg-email').value.trim().toLowerCase(),
     discord: document.getElementById('reg-discord').value.trim(),
     registered: new Date().toISOString().slice(0,10)
   };
@@ -204,11 +233,11 @@ form.addEventListener('submit', function(e){
   if (!validXrp(r.xrp)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That XRPL address does not look right. It should start with r.</p>'; return; }
   if (!validBase(r.base)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That Base address does not look right. It should start with 0x and be 42 characters long.</p>'; return; }
   if (!validSol(r.sol)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That Solana address does not look right. Check it and try again.</p>'; return; }
-  if (!r.wax && !r.xrp && !r.kofi && !r.discord) { resultEl.hidden = false; resultEl.innerHTML = '<p>Add at least one way for us to know you: a WAX or XRP wallet, your Ko-fi name, or your Discord name.</p>'; return; }
+  if (r.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(r.email)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That email does not look right. Check it, or clear it and use a wallet, Ko-fi or Discord name instead.</p>'; return; }
+  if (!r.wax && !r.xrp && !r.discord && !r.email) { resultEl.hidden = false; resultEl.innerHTML = '<p>Add at least one way for us to know you: a WAX or XRP wallet, your Ko-fi name, your Discord name, or your email.</p>'; return; }
   try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (err) {}
   if (window.__provenWax && r.wax && window.__provenWax === r.wax) { try { localStorage.setItem('horde_proven', r.wax); } catch (err) {} }
-  showReg(r);
-  sbSaveProfile({ name: r.name, wax: r.wax || null, xrp: r.xrp || null, discord: r.discord || null, kofi: r.kofi || null, base: r.base || null, sol: r.sol || null });
+  sbSaveProfile({ name: r.name, wax: r.wax || null, xrp: r.xrp || null, discord: r.discord || null, base: r.base || null, sol: r.sol || null, email: r.email || null }).then(function(saved){ showReg(r, saved); });
 });
 document.getElementById('reg-clear').addEventListener('click', function(){
   try { localStorage.removeItem(KEY); } catch (e) {}
