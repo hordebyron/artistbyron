@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Subscriptions · Artist Byron</title>
 <meta name="description" content="One Horde membership, payable on either chain. Pick a tier, pay on WAX or XRP, and get monthly rewards from your tier's own collection.">
-<link rel="stylesheet" href="style.css?v=89">
+<link rel="stylesheet" href="style.css?v=93">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -125,5 +125,63 @@
   } catch (e) {}
 })();
 </script>
+<!-- horde-feedback: floating bug report / suggestion box -->
+<style>
+#fb-btn{position:fixed;right:14px;bottom:14px;z-index:9998;background:#b91c1c;color:#fff;border:none;border-radius:999px;padding:12px 18px;font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+#fb-panel{position:fixed;right:14px;bottom:70px;z-index:9998;width:min(330px,calc(100vw - 28px));background:#14141b;border:1px solid #33333f;border-radius:12px;padding:16px;color:#f2f2f2;box-shadow:0 10px 34px rgba(0,0,0,.55)}
+#fb-panel h3{margin:.1em 0 .4em;font-size:1.05rem}
+#fb-panel p{font-size:.88rem;color:#b9b9c4;margin:.2em 0 .6em}
+#fb-panel textarea,#fb-panel input[type=text]{width:100%;box-sizing:border-box;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;margin:0 0 8px}
+#fb-panel .fb-kinds{display:flex;gap:8px;margin:0 0 8px}
+#fb-panel .fb-kinds button{flex:1;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-panel .fb-kinds button.on{background:#b91c1c;border-color:#b91c1c;color:#fff}
+#fb-send{width:100%;padding:11px;border:none;border-radius:8px;background:#b91c1c;color:#fff;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-msg{font-size:.88rem;min-height:1.2em;margin:.5em 0 0}
+</style>
+<button id="fb-btn" type="button">See a bug? Tell me</button>
+<div id="fb-panel" hidden>
+  <h3>Report a bug, or make a suggestion</h3>
+  <p>Muse reads every one of these, and we fix what we can.</p>
+  <div class="fb-kinds">
+    <button type="button" id="fb-kind-bug" class="on">Bug</button>
+    <button type="button" id="fb-kind-sug">Suggestion</button>
+  </div>
+  <textarea id="fb-text" rows="4" maxlength="2000" placeholder="What happened, or what would make this better?"></textarea>
+  <input type="text" id="fb-name" maxlength="80" placeholder="Your name (optional)">
+  <button id="fb-send" type="button">Send it</button>
+  <p id="fb-msg"></p>
+</div>
+<script>
+(function(){
+  var btn = document.getElementById('fb-btn'), panel = document.getElementById('fb-panel');
+  var kind = 'bug';
+  var kb = document.getElementById('fb-kind-bug'), ks = document.getElementById('fb-kind-sug');
+  function setKind(k){ kind = k; kb.className = k === 'bug' ? 'on' : ''; ks.className = k === 'suggestion' ? 'on' : ''; }
+  kb.addEventListener('click', function(){ setKind('bug'); });
+  ks.addEventListener('click', function(){ setKind('suggestion'); });
+  btn.addEventListener('click', function(){ panel.hidden = !panel.hidden; });
+  document.getElementById('fb-send').addEventListener('click', async function(){
+    var msg = document.getElementById('fb-msg');
+    var text = document.getElementById('fb-text').value.trim();
+    if (!text) { msg.textContent = 'Type a few words first.'; return; }
+    var send = document.getElementById('fb-send');
+    send.disabled = true; msg.textContent = 'Sending…';
+    try {
+      var r = await fetch('https://tuzzavnacfzveucwhdeq.supabase.co/rest/v1/site_feedback', {
+        method: 'POST',
+        headers: { apikey: 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', Authorization: 'Bearer sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
+      });
+      if (!r.ok) throw new Error('bad');
+      msg.textContent = 'Got it, thank you. Muse will read it.';
+      document.getElementById('fb-text').value = '';
+    } catch (e) {
+      msg.textContent = 'Could not send just now. Try again in a bit.';
+    }
+    send.disabled = false;
+  });
+})();
+</script>
+
 </body>
 </html>
