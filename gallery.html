@@ -9,7 +9,7 @@
 
 
 
-<link rel="stylesheet" href="style.css?v=106">
+<link rel="stylesheet" href="style.css?v=110">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
 <a class="work pic" href="art/gallery/spiral-eye-skull-brick-wall.jpg" data-cat="painting skull face"><img src="art/gallery/spiral-eye-skull-brick-wall.jpg" alt="Colourful skull with a spiral eye against a brick wall, painting" loading="lazy"></a>
 <a class="work pic" href="art/gallery/gold-skull-blue-background.jpg" data-cat="painting skull"><img src="art/gallery/gold-skull-blue-background.jpg" alt="Gold skull with a green eye on a deep blue background, painting" loading="lazy"></a>
 <a class="work pic" href="art/gallery/dark-splatter-skull.jpg" data-cat="painting skull"><img src="art/gallery/dark-splatter-skull.jpg" alt="Dark skull with splattered paint on a black background, painting" loading="lazy"></a>
-</div><div class="lightbox" id="lightbox" aria-hidden="true"><button class="lb-close" id="lb-close" aria-label="Close">&times;</button><button class="lb-prev" id="lb-prev" aria-label="Previous">&lsaquo;</button><img id="lb-img" src="" alt=""><div class="lb-actions"><a class="btn" href="shop.html">Prints &amp; originals, the shop</a></div><button class="lb-next" id="lb-next" aria-label="Next">&rsaquo;</button></div>
+</div><div class="lightbox" id="lightbox" aria-hidden="true"><button class="lb-close" id="lb-close" aria-label="Close">&times;</button><button class="lb-prev" id="lb-prev" aria-label="Previous">&lsaquo;</button><img id="lb-img" src="" alt=""><div class="lb-cap" id="lb-cap"></div><div class="lb-actions"><a class="btn" href="shop.html">Prints &amp; originals, the shop</a></div><button class="lb-next" id="lb-next" aria-label="Next">&rsaquo;</button></div>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script>
@@ -49,6 +49,7 @@
     img.src = links[i].getAttribute('href');
     var thumb = links[i].querySelector('img');
     img.alt = thumb ? (thumb.getAttribute('alt') || '') : '';
+    document.getElementById('lb-cap').textContent = img.alt;
     box.classList.add('open');
     box.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
