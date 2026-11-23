@@ -49,6 +49,11 @@ nav a:hover,nav a.active{border-color:var(--red);background:var(--red);color:#ff
 .btn.paypal .pp-a{color:#003087}
 .btn.paypal .pp-b{color:#0079c1}
 .btn .card-ico{vertical-align:-3px;margin-right:7px}
+.updates{border-left:4px solid var(--red)}
+.update{padding:10px 0;border-top:1px solid var(--line)}
+.update time{display:block;color:var(--muted);font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.update p{margin:.3em 0 0}
+.marrow-note{color:var(--muted);font-style:italic}
 .btn-row{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:12px 0}
 .btn-row .btn{margin:0}
 .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
