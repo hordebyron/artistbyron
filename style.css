@@ -261,7 +261,7 @@ h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial 
   .nav-drop{display:block}
   .nav-menu{display:block;position:static;box-shadow:none;border:none;background:transparent;padding:0 0 0 14px;min-width:0}
   .doors,.chooser{grid-template-columns:1fr}
-  .gallery-grid{grid-template-columns:repeat(2,1fr)}
+  .gallery-grid{grid-template-columns:repeat(3,1fr);gap:8px}
   .hero-bleed>img{max-height:340px}
 }
-@media (max-width:480px){.gallery-grid{grid-template-columns:1fr}}
+@media (max-width:480px){.gallery-grid{grid-template-columns:repeat(3,1fr);gap:6px}}
