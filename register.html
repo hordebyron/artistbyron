@@ -201,7 +201,6 @@ function showReg(r, saved){
     + (r.xrp ? '<p>XRPL: <strong>' + esc(r.xrp) + '</strong></p>' : '<p>XRPL: not added yet.</p>')
     + (r.base ? '<p>Base: <strong>' + esc(r.base) + '</strong></p>' : '')
     + (r.sol ? '<p>Solana: <strong>' + esc(r.sol) + '</strong></p>' : '')
-    + (r.kofi ? '<p>Ko-fi: ' + esc(r.kofi) + '</p>' : '')
     + (r.discord ? '<p>Discord: ' + esc(r.discord) + '</p>' : '')
     + '<p class="small">Your rank shows here after Monday, once points go live.</p>';
   syncProve();
@@ -254,7 +253,7 @@ document.getElementById('reg-clear').addEventListener('click', function(){
   document.getElementById('reg-xrp').value = r.xrp || '';
   document.getElementById('reg-base').value = r.base || '';
   document.getElementById('reg-sol').value = r.sol || '';
-  document.getElementById('reg-kofi').value = r.kofi || '';
+  var kf = document.getElementById('reg-kofi'); if (kf) kf.value = r.kofi || '';
   document.getElementById('reg-discord').value = r.discord || '';
   showReg(r);
 })();
