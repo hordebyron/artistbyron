@@ -16,7 +16,7 @@
 .status-strip{background:#7a1220;color:#fff;border-radius:var(--radius);padding:12px 16px;text-align:center;font-weight:600}
 </style>
 
-<link rel="stylesheet" href="style.css?v=122">
+<link rel="stylesheet" href="style.css?v=123">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -30,7 +30,7 @@
     <img src="art/join-the-horde-wax.webp" alt="A zombie holding a Join the Horde sign, art by Byron">
   </section>
 
-  <p class="status-strip">Season 1 is being built. The doors are not open yet. When they open, they open on this page.</p>
+  <p class="status-strip">Season 1 is open. The doors are open, and the game is live on this page.</p>
 
   <section class="card" id="member-strip">
     <h2 id="member-title">New here?</h2>
@@ -38,14 +38,36 @@
     <p><a class="btn" id="member-btn" href="register.html">Join the Horde</a></p>
   </section>
 
+  <section class="card" id="play">
+    <h2>Play now</h2>
+    <div id="game-login" hidden>
+      <p>Log in to play. Your Horde profile is your Explorer Book, and it keeps your stamps.</p>
+      <p><a class="btn" href="login.html">Log in</a> <a class="btn ghost" href="register.html">Join the Horde, it is free</a></p>
+    </div>
+    <div id="game-main" hidden>
+      <p id="game-day">Day 1</p>
+      <p id="game-pushes">Delves today: 0 of 8</p>
+      <p id="game-stamps">Day stamps: 0 &middot; Weeks finished: 0 &middot; Wins banked: 0</p>
+      <p><button class="btn" id="delve-btn" type="button">Delve deeper</button></p>
+      <p id="game-status">You can delve now.</p>
+      <div id="game-reward" hidden>
+        <p><b>You finished a week.</b> Pick your reward:</p>
+        <p><button class="btn" id="claim-points" type="button">Take the points (1 win toward the prize ladder)</button>
+        <button class="btn ghost" id="claim-nft" type="button">Take the NFT on my chain</button></p>
+        <p class="small">The NFT is minted once the weekly reward art is ready, on the chain on your profile. No wallet linked yet? <a href="profile.html">Link one on your profile</a> first, or take the points.</p>
+      </div>
+    </div>
+    <p id="game-error" class="small" hidden></p>
+  </section>
+
   <section class="card">
     <h2>The quest, step by step</h2>
     <ol class="quest">
-      <li><span class="n">1</span><b>Explorer Coin.</b> The coin gets you in. No coin, no entry. It will be claimed right here on this page, free, when the doors open.</li>
-      <li><span class="n">2</span><b>Explorer Pack.</b> Your starter kit. Claimed after your coin, it hands you the pieces you need to begin.</li>
+      <li><span class="n">1</span><b>Explorer Coin.</b> The coin gets you in. No coin, no entry. Your Horde profile is your coin. It is free, and this page is where you use it.</li>
+      <li><span class="n">2</span><b>Explorer Pack.</b> Your starter kit. It hands you the pieces you need to begin. In this version your kit is this page: the button, the timer, and your Book.</li>
       <li><span class="n">3</span><b>Explorer Book.</b> Your passport. Every stamp you earn lands in your Book. This one already exists: it is your Horde HODLer. <a href="profile.html">See your Book on your profile</a>.</li>
       <li><span class="n">4</span><b>Pass Key.</b> The key lets you burn. You earn it in the game, and then the real work starts.</li>
-      <li><span class="n">5</span><b>Work Order.</b> Your job. Burn old Horde pieces, up to 8 a day, at least an hour apart. Every finished day earns a stamp in your Book.</li>
+      <li><span class="n">5</span><b>Work Order.</b> Your job. Push the button once an hour, up to 8 times a day. Every finished day earns a stamp in your Book.</li>
       <li><span class="n">6</span><b>Stamps and levels.</b> Stamps fill your Book and level you up. Four weeks of work is your apprenticeship. Finish it, and you graduate. Then Month 2 begins.</li>
     </ol>
   </section>
@@ -56,14 +78,14 @@
       <li><b>Taco Tuesday.</b> A mid week treat for explorers who showed up.</li>
       <li><b>Freaky Friday.</b> Something strange always happens on Friday.</li>
       <li><b>Mid Week Perk Pack.</b> A Horde wide puzzle. Solve it together, earn the pack.</li>
-      <li><b>666 DHC.</b> Paid after each finished week, like the original game did.</li>
+      <li><b>Weekly reward.</b> Finish a week and pick your reward: points toward the prize ladder, or an NFT on your chain.</li>
     </ul>
   </section>
 
   <section class="card">
-    <h2>Two doors, one game</h2>
-    <p><b>WAX opens first.</b> The Catacombs were born on WAX, and WAX is the smooth door: log in with your wallet and play.</p>
-    <p><b>The XRP door opens later.</b> Same Book, same quest, same stamps. Your XRP HODLer is your passport there, and rewards can land in $HORDE. One profile, one passport, either chain.</p>
+    <h2>Five doors, one game</h2>
+    <p><b>Play as a site member</b> with just your profile, or come in through a wallet: WAX, XRP, Base or Solana. Same button, same stamps, same Book. The chain only decides your reward.</p>
+    <p>The NFT reward is ready on WAX and XRP now. Base and Solana players take points until their NFT doors are ready.</p>
   </section>
 
   <section class="card">
@@ -87,7 +109,7 @@
     var w = p || r;
     if (w && w.name) {
       document.getElementById('member-title').textContent = 'Welcome back, ' + w.name;
-      document.getElementById('member-text').textContent = 'You are already in the Horde, and your Explorer Book is your Horde profile. When the doors open, you start at step 1: the Explorer Coin, claimed right here.';
+      document.getElementById('member-text').textContent = 'You are already in the Horde, and your Explorer Book is your Horde profile. The doors are open. Your profile is your coin, so you can start right here, right now.';
       var b = document.getElementById('member-btn');
       b.textContent = 'See my profile and my Book';
       b.href = 'profile.html';
@@ -186,6 +208,94 @@
     }
     send.disabled = false;
   });
+})();
+</script>
+
+<!-- horde-catacombs-game: the playable game, talks to the catacombs Edge Function -->
+<script>
+(function(){
+  var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
+  var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+  var FN = SB_URL + '/functions/v1/catacombs';
+  function session(){ try { return JSON.parse(localStorage.getItem('horde_session') || 'null'); } catch (e) { return null; } }
+  function call(body){
+    return fetch(FN, { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function(r){ return r.json(); });
+  }
+  var loginBox = document.getElementById('game-login');
+  var mainBox = document.getElementById('game-main');
+  var dayEl = document.getElementById('game-day');
+  var pushesEl = document.getElementById('game-pushes');
+  var stampsEl = document.getElementById('game-stamps');
+  var btn = document.getElementById('delve-btn');
+  var statusEl = document.getElementById('game-status');
+  var rewardBox = document.getElementById('game-reward');
+  var errEl = document.getElementById('game-error');
+  var s = session();
+  if (!s || !s.token) { loginBox.hidden = false; return; }
+  mainBox.hidden = false;
+  var timer = null;
+  function fmt(ms){
+    var m = Math.ceil(ms / 60000);
+    if (m >= 60) return Math.floor(m / 60) + 'h ' + (m % 60) + 'm';
+    return m + 'm';
+  }
+  function render(st){
+    dayEl.textContent = 'Day ' + st.day;
+    pushesEl.textContent = 'Delves today: ' + st.pushes_today + ' of ' + st.pushes_per_day;
+    stampsEl.textContent = 'Day stamps: ' + st.days_completed + ' · Weeks finished: ' + st.weeks_completed + ' · Wins banked: ' + st.wins_banked + (st.pending_nft_weeks ? ' · NFT weeks waiting: ' + st.pending_nft_weeks : '');
+    if (st.can_push) {
+      btn.disabled = false;
+      statusEl.textContent = 'You can delve now.';
+    } else {
+      btn.disabled = true;
+      statusEl.textContent = 'Next delve in ' + fmt(st.next_push_in_ms) + '. Come back then.';
+    }
+    rewardBox.hidden = !(st.weeks_claimable > 0);
+    if (timer) { clearInterval(timer); timer = null; }
+    if (!st.can_push && st.next_push_in_ms > 0) {
+      var left = st.next_push_in_ms;
+      timer = setInterval(function(){
+        left -= 30000;
+        if (left <= 0) { clearInterval(timer); timer = null; load(); return; }
+        statusEl.textContent = 'Next delve in ' + fmt(left) + '. Come back then.';
+      }, 30000);
+    }
+  }
+  function showErr(msg){ errEl.hidden = false; errEl.textContent = msg; }
+  function load(){
+    errEl.hidden = true;
+    call({ action: 'state', token: s.token }).then(function(st){
+      if (!st || !st.ok) { showErr(st && st.error ? st.error : 'The game could not load just now. Try again in a bit.'); return; }
+      render(st);
+    }).catch(function(){ showErr('The game could not load just now. Try again in a bit.'); });
+  }
+  btn.addEventListener('click', function(){
+    btn.disabled = true;
+    statusEl.textContent = 'Delving…';
+    call({ action: 'push', token: s.token }).then(function(st){
+      if (!st || !st.ok) { showErr(st && st.error ? st.error : 'The delve did not save. Try again in a bit.'); load(); return; }
+      errEl.hidden = true;
+      if (st.day_done) statusEl.textContent = 'Day done. A stamp lands in your Book. The next day is open.';
+      render(st);
+    }).catch(function(){ showErr('The delve did not save. Try again in a bit.'); load(); });
+  });
+  document.getElementById('claim-points').addEventListener('click', function(){
+    call({ action: 'claim', token: s.token, choice: 'points' }).then(function(st){
+      if (!st || !st.ok) { showErr(st && st.error ? st.error : 'The claim did not save. Try again in a bit.'); return; }
+      errEl.hidden = true;
+      statusEl.textContent = 'One win banked toward the prize ladder.';
+      render(st);
+    }).catch(function(){ showErr('The claim did not save. Try again in a bit.'); });
+  });
+  document.getElementById('claim-nft').addEventListener('click', function(){
+    call({ action: 'claim', token: s.token, choice: 'nft' }).then(function(st){
+      if (!st || !st.ok) { showErr(st && st.error ? st.error : 'The claim did not save. Try again in a bit.'); return; }
+      errEl.hidden = true;
+      statusEl.textContent = 'Noted. One of the Horde\'s minions will mint your NFT once the weekly reward art is ready.';
+      render(st);
+    }).catch(function(){ showErr('The claim did not save. Try again in a bit.'); });
+  });
+  load();
 })();
 </script>
 
