@@ -56,6 +56,13 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
   <section class="card" id="unlock-card" hidden>
     <h2>Unlock your profile on this device</h2>
     <p>Prove your wallet once and this browser stays unlocked for 30 days. Each browser needs its own unlock, once. After that, saving just writes to the shared list. No code and no dust for every little edit, ever again.</p>
+    <p id="unlock-xaman-row"><button class="btn" type="button" id="unlock-xaman">Unlock with Xaman</button></p>
+    <p class="small" id="unlock-xaman-status">One tap. Approve in Xaman, come back, unlocked for 30 days. No code, no dust.</p>
+    <div id="unlock-xaman-box" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px">
+      <p class="small" id="unlock-xaman-text">Scan this with your Xaman app to unlock.</p>
+      <p><img id="unlock-xaman-qr" src="" alt="Scan this QR code with Xaman" style="max-width:220px;width:100%;background:#fff;padding:8px;border-radius:8px"></p>
+      <p><a class="btn" id="unlock-xaman-link" href="#">Open in Xaman</a></p>
+    </div>
     <p id="unlock-wax-row"><button class="btn" type="button" id="unlock-wax">Unlock with WAX</button></p>
     <p class="small" id="unlock-wax-status">Works with Anchor or the WAX Cloud Wallet. The wallet will ask you to send a tiny proof, 0.0001 WAX, with a code in the memo. That one proof is the unlock.</p>
     <p id="unlock-xrp-row"><label for="unlock-xrp-addr">Or unlock with XRP: your XRPL address</label>
@@ -839,6 +846,77 @@ window.__beginUnlock = async function(chain, address){
     }
   } catch (e) {}
 })();
+/* One-tap unlock with Xaman: the sign-in is the proof, so no dust, no
+   memo code. Same create/poll flow as the login page, then the function
+   mints the 30 day session straight away. */
+var xamanUnlockTimer = null;
+var xamanUnlockUuid = null;
+function xamanUnlockCall(body) {
+  return fetch(SB_URL + '/functions/v1/xaman-signin', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function(r){ return r.json(); });
+}
+function stopXamanUnlock() { if (xamanUnlockTimer) { clearInterval(xamanUnlockTimer); xamanUnlockTimer = null; } xamanUnlockUuid = null; }
+async function xamanUnlockStatus() {
+  if (!xamanUnlockUuid) return;
+  var uuid = xamanUnlockUuid;
+  var j;
+  try { j = await xamanUnlockCall({ action: 'status', uuid: uuid }); } catch (e) { return; }
+  if (xamanUnlockUuid !== uuid || !j || !j.ok) return;
+  if (j.signed && j.account) {
+    stopXamanUnlock();
+    var st = document.getElementById('unlock-xaman-status');
+    var sj;
+    try { sj = await xamanUnlockCall({ action: 'session', uuid: uuid }); } catch (e) { sj = null; }
+    if (sj && sj.ok && sj.token) {
+      state.session = { token: sj.token, profile_no: sj.profile_no, name: sj.name || '' };
+      storeSession(state.session);
+      try { localStorage.setItem('horde_unlock_chain', 'xrp'); } catch (e) {}
+      if (st) st.textContent = 'Unlocked. Welcome back, ' + (sj.name || '') + '.';
+      var row = await sbByNo(sj.profile_no);
+      if (row) {
+        try { localStorage.setItem('horde_registration', JSON.stringify({ name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
+        await renderProfile(row);
+      }
+      var vc = document.getElementById('profile-view-card');
+      if (vc) vc.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      if (st) st.textContent = (sj && sj.error) || 'Unlock did not go through. Try again, or use the dust proof below.';
+    }
+  } else if (j.resolved || j.expired || j.cancelled) {
+    stopXamanUnlock();
+    var st2 = document.getElementById('unlock-xaman-status');
+    if (st2) st2.textContent = j.expired ? 'That login ran out of time. Tap Unlock with Xaman again for a fresh one.' : 'Unlock was cancelled in Xaman. Tap again, or use the dust proof below.';
+  }
+}
+document.getElementById('unlock-xaman').addEventListener('click', async function(){
+  var st = document.getElementById('unlock-xaman-status');
+  var box = document.getElementById('unlock-xaman-box');
+  var txt = document.getElementById('unlock-xaman-text');
+  var qr = document.getElementById('unlock-xaman-qr');
+  var link = document.getElementById('unlock-xaman-link');
+  if (st) st.textContent = 'Opening Xaman. Approve it there, then come back here.';
+  var j;
+  try { j = await xamanUnlockCall({ action: 'create' }); }
+  catch (e) { if (st) st.textContent = 'Xaman unlock could not start just now. Try again, or use the dust proof below.'; return; }
+  if (!j || !j.ok || !j.uuid) { if (st) st.textContent = (j && j.error) || 'Xaman unlock could not start just now. Try again, or use the dust proof below.'; return; }
+  stopXamanUnlock();
+  xamanUnlockUuid = j.uuid;
+  if (j.qr) qr.src = j.qr;
+  if (j.link) link.href = j.link;
+  box.hidden = false;
+  try {
+    var coarse = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window);
+    if (coarse && j.link) setTimeout(function(){ window.location.href = j.link; }, 400);
+  } catch (e) {}
+  if (txt) txt.textContent = 'Approve it in Xaman, then come back here. This page picks it up.';
+  var tries = 0;
+  xamanUnlockTimer = setInterval(function(){
+    tries++;
+    if (tries > 100) { stopXamanUnlock(); if (st) st.textContent = 'That login ran out of time. Tap Unlock with Xaman again for a fresh one.'; return; }
+    xamanUnlockStatus();
+  }, 3000);
+});
+document.addEventListener('visibilitychange', function(){ if (!document.hidden) xamanUnlockStatus(); });
+window.addEventListener('focus', function(){ xamanUnlockStatus(); });
 document.getElementById('unlock-xrp').addEventListener('click', function(){
   var addr = document.getElementById('unlock-xrp-addr').value.trim();
   var st = document.getElementById('unlock-status');

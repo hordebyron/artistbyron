@@ -133,6 +133,17 @@ async function xamanStatus() {
     if (addr) {
       statusEl.textContent = 'Logged in with Xaman as ' + shortAddr(addr) + '.';
       showHorde(addr, true);
+      /* The sign-in is the unlock: mint the 30 day session in the
+         background, so the profile page already counts this browser
+         as yours when you tap through to it. */
+      xamanSigninCall({ action: 'session', uuid: uuid }).then(function(sj){
+        if (sj && sj.ok && sj.token) {
+          try { localStorage.setItem('horde_session', JSON.stringify({ token: sj.token, profile_no: sj.profile_no, name: sj.name || '' })); } catch (e) {}
+          try { localStorage.setItem('horde_unlock_chain', 'xrp'); } catch (e) {}
+        } else if (sj && sj.error) {
+          statusEl.textContent = sj.error;
+        }
+      }).catch(function(){});
     } else {
       statusEl.textContent = 'Xaman did not return an address. Try again, or paste your address below.';
     }
