@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Daily Zombie · Artist Byron</title>
 <meta name="description" content="The Daily Zombie, Byron's blog since 2009, now at home on artistbyron.ca. Notes on art, the Horde, and the road so far.">
-<link rel="stylesheet" href="style.css?v=115">
+<link rel="stylesheet" href="style.css?v=116">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
     </div>
     <div class="update">
       <time>Mon 23 Nov 2026</time>
-      <p>The Loot Crate got its gold PayPal button today. Cards, PayPal, Ko-fi and crypto, all from our own front door. <a href="shop.html">See the crate</a></p>
+      <p>The Loot Crate got its gold PayPal button today. Cards, PayPal and crypto, all from our own front door. <a href="shop.html">See the crate</a></p>
     </div>
     <div class="update">
       <time>Mon 23 Nov 2026</time>
@@ -43,6 +43,12 @@
       <time>Sun 22 Nov 2026</time>
       <p>Loot Crate tokens hatched. The token is the crate, and the crate is a gift card. Claim it, or keep the credit. <a href="loot-crate.html">How it works</a></p>
     </div>
+  </section>
+
+  <section class="card updates" id="crypto-feed" hidden>
+    <h2>Crypto updates</h2>
+    <p class="marrow-note">For members with a crypto badge, a wallet on their profile. Newest first.</p>
+    <div id="crypto-entries"></div>
   </section>
 
   <section class="card">
@@ -103,6 +109,34 @@
       document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
       document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
     }
+  } catch (e) {}
+})();
+</script>
+<!-- horde-crypto-updates: the section above only shows for members with a crypto badge (a wallet on their profile), same check as the nav trim -->
+<script>
+(function () {
+  try {
+    var w = null;
+    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+    if (!w) return;
+    var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
+    if (!crypto) return;
+    fetch('data/crypto-updates.json').then(function (r) { if (!r.ok) throw new Error('bad'); return r.json(); })
+    .then(function (d) {
+      var box = document.getElementById('crypto-entries');
+      (d.updates || []).forEach(function (u) {
+        var div = document.createElement('div'); div.className = 'update';
+        var t = document.createElement('time'); t.textContent = u.date; div.appendChild(t);
+        var p = document.createElement('p');
+        var b = document.createElement('b'); b.textContent = u.title + '. '; p.appendChild(b);
+        p.appendChild(document.createTextNode(u.body + ' '));
+        if (u.link) { var a = document.createElement('a'); a.href = u.link; a.textContent = u.link_text || 'Read more'; p.appendChild(a); }
+        div.appendChild(p); box.appendChild(div);
+      });
+      document.getElementById('crypto-feed').hidden = false;
+    })
+    .catch(function () {});
   } catch (e) {}
 })();
 </script>
