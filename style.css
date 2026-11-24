@@ -320,3 +320,6 @@ h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial 
 .mkt-price{margin:0 0 8px;font-weight:700}
 .mkt-foot .btn{width:100%}
 @media(max-width:640px){.mkt-grid{grid-template-columns:repeat(2,1fr);gap:10px}.mkt-card{padding:10px}}
+
+/* horde-hidden: a button style was overriding the hidden attribute, so hidden buttons still showed (profile Unlock button, 24 Nov 2026). This line makes hidden always win. */
+[hidden]{display:none!important}
