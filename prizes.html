@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Prize Ladder - Artist Byron</title>
 <meta name="description" content="The Horde Prize Ladder: bank your wins, claim a rung, or let them ride toward a painting commission.">
-<link rel="stylesheet" href="style.css?v=110">
+<link rel="stylesheet" href="style.css?v=122">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -38,9 +38,9 @@
   <p class="small">Prizes may change without notice as we iron everything out.</p>
 
   <h2>Won something?</h2>
-  <p>When you win, your name goes on the win list Muse keeps. To claim a rung, or to check your stack, say the word in the Discord or email Muse:</p>
+  <p>When you win, your name goes on the win list one of the Horde's minions keeps. To claim a rung, or to check your stack, say the word in the Discord or email Horde's minions:</p>
   <p class="btn-row">
-    <a class="btn" href="mailto:hordemuse@muse.ai?subject=Prize%20Ladder">Email Muse</a>
+    <a class="btn" href="mailto:hordemuse@muse.ai?subject=Prize%20Ladder">Email Horde's minions</a>
     <a class="btn ghost" href="https://discord.gg/rA3UMEkpqc">The Horde Discord</a>
   </p>
 </main>
@@ -233,7 +233,7 @@ function updateClaimBtn() {
 <button id="fb-btn" type="button">See a bug? Tell me</button>
 <div id="fb-panel" hidden>
   <h3>Report a bug, or make a suggestion</h3>
-  <p>Muse reads every one of these, and we fix what we can.</p>
+  <p>One of the Horde's minions reads every one of these, and we fix what we can.</p>
   <div class="fb-kinds">
     <button type="button" id="fb-kind-bug" class="on">Bug</button>
     <button type="button" id="fb-kind-sug">Suggestion</button>
@@ -265,7 +265,7 @@ function updateClaimBtn() {
         body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
       });
       if (!r.ok) throw new Error('bad');
-      msg.textContent = 'Got it, thank you. Muse will read it.';
+      msg.textContent = 'Got it, thank you. One of the Horde\'s minions will read it.';
       document.getElementById('fb-text').value = '';
     } catch (e) {
       msg.textContent = 'Could not send just now. Try again in a bit.';

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Subscriptions · Artist Byron</title>
 <meta name="description" content="One Horde membership, payable on either chain. Pick a tier, pay on WAX or XRP, and get monthly rewards from your tier's own collection.">
-<link rel="stylesheet" href="style.css?v=119">
+<link rel="stylesheet" href="style.css?v=122">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -101,14 +101,14 @@
     <span class="btn-row"><a class="btn" href="sub-drop.html?d=7">Pay 5,000 WAX</a> <a class="btn ghost" href="sub-drop.html?d=8">Pay 32,000 DHC</a></span></p>
     <p><strong>The Assimilated</strong> ($125 a month)<br>
     <span class="btn-row"><a class="btn" href="sub-drop.html?d=9">Pay 25,000 WAX</a> <a class="btn ghost" href="sub-drop.html?d=10">Pay 160,000 DHC</a></span></p>
-    <p><strong>On XRP, the automatic door is being built.</strong> Until it opens, start by email and Muse sends you the payment address for XRP or $HORDE ($HORDE is 5% cheaper). Your NFT is still minted on demand, the moment you pay.</p>
+    <p><strong>On XRP, the automatic door is being built.</strong> Until it opens, start by email and one of the Horde's minions sends you the payment address for XRP or $HORDE ($HORDE is 5% cheaper). Your NFT is still minted on demand, the moment you pay.</p>
     <p class="btn-row">
       <a class="btn" href="mailto:hordemuse@muse.ai?subject=Crypto%20subscription%3A%20The%20Wanderer">The Wanderer, $5</a>
       <a class="btn" href="mailto:hordemuse@muse.ai?subject=Crypto%20subscription%3A%20The%20Seeker">The Seeker, $12</a>
       <a class="btn" href="mailto:hordemuse@muse.ai?subject=Crypto%20subscription%3A%20The%20Serious">The Serious, $25</a>
       <a class="btn" href="mailto:hordemuse@muse.ai?subject=Crypto%20subscription%3A%20The%20Assimilated">The Assimilated, $125</a>
     </p>
-    <p><strong>The honest fine print:</strong> your subscription NFT doubles as a credit note. Burn it, any time, and it pays back <strong>half of what you paid for it</strong> as credit toward anything of Byron's. Pay $7 for a month and that NFT can be claimed or burned as $3.50 toward his stuff. To use the credit, burn the NFT (or send it back) and tell Muse; the credit goes on your name.</p>
+    <p><strong>The honest fine print:</strong> your subscription NFT doubles as a credit note. Burn it, any time, and it pays back <strong>half of what you paid for it</strong> as credit toward anything of Byron's. Pay $7 for a month and that NFT can be claimed or burned as $3.50 toward his stuff. To use the credit, burn the NFT (or send it back) and tell one of the Horde's minions; the credit goes on your name.</p>
   </section>
 </main>
 <footer class="foot"><div class="wrap small">
@@ -166,7 +166,7 @@
 <button id="fb-btn" type="button">See a bug? Tell me</button>
 <div id="fb-panel" hidden>
   <h3>Report a bug, or make a suggestion</h3>
-  <p>Muse reads every one of these, and we fix what we can.</p>
+  <p>One of the Horde's minions reads every one of these, and we fix what we can.</p>
   <div class="fb-kinds">
     <button type="button" id="fb-kind-bug" class="on">Bug</button>
     <button type="button" id="fb-kind-sug">Suggestion</button>
@@ -198,7 +198,7 @@
         body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
       });
       if (!r.ok) throw new Error('bad');
-      msg.textContent = 'Got it, thank you. Muse will read it.';
+      msg.textContent = 'Got it, thank you. One of the Horde\'s minions will read it.';
       document.getElementById('fb-text').value = '';
     } catch (e) {
       msg.textContent = 'Could not send just now. Try again in a bit.';

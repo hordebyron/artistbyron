@@ -9,7 +9,7 @@
 
 
 
-<link rel="stylesheet" href="style.css?v=110">
+<link rel="stylesheet" href="style.css?v=122">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -255,7 +255,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
 <button id="fb-btn" type="button">See a bug? Tell me</button>
 <div id="fb-panel" hidden>
   <h3>Report a bug, or make a suggestion</h3>
-  <p>Muse reads every one of these, and we fix what we can.</p>
+  <p>One of the Horde's minions reads every one of these, and we fix what we can.</p>
   <div class="fb-kinds">
     <button type="button" id="fb-kind-bug" class="on">Bug</button>
     <button type="button" id="fb-kind-sug">Suggestion</button>
@@ -287,7 +287,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
         body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
       });
       if (!r.ok) throw new Error('bad');
-      msg.textContent = 'Got it, thank you. Muse will read it.';
+      msg.textContent = 'Got it, thank you. One of the Horde\'s minions will read it.';
       document.getElementById('fb-text').value = '';
     } catch (e) {
       msg.textContent = 'Could not send just now. Try again in a bit.';

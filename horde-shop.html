@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Shop</title>
 <meta name="description" content="Buy Byron's NFTs direct, on the XRP Ledger, priced in $HORDE or XRP. No platform cut, the money goes straight to the seller.">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=122">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" href="favicon.ico">
 </head>
@@ -76,7 +76,7 @@
     <p>Got a Byron NFT and want to sell it? List it on the ledger, then tell Byron or Marrow in Discord and it can show up here.</p>
     <p>1. In Xaman, open your NFT, make a sell offer, pick XRP or $HORDE and your price.<br>
     2. Tell Byron the NFT name and the price, in Discord or a Ko-fi message.<br>
-    3. Muse checks the ledger to confirm the sell offer is real, then adds it to this page.<br>
+    3. One of the Horde's minions checks the ledger to confirm the sell offer is real, then adds it to this page.<br>
     No wash trading, selling to yourself does not count, and no one promises a price or a profit.</p>
   </section>
 
@@ -88,15 +88,15 @@
   <section>
     <h2>Test listing, NOT real art</h2>
     <div class="card">
-      <h3>Muse Test Zombie, TEST ONLY</h3>
-      <p><strong>NOT Byron art.</strong> A test doodle Muse made on testnet, used here only so we do not sell Byron art by accident.</p>
+      <h3>Minion Test Zombie, TEST ONLY</h3>
+      <p><strong>NOT Byron art.</strong> A test doodle one of the Horde's minions made on testnet, used here only so we do not sell Byron art by accident.</p>
       <p>Price: <strong>10,000,000 $HORDE</strong><br>
       That was about 0.18 XRP at the AMM pool price on 13 Nov, and about the same today.<br>
-      Seller: Muse test wallet, rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH<br>
+      Seller: Minion test wallet, rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH<br>
       $HORDE issuer: rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR</p>
       <p><button class="btn" id="buyBtn" type="button">Buy with $HORDE, TEST</button></p>
       <p id="buyMsg" class="small">No live sell offer exists for this test NFT yet. Clicking Buy shows the steps instead of taking any $HORDE.</p>
-      <p class="small">To make this live, only when Byron says go: mint the test NFT on mainnet from Muse's wallet, mutable, fee about 0.00001 XRP plus a 0.2 XRP reserve while it is held, then create a sell offer on ledger, NFTokenCreateOffer, priced in $HORDE. Then the Buy button opens that offer in the buyer's wallet to accept and sign.</p>
+      <p class="small">To make this live, only when Byron says go: mint the test NFT on mainnet from the minion test wallet, mutable, fee about 0.00001 XRP plus a 0.2 XRP reserve while it is held, then create a sell offer on ledger, NFTokenCreateOffer, priced in $HORDE. Then the Buy button opens that offer in the buyer's wallet to accept and sign.</p>
     </div>
   </section>
 </main>
@@ -192,7 +192,7 @@ document.getElementById('checkBtn').addEventListener('click', async function () 
 <button id="fb-btn" type="button">See a bug? Tell me</button>
 <div id="fb-panel" hidden>
   <h3>Report a bug, or make a suggestion</h3>
-  <p>Muse reads every one of these, and we fix what we can.</p>
+  <p>One of the Horde's minions reads every one of these, and we fix what we can.</p>
   <div class="fb-kinds">
     <button type="button" id="fb-kind-bug" class="on">Bug</button>
     <button type="button" id="fb-kind-sug">Suggestion</button>
@@ -224,7 +224,7 @@ document.getElementById('checkBtn').addEventListener('click', async function () 
         body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
       });
       if (!r.ok) throw new Error('bad');
-      msg.textContent = 'Got it, thank you. Muse will read it.';
+      msg.textContent = 'Got it, thank you. One of the Horde\'s minions will read it.';
       document.getElementById('fb-text').value = '';
     } catch (e) {
       msg.textContent = 'Could not send just now. Try again in a bit.';

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=117">
+<link rel="stylesheet" href="style.css?v=122">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -190,7 +190,7 @@ document.getElementById('email-login-go').addEventListener('click', async functi
 <button id="fb-btn" type="button">See a bug? Tell me</button>
 <div id="fb-panel" hidden>
   <h3>Report a bug, or make a suggestion</h3>
-  <p>Muse reads every one of these, and we fix what we can.</p>
+  <p>One of the Horde's minions reads every one of these, and we fix what we can.</p>
   <div class="fb-kinds">
     <button type="button" id="fb-kind-bug" class="on">Bug</button>
     <button type="button" id="fb-kind-sug">Suggestion</button>
@@ -222,7 +222,7 @@ document.getElementById('email-login-go').addEventListener('click', async functi
         body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
       });
       if (!r.ok) throw new Error('bad');
-      msg.textContent = 'Got it, thank you. Muse will read it.';
+      msg.textContent = 'Got it, thank you. One of the Horde\'s minions will read it.';
       document.getElementById('fb-text').value = '';
     } catch (e) {
       msg.textContent = 'Could not send just now. Try again in a bit.';
