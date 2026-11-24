@@ -99,6 +99,41 @@ document.getElementById('login-no-btn').addEventListener('click', async function
   if (row) { st.textContent = 'Opening profile #' + row.profile_no + ' to view. Viewing is not logging in: to make this device yours, use the email sign in below.'; location.href = 'profile.html?n=' + row.profile_no; return; }
   st.textContent = 'No profile with that number yet. If you are new, register below.';
 });
+/* Email sign in: the box above had no button wired up at all, so the
+   button did nothing. Now it sends the code and signs you in. */
+function emailLoginCall(body) {
+  return fetch(SB_URL + '/functions/v1/email-verify', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function(r){ return r.json(); });
+}
+document.getElementById('email-login-send').addEventListener('click', async function(){
+  var st = document.getElementById('email-login-status');
+  var em = document.getElementById('email-login-addr').value.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { st.textContent = 'Type your email address first.'; return; }
+  st.textContent = 'Sending your code…';
+  var j;
+  try { j = await emailLoginCall({ action: 'request', email: em }); }
+  catch (e) { st.textContent = 'The code could not be sent just now. Try again in a bit.'; return; }
+  if (!j || !j.ok) { st.textContent = (j && j.error) || 'The code could not be sent just now. Try again in a bit.'; return; }
+  document.getElementById('email-login-code-row').hidden = false;
+  st.textContent = 'Code sent to ' + em + '. It lives for 10 minutes.';
+  document.getElementById('email-login-code').focus();
+});
+document.getElementById('email-login-go').addEventListener('click', async function(){
+  var st = document.getElementById('email-login-status');
+  var em = document.getElementById('email-login-addr').value.trim().toLowerCase();
+  var code = document.getElementById('email-login-code').value.trim();
+  if (!/^\d{6}$/.test(code)) { st.textContent = 'Type the 6-digit code from your inbox.'; return; }
+  st.textContent = 'Signing in…';
+  var j;
+  try { j = await emailLoginCall({ action: 'login', email: em, code: code }); }
+  catch (e) { st.textContent = 'Sign in could not be reached just now. Try again in a bit.'; return; }
+  if (!j || !j.ok) { st.textContent = (j && j.error) || 'Sign in did not go through. Try again.'; return; }
+  try { localStorage.setItem('horde_session', JSON.stringify({ token: j.token, profile_no: j.profile_no, name: j.name || '' })); } catch (e) {}
+  try { localStorage.setItem('horde_email_login', em); } catch (e) {}
+  st.textContent = 'Signed in. Welcome back, ' + (j.name || '') + '.';
+  document.getElementById('email-login-done').hidden = false;
+  var row = await sbByNo(j.profile_no);
+  if (row) { sbMirrorLocal(row); try { localStorage.setItem('horde_profile', JSON.stringify(row)); } catch (e) {} }
+});
 </script>
 <script>
 (function(){
