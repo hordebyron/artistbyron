@@ -31,11 +31,13 @@
     <p>Not yet a member? <a class="btn" href="register.html">Click here to register</a></p>
     <p>Already registered? Enter your ID: <input id="login-no" inputmode="numeric" placeholder="No." style="width:84px"> <button class="btn" type="button" id="login-no-btn">Go</button></p>
     <p class="small" id="login-no-status"></p>
-    <p>or log in with a wallet:</p>
-    <p><button class="btn" type="button" id="login-wax-btn">Log in with WAX</button> <a class="btn ghost" href="xrp.html">Log in with XRP</a></p>
-    <p class="small" id="login-wax-status"></p>
-    <p class="small">Your profile number only views a profile, it does not log you in. The wallet login is what makes this device yours.</p>
-    <p class="small">Note: wallet login only works if you registered first with that wallet. New here counts as not registered, use the register button above first, then the wallet login will know you.</p>
+    <p>Log in with your email:</p>
+    <p><label for="email-login-addr">Your email</label><br><input id="email-login-addr" type="email" autocomplete="email" placeholder="you@example.com" style="width:min(320px,100%)"> <button class="btn" type="button" id="email-login-send">Email me a code</button></p>
+    <p id="email-login-code-row" hidden><label for="email-login-code">Code from your inbox</label><br><input id="email-login-code" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" maxlength="6" style="width:120px"> <button class="btn" type="button" id="email-login-go">Sign in</button></p>
+    <p class="small" id="email-login-status"></p>
+    <p id="email-login-done" hidden><a class="btn" id="email-login-profile" href="profile.html">Go to my profile</a></p>
+    <p class="small">Your profile number only views a profile, it does not log you in. A code from your inbox is what makes this device yours.</p>
+    <p class="small">Note: email sign in only works if you registered with that email. New here counts as not registered, use the register button above first, then the email sign in will know you. Wallet login still lives on the WAX and XRP door pages.</p>
   </section>
 
   <p class="small">No password, no seed, ever. Wallet addresses are public on the chain already.</p>
@@ -69,7 +71,9 @@ function sbMirrorLocal(r){
     var who = prof || reg;
     var proven = '';
     try { proven = localStorage.getItem('horde_proven') || ''; } catch (e) {}
-    if (who && proven && (proven === (who.wax || '') || proven === (who.xrp || ''))) {
+    var emailIn = '';
+    try { emailIn = localStorage.getItem('horde_email_login') || ''; } catch (e) {}
+    if (who && ((proven && (proven === (who.wax || '') || proven === (who.xrp || ''))) || emailIn)) {
       var card = document.getElementById('known-card');
       card.hidden = false;
       document.getElementById('doors-card').hidden = true;
@@ -86,50 +90,15 @@ document.getElementById('known-stay').addEventListener('click', function(e){
   document.getElementById('known-card').hidden = true;
   document.getElementById('doors-card').hidden = false;
 });
-async function goProfile(wax){
-  var st = document.getElementById('login-wax-status');
-  st.textContent = 'Logged in as ' + wax + '. Looking up your Horde profile…';
-  var row = await sbFind(wax, null);
-  if (row) { try { localStorage.setItem('horde_proven', wax); } catch (e) {} sbMirrorLocal(row); location.href = 'profile.html'; return; }
-  st.textContent = 'Logged in as ' + wax + ', but no Horde profile has that wallet yet. If that is news to you, register below and this wallet ties to your profile.';
-}
 document.getElementById('login-no-btn').addEventListener('click', async function(){
   var st = document.getElementById('login-no-status');
   var v = document.getElementById('login-no').value.trim();
   if (!v) { st.textContent = 'Type your profile number first.'; return; }
   st.textContent = 'Looking up profile #' + v + '…';
   var row = await sbByNo(v);
-  if (row) { st.textContent = 'Opening profile #' + row.profile_no + ' to view. Viewing is not logging in: to make this device yours, use a wallet login below.'; location.href = 'profile.html?n=' + row.profile_no; return; }
+  if (row) { st.textContent = 'Opening profile #' + row.profile_no + ' to view. Viewing is not logging in: to make this device yours, use the email sign in below.'; location.href = 'profile.html?n=' + row.profile_no; return; }
   st.textContent = 'No profile with that number yet. If you are new, register below.';
 });
-</script>
-<script>
-(function(){
-  var btn = document.getElementById('login-wax-btn');
-  var st = document.getElementById('login-wax-status');
-  if (!btn || !st) return;
-  var kit = null;
-  async function init(){
-    try {
-      var m = await Promise.all([
-        import('https://esm.sh/@wharfkit/session@4.0.2'),
-        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
-      ]);
-      kit = new m[0].SessionKit({ appName: 'artistbyron', chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }], ui: new m[1].WebRenderer(), walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()] });
-      window.__loginKit = kit;
-      btn.addEventListener('click', async function(){
-        btn.disabled = true; st.textContent = 'Opening your wallet\u2026';
-        try { var res = await kit.login(); await goProfile(String(res.session.actor)); }
-        catch (e) { st.textContent = 'Login cancelled or failed. ' + (e && e.message ? e.message : ''); }
-        finally { btn.disabled = false; }
-      });
-      try { var sess = await kit.restore(); if (sess) await goProfile(String(sess.actor)); } catch (e) {}
-    } catch (e) { st.textContent = 'WAX login could not load just now. ' + (e && e.message ? e.message : ''); }
-  }
-  init();
-})();
 </script>
 <script>
 (function(){
@@ -142,7 +111,10 @@ document.getElementById('login-no-btn').addEventListener('click', async function
   a.href = '#';
   a.addEventListener('click', async function(e){
     e.preventDefault();
-    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    var tok = null;
+    try { var s = JSON.parse(localStorage.getItem('horde_session') || 'null'); tok = s && s.token; } catch (err) {}
+    if (tok) fetch(SB_URL + '/functions/v1/update-profile', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'logout', token: tok }) }).catch(function(){});
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); localStorage.removeItem('horde_session'); localStorage.removeItem('horde_email_login'); } catch (err) {}
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';
