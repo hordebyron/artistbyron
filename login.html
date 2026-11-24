@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=110">
+<link rel="stylesheet" href="style.css?v=117">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -229,6 +229,30 @@ document.getElementById('email-login-go').addEventListener('click', async functi
     }
     send.disabled = false;
   });
+})();
+</script>
+
+<!-- horde-phone-pair: a ?pair= code from the desktop QR logs this phone in -->
+<script>
+(function(){
+  var code = null;
+  try { code = new URLSearchParams(location.search).get('pair'); } catch (e) {}
+  if (!code) return;
+  var st = document.getElementById('email-login-status');
+  st.textContent = 'Connecting this phone…';
+  fetch(SB_URL + '/functions/v1/pair', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'redeem', code: code }) })
+  .then(function(r){ return r.json(); })
+  .then(function(j){
+    if (!j || !j.ok) { st.textContent = (j && j.error) || 'That code did not work. Make a new one on your computer.'; return; }
+    try { localStorage.setItem('horde_session', JSON.stringify({ token: j.token, profile_no: j.profile_no, name: j.name || '' })); } catch (e) {}
+    try { history.replaceState(null, '', location.pathname); } catch (e) {}
+    st.textContent = 'This phone is connected. Welcome back' + (j.name ? ', ' + j.name : '') + '.';
+    document.getElementById('email-login-done').hidden = false;
+    sbByNo(j.profile_no).then(function(row){
+      if (row) { sbMirrorLocal(row); try { localStorage.setItem('horde_profile', JSON.stringify(row)); } catch (e) {} }
+    });
+  })
+  .catch(function(){ st.textContent = 'Could not connect just now. Try again in a bit.'; });
 })();
 </script>
 

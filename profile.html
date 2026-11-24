@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=110">
+<link rel="stylesheet" href="style.css?v=117">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -78,7 +78,15 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <p id="view-key"><strong>HODLer:</strong> <span id="key-text">checking…</span></p>
         <p id="view-wallets" class="small"></p>
         <p id="view-links" class="small"></p>
-        <p id="edit-row" hidden><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button> <button class="btn ghost" type="button" id="session-logout">Log out of this device</button> <button class="btn ghost" type="button" id="unlock-edit" hidden>Unlock to edit this profile</button></p>
+        <p id="edit-row" hidden><button class="btn ghost" type="button" id="edit-toggle">Edit profile</button> <button class="btn ghost" type="button" id="pair-phone-btn">Connect your phone</button> <button class="btn ghost" type="button" id="session-logout">Log out of this device</button> <button class="btn ghost" type="button" id="unlock-edit" hidden>Unlock to edit this profile</button></p>
+        <!-- horde-phone-pair: QR code that logs your phone in as this profile only -->
+        <div id="pair-box" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px">
+          <p style="margin-top:0"><strong>Connect your phone</strong></p>
+          <p class="small">Point your phone camera at this code. It opens the login on your phone, and your phone becomes this profile, only this one. The code works once and stops working in 5 minutes.</p>
+          <div id="pair-qr" style="background:#fff;padding:10px;display:inline-block;border-radius:8px"></div>
+          <p class="small" id="pair-status" aria-live="polite"></p>
+          <p><button class="btn ghost" type="button" id="pair-new">Make a new code</button> <button class="btn ghost" type="button" id="pair-close">Close</button></p>
+        </div>
       </div>
     </div>
   </section>
@@ -345,6 +353,7 @@ async function renderProfile(row){
   // simply missing (Sasha hunted for it, 21 Nov).
   document.getElementById('edit-row').hidden = false;
   document.getElementById('edit-toggle').hidden = !state.mine;
+  document.getElementById('pair-phone-btn').hidden = !state.mine;
   document.getElementById('session-logout').hidden = !state.mine;
   document.getElementById('unlock-edit').hidden = state.mine;
   // On your own unlocked profile the welcome-back page drops the
@@ -1100,6 +1109,50 @@ document.getElementById('unlock-email-go').addEventListener('click', async funct
       msg.textContent = 'Could not send just now. Try again in a bit.';
     }
     send.disabled = false;
+  });
+})();
+</script>
+
+<!-- horde-phone-pair: Connect your phone QR pop-up -->
+<script>
+(function(){
+  var SB_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co';
+  var SB_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+  var QR_LIB = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+  function session(){ try { return JSON.parse(localStorage.getItem('horde_session') || 'null'); } catch (e) { return null; } }
+  function pairCall(body){
+    return fetch(SB_URL + '/functions/v1/pair', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function(r){ return r.json(); });
+  }
+  function loadQrLib(cb){
+    if (window.QRCode) { cb(); return; }
+    var s = document.createElement('script'); s.src = QR_LIB; s.onload = function(){ cb(); }; s.onerror = function(){ cb(new Error('qr')); }; document.head.appendChild(s);
+  }
+  async function makeCode(){
+    var st = document.getElementById('pair-status');
+    var s = session();
+    if (!s || !s.token) { st.textContent = 'This device is not unlocked. Unlock above first.'; return; }
+    st.textContent = 'Making your code…';
+    var j;
+    try { j = await pairCall({ action: 'create', token: s.token }); }
+    catch (e) { st.textContent = 'The code could not be made just now. Try again in a bit.'; return; }
+    if (!j || !j.ok) { st.textContent = (j && j.error) || 'The code could not be made just now. Try again in a bit.'; return; }
+    var url = location.origin + '/login.html?pair=' + encodeURIComponent(j.code);
+    var box = document.getElementById('pair-qr');
+    loadQrLib(function(err){
+      box.innerHTML = '';
+      if (err || !window.QRCode) { st.textContent = 'The QR picture could not load. Open this link on your phone instead: ' + url; return; }
+      new QRCode(box, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+      st.textContent = 'Scan with your phone camera. This code works once and stops working in 5 minutes.';
+    });
+  }
+  document.getElementById('pair-phone-btn').addEventListener('click', function(){
+    document.getElementById('pair-box').hidden = false;
+    makeCode();
+  });
+  document.getElementById('pair-new').addEventListener('click', makeCode);
+  document.getElementById('pair-close').addEventListener('click', function(){
+    document.getElementById('pair-box').hidden = true;
+    document.getElementById('pair-qr').innerHTML = '';
   });
 })();
 </script>
