@@ -16,7 +16,7 @@
 .status-strip{background:#7a1220;color:#fff;border-radius:var(--radius);padding:12px 16px;text-align:center;font-weight:600}
 </style>
 
-<link rel="stylesheet" href="style.css?v=123">
+<link rel="stylesheet" href="style.css?v=124">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -47,6 +47,7 @@
     <div id="game-main" hidden>
       <p id="game-day">Day 1</p>
       <p id="game-pushes">Delves today: 0 of 8</p>
+      <p id="game-bank">Delves ready: 1 of 2</p>
       <p id="game-stamps">Day stamps: 0 &middot; Weeks finished: 0 &middot; Wins banked: 0</p>
       <p><button class="btn" id="delve-btn" type="button">Delve deeper</button></p>
       <p id="game-status">You can delve now.</p>
@@ -67,7 +68,7 @@
       <li><span class="n">2</span><b>Explorer Pack.</b> Your starter kit. It hands you the pieces you need to begin. In this version your kit is this page: the button, the timer, and your Book.</li>
       <li><span class="n">3</span><b>Explorer Book.</b> Your passport. Every stamp you earn lands in your Book. This one already exists: it is your Horde HODLer. <a href="profile.html">See your Book on your profile</a>.</li>
       <li><span class="n">4</span><b>Pass Key.</b> The key lets you burn. You earn it in the game, and then the real work starts.</li>
-      <li><span class="n">5</span><b>Work Order.</b> Your job. Push the button once an hour, up to 8 times a day. Every finished day earns a stamp in your Book.</li>
+      <li><span class="n">5</span><b>Work Order.</b> Your job. Delves recharge one an hour, up to 2 stored, so come back often and spend them. Up to 8 a day. Every finished day earns a stamp in your Book.</li>
       <li><span class="n">6</span><b>Stamps and levels.</b> Stamps fill your Book and level you up. Four weeks of work is your apprenticeship. Finish it, and you graduate. Then Month 2 begins.</li>
     </ol>
   </section>
@@ -225,6 +226,7 @@
   var mainBox = document.getElementById('game-main');
   var dayEl = document.getElementById('game-day');
   var pushesEl = document.getElementById('game-pushes');
+  var bankEl = document.getElementById('game-bank');
   var stampsEl = document.getElementById('game-stamps');
   var btn = document.getElementById('delve-btn');
   var statusEl = document.getElementById('game-status');
@@ -239,25 +241,35 @@
     if (m >= 60) return Math.floor(m / 60) + 'h ' + (m % 60) + 'm';
     return m + 'm';
   }
+  var cur = null;
+  function bankText(st, left){
+    var t = 'Delves ready: ' + st.banked + ' of ' + st.bank_max;
+    if (st.banked < st.bank_max) t += ' · next in ' + fmt(left == null ? st.next_recharge_in_ms : left);
+    else t += ' · bank full';
+    return t;
+  }
   function render(st){
-    dayEl.textContent = 'Day ' + st.day;
+    cur = st;
+    dayEl.textContent = 'Day ' + st.day + (st.day_started_at ? ' · began ' + new Date(st.day_started_at).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '');
     pushesEl.textContent = 'Delves today: ' + st.pushes_today + ' of ' + st.pushes_per_day;
+    bankEl.textContent = bankText(st);
     stampsEl.textContent = 'Day stamps: ' + st.days_completed + ' · Weeks finished: ' + st.weeks_completed + ' · Wins banked: ' + st.wins_banked + (st.pending_nft_weeks ? ' · NFT weeks waiting: ' + st.pending_nft_weeks : '');
     if (st.can_push) {
       btn.disabled = false;
       statusEl.textContent = 'You can delve now.';
     } else {
       btn.disabled = true;
-      statusEl.textContent = 'Next delve in ' + fmt(st.next_push_in_ms) + '. Come back then.';
+      statusEl.textContent = 'No delves ready. Next one recharges in ' + fmt(st.next_recharge_in_ms) + '. Come back then.';
     }
     rewardBox.hidden = !(st.weeks_claimable > 0);
     if (timer) { clearInterval(timer); timer = null; }
-    if (!st.can_push && st.next_push_in_ms > 0) {
-      var left = st.next_push_in_ms;
+    if (st.banked < st.bank_max && st.next_recharge_in_ms > 0) {
+      var left = st.next_recharge_in_ms;
       timer = setInterval(function(){
         left -= 30000;
         if (left <= 0) { clearInterval(timer); timer = null; load(); return; }
-        statusEl.textContent = 'Next delve in ' + fmt(left) + '. Come back then.';
+        bankEl.textContent = bankText(cur, left);
+        if (!cur.can_push) statusEl.textContent = 'No delves ready. Next one recharges in ' + fmt(left) + '. Come back then.';
       }, 30000);
     }
   }
