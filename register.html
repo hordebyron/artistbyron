@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Join the Horde</title>
-<meta name="description" content="Join the Horde. One name plus one way to know you: an email, a Ko-fi or Discord name, or a wallet if you hold Horde art. No seed, ever.">
+<meta name="description" content="Join the Horde. One name plus one way to know you: an email, a Discord name, or a wallet if you hold Horde art. No seed, ever.">
 
 
 
@@ -68,8 +68,6 @@
       <p><button class="btn" type="submit">Register me</button>
       <button class="btn ghost" type="button" id="reg-clear">Start over</button></p>
     </form>
-    <p><button class="btn ghost" type="button" id="wax-login-btn">Log in with WAX to prove it is yours</button></p>
-    <p class="small" id="wax-login-status">WAX login is optional. It just proves the WAX name is yours, so nobody can register as you. It signs nothing. XRPL login is coming next, for now XRPL is paste your address.</p>
     <div id="register-result" class="result" aria-live="polite" hidden></div>
   </section>
 
@@ -82,10 +80,10 @@
   <section class="card">
     <h2>What happens next</h2>
     <ul class="tight">
-      <li>You are on the shared Horde list right away. Log in on any device with your wallet or your profile number and it is you, name, level, badges, pieces and all.</li>
+      <li>You are on the shared Horde list right away. Log in on any device with your email and it is you, name, level, badges, pieces and all.</li>
       <li>Byron sends your HODLers by hand. Message him on X or in the Discord and say you registered, and watch for them.</li>
       <li>Come say hi in the Discord, that is where the Horde hangs out.</li>
-      <li>If you only have one wallet, register that one. No wallet yet? Your Ko-fi name or Discord name works too. You can add a wallet later, same name, same profile.</li>
+      <li>If you only have one wallet, register that one. No wallet yet? Your Discord name works too. You can add a wallet later from your profile, once you log in with your email, and prove it is yours there.</li>
     </ul>
   </section>
   <p class="small">New here? <a href="blog-mental-shifting.html">Read Byron's story</a>.</p>
@@ -148,18 +146,6 @@ function validWax(v){ return !v || /^[a-z1-5.]{1,12}$/.test(v); }
 function validXrp(v){ return !v || /^r[0-9a-zA-Z]{24,34}$/.test(v); }
 function validBase(v){ return !v || /^0x[0-9a-fA-F]{40}$/.test(v); }
 function validSol(v){ return !v || /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(v); }
-function syncProve(){
-  var btn = document.getElementById('wax-login-btn');
-  var st = document.getElementById('wax-login-status');
-  var saved = null;
-  try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
-  if (saved && saved.wax && window.__provenWax && window.__provenWax === saved.wax) {
-    if (btn) btn.hidden = true;
-    if (st) st.textContent = 'Registered, and proven as ' + saved.wax + '. You are all set, there is nothing more to click.';
-    return true;
-  }
-  return false;
-}
 function showReg(r, saved){
   resultEl.hidden = false;
   resultEl.innerHTML = '<p><strong>Registered. Hey ' + esc(r.name) + ', welcome to the Horde.</strong></p>'
@@ -203,7 +189,6 @@ function showReg(r, saved){
     + (r.sol ? '<p>Solana: <strong>' + esc(r.sol) + '</strong></p>' : '')
     + (r.discord ? '<p>Discord: ' + esc(r.discord) + '</p>' : '')
     + '<p class="small">Your rank shows here after Monday, once points go live.</p>';
-  syncProve();
 }
 function loadReg(){
   try {
@@ -232,10 +217,9 @@ form.addEventListener('submit', function(e){
   if (!validXrp(r.xrp)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That XRPL address does not look right. It should start with r.</p>'; return; }
   if (!validBase(r.base)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That Base address does not look right. It should start with 0x and be 42 characters long.</p>'; return; }
   if (!validSol(r.sol)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That Solana address does not look right. Check it and try again.</p>'; return; }
-  if (r.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(r.email)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That email does not look right. Check it, or clear it and use a wallet, Ko-fi or Discord name instead.</p>'; return; }
-  if (!r.wax && !r.xrp && !r.discord && !r.email) { resultEl.hidden = false; resultEl.innerHTML = '<p>Add at least one way for us to know you: a WAX or XRP wallet, your Ko-fi name, your Discord name, or your email.</p>'; return; }
+  if (r.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(r.email)) { resultEl.hidden = false; resultEl.innerHTML = '<p>That email does not look right. Check it, or clear it and use a wallet or Discord name instead.</p>'; return; }
+  if (!r.wax && !r.xrp && !r.discord && !r.email) { resultEl.hidden = false; resultEl.innerHTML = '<p>Add at least one way for us to know you: a WAX or XRP wallet, your Discord name, or your email.</p>'; return; }
   try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (err) {}
-  if (window.__provenWax && r.wax && window.__provenWax === r.wax) { try { localStorage.setItem('horde_proven', r.wax); } catch (err) {} }
   sbSaveProfile({ name: r.name, wax: r.wax || null, xrp: r.xrp || null, discord: r.discord || null, base: r.base || null, sol: r.sol || null, email: r.email || null }).then(function(saved){ showReg(r, saved); });
 });
 document.getElementById('reg-clear').addEventListener('click', function(){
@@ -253,55 +237,10 @@ document.getElementById('reg-clear').addEventListener('click', function(){
   document.getElementById('reg-xrp').value = r.xrp || '';
   document.getElementById('reg-base').value = r.base || '';
   document.getElementById('reg-sol').value = r.sol || '';
-  var kf = document.getElementById('reg-kofi'); if (kf) kf.value = r.kofi || '';
   document.getElementById('reg-discord').value = r.discord || '';
   showReg(r);
 })();
 </script>
-<script>
-/* WAX login on the register page, same as wallet.html. Proves the WAX name,
-   fills it in, signs nothing. Wharfkit SessionKit 4.0.2 via esm.sh. */
-(function () {
-  var statusEl = document.getElementById('wax-login-status');
-  var loginBtn = document.getElementById('wax-login-btn');
-  var waxInput = document.getElementById('reg-wax');
-  var sessionKit = null;
-  async function init() {
-    try {
-      var m = await Promise.all([
-        import('https://esm.sh/@wharfkit/session@4.0.2'),
-        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
-      ]);
-      sessionKit = new m[0].SessionKit({
-        appName: 'artistbyron',
-        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
-        ui: new m[1].WebRenderer(),
-        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
-      });
-      loginBtn.addEventListener('click', async function () {
-        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
-        try {
-          var res = await sessionKit.login();
-          waxInput.value = String(res.session.actor); window.__provenWax = String(res.session.actor);
-          if (!syncProve()) statusEl.textContent = 'Logged in as ' + String(res.session.actor) + ', proven by your wallet. Now finish the form and hit Register me.';
-        } catch (err) {
-          statusEl.textContent = 'Login cancelled or failed, you can still type your WAX name in by hand.';
-        } finally { loginBtn.disabled = false; }
-      });
-      try {
-        var session = await sessionKit.restore();
-        if (session) { waxInput.value = String(session.actor); window.__provenWax = String(session.actor); statusEl.textContent = 'Logged in as ' + String(session.actor) + ', proven by your wallet.'; syncProve(); }
-      } catch (err) {}
-    } catch (err) {
-      statusEl.textContent = 'WAX login could not load just now, you can still type your WAX name in by hand.';
-    }
-  }
-  init();
-})();
-</script>
-
 <script>
 (function(){
   var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
@@ -329,7 +268,7 @@ document.getElementById('reg-clear').addEventListener('click', function(){
     try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
     if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
     if (!w) return;
-    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
+    var known = !!(w.name || w.wax || w.xrp || w.discord);
     var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
     if (known && !crypto) {
       document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });

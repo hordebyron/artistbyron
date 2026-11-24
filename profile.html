@@ -42,7 +42,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 <main class="wrap">
   <div id="profile-intro">
   <h1>My Horde profile</h1>
-  <p>One person, one profile, one Horde number. Your profile lives on the shared Horde list, and that list is the only copy. Your wallet is just how you unlock your number on a device.</p>
+  <p>One person, one profile, one Horde number. Your profile lives on the shared Horde list, and that list is the only copy. You log in with your email. Your wallets are how the site counts your pieces and your level.</p>
   <p class="small">No password, no seed, ever. Wallet addresses are public on the chain already.</p>
   </div>
 
@@ -55,29 +55,11 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 
   <section class="card" id="unlock-card" hidden>
     <h2>Unlock your profile on this device</h2>
-    <p>Prove it is you once and this browser stays unlocked for 30 days. Each browser needs its own unlock, once. After that, saving just writes to the shared list. No code and no dust for every little edit, ever again.</p>
-    <p id="unlock-xaman-row"><button class="btn" type="button" id="unlock-xaman">Unlock with Xaman</button></p>
-    <p class="small" id="unlock-xaman-status">One tap. Approve in Xaman, come back, unlocked for 30 days. No code, no dust.</p>
-    <div id="unlock-xaman-box" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px">
-      <p class="small" id="unlock-xaman-text">Scan this with your Xaman app to unlock.</p>
-      <p><img id="unlock-xaman-qr" src="" alt="Scan this QR code with Xaman" style="max-width:220px;width:100%;background:#fff;padding:8px;border-radius:8px"></p>
-      <p><a class="btn" id="unlock-xaman-link" href="#">Open in Xaman</a></p>
-    </div>
-    <p id="unlock-email-row"><label for="unlock-email-addr">Or unlock with your email</label><br><input id="unlock-email-addr" type="email" autocomplete="email" placeholder="you@example.com" style="width:min(320px,100%)"> <button class="btn" type="button" id="unlock-email-send">Email me a code</button></p>
+    <p>Prove it is you once and this browser stays unlocked for 30 days. Each browser needs its own unlock, once. After that, saving just writes to the shared list. No code for every little edit, ever again.</p>
+    <p id="unlock-email-row"><label for="unlock-email-addr">Unlock with your email</label><br><input id="unlock-email-addr" type="email" autocomplete="email" placeholder="you@example.com" style="width:min(320px,100%)"> <button class="btn" type="button" id="unlock-email-send">Email me a code</button></p>
     <p id="unlock-email-code-row" hidden><label for="unlock-email-code">Code from your inbox</label><br><input id="unlock-email-code" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" maxlength="6" style="width:120px"> <button class="btn" type="button" id="unlock-email-go">Unlock</button></p>
     <p class="small" id="unlock-email-status"></p>
-    <p id="unlock-wax-row"><button class="btn" type="button" id="unlock-wax">Unlock with WAX</button></p>
-    <p class="small" id="unlock-wax-status">Works with Anchor or the WAX Cloud Wallet. The wallet will ask you to send a tiny proof, 0.0001 WAX, with a code in the memo. That one proof is the unlock.</p>
-    <p id="unlock-xrp-row"><label for="unlock-xrp-addr">Or unlock with XRP: your XRPL address</label>
-    <input type="text" id="unlock-xrp-addr" placeholder="r..." autocomplete="off" spellcheck="false">
-    <button class="btn ghost" type="button" id="unlock-xrp">Unlock with XRP</button></p>
-    <div id="unlock-box" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px">
-      <p style="margin-top:0"><strong>One small proof, then you are unlocked.</strong></p>
-      <p class="small" id="unlock-text"></p>
-      <p style="font-size:1.6rem;letter-spacing:.2em;margin:8px 0" id="unlock-code"></p>
-      <p class="small" id="unlock-status" aria-live="polite"></p>
-    </div>
-    <p class="small">Typing an address or a number lets you look, never edit. Only the wallet proof unlocks.</p>
+    <p class="small">Logging in is by email only. Once you are in, you can link your wallets from the edit section below.</p>
   </section>
 
   <section class="card" id="profile-view-card" hidden>
@@ -115,8 +97,6 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
           <input type="text" id="pf-about" placeholder="e.g. Collector of zombie cats" autocomplete="off" maxlength="120"></p>
           <p><label for="pf-discord">Discord name</label>
           <input type="text" id="pf-discord" placeholder="Your Discord name" autocomplete="off" maxlength="40"></p>
-          <p><label for="pf-kofi">Ko-fi name</label>
-          <input type="text" id="pf-kofi" placeholder="Your Ko-fi name" autocomplete="off" maxlength="40"></p>
           <p><label for="pf-x">X handle</label>
           <input type="text" id="pf-x" placeholder="@yourname" autocomplete="off" maxlength="40"></p>
           <p><label for="pf-base">Base wallet</label>
@@ -128,8 +108,32 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
           <p><button class="btn" type="submit">Save</button></p>
         </form>
         <p class="small" id="pf-status" aria-live="polite"></p>
-        <p class="small">Your name, WAX and XRP are set when you register and are not edited here. If one of those is wrong, tell Byron and he will fix it. Base and Solana you can change here any time.</p>
+        <p class="small">Your name is set when you register and is not edited here. If it is wrong, tell Byron and he will fix it. Base and Solana you can change here any time. WAX and XRP link below, with proof.</p>
       </div>
+    </div>
+    <div id="link-wallets">
+      <h3>Link your wallets</h3>
+      <p class="small">Your WAX and XRP wallets are how the site counts your pieces and your level. Link one here, then prove it is yours with one tiny send. One wallet per chain. If a wallet is already on another profile, it cannot be linked here.</p>
+      <p><label for="link-wax">WAX name</label>
+      <input type="text" id="link-wax" placeholder="e.g. ylab4.wam" autocomplete="off" spellcheck="false" maxlength="12">
+      <button class="btn ghost" type="button" id="link-wax-btn">Prove and link</button></p>
+      <p class="small" id="link-wax-status"></p>
+      <p><label for="link-xrp">XRPL address</label>
+      <input type="text" id="link-xrp" placeholder="r..." autocomplete="off" spellcheck="false">
+      <button class="btn ghost" type="button" id="link-xrp-btn">Prove and link</button></p>
+      <p class="small" id="link-xrp-status"></p>
+      <div id="link-box" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px">
+        <p style="margin-top:0"><strong>One small proof, then it is linked.</strong></p>
+        <p class="small" id="link-text"></p>
+        <p style="font-size:1.6rem;letter-spacing:.2em;margin:8px 0" id="link-code"></p>
+        <p class="small" id="link-status" aria-live="polite"></p>
+      </div>
+    </div>
+    <div id="pfp-upload">
+      <h3>Your picture</h3>
+      <p class="small">Pick a piece from your own collections below, or upload a picture of your own. It gets shrunk to fit and becomes your profile picture.</p>
+      <p><input type="file" id="pfp-file" accept="image/jpeg,image/png,image/webp"> <button class="btn ghost" type="button" id="pfp-upload-btn">Upload picture</button></p>
+      <p class="small" id="pfp-upload-status"></p>
     </div>
   </section>
 
@@ -172,11 +176,13 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
 <script>
 /* Horde profile, clean build (live 21 Nov 2026, replaced the old page).
-   The model, decided 21 Nov 2026 after the old page's save saga:
+   The model, decided 21 Nov 2026 after the old page's save saga, and
+   updated 23 Nov 2026 to email-only login:
    - The profile is ONE row on the shared list, keyed by Horde number.
      That row is the only copy. This page reads it fresh every load.
-   - The wallet is a key, not a storage place. One dust proof unlocks
-     this device for 30 days (a session token from the checker).
+   - You log in with your email. One code mints a 30 day session.
+   - Wallets link from the edit section below, with a dust proof from
+     that exact wallet. The proof guards the link, not the login.
    - Saving carries the token and writes straight to the row. No codes,
      no dust, no device mirror that can drift or go missing.
    - Viewing by number is public. Editing exists only when unlocked
@@ -213,7 +219,7 @@ async function sbExtras(no){
   return out;
 }
 function rowToP(row){
-  return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '', email_verified: row.email_verified || false, x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', base: row.base || '', sol: row.sol || '' };
+  return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', email_verified: row.email_verified || false, x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', base: row.base || '', sol: row.sol || '' };
 }
 
 var OUR_ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
@@ -314,10 +320,11 @@ function renderBadges(p, hasKey){
 function fillForm(p){
   document.getElementById('pf-about').value = p.about || '';
   document.getElementById('pf-discord').value = p.discord || '';
-  document.getElementById('pf-kofi').value = p.kofi || '';
   document.getElementById('pf-x').value = p.x || '';
   document.getElementById('pf-base').value = p.base || '';
   document.getElementById('pf-sol').value = p.sol || '';
+  document.getElementById('link-wax').value = p.wax || '';
+  document.getElementById('link-xrp').value = p.xrp || '';
   document.getElementById('pfp-preview').src = pfpSrc(p.pfp);
   document.getElementById('edit-who').textContent = 'You are editing Horde profile #' + p.no + ', ' + p.name + '. These are the same words everyone sees on the shared list.';
 }
@@ -357,7 +364,6 @@ async function renderProfile(row){
   document.getElementById('view-wallets').innerHTML = w.length ? w.join('') : 'No wallets on this profile yet.';
   var l = [];
   if (p.discord) l.push('Discord: ' + p.discord);
-  if (p.kofi) l.push('Ko-fi: ' + p.kofi);
   if (p.x) l.push('X: ' + p.x);
   document.getElementById('view-links').textContent = l.join('  ·  ');
   var note = document.getElementById('view-note');
@@ -738,7 +744,6 @@ document.getElementById('profile-form').addEventListener('submit', async functio
   var fields = {
     about: document.getElementById('pf-about').value.trim(),
     discord: document.getElementById('pf-discord').value.trim(),
-    kofi: document.getElementById('pf-kofi').value.trim(),
     x_handle: document.getElementById('pf-x').value.trim(),
     base: document.getElementById('pf-base').value.trim(),
     sol: document.getElementById('pf-sol').value.trim()
@@ -765,161 +770,141 @@ document.getElementById('profile-form').addEventListener('submit', async functio
   }
 });
 
-/* Unlock: one dust proof, one 30 day session. */
-var loginPollTimer = null;
-async function pollLogin(nonce){
-  var st = document.getElementById('unlock-status');
-  var tries = 0;
-  clearInterval(loginPollTimer);
-  loginPollTimer = setInterval(async function(){
-    tries++;
-    var res;
-    try { res = await checkerPost({ action: 'login', nonce: nonce }); } catch (e) { return; }
-    if (res && res.status === 'logged_in' && res.token) {
-      clearInterval(loginPollTimer);
-      state.session = { token: res.token, profile_no: res.profile_no, name: res.name || '' };
-      storeSession(state.session);
-      if (st) st.textContent = 'Unlocked. Welcome back, ' + (res.name || '') + '.';
-      var row = await sbByNo(res.profile_no);
-      if (row) {
-        try { localStorage.setItem('horde_registration', JSON.stringify({ name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
-        await renderProfile(row);
-      }
-      var vc = document.getElementById('profile-view-card');
-      if (vc) vc.scrollIntoView({ behavior: 'smooth' });
-    } else if (res && (res.status === 'expired' || res.status === 'used' || res.status === 'unknown')) {
-      clearInterval(loginPollTimer);
-      if (st) st.textContent = 'That code is done. Start the unlock again and use the fresh code.';
-    } else if (tries > 60) {
-      clearInterval(loginPollTimer);
-      if (st) st.textContent = 'Still no proof seen after a few minutes. If you sent it, wait a bit and try the unlock again. Nothing is lost.';
-    }
-  }, 4000);
-}
-window.__beginUnlock = async function(chain, address){
-  try { localStorage.setItem('horde_unlock_chain', chain); } catch (e) {}
-  var box = document.getElementById('unlock-box');
-  var txt = document.getElementById('unlock-text');
-  var code = document.getElementById('unlock-code');
-  var st = document.getElementById('unlock-status');
+/* Link a wallet: one dust proof, then the wallet joins your profile.
+   Login is email-only now, so the dust proof guards linking, not
+   unlocking. Same code flow as the old unlock, but when the proof
+   lands the page calls the link action instead of logging in. */
+var linkPollTimer = null;
+function stopLinkPoll(){ if (linkPollTimer) { clearInterval(linkPollTimer); linkPollTimer = null; } }
+async function beginLinkProof(chain, address, st){
+  if (!state.session || !state.mine) { st.textContent = 'This device is not unlocked for this profile. Unlock above first.'; return; }
+  var box = document.getElementById('link-box');
+  var txt = document.getElementById('link-text');
+  var code = document.getElementById('link-code');
+  var lst = document.getElementById('link-status');
   box.hidden = false;
-  txt.textContent = 'Getting your one-time code…';
+  txt.textContent = 'Getting your one-time code\u2026';
   code.textContent = '';
+  lst.textContent = '';
   st.textContent = '';
   var ch;
-  try { ch = await checkerPost({ action: 'challenge', chain: chain, address: address }); }
+  try { ch = await checkerPost({ action: 'challenge', chain: chain, address: address, token: state.session.token }); }
   catch (e) { txt.textContent = 'The checker could not be reached just now. Try again in a minute.'; return; }
   if (!ch || !ch.nonce) {
-    txt.textContent = (ch && ch.error) ? ch.error : 'No Horde profile has that wallet. Register first, then unlock.';
+    txt.textContent = (ch && ch.error) ? ch.error : 'That wallet could not be linked.';
     return;
   }
   code.textContent = ch.nonce;
   if (chain === 'wax' && window.__sendWaxProof) {
-    txt.textContent = 'One tap left. Your wallet will pop up to send the tiny proof, 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ', with the code already filled in as the memo. Approve it and this device unlocks.';
-    st.textContent = 'Opening your wallet…';
+    txt.textContent = 'One tap left. Your wallet will pop up to send the tiny proof, 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ', with the code already filled in as the memo. Approve it and the wallet links.';
+    lst.textContent = 'Opening your wallet\u2026';
     try {
       await window.__sendWaxProof(ch.send_to || 'hordesmuse42', ch.nonce);
-      st.textContent = 'Proof sent. Watching for it, this can take a minute or two.';
+      lst.textContent = 'Proof sent. Watching for it, this can take a minute or two.';
     } catch (e) {
       txt.textContent = 'No problem, send the proof by hand instead. From your WAX wallet ' + address + ', send 0.0001 WAX to ' + (ch.send_to || 'hordesmuse42') + ' with exactly this code as the memo.';
-      st.textContent = 'Watching the chain for your proof.';
+      lst.textContent = 'Watching the chain for your proof.';
     }
   } else {
     txt.textContent = chain === 'wax'
       ? 'From your WAX wallet ' + address + ', send 0.0001 WAX to hordesmuse42 with exactly this code as the memo.'
       : 'From your XRP wallet ' + address + ', send 1 drop (0.000001 XRP) to ' + ch.send_to + ' with exactly this code as the memo. In Xaman the memo is called a tag or note on some screens, use the one labelled memo.';
-    st.textContent = 'Watching the chain for your proof.';
+    lst.textContent = 'Watching the chain for your proof.';
   }
   box.scrollIntoView({ behavior: 'smooth' });
-  pollLogin(ch.nonce);
-};
-/* Lead with the chain this browser unlocked with last time, and fill in
-   the XRP address this browser already proved, so the card never pushes
-   WAX at someone who unlocks with XRP. */
-(function(){
-  try {
-    var last = localStorage.getItem('horde_unlock_chain') || '';
-    var proven = localStorage.getItem('horde_proven') || '';
-    var xr = document.getElementById('unlock-xrp-row');
-    var wx = document.getElementById('unlock-wax-row');
-    if (last === 'xrp' && xr && wx && xr.parentNode === wx.parentNode) xr.parentNode.insertBefore(xr, wx);
-    if (/^r[0-9a-zA-Z]{24,34}$/.test(proven)) {
-      var f = document.getElementById('unlock-xrp-addr');
-      if (f && !f.value) f.value = proven;
-    }
-  } catch (e) {}
-})();
-/* One-tap unlock with Xaman: the sign-in is the proof, so no dust, no
-   memo code. Same create/poll flow as the login page, then the function
-   mints the 30 day session straight away. */
-var xamanUnlockTimer = null;
-var xamanUnlockUuid = null;
-function xamanUnlockCall(body) {
-  return fetch(SB_URL + '/functions/v1/xaman-signin', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function(r){ return r.json(); });
-}
-function stopXamanUnlock() { if (xamanUnlockTimer) { clearInterval(xamanUnlockTimer); xamanUnlockTimer = null; } xamanUnlockUuid = null; }
-async function xamanUnlockStatus() {
-  if (!xamanUnlockUuid) return;
-  var uuid = xamanUnlockUuid;
-  var j;
-  try { j = await xamanUnlockCall({ action: 'status', uuid: uuid }); } catch (e) { return; }
-  if (xamanUnlockUuid !== uuid || !j || !j.ok) return;
-  if (j.signed && j.account) {
-    stopXamanUnlock();
-    var st = document.getElementById('unlock-xaman-status');
-    var sj;
-    try { sj = await xamanUnlockCall({ action: 'session', uuid: uuid }); } catch (e) { sj = null; }
-    if (sj && sj.ok && sj.token) {
-      state.session = { token: sj.token, profile_no: sj.profile_no, name: sj.name || '' };
-      storeSession(state.session);
-      try { localStorage.setItem('horde_unlock_chain', 'xrp'); } catch (e) {}
-      if (st) st.textContent = 'Unlocked. Welcome back, ' + (sj.name || '') + '.';
-      var row = await sbByNo(sj.profile_no);
-      if (row) {
-        try { localStorage.setItem('horde_registration', JSON.stringify({ name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
-        await renderProfile(row);
-      }
-      var vc = document.getElementById('profile-view-card');
-      if (vc) vc.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      if (st) st.textContent = (sj && sj.error) || 'Unlock did not go through. Try again, or use the dust proof below.';
-    }
-  } else if (j.resolved || j.expired || j.cancelled) {
-    stopXamanUnlock();
-    var st2 = document.getElementById('unlock-xaman-status');
-    if (st2) st2.textContent = j.expired ? 'That login ran out of time. Tap Unlock with Xaman again for a fresh one.' : 'Unlock was cancelled in Xaman. Tap again, or use the dust proof below.';
-  }
-}
-document.getElementById('unlock-xaman').addEventListener('click', async function(){
-  var st = document.getElementById('unlock-xaman-status');
-  var box = document.getElementById('unlock-xaman-box');
-  var txt = document.getElementById('unlock-xaman-text');
-  var qr = document.getElementById('unlock-xaman-qr');
-  var link = document.getElementById('unlock-xaman-link');
-  if (st) st.textContent = 'Opening Xaman. Approve it there, then come back here.';
-  var j;
-  try { j = await xamanUnlockCall({ action: 'create' }); }
-  catch (e) { if (st) st.textContent = 'Xaman unlock could not start just now. Try again, or use the dust proof below.'; return; }
-  if (!j || !j.ok || !j.uuid) { if (st) st.textContent = (j && j.error) || 'Xaman unlock could not start just now. Try again, or use the dust proof below.'; return; }
-  stopXamanUnlock();
-  xamanUnlockUuid = j.uuid;
-  if (j.qr) qr.src = j.qr;
-  if (j.link) link.href = j.link;
-  box.hidden = false;
-  try {
-    var coarse = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window);
-    if (coarse && j.link) setTimeout(function(){ window.location.href = j.link; }, 400);
-  } catch (e) {}
-  if (txt) txt.textContent = 'Approve it in Xaman, then come back here. This page picks it up.';
   var tries = 0;
-  xamanUnlockTimer = setInterval(function(){
+  stopLinkPoll();
+  linkPollTimer = setInterval(async function(){
     tries++;
-    if (tries > 100) { stopXamanUnlock(); if (st) st.textContent = 'That login ran out of time. Tap Unlock with Xaman again for a fresh one.'; return; }
-    xamanUnlockStatus();
-  }, 3000);
+    var res;
+    try { res = await checkerPost({ action: 'check', nonce: ch.nonce }); }
+    catch (e) { return; }
+    if (!res) return;
+    if (res.status === 'proven') {
+      stopLinkPoll();
+      lst.textContent = 'Proof seen. Linking it to your profile\u2026';
+      var lk;
+      try { lk = await checkerPost({ action: 'link', token: state.session.token, chain: chain, address: address, nonce: ch.nonce }); }
+      catch (e) { lst.textContent = 'Link could not be reached just now. The proof is in, tap Prove and link again.'; return; }
+      if (lk && lk.ok) {
+        lst.textContent = lk.status === 'already_linked' ? 'That wallet is already linked to your profile.' : 'Linked. Your profile now counts this wallet.';
+        st.textContent = 'Linked.';
+        var row = await sbByNo(state.session.profile_no);
+        if (row) await renderProfile(row);
+      } else {
+        lst.textContent = (lk && lk.error) || 'Link did not go through. Try again.';
+      }
+    } else if (res.status === 'expired' || res.status === 'used' || res.status === 'unknown') {
+      stopLinkPoll();
+      lst.textContent = 'That code is done. Start the link again and use the fresh code.';
+    } else if (tries > 60) {
+      stopLinkPoll();
+      lst.textContent = 'Still no proof seen after a few minutes. If you sent it, wait a bit and try the link again. Nothing is lost.';
+    }
+  }, 4000);
+}
+document.getElementById('link-wax-btn').addEventListener('click', function(){
+  var st = document.getElementById('link-wax-status');
+  var v = document.getElementById('link-wax').value.trim().toLowerCase();
+  if (!/^[a-z1-5.]{1,12}$/.test(v)) { st.textContent = 'That WAX name does not look right. Lower case, 12 characters max, like ylab4.wam.'; return; }
+  beginLinkProof('wax', v, st);
 });
-document.addEventListener('visibilitychange', function(){ if (!document.hidden) xamanUnlockStatus(); });
-window.addEventListener('focus', function(){ xamanUnlockStatus(); });
+document.getElementById('link-xrp-btn').addEventListener('click', function(){
+  var st = document.getElementById('link-xrp-status');
+  var v = document.getElementById('link-xrp').value.trim();
+  if (!/^r[0-9a-zA-Z]{24,34}$/.test(v)) { st.textContent = 'That XRPL address does not look right. It should start with r.'; return; }
+  beginLinkProof('xrp', v, st);
+});
+/* Profile picture upload. The picture is shrunk to 512px in this
+   browser first, then sent to the checker function, which stores it
+   and points the profile picture at it. */
+document.getElementById('pfp-upload-btn').addEventListener('click', async function(){
+  var st = document.getElementById('pfp-upload-status');
+  if (!state.session || !state.mine) { st.textContent = 'This device is not unlocked for this profile. Unlock above first.'; return; }
+  var input = document.getElementById('pfp-file');
+  var file = input.files && input.files[0];
+  if (!file) { st.textContent = 'Pick a picture file first.'; return; }
+  if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/webp') { st.textContent = 'That file is not a picture. JPG, PNG or WebP only.'; return; }
+  st.textContent = 'Shrinking your picture\u2026';
+  var img;
+  try {
+    var dataUrl = await new Promise(function(resolve, reject){
+      var r = new FileReader();
+      r.onload = function(){ resolve(r.result); };
+      r.onerror = function(){ reject(new Error('read')); };
+      r.readAsDataURL(file);
+    });
+    img = await new Promise(function(resolve, reject){
+      var im = new Image();
+      im.onload = function(){ resolve(im); };
+      im.onerror = function(){ reject(new Error('load')); };
+      im.src = dataUrl;
+    });
+  } catch (e) { st.textContent = 'That picture could not be read. Try another file.'; return; }
+  var max = 512;
+  var scale = Math.min(1, max / Math.max(img.width, img.height));
+  var cv = document.createElement('canvas');
+  cv.width = Math.max(1, Math.round(img.width * scale));
+  cv.height = Math.max(1, Math.round(img.height * scale));
+  cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+  var blob = await new Promise(function(resolve){ cv.toBlob(resolve, 'image/jpeg', 0.85); });
+  if (!blob) { st.textContent = 'That picture could not be shrunk. Try another file.'; return; }
+  var b64 = await new Promise(function(resolve, reject){
+    var r = new FileReader();
+    r.onload = function(){ resolve(String(r.result).split(',')[1] || ''); };
+    r.onerror = function(){ reject(new Error('read')); };
+    r.readAsDataURL(blob);
+  });
+  st.textContent = 'Uploading your picture\u2026';
+  var j;
+  try { j = await checkerPost({ action: 'pfp', token: state.session.token, type: 'image/jpeg', data: b64 }); }
+  catch (e) { st.textContent = 'Upload could not be reached just now. Try again in a bit.'; return; }
+  if (!j || !j.ok) { st.textContent = (j && j.error) || 'Upload did not go through. Try again.'; return; }
+  st.textContent = 'Uploaded. That is your profile picture now.';
+  document.getElementById('pfp-preview').src = j.pfp;
+  var row = await sbByNo(state.session.profile_no);
+  if (row) await renderProfile(row);
+});
 /* Email unlock: same code flow as the login page, mints the 30 day
    session in place. */
 function emailUnlockCall(body) {
@@ -954,23 +939,11 @@ document.getElementById('unlock-email-go').addEventListener('click', async funct
   st.textContent = 'Unlocked. Welcome back, ' + (j.name || '') + '.';
   var row = await sbByNo(j.profile_no);
   if (row) {
-    try { localStorage.setItem('horde_registration', JSON.stringify({ name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', kofi: row.kofi || '' })); } catch (e) {}
+    try { localStorage.setItem('horde_registration', JSON.stringify({ name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '' })); } catch (e) {}
     await renderProfile(row);
   }
   var vc = document.getElementById('profile-view-card');
   if (vc) vc.scrollIntoView({ behavior: 'smooth' });
-});
-document.getElementById('unlock-xrp').addEventListener('click', function(){
-  var addr = document.getElementById('unlock-xrp-addr').value.trim();
-  var st = document.getElementById('unlock-status');
-  if (!/^r[0-9a-zA-Z]{24,34}$/.test(addr)) {
-    document.getElementById('unlock-box').hidden = false;
-    document.getElementById('unlock-text').textContent = 'That XRPL address does not look right. It should start with r.';
-    document.getElementById('unlock-code').textContent = '';
-    if (st) st.textContent = '';
-    return;
-  }
-  window.__beginUnlock('xrp', addr);
 });
 
 /* Start: session first, then the number in the link, then your own. */
@@ -995,7 +968,7 @@ document.getElementById('unlock-xrp').addEventListener('click', function(){
   if (!target) {
     var note2 = document.getElementById('view-note');
     note2.hidden = false;
-    note2.textContent = 'No profile loaded yet. Put your number in above, or unlock with your wallet below and your own profile loads itself.';
+    note2.textContent = 'No profile loaded yet. Put your number in above, or unlock with your email below and your own profile loads itself.';
   }
   document.getElementById('unlock-card').hidden = !!state.session;
   if (state.session) {
@@ -1005,14 +978,10 @@ document.getElementById('unlock-xrp').addEventListener('click', function(){
 })();
 </script>
 <script>
-/* WAX unlock. Classic script with a dynamic import, the pattern that
-   works on every page of this site: the esm.sh Wharfkit build inside
-   try/catch, errors written to the status line. */
+/* WAX proof send. Only used to send the tiny link proof from the
+   member's own wallet, never to log in. Classic script with a dynamic
+   import, the pattern that works on every page of this site. */
 (function(){
-  var btn = document.getElementById('unlock-wax');
-  var st = document.getElementById('unlock-wax-status');
-  if (!btn || !st) return;
-  var kit = null, sess = null;
   async function init(){
     try {
       var m = await Promise.all([
@@ -1021,30 +990,18 @@ document.getElementById('unlock-xrp').addEventListener('click', function(){
         import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
         import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
       ]);
-      kit = new m[0].SessionKit({ appName: 'artistbyron', chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }], ui: new m[1].WebRenderer(), walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()] });
-      window.__waxKit = kit;
+      var kit = new m[0].SessionKit({ appName: 'artistbyron', chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }], ui: new m[1].WebRenderer(), walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()] });
       window.__sendWaxProof = async function(to, memo){
-        var s = sess;
-        if (!s) { try { s = await kit.restore(); } catch (e) {} }
+        var s = null;
+        try { s = await kit.restore(); } catch (e) {}
         if (!s) { var res = await kit.login(); s = res.session; }
-        sess = s;
         var actor = String(s.actor);
         var perm = null;
         try { perm = s.permissionLevel || null; } catch (e) {}
         if (!perm) perm = { actor: actor, permission: 'active' };
         return await s.transact({ actions: [{ account: 'eosio.token', name: 'transfer', authorization: [perm], data: { from: actor, to: to, quantity: '0.00010000 WAX', memo: memo } }] });
       };
-      btn.addEventListener('click', async function(){
-        btn.disabled = true; st.textContent = 'Opening your wallet…';
-        try {
-          var res = await kit.login(); sess = res.session;
-          st.textContent = 'Wallet proven as ' + String(sess.actor) + '. Getting your unlock code…';
-          await window.__beginUnlock('wax', String(sess.actor));
-        } catch (e) { st.textContent = 'Unlock cancelled or failed. You can try again, nothing was changed.'; }
-        finally { btn.disabled = false; }
-      });
-      try { sess = await kit.restore(); if (sess) st.textContent = 'Your wallet is connected as ' + String(sess.actor) + '. Tap Unlock with WAX and approve the tiny proof to unlock this device.'; } catch (e) {}
-    } catch (e) { st.textContent = 'WAX login could not load just now. You can still view any profile by its number.'; }
+    } catch (e) { /* No wallet helper: the proof is sent by hand instead. */ }
   }
   init();
 })();
@@ -1080,7 +1037,7 @@ document.getElementById('unlock-xrp').addEventListener('click', function(){
     try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
     if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
     if (!w) return;
-    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
+    var known = !!(w.name || w.wax || w.xrp || w.discord);
     var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
     if (known && !crypto) {
       document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });

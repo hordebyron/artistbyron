@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde on WAX</title>
-<meta name="description" content="WAX side of the Horde. Log in with Anchor or Cloud Wallet, and see how much Byron art you hold on WAX.">
+<meta name="description" content="WAX side of the Horde. Paste your WAX name and see how much Byron art you hold on WAX.">
 
 
 
@@ -19,12 +19,11 @@
 <main class="wrap">
 <main class="wrap">
   <h1>WAX side</h1>
-  <p>Log in with your WAX wallet, Anchor or Cloud Wallet. The site only sees your account name, never your keys, and logging in signs nothing.</p>
+  <p>Paste your WAX name below to see how much Byron art you hold on WAX. To log in, use your email on the <a href="login.html">Log in</a> page. Once you are logged in, you can link your WAX wallet on your profile.</p>
 
   <section class="card" id="login-card">
-    <h2>Log in</h2>
-    <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button></p>
-    <p class="small" id="login-status">Not logged in yet.</p>
+    <h2>Check your WAX Horde</h2>
+    <p class="small" id="login-status">Paste your WAX name below.</p>
     <form id="paste-form">
       <label for="wax-input">Or paste your WAX name</label>
       <input type="text" id="wax-input" placeholder="e.g. ylab4.wam" autocomplete="off" spellcheck="false">
@@ -42,7 +41,7 @@
     <h2 id="welcome-title">Welcome</h2>
     <p id="welcome-text"></p>
     <div id="inventory"></div>
-    <p><a class="btn" id="wax-profile-link" href="profile.html">My Horde profile</a> <button class="btn ghost" type="button" id="wax-logout-btn">Log out</button></p>
+    <p><a class="btn" id="wax-profile-link" href="profile.html">My Horde profile</a></p>
   </section>
 
   <section class="card">
@@ -127,10 +126,7 @@ var welcomeCard = document.getElementById('welcome-card');
 var welcomeTitle = document.getElementById('welcome-title');
 var welcomeText = document.getElementById('welcome-text');
 var inventoryEl = document.getElementById('inventory');
-var loginBtn = document.getElementById('wax-login-btn');
-var logoutBtn = document.getElementById('wax-logout-btn');
 var waxInput = document.getElementById('wax-input');
-var sessionKit = null, session = null;
 var FOUNDERS = { 'ylab4.wam': 1, 'q52aw.wam': 1, 'fzyr.wam': 1, 'grkx.wam': 1, 'kylinvaderme': 1, 'mpvee.wam': 1, 'pzyas.wam': 1, 'byronjrempel': 1 };
 function applyFounderGate(name){
   var show = !!(name && FOUNDERS[String(name).toLowerCase()]);
@@ -182,7 +178,7 @@ async function showHorde(name) {
   welcomeText.textContent = 'Checking your WAX inventory…';
   inventoryEl.innerHTML = '';
   var sbRow = await sbFind(name, null);
-  if (sbRow) { sbMirrorLocal(sbRow); if (proven) { try { localStorage.setItem('horde_proven', name); } catch (e) {} } var pl = document.getElementById('wax-profile-link'); if (pl && sbRow.profile_no) pl.href = 'profile.html?n=' + sbRow.profile_no; if (proven) { welcomeText.textContent = 'Taking you to your Horde profile…'; setTimeout(function(){ location.href = 'profile.html'; }, 600); return; } }
+  if (sbRow) { sbMirrorLocal(sbRow); var pl = document.getElementById('wax-profile-link'); if (pl && sbRow.profile_no) pl.href = 'profile.html?n=' + sbRow.profile_no; }
   var displayName = await getRegisteredName(name);
   if (displayName) welcomeTitle.textContent = 'Welcome to the Horde, ' + displayName;
   try {
@@ -205,59 +201,6 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
   statusEl.textContent = 'Checking ' + name + ' by name, no login.';
   showHorde(name);
 });
-(function () {
-  async function init() {
-    try {
-      var m = await Promise.all([
-        import('https://esm.sh/@wharfkit/session@4.0.2'),
-        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
-        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
-      ]);
-      sessionKit = new m[0].SessionKit({
-        appName: 'artistbyron',
-        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
-        ui: new m[1].WebRenderer(),
-        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
-      });
-      loginBtn.addEventListener('click', async function () {
-        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
-        try {
-          var res = await sessionKit.login();
-          session = res.session;
-          var name = String(session.actor);
-          statusEl.textContent = 'Logged in as ' + name + ', proven by your wallet.';
-          loginCard.hidden = true;
-          waxInput.value = name;
-          showHorde(name);
-        } catch (e) {
-          statusEl.textContent = 'Login cancelled or failed. Paste your WAX name below instead.';
-        } finally { loginBtn.disabled = false; }
-      });
-      logoutBtn.addEventListener('click', async function () {
-        try { await sessionKit.logout(session); } catch (e) {}
-        session = null; waxInput.value = '';
-        applyFounderGate(null);
-        loginCard.hidden = false;
-        welcomeCard.hidden = true;
-        statusEl.textContent = 'Logged out.';
-      });
-      try {
-        session = await sessionKit.restore();
-        if (session) {
-          var name = String(session.actor);
-          statusEl.textContent = 'Logged in as ' + name + '.';
-          loginCard.hidden = true;
-          waxInput.value = name;
-          showHorde(name);
-        }
-      } catch (e) {}
-    } catch (e) {
-      statusEl.textContent = 'WAX login could not load just now. Paste your WAX name below instead, that still works.';
-    }
-  }
-  init();
-})();
 </script>
 
 <script>
@@ -271,7 +214,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
   a.href = '#';
   a.addEventListener('click', async function(e){
     e.preventDefault();
-    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); localStorage.removeItem('horde_session'); localStorage.removeItem('horde_email_login'); } catch (err) {}
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';

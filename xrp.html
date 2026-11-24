@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde on XRP</title>
-<meta name="description" content="XRP side of the Horde. Connect with Xaman or Joey, or paste your XRPL address, and see how much Byron art you hold on XRP.">
+<meta name="description" content="XRP side of the Horde. Paste your XRPL address and see how much Byron art you hold on XRP.">
 
 
 
@@ -31,21 +31,8 @@
 <main class="wrap">
 <main class="wrap xrp-centered">
   <section class="card" id="login-card">
-    <h2>Log in</h2>
-    <p>
-      <button class="btn" type="button" data-xrp-login="Xaman">Log in with Xaman</button>
-      <button class="btn ghost" type="button" data-xrp-login="Joey">Joey</button>
-    </p>
-    <p class="small" id="login-status">Tap Log in with Xaman to scan a code, or paste your address below.</p>
-        <details class="xaman-note" style="margin-top:8px">
-      <summary class="small" style="cursor:pointer">Using an iPhone? Tap here before the Xaman button.</summary>
-      <p class="small">On iPhone, tap the button, approve in Xaman, then flip back to this browser yourself. The page picks up your login when you come back, in Chrome or Safari. If Xaman does not open, check it is installed.</p>
-    </details>
-    <div id="xaman-qr" hidden>
-      <p>Scan this with your Xaman app to log in.</p>
-      <p><img id="xaman-qr-img" src="" alt="Scan this QR code with Xaman" style="max-width:220px;width:100%;background:#fff;padding:8px;border-radius:8px"></p>
-      <p><a class="btn" id="xaman-deeplink" href="#">Open in Xaman</a> <button class="btn ghost" type="button" id="xaman-cancel">Cancel</button></p>
-    </div>
+    <h2>Check your XRP Horde</h2>
+    <p class="small" id="login-status">Paste your XRPL address below to see your Horde.</p>
     <form id="paste-form">
       <label for="xrpl-input">Your XRPL address</label>
       <input type="text" id="xrpl-input" placeholder="r..." autocomplete="off" spellcheck="false">
@@ -70,7 +57,6 @@
 </main>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="profile.html">My Horde Profile</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.3/dist/xrpl-wallet-kit.iife.js"></script>
 <script>
 
 /* Supabase shared profiles (Horde Profiles project). The publishable
@@ -100,130 +86,6 @@ var welcomeTitle = document.getElementById('welcome-title');
 var welcomeText = document.getElementById('welcome-text');
 var inventoryEl = document.getElementById('inventory');
 var xrplInput = document.getElementById('xrpl-input');
-var xamanQrBox = document.getElementById('xaman-qr');
-var xamanQrImg = document.getElementById('xaman-qr-img');
-var xamanDeeplink = document.getElementById('xaman-deeplink');
-/* Xaman public client key for the Horde app. This key is made to live in browser code, it only identifies the app. The API secret is never used here and stays private. */
-var XAMAN_API_KEY = '09e6660d-6fce-4f1c-991f-7b0497ef709d';
-var xamanKit = null;
-function isPhone(){ try { return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window); } catch (e) { return false; } }
-/* Xaman login, the Chrome-proof way. The page asks our own function to
-   make a sign-in request with Xaman, then polls the function to learn
-   when the user approved. No return link is involved at all, so it works
-   in Chrome, Safari, or any browser on the phone: approve in Xaman, flip
-   back here yourself, the page picks it up. */
-var xamanPollTimer = null;
-var xamanUuid = null;
-var xamanTries = 0;
-function xamanSigninCall(body) {
-  return fetch(SB_URL + '/functions/v1/xaman-signin', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function(r){ return r.json(); });
-}
-function stopXamanPoll() { if (xamanPollTimer) { clearInterval(xamanPollTimer); xamanPollTimer = null; } xamanUuid = null; xamanTries = 0; }
-function hideXamanQr() { stopXamanPoll(); xamanQrBox.hidden = true; xamanQrImg.src = ''; window.__xamanAutoOpened = false; }
-async function xamanStatus() {
-  if (!xamanUuid) return;
-  var uuid = xamanUuid;
-  var j;
-  try { j = await xamanSigninCall({ action: 'status', uuid: uuid }); } catch (e) { return; }
-  if (xamanUuid !== uuid || !j || !j.ok) return;
-  if (j.signed && j.account) {
-    var addr = normAddr(j.account);
-    stopXamanPoll();
-    hideXamanQr();
-    if (addr) {
-      statusEl.textContent = 'Logged in with Xaman as ' + shortAddr(addr) + '.';
-      showHorde(addr, true);
-      /* The sign-in is the unlock: mint the 30 day session in the
-         background, so the profile page already counts this browser
-         as yours when you tap through to it. */
-      xamanSigninCall({ action: 'session', uuid: uuid }).then(function(sj){
-        if (sj && sj.ok && sj.token) {
-          try { localStorage.setItem('horde_session', JSON.stringify({ token: sj.token, profile_no: sj.profile_no, name: sj.name || '' })); } catch (e) {}
-          try { localStorage.setItem('horde_unlock_chain', 'xrp'); } catch (e) {}
-        } else if (sj && sj.error) {
-          statusEl.textContent = sj.error;
-        }
-      }).catch(function(){});
-    } else {
-      statusEl.textContent = 'Xaman did not return an address. Try again, or paste your address below.';
-    }
-  } else if (j.resolved || j.expired || j.cancelled) {
-    stopXamanPoll(); hideXamanQr();
-    statusEl.textContent = j.expired ? 'That login ran out of time. Tap Log in with Xaman again for a fresh one.' : 'Xaman login was cancelled. Tap Log in with Xaman again, or paste your address below.';
-  }
-}
-function getXamanKit() {
-  if (xamanKit) return xamanKit;
-  if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) return null;
-  /* The kit stays for Joey and for picking up older sessions. Xaman logins
-     no longer go through it, they use the function above. */
-  xamanKit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman', 'joey-wallet'], xamanClientId: XAMAN_API_KEY, autoReconnect: true });
-  return xamanKit;
-}
-/* Pick up a finished Xaman login when the page loads again after the trip to the Xaman app.
-   The kit keeps a pending-recovery marker for about 3 minutes, so approve in Xaman and come back quickly. */
-async function tryAutoReconnect() {
-  var kit = getXamanKit();
-  if (!kit) return;
-  var mgr = kit.manager || kit;
-  if (!mgr || typeof mgr.autoReconnect !== 'function') return;
-  try {
-    await mgr.autoReconnect();
-    var acct = (typeof mgr.getAccount === 'function') ? mgr.getAccount() : null;
-    var addr = normAddr(acct);
-    if (addr) {
-      statusEl.textContent = 'Logged in with Xaman as ' + shortAddr(addr) + '.';
-      showHorde(addr, true);
-    }
-  } catch (e) {}
-}
-tryAutoReconnect();
-async function loginWithExtension(adapterId, label) {
-  var kit = getXamanKit();
-  if (!kit) { statusEl.textContent = label + ' login could not load. Paste your address below instead, that still shows your real Horde.'; xrplInput.focus(); return; }
-  statusEl.textContent = 'Opening ' + label + '. Approve it in the extension.';
-  try {
-    var res = await kit.connect(adapterId);
-    var addr = normAddr(res && res.account);
-    if (addr) {
-      statusEl.textContent = 'Logged in with ' + label + ' as ' + shortAddr(addr) + '.';
-      showHorde(addr, true);
-    } else {
-      statusEl.textContent = label + ' did not return an address. Make sure the extension is installed and unlocked, or paste your address below.';
-    }
-  } catch (e) {
-    statusEl.textContent = label + ' login was cancelled or failed. Make sure the extension is installed and unlocked, or paste your address below.';
-  }
-}
-async function loginWithXaman() {
-  statusEl.textContent = isPhone() ? 'Opening Xaman on this phone. Approve it there, then come back here.' : 'Opening Xaman. Scan the code with your Xaman app.';
-  var j;
-  try { j = await xamanSigninCall({ action: 'create' }); }
-  catch (e) { statusEl.textContent = 'Xaman login could not start just now. Paste your address below instead, that still shows your real Horde.'; return; }
-  if (!j || !j.ok || !j.uuid) { statusEl.textContent = (j && j.error) || 'Xaman login could not start just now. Paste your address below instead.'; return; }
-  stopXamanPoll();
-  xamanUuid = j.uuid;
-  xamanTries = 0;
-  if (j.qr) xamanQrImg.src = j.qr;
-  if (j.link) xamanDeeplink.href = j.link;
-  xamanQrBox.hidden = false;
-  /* On a phone you cannot scan your own screen, so open Xaman directly.
-     The QR stays as the desktop path and as a fallback if the jump is blocked. */
-  if (isPhone() && j.link && !window.__xamanAutoOpened) {
-    window.__xamanAutoOpened = true;
-    setTimeout(function(){ window.location.href = j.link; }, 400);
-  }
-  xamanPollTimer = setInterval(function(){
-    xamanTries++;
-    if (xamanTries > 100) { stopXamanPoll(); hideXamanQr(); statusEl.textContent = 'That login ran out of time. Tap Log in with Xaman again for a fresh one.'; return; }
-    xamanStatus();
-  }, 3000);
-}
-/* When the user flips back to this browser after approving in Xaman,
-   check right away instead of waiting for the next poll. */
-document.addEventListener('visibilitychange', function(){ if (!document.hidden) xamanStatus(); });
-window.addEventListener('focus', function(){ xamanStatus(); });
-document.getElementById('xaman-cancel').addEventListener('click', function(){ hideXamanQr(); statusEl.textContent = 'Xaman login cancelled. Paste your address below, or tap Log in with Xaman again.'; });
 function shortAddr(a){ return a.length > 12 ? a.slice(0,6) + '...' + a.slice(-4) : a; }
 function normAddr(a){
   if (!a) return null;
@@ -288,17 +150,16 @@ async function liveByronHoldings(addr) {
     return { total: total, byKey: byKey };
   } catch (e) { return null; }
 }
-async function showHorde(addr, proven) {
+async function showHorde(addr) {
   /* After login, the login card goes away. Just the welcome, the count, and the list. */
   loginCard.hidden = true;
-  hideXamanQr();
   welcomeCard.hidden = false;
   welcomeTitle.textContent = 'Welcome to the Horde';
   welcomeText.textContent = 'Checking your XRP art…';
   inventoryEl.innerHTML = '';
   document.getElementById('switch-wallet-wrap').hidden = true;
   var sbRow = await sbFind(null, addr);
-  if (sbRow) { sbMirrorLocal(sbRow); if (proven) { try { localStorage.setItem('horde_proven', addr); } catch (e) {} } }
+  if (sbRow) { sbMirrorLocal(sbRow); }
   var name = await getRegisteredName(addr);
   var data = await loadCollections();
   var holdings = await liveByronHoldings(addr);
@@ -330,9 +191,8 @@ async function showHorde(addr, proven) {
   var html = '<ul class="collection-list">' + heldRows.map(rowHtml).join('') + '</ul>';
   if (zeroRows.length) html += '<details><summary>Collections you do not hold yet (' + zeroRows.length + ')</summary><ul class="collection-list">' + zeroRows.map(rowHtml).join('') + '</ul></details>';
   if (sbRow) html += '<p><a class="btn" href="profile.html?n=' + sbRow.profile_no + '">Your Horde profile is loaded, view it here</a></p>';
-  /* Stay here after login: profile.html only treats this device as yours
-     once it is unlocked there, so sending you straight over looks like
-     the login failed. The button above takes you to your profile. */
+  /* The button below takes you to your profile. Log in there with
+     your email to unlock it on this device. */
   inventoryEl.innerHTML = html;
   document.getElementById('switch-wallet-wrap').hidden = false;
 }
@@ -340,16 +200,7 @@ document.getElementById('switch-wallet').addEventListener('click', function(e){
   e.preventDefault();
   welcomeCard.hidden = true;
   loginCard.hidden = false;
-  statusEl.textContent = 'Tap Log in with Xaman to scan a code, or paste your address below.';
-});
-document.querySelectorAll('[data-xrp-login]').forEach(function(btn){
-  btn.addEventListener('click', function(){
-    var w = btn.getAttribute('data-xrp-login');
-    if (w === 'Xaman') { loginWithXaman(); return; }
-    if (w === 'Joey') { loginWithExtension('joey-wallet', 'Joey'); return; }
-    statusEl.textContent = w + ' login is coming. For now, paste your XRPL address below, that still shows your real Horde, no seed ever.';
-    xrplInput.focus();
-  });
+  statusEl.textContent = 'Paste your XRPL address below to see your Horde.';
 });
 document.getElementById('paste-form').addEventListener('submit', function(e){
   e.preventDefault();
@@ -371,7 +222,7 @@ document.getElementById('paste-form').addEventListener('submit', function(e){
   a.href = '#';
   a.addEventListener('click', async function(e){
     e.preventDefault();
-    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); localStorage.removeItem('horde_session'); localStorage.removeItem('horde_email_login'); } catch (err) {}
     try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
     try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
     location.href = 'index.html';
