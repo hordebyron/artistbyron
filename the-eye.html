@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Eye - Artist Byron</title>
+<meta name="description" content="The Eye, a one of one original painting by Byron. Buy it by card, or on WAX, XRP, Base or Ordinals. First buyer takes it, on any chain.">
+<style>
+.prod img{width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);display:block;margin-bottom:10px}
+.prod h3{margin-top:0}
+.feature-text h2{margin-top:0}
+.sold{background:#b91c1c;color:#fff;padding:12px 16px;border-radius:9px;font-weight:700}
+.door-closed{opacity:.6}
+@media (min-width:760px){
+  .feature{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+  .feature img{margin-bottom:0}
+}
+</style>
+<link rel="stylesheet" href="style.css?v=120">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>The Eye</h1>
+  <p id="sold-banner" class="sold" hidden>This piece is sold. Whoever bought it first took it, and it is gone from every door.</p>
+
+  <section class="card prod feature">
+    <div>
+    <img src="art/eye-2026-11-24-closeup.png" alt="The Eye, original painting">
+    </div>
+    <div class="feature-text">
+    <h2>One of one, five doors</h2>
+    <p class="price">CA$25 in Canada (about US$17.50) &middot; CA$30 elsewhere (about US$21), shipping included</p>
+    <p>A big swirling eye stares out of green, orange and pink. Painted by hand, one of one. The buyer gets the physical card, and the NFT on the chain they pick. <span class="sig">Signed by Byron. Original, one of one, not a print.</span></p>
+    <p>Small square painted card, about 5 inches. Introductory special for the new website.</p>
+    <p>Shipping is free in Canada, $5 everywhere else. If you want it tracked, contact Byron.</p>
+    <p class="small">One shared pool: whoever buys it first takes it, and it is gone from the rest. Each door is a single one of one, so it cannot sell twice on the same chain.</p>
+    </div>
+  </section>
+
+  <h2>Pick your door</h2>
+  <div class="card-grid" id="doors">
+    <section class="card prod">
+      <h3>Pay by card</h3>
+      <p class="price">CA$25 in Canada &middot; CA$30 elsewhere, shipping included</p>
+      <p>Pay by debit or credit card right here. At checkout, pick the chain you want the NFT on (WAX, XRP, Base or Ordinals) and type your wallet address. Muse mints it on that chain after payment.</p>
+      <p class="btn-row"><a class="btn" href="https://buy.stripe.com/3cI8wQ7VsgDV0ia5Db8IU0x">Pay by card &mdash; Canada</a><a class="btn" href="https://buy.stripe.com/4gM3cw8Zw2N56Gy6Hf8IU0y">Pay by card &mdash; Elsewhere</a></p>
+    </section>
+    <section class="card prod" id="wax-door">
+      <h3>WAX</h3>
+      <p class="price">5,000 WAX</p>
+      <p>Buy the one of one on WAX, straight from Byron's own drop contract. The money goes to Byron in full.</p>
+      <p class="btn-row" id="wax-buy"><a class="btn" href="#" onclick="return false;">WAX door opens soon</a></p>
+    </section>
+    <section class="card prod" id="xrp-door">
+      <h3>XRP</h3>
+      <p class="price">19 XRP</p>
+      <p>Buy the one of one on the XRP Ledger. Burnable, transferable, 13% royalty to Byron on resale.</p>
+      <p class="btn-row" id="xrp-buy"><a class="btn" href="#" onclick="return false;">XRP door opens soon</a></p>
+    </section>
+    <section class="card prod">
+      <h3>Base</h3>
+      <p class="price">0.01 ETH</p>
+      <p>The Base door opens soon. The contract is getting a burn function first, so every NFT stays burnable. Price when it opens: 0.01 ETH, pay then Muse mints it to your address.</p>
+    </section>
+    <section class="card prod">
+      <h3>Ordinals</h3>
+      <p class="price">0.00029 BTC</p>
+      <p>No inscription exists yet. When you pick this door, you pay, Byron inscribes it to your address, and Muse walks you through it. Email <a href="mailto:hordemuse@muse.ai">hordemuse@muse.ai</a> to start.</p>
+    </section>
+  </div>
+
+  <p class="small">Outside Canada, add $5 for shipping in the same crypto you pay with: WAX 1,000, XRP 4, ETH 0.002, BTC 0.00006. Tracked shipping: contact Byron.</p>
+  <p><a href="shop.html">&larr; Back to the shop</a></p>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
+<script src="script.js"></script>
+<script>
+(function(){
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  links.forEach(function(a){
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
+    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+  });
+})();
+</script>
+<!-- horde-nav-trim: logged-in members with no wallet on their profile get the plain Shop door, no crypto dropdown -->
+<script>
+(function () {
+  try {
+    var w = null;
+    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+    if (!w) return;
+    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
+    var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
+    if (known && !crypto) {
+      document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
+      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+    }
+  } catch (e) {}
+})();
+</script>
+<script>
+// The Eye: sold state and door links come from data/pieces.json, the single source of truth.
+(function () {
+  fetch('data/pieces.json').then(function (r) { return r.json(); }).then(function (d) {
+    var piece = null;
+    (d.pieces || []).forEach(function (p) { if (p.slug === 'the-eye') piece = p; });
+    if (!piece) return;
+    if (piece.status === 'sold') {
+      document.getElementById('sold-banner').hidden = false;
+      document.querySelectorAll('#doors .btn').forEach(function (b) {
+        b.textContent = 'Sold';
+        b.href = '#';
+        b.onclick = function () { return false; };
+      });
+      document.querySelectorAll('#doors .card').forEach(function (c) { c.classList.add('door-closed'); });
+      return;
+    }
+    var wax = piece.doors && piece.doors.wax;
+    if (wax && wax.drop) {
+      document.getElementById('wax-buy').innerHTML = '<a class="btn" href="sub-drop.html?d=' + wax.drop + '">Buy on WAX &mdash; 5,000 WAX</a>';
+    }
+    var xrp = piece.doors && piece.doors.xrp;
+    if (xrp && xrp.offer) {
+      document.getElementById('xrp-buy').innerHTML = '<a class="btn" href="xrp-market.html">Buy on XRP &mdash; 19 XRP</a>';
+    }
+  }).catch(function () {});
+})();
+</script>
+<!-- horde-feedback: floating bug report / suggestion box -->
+<style>
+#fb-btn{position:fixed;right:14px;bottom:14px;z-index:9998;background:#b91c1c;color:#fff;border:none;border-radius:999px;padding:8px 13px;font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+#fb-panel{position:fixed;right:14px;bottom:60px;z-index:9998;width:min(330px,calc(100vw - 28px));background:#14141b;border:1px solid #33333f;border-radius:12px;padding:16px;color:#f2f2f2;box-shadow:0 10px 34px rgba(0,0,0,.55)}
+#fb-panel h3{margin:.1em 0 .4em;font-size:1.05rem}
+#fb-panel p{font-size:.88rem;color:#b9b9c4;margin:.2em 0 .6em}
+#fb-panel textarea,#fb-panel input[type=text]{width:100%;box-sizing:border-box;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;margin:0 0 8px}
+#fb-panel .fb-kinds{display:flex;gap:8px;margin:0 0 8px}
+#fb-panel .fb-kinds button{flex:1;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-panel .fb-kinds button.on{background:#b91c1c;border-color:#b91c1c;color:#fff}
+#fb-send{width:100%;padding:11px;border:none;border-radius:8px;background:#b91c1c;color:#fff;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-msg{font-size:.88rem;min-height:1.2em;margin:.5em 0 0}
+</style>
+<button id="fb-btn" type="button">See a bug? Tell me</button>
+<div id="fb-panel" hidden>
+  <h3>Report a bug, or make a suggestion</h3>
+  <p>Muse reads every one of these, and we fix what we can.</p>
+  <div class="fb-kinds">
+    <button type="button" id="fb-kind-bug" class="on">Bug</button>
+    <button type="button" id="fb-kind-sug">Suggestion</button>
+  </div>
+  <textarea id="fb-text" rows="4" maxlength="2000" placeholder="What happened, or what would make this better?"></textarea>
+  <input type="text" id="fb-name" maxlength="80" placeholder="Your name (optional)">
+  <button id="fb-send" type="button">Send it</button>
+  <p id="fb-msg"></p>
+</div>
+<script>
+(function(){
+  var btn = document.getElementById('fb-btn'), panel = document.getElementById('fb-panel');
+  var kind = 'bug';
+  var kb = document.getElementById('fb-kind-bug'), ks = document.getElementById('fb-kind-sug');
+  function setKind(k){ kind = k; kb.className = k === 'bug' ? 'on' : ''; ks.className = k === 'suggestion' ? 'on' : ''; }
+  kb.addEventListener('click', function(){ setKind('bug'); });
+  ks.addEventListener('click', function(){ setKind('suggestion'); });
+  btn.addEventListener('click', function(){ panel.hidden = !panel.hidden; });
+  document.getElementById('fb-send').addEventListener('click', async function(){
+    var msg = document.getElementById('fb-msg');
+    var text = document.getElementById('fb-text').value.trim();
+    if (!text) { msg.textContent = 'Type a few words first.'; return; }
+    var send = document.getElementById('fb-send');
+    send.disabled = true; msg.textContent = 'Sending…';
+    try {
+      var r = await fetch('https://tuzzavnacfzveucwhdeq.supabase.co/rest/v1/site_feedback', {
+        method: 'POST',
+        headers: { apikey: 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', Authorization: 'Bearer sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
+      });
+      if (!r.ok) throw new Error('bad');
+      msg.textContent = 'Got it, thank you. Muse will read it.';
+      document.getElementById('fb-text').value = '';
+    } catch (e) {
+      msg.textContent = 'Could not send just now. Try again in a bit.';
+    }
+    send.disabled = false;
+  });
+})();
+</script>
+
+<script data-goatcounter="https://artistbyron.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
