@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=110">
+<link rel="stylesheet" href="style.css?v=114">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
       </select>
     </p>
     <p class="small" id="sales-status">Loading the market…</p>
-    <div id="sales-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px"></div>
+    <div id="sales-grid" class="mkt-grid"></div>
     <p style="margin-top:12px"><button class="btn ghost" type="button" id="sales-refresh">Refresh the market</button></p>
   </section>
 
@@ -50,7 +50,7 @@
       <h3>Your pieces</h3>
       <p><input type="text" id="piece-filter" placeholder="Type to filter by name" autocomplete="off" style="max-width:320px"></p>
       <p class="small" id="your-pieces-status">Loading your pieces…</p>
-      <div id="your-pieces" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px"></div>
+      <div id="your-pieces" class="mkt-grid"></div>
     </div>
   </section>
 </main>
@@ -70,11 +70,10 @@ var actor = null, kit = null, sess = null;
 
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 function imgTag(cid, alt, eager){
-  if (!cid) return '';
-  var st = 'width:100%;height:104px;object-fit:contain;border-radius:6px;background:#171310;color:transparent';
+  if (!cid) return '<div class="mkt-img"></div>';
   var ld = eager ? 'eager' : 'lazy';
-  if (/^https:/.test(cid)) return '<img src="' + esc(cid) + '" alt="" loading="' + ld + '" decoding="async" style="' + st + '">';
-  return '<img src="https://gateway.pinata.cloud/ipfs/' + esc(cid) + '" data-cid="' + esc(cid) + '" data-step="0" alt="" loading="' + ld + '" decoding="async" style="' + st + '" onerror="imgFallback(this)">';
+  if (/^https:/.test(cid)) return '<img src="' + esc(cid) + '" alt="" loading="' + ld + '" decoding="async" class="mkt-img">';
+  return '<img src="https://gateway.pinata.cloud/ipfs/' + esc(cid) + '" data-cid="' + esc(cid) + '" data-step="0" alt="" loading="' + ld + '" decoding="async" class="mkt-img" onerror="imgFallback(this)">';
 }
 function imgFallback(im){
   var step = parseInt(im.getAttribute('data-step') || '0', 10) + 1;
@@ -139,14 +138,15 @@ function renderSales(){
     var img = (a.data && a.data.img) || '';
     var sym = (s.price && s.price.token_symbol) || 'WAX';
     var card = document.createElement('div');
-    card.style.border = '1px solid var(--line)'; card.style.borderRadius = '10px'; card.style.padding = '7px'; card.style.fontSize = '13px';
+    card.className = 'mkt-card';
     var html = imgTag(img, a.name, cardNo <= 24)
-      + '<p style="margin:5px 0 1px;line-height:1.25"><strong>' + esc(a.name || 'Horde piece') + '</strong></p>'
-      + '<p class="small" style="margin:1px 0">' + esc(COLL_LABEL[s.collection_name] || s.collection_name || '') + '</p>'
-      + '<p class="small" style="margin:1px 0">Seller: ' + esc(s.seller || '') + '</p>'
-      + '<p style="margin:4px 0"><strong>' + (sym === 'WAX' ? fmtWax(s.price.amount) : esc(((parseInt(s.price.amount, 10) / Math.pow(10, s.price.token_precision || 8)) || 0).toString())) + ' ' + esc(sym) + '</strong></p>';
-    if (sym === 'WAX') html += '<button class="btn" type="button" style="padding:3px 12px;font-size:13px" data-buy="' + s.sale_id + '">Buy</button>';
-    else html += '<a class="btn ghost" style="padding:3px 12px;font-size:13px" href="https://wax.atomichub.io/market/sale/' + s.sale_id + '" target="_blank" rel="noopener">AtomicHub</a>';
+      + '<p class="mkt-name">' + esc(a.name || 'Horde piece') + '</p>'
+      + '<p class="mkt-meta">' + esc(COLL_LABEL[s.collection_name] || s.collection_name || '') + '</p>'
+      + '<p class="mkt-meta">Seller: ' + esc(s.seller || '') + '</p>'
+      + '<div class="mkt-foot"><p class="mkt-price">' + (sym === 'WAX' ? fmtWax(s.price.amount) : esc(((parseInt(s.price.amount, 10) / Math.pow(10, s.price.token_precision || 8)) || 0).toString())) + ' ' + esc(sym) + '</p>';
+    if (sym === 'WAX') html += '<button class="btn" type="button" data-buy="' + s.sale_id + '">Buy</button>';
+    else html += '<a class="btn ghost" href="https://wax.atomichub.io/market/sale/' + s.sale_id + '" target="_blank" rel="noopener">AtomicHub</a>';
+    html += '</div>';
     card.innerHTML = html;
     grid.appendChild(card);
   });
@@ -259,15 +259,18 @@ function renderYourPieces(){
     shown++;
     var img = (a.data && a.data.img) || '';
     var card = document.createElement('div');
-    card.style.border = '1px solid var(--line)'; card.style.borderRadius = '10px'; card.style.padding = '7px'; card.style.fontSize = '13px';
+    card.className = 'mkt-card';
     card.innerHTML = imgTag(img, name)
-      + '<p style="margin:5px 0 1px;line-height:1.25"><strong>' + esc(name) + '</strong></p>'
-      + '<p class="small" style="margin:1px 0">' + esc(COLL_LABEL[a.collection && a.collection.collection_name] || '') + '</p>'
-      + '<p style="margin:4px 0"><input type="number" min="0" step="any" placeholder="WAX price" id="price-' + a.asset_id + '" style="width:88px"></p>';
+      + '<p class="mkt-name">' + esc(name) + '</p>'
+      + '<p class="mkt-meta">' + esc(COLL_LABEL[a.collection && a.collection.collection_name] || '') + '</p>';
+    var foot = document.createElement('div');
+    foot.className = 'mkt-foot';
+    foot.innerHTML = '<p style="margin:0 0 8px"><input type="number" min="0" step="any" placeholder="WAX price" id="price-' + a.asset_id + '" style="width:100%"></p>';
     var b = document.createElement('button');
-    b.className = 'btn'; b.type = 'button'; b.style.padding = '3px 12px'; b.style.fontSize = '13px'; b.textContent = 'List for sale';
+    b.className = 'btn'; b.type = 'button'; b.textContent = 'List for sale';
     b.addEventListener('click', function(){ listPiece(a.asset_id, b); });
-    card.appendChild(b);
+    foot.appendChild(b);
+    card.appendChild(foot);
     box.appendChild(card);
   });
   st.textContent = yourPieces.length

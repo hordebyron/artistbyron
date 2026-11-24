@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=110">
+<link rel="stylesheet" href="style.css?v=114">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@
       </select>
     </p>
     <p class="small" id="sales-status">Loading the market…</p>
-    <div id="sales-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px"></div>
+    <div id="sales-grid" class="mkt-grid"></div>
     <p class="small" id="sales-updated"></p>
   </section>
 
@@ -71,7 +71,7 @@
     <div id="my-pieces-wrap" hidden>
       <h3>Your Byron pieces</h3>
       <p class="small" id="my-pieces-status"></p>
-      <div id="my-pieces" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px"></div>
+      <div id="my-pieces" class="mkt-grid"></div>
     </div>
   </section>
 
@@ -361,40 +361,42 @@
     grid.innerHTML = '';
     list.forEach(function(o){
       var card = document.createElement('div');
-      card.className = 'card'; card.style.padding = '8px'; card.style.margin = '0';
+      card.className = 'mkt-card';
       var img = document.createElement('img');
-      img.alt = ''; img.style.cssText = 'width:100%;height:130px;object-fit:contain;background:#141210;border-radius:8px';
+      img.alt = ''; img.className = 'mkt-img';
       if (o.img) raceImg(img, o.img); else img.style.visibility = 'hidden';
       card.appendChild(img);
       var nm = document.createElement('p');
-      nm.style.cssText = 'margin:6px 0 2px;font-weight:600;font-size:.85rem;line-height:1.25';
+      nm.className = 'mkt-name';
       nm.textContent = o.name || 'Untitled piece';
       card.appendChild(nm);
-      var pr = document.createElement('p');
-      pr.style.cssText = 'margin:0 0 2px;font-size:.85rem';
-      pr.textContent = priceText(o.price);
-      card.appendChild(pr);
       var sl = document.createElement('p');
-      sl.className = 'small'; sl.style.margin = '0 0 6px';
+      sl.className = 'mkt-meta';
       sl.textContent = 'seller ' + shortAddr(o.seller) + ' · ' + o.issuer_name;
       card.appendChild(sl);
+      var foot = document.createElement('div');
+      foot.className = 'mkt-foot';
+      var pr = document.createElement('p');
+      pr.className = 'mkt-price';
+      pr.textContent = priceText(o.price);
+      foot.appendChild(pr);
       if (myAddr && o.seller === myAddr) {
         var mine = document.createElement('p');
         mine.className = 'small'; mine.style.margin = '0';
         mine.textContent = 'Your listing. Manage it under Sell your pieces.';
-        card.appendChild(mine);
+        foot.appendChild(mine);
       } else {
         var buy = document.createElement('button');
         buy.className = 'btn'; buy.type = 'button';
-        buy.style.cssText = 'padding:4px 10px;font-size:.8rem';
         buy.textContent = 'Buy';
         buy.addEventListener('click', function(){ buyOffer(o, buy); });
-        card.appendChild(buy);
+        foot.appendChild(buy);
         var alt = document.createElement('p');
         alt.className = 'small'; alt.style.margin = '6px 0 0';
         alt.innerHTML = 'or <a target="_blank" rel="noopener" href="https://bithomp.com/en/nft/' + esc(o.token) + '">view on Bithomp</a>';
-        card.appendChild(alt);
+        foot.appendChild(alt);
       }
+      card.appendChild(foot);
       grid.appendChild(card);
     });
   }
@@ -535,27 +537,29 @@
     piecesEl.innerHTML = '';
     shown.forEach(function(pc){
       var card = document.createElement('div');
-      card.className = 'card'; card.style.padding = '8px'; card.style.margin = '0';
+      card.className = 'mkt-card';
       var img = document.createElement('img');
-      img.alt = ''; img.style.cssText = 'width:100%;height:130px;object-fit:contain;background:#141210;border-radius:8px';
+      img.alt = ''; img.className = 'mkt-img';
       if (pc.img) raceImg(img, pc.img); else img.style.visibility = 'hidden';
       card.appendChild(img);
       var nm = document.createElement('p');
-      nm.style.cssText = 'margin:6px 0 2px;font-weight:600;font-size:.85rem;line-height:1.25';
+      nm.className = 'mkt-name';
       nm.textContent = pc.name || 'Untitled piece';
       card.appendChild(nm);
       var coll = document.createElement('p');
-      coll.className = 'small'; coll.style.margin = '0 0 6px';
+      coll.className = 'mkt-meta';
       coll.textContent = pc.issuer_name;
       card.appendChild(coll);
+      var foot = document.createElement('div');
+      foot.className = 'mkt-foot';
       if (listed[pc.token]) {
         var lp = document.createElement('p');
         lp.className = 'small'; lp.style.margin = '0';
         lp.textContent = 'Listed for ' + priceText(listed[pc.token].price) + '. Cancel it above any time.';
-        card.appendChild(lp);
+        foot.appendChild(lp);
       } else {
         var row = document.createElement('p');
-        row.style.margin = '0';
+        row.style.margin = '0 0 8px';
         var input = document.createElement('input');
         input.type = 'number'; input.min = '0'; input.step = 'any'; input.placeholder = 'Price';
         input.style.cssText = 'width:80px;margin-right:4px';
@@ -563,13 +567,13 @@
         sel.innerHTML = '<option value="XRP">XRP</option><option value="HORDE">$HORDE</option>';
         var btn = document.createElement('button');
         btn.className = 'btn'; btn.type = 'button';
-        btn.style.cssText = 'padding:4px 10px;font-size:.8rem;margin-top:4px';
         btn.textContent = 'List for sale';
         btn.addEventListener('click', function(){ listPiece(pc, input, sel, btn); });
         row.appendChild(input); row.appendChild(sel);
-        card.appendChild(row);
-        card.appendChild(btn);
+        foot.appendChild(row);
+        foot.appendChild(btn);
       }
+      card.appendChild(foot);
       piecesEl.appendChild(card);
     });
   }
