@@ -43,8 +43,16 @@ nav a:hover,nav a.active{border-color:var(--red);background:var(--red);color:#ff
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink) !important}
 .btn.paypal{background:#ffc439;color:#111 !important}
 .btn.paypal:hover{background:#f0b72a}
-.btn.cardpay{background:#232323}
-.btn.cardpay:hover{background:#000}
+.btn.cardpay{background:var(--red)}
+.btn.cardpay:hover{background:var(--red2)}
+.btn.kofi{background:#29abe0;border-color:#29abe0;color:#fff !important}
+.btn.kofi:hover{background:#1d8fc0}
+.btn.cryptopay{background:var(--gold);border-color:var(--gold);color:#111 !important}
+.btn.cryptopay:hover{background:#d9a93f}
+/* Pay with crypto only shows for a wallet login. Hidden by default, so
+   visitors and email-only logins never see a crypto mention. */
+.btn.pay-crypto{display:none}
+body.crypto-in .btn.pay-crypto{display:inline-block}
 .btn.paypal .pp{font-style:italic;font-weight:800;letter-spacing:-.03em;font-size:1.18rem;line-height:1}
 .btn.paypal .pp-a{color:#003087}
 .btn.paypal .pp-b{color:#0079c1}
