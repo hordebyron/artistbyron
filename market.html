@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=140">
+<link rel="stylesheet" href="style.css?v=142">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -457,29 +457,47 @@ async function loadDrops(){
   var now = Math.floor(Date.now() / 1000);
   drops = drops.filter(function(d){ return !d.end_time || d.end_time > now; }).slice(0, 3);
   if (!drops.length) { st.textContent = 'No drops are open right now. Check back soon.'; box.innerHTML = ''; return; }
-  await Promise.all(drops.map(async function(d){
-    if (d.contract !== 'atomicdropsx') return;
+  /* Paint right away from the saved drop list. The strip used to wait on the
+     live claimed-count service before painting anything, and that wait left it
+     stuck on "Loading..." in the browser. The counts refresh in the background
+     afterwards; if they never arrive, the saved counts stand. */
+  function paint(){
     try {
-      var rr = await fetch('https://wax.api.atomicassets.io/atomicdrops/v1/drops/' + d.drop_id);
-      var jj = await rr.json();
-      if (jj && jj.success && jj.data && jj.data.current_claimed != null) d.claimed = parseInt(jj.data.current_claimed, 10);
-    } catch (e) {}
-  }));
-  box.innerHTML = '';
+      box.innerHTML = '';
+      drops.forEach(function(d){
+        var a = document.createElement('a');
+        a.className = 'drop-card';
+        a.href = d.claim_url;
+        if (/^https:/.test(d.claim_url)) { a.target = '_blank'; a.rel = 'noopener'; }
+        var ends = d.end_time ? 'Ends ' + fmtDropEnd(d.end_time) : 'No end date';
+        var claimed = (d.max_claimable != null) ? '<p class="mkt-meta">' + d.claimed + ' of ' + d.max_claimable + ' claimed</p>' : '';
+        a.innerHTML = dropImg(d.image)
+          + '<p class="mkt-name">' + esc(d.name) + '</p>'
+          + '<p class="mkt-meta">' + esc(d.price_text) + '</p>' + claimed
+          + '<p class="mkt-meta">' + esc(ends) + '</p>';
+        box.appendChild(a);
+      });
+      st.textContent = '';
+    } catch (e) { st.textContent = 'The newest drops could not load just now.'; }
+  }
+  paint();
   drops.forEach(function(d){
-    var a = document.createElement('a');
-    a.className = 'drop-card';
-    a.href = d.claim_url;
-    if (/^https:/.test(d.claim_url)) { a.target = '_blank'; a.rel = 'noopener'; }
-    var ends = d.end_time ? 'Ends ' + fmtDropEnd(d.end_time) : 'No end date';
-    var claimed = (d.max_claimable != null) ? '<p class="mkt-meta">' + d.claimed + ' of ' + d.max_claimable + ' claimed</p>' : '';
-    a.innerHTML = dropImg(d.image)
-      + '<p class="mkt-name">' + esc(d.name) + '</p>'
-      + '<p class="mkt-meta">' + esc(d.price_text) + '</p>' + claimed
-      + '<p class="mkt-meta">' + esc(ends) + '</p>';
-    box.appendChild(a);
+    if (d.contract !== 'atomicdropsx') return;
+    var settled = false;
+    var to = setTimeout(function(){ settled = true; }, 5000);
+    fetch('https://wax.api.atomicassets.io/atomicdrops/v1/drops/' + d.drop_id)
+      .then(function(rr){ return rr.json(); })
+      .then(function(jj){
+        if (settled) return;
+        clearTimeout(to);
+        settled = true;
+        if (jj && jj.success && jj.data && jj.data.current_claimed != null) {
+          d.claimed = parseInt(jj.data.current_claimed, 10);
+          paint();
+        }
+      })
+      .catch(function(){ clearTimeout(to); settled = true; });
   });
-  st.textContent = '';
 }
 loadDrops();
 
