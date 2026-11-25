@@ -259,7 +259,7 @@ h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial 
 .nav-drop:hover .nav-menu,.nav-drop:focus-within .nav-menu{display:block}
 .nav-menu a{display:block;border-radius:8px}
 .nav-menu a[href="subscribe.html"]{display:none!important}
-.nav-menu .nav-big{display:block;font-weight:700}
+.nav-menu .nav-big{display:block;font-weight:700;font-size:1.15em}
 .nav-menu .nav-sub{display:block;font-size:.85em;opacity:.75}
 .nav-menu .nav-soon{display:block;padding:8px 12px;color:#a89f96;font-weight:600}
 .nav-toggle{display:none}
