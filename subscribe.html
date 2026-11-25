@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Subscriptions · Artist Byron</title>
 <meta name="description" content="One Horde membership, payable on either chain. Pick a tier, pay on WAX or XRP, and get monthly rewards from your tier's own collection.">
-<link rel="stylesheet" href="style.css?v=122">
+<link rel="stylesheet" href="style.css?v=127">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -37,7 +37,7 @@
       <li>First dibs on free drops and holder-only mints.</li>
       <li>The draw tickets and perks in your tier below.</li>
     </ul>
-    <p>Paying with crypto is open now, mint on demand: <a href="#crypto">how crypto subscriptions work</a>.</p>
+    <p class="crypto-gated" hidden>Paying with crypto is open now, mint on demand: <a href="#crypto">how crypto subscriptions work</a>.</p>
   </section>
 
   <section class="card">
@@ -90,7 +90,13 @@
     <p class="btn-row"><a class="btn ghost crypto-only" href="#crypto">Subscribe with crypto</a></p>
   </section>
 
-  <section class="card" id="crypto">
+  <section class="card" id="crypto-locked">
+    <h2>Pay with crypto</h2>
+    <p>Log in and link a wallet on your profile, and the crypto doors open here.</p>
+    <p class="btn-row"><a class="btn" href="login.html">Log in</a></p>
+  </section>
+
+  <section class="card crypto-gated" id="crypto" hidden>
     <h2>Pay with crypto</h2>
     <p><strong>On WAX, it is instant.</strong> Pick your tier and pay with WAX or DHC. DHC is 5% cheaper, our own token gets the deal. Your subscription NFT mints into your wallet the moment you pay, nothing is pre-minted, and it counts as the same membership on your Horde profile. One claim pays for one month; claim again next month to keep it rolling.</p>
     <p><strong>The Wanderer</strong> ($5 a month)<br>
@@ -133,21 +139,16 @@
   });
 })();
 </script>
-<!-- horde-nav-trim: logged-in members with no wallet on their profile get the plain Shop door, no crypto dropdown -->
+<!-- horde-crypto-gate: crypto nav links and crypto-only elements stay hidden until the visitor is logged in with a wallet on their profile (Byron, 24 Nov 2026) -->
 <script>
 (function () {
-  try {
-    var w = null;
-    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
-    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
-    if (!w) return;
-    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
-    var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
-    if (known && !crypto) {
-      document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
-      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
-    }
-  } catch (e) {}
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (hasWallet) return;
+  document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+  document.querySelectorAll('a[href="market.html"], a[href="xrp-market.html"], a[href="nft-gallery.html"]').forEach(function (m) { m.remove(); });
 })();
 </script>
 <!-- horde-feedback: floating bug report / suggestion box -->
@@ -205,6 +206,20 @@
     }
     send.disabled = false;
   });
+})();
+</script>
+
+<script>
+// horde-crypto-gate: crypto-gated elements stay hidden until the visitor is logged in with a wallet on their profile
+(function () {
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (!hasWallet) return;
+  document.querySelectorAll('.crypto-gated').forEach(function (el) { el.hidden = false; });
+  var locked = document.getElementById('crypto-locked');
+  if (locked) locked.hidden = true;
 })();
 </script>
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=122">
+<link rel="stylesheet" href="style.css?v=127">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -13,6 +13,25 @@
 <body>
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
+  <section class="card" id="crypto-locked">
+    <h2>This part of the Horde is for members with a wallet</h2>
+    <p>Log in and link a wallet on your profile, and the market opens here.</p>
+    <p class="btn-row"><a class="btn" href="login.html">Log in</a></p>
+  </section>
+  <script>
+  (function () {
+    var w = null;
+    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+    var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+    var locked = document.getElementById('crypto-locked');
+    if (hasWallet) { if (locked) locked.hidden = true; return; }
+    var main = document.querySelector('main');
+    if (main) Array.from(main.children).forEach(function (el) {
+      if (el !== locked && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') el.hidden = true;
+    });
+  })();
+  </script>
   <h1>The XRP Market</h1>
   <p>This is the Horde's own market. Byron pieces on XRP, offered for sale by the people who hold them, bought and sold right here on this page. You sign in your own wallet, the ledger settles it wallet to wallet, and nobody takes a marketplace cut. Not us, not anyone.</p>
 
@@ -611,21 +630,16 @@
   }
 })();
 </script>
-<!-- horde-nav-trim: logged-in members with no wallet on their profile get the plain Shop door, no crypto dropdown -->
+<!-- horde-crypto-gate: crypto nav links and crypto-only elements stay hidden until the visitor is logged in with a wallet on their profile (Byron, 24 Nov 2026) -->
 <script>
 (function () {
-  try {
-    var w = null;
-    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
-    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
-    if (!w) return;
-    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
-    var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
-    if (known && !crypto) {
-      document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
-      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
-    }
-  } catch (e) {}
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (hasWallet) return;
+  document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+  document.querySelectorAll('a[href="market.html"], a[href="xrp-market.html"], a[href="nft-gallery.html"]').forEach(function (m) { m.remove(); });
 })();
 </script>
 <!-- horde-feedback: floating bug report / suggestion box -->

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=122">
+<link rel="stylesheet" href="style.css?v=127">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -157,21 +157,16 @@ document.getElementById('email-login-go').addEventListener('click', async functi
   });
 })();
 </script>
-<!-- horde-nav-trim: logged-in members with no wallet on their profile get the plain Shop door, no crypto dropdown -->
+<!-- horde-crypto-gate: crypto nav links and crypto-only elements stay hidden until the visitor is logged in with a wallet on their profile (Byron, 24 Nov 2026) -->
 <script>
 (function () {
-  try {
-    var w = null;
-    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
-    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
-    if (!w) return;
-    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
-    var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
-    if (known && !crypto) {
-      document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
-      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
-    }
-  } catch (e) {}
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (hasWallet) return;
+  document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+  document.querySelectorAll('a[href="market.html"], a[href="xrp-market.html"], a[href="nft-gallery.html"]').forEach(function (m) { m.remove(); });
 })();
 </script>
 <!-- horde-feedback: floating bug report / suggestion box -->

@@ -16,7 +16,7 @@
   .feature img{margin-bottom:0}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=122">
+<link rel="stylesheet" href="style.css?v=127">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -51,32 +51,51 @@
       <p>PayPal works too. Email <a href="mailto:hordemuse@muse.ai">Horde's minions</a> and one of the Horde's minions will send you the payment link, then mint the NFT on the chain you pick after you pay.</p>
       <p class="btn-row"><a class="btn" href="https://buy.stripe.com/eVq00ka3AfzR5Cu1mV8IU0z">Pay by card &mdash; Canada</a><a class="btn" href="https://buy.stripe.com/bJebJ2grYdrJ7KC3v38IU0A">Pay by card &mdash; Elsewhere</a></p>
     </section>
-    <section class="card prod" id="wax-door">
+    <section class="card prod" id="crypto-locked">
+      <h3>Pay with crypto</h3>
+      <p>Log in and link a wallet on your profile, and the crypto doors open here.</p>
+      <p class="btn-row"><a class="btn" href="login.html">Log in</a></p>
+    </section>
+    <section class="card prod crypto-gated" id="wax-door" hidden>
       <h3>WAX</h3>
       <p class="price">5,000 WAX</p>
       <p>Buy the one of one on WAX, straight from Byron's own drop contract. The money goes to Byron in full.</p>
       <p class="btn-row" id="wax-buy"><a class="btn" href="#" onclick="return false;">WAX door opens soon</a></p>
     </section>
-    <section class="card prod" id="xrp-door">
+    <section class="card prod crypto-gated" id="xrp-door" hidden>
       <h3>XRP</h3>
       <p class="price">19 XRP</p>
       <p>Nothing is minted until you buy it. Send 19 XRP to this wallet with the note BUSH-SKULL, then email your XRP address to <a href="mailto:hordemuse@muse.ai">Horde's minions</a> and one of the Horde's minions mints the one of one straight to you. Burnable, transferable, 13% royalty to Byron on resale.</p>
       <p>This wallet:</p>
       <p>rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH</p>
     </section>
-    <section class="card prod">
+    <section class="card prod crypto-gated" hidden>
       <h3>Base</h3>
       <p class="price">0.01 ETH</p>
       <p>The Base door opens soon. The contract is getting a burn function first, so every NFT stays burnable. Price when it opens: 0.01 ETH, pay then one of the Horde's minions mints it to your address.</p>
     </section>
-    <section class="card prod">
+    <section class="card prod crypto-gated" hidden>
       <h3>Ordinals</h3>
       <p class="price">0.00029 BTC</p>
       <p>No inscription exists yet. When you pick this door, you pay, Byron inscribes it to your address, and one of the Horde's minions walks you through it. Email <a href="mailto:hordemuse@muse.ai">Horde's minions</a> to start.</p>
     </section>
   </div>
 
-  <p class="small">Outside Canada, add $5 for shipping in the same crypto you pay with: WAX 1,000, XRP 4, ETH 0.002, BTC 0.00006. Tracked shipping: contact Byron.</p>
+<script>
+// horde-crypto-gate: the crypto doors stay hidden until the visitor is logged in with a wallet on their profile
+(function () {
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (!hasWallet) return;
+  document.querySelectorAll('.crypto-gated').forEach(function (el) { el.hidden = false; });
+  var locked = document.getElementById('crypto-locked');
+  if (locked) locked.hidden = true;
+})();
+</script>
+
+  <p class="small crypto-gated" hidden>Outside Canada, add $5 for shipping in the same crypto you pay with: WAX 1,000, XRP 4, ETH 0.002, BTC 0.00006. Tracked shipping: contact Byron.</p>
   <p><a href="shop.html">&larr; Back to the shop</a></p>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
@@ -100,21 +119,16 @@
   });
 })();
 </script>
-<!-- horde-nav-trim: logged-in members with no wallet on their profile get the plain Shop door, no crypto dropdown -->
+<!-- horde-crypto-gate: crypto nav links and crypto-only elements stay hidden until the visitor is logged in with a wallet on their profile (Byron, 24 Nov 2026) -->
 <script>
 (function () {
-  try {
-    var w = null;
-    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
-    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
-    if (!w) return;
-    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
-    var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
-    if (known && !crypto) {
-      document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
-      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
-    }
-  } catch (e) {}
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (hasWallet) return;
+  document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+  document.querySelectorAll('a[href="market.html"], a[href="xrp-market.html"], a[href="nft-gallery.html"]').forEach(function (m) { m.remove(); });
 })();
 </script>
 <script>

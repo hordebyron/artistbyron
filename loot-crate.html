@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Holiday Loot Crate Token - Artist Byron</title>
 <meta name="description" content="The Horde Holiday Loot Crate as a token on WAX and XRP. Claim the physical crate, or hold the token as a credit for what you paid.">
-<link rel="stylesheet" href="style.css?v=122">
+<link rel="stylesheet" href="style.css?v=127">
 <style>
 main.wrap{max-width:900px}
 main.wrap h1{font-size:2rem}
@@ -29,7 +29,13 @@ main.wrap .card{padding:14px;margin:14px 0}
   <h1>The Holiday Loot Crate, as a token</h1>
   <p>The Horde Holiday Loot Crate, sold as a token on WAX and on XRP. The token IS the crate. Claim it and the physical crate ships to you. Or never claim it, and the token stands as a credit toward future purchases from Byron, for the full amount you paid for it.</p>
 
-  <section class="card">
+  <section class="card" id="crypto-locked">
+    <h2>Buy the token with crypto</h2>
+    <p>Log in and link a wallet on your profile, and the WAX and XRP doors open here.</p>
+    <p class="btn-row"><a class="btn" href="login.html">Log in</a></p>
+  </section>
+
+  <section class="card crypto-gated" hidden>
     <div class="chain-grid">
       <div class="chain">
         <img src="art/loot-crate-wax.png" alt="Horde Holiday Loot Crate token, WAX version">
@@ -236,21 +242,16 @@ main.wrap .card{padding:14px;margin:14px 0}
   });
 })();
 </script>
-<!-- horde-nav-trim: logged-in members with no wallet on their profile get the plain Shop door, no crypto dropdown -->
+<!-- horde-crypto-gate: crypto nav links and crypto-only elements stay hidden until the visitor is logged in with a wallet on their profile (Byron, 24 Nov 2026) -->
 <script>
 (function () {
-  try {
-    var w = null;
-    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
-    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
-    if (!w) return;
-    var known = !!(w.name || w.wax || w.xrp || w.kofi || w.discord);
-    var crypto = !!((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()));
-    if (known && !crypto) {
-      document.querySelectorAll('.nav-menu').forEach(function (m) { m.remove(); });
-      document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
-    }
-  } catch (e) {}
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (hasWallet) return;
+  document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+  document.querySelectorAll('a[href="market.html"], a[href="xrp-market.html"], a[href="nft-gallery.html"]').forEach(function (m) { m.remove(); });
 })();
 </script>
 <!-- horde-feedback: floating bug report / suggestion box -->
@@ -308,6 +309,20 @@ main.wrap .card{padding:14px;margin:14px 0}
     }
     send.disabled = false;
   });
+})();
+</script>
+
+<script>
+// horde-crypto-gate: crypto-gated elements stay hidden until the visitor is logged in with a wallet on their profile
+(function () {
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (!hasWallet) return;
+  document.querySelectorAll('.crypto-gated').forEach(function (el) { el.hidden = false; });
+  var locked = document.getElementById('crypto-locked');
+  if (locked) locked.hidden = true;
 })();
 </script>
 
