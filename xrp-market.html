@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=133">
+<link rel="stylesheet" href="style.css?v=134">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -38,7 +38,6 @@
   <section class="card" id="wallet-card">
     <h2>Your wallet</h2>
     <p id="wallet-status">Connect your wallet to buy a piece or list one of yours for sale. Looking at the wall needs no wallet at all.</p>
-    <p id="wallet-linked" hidden>Your XRP wallet on your profile: <span id="wallet-linked-addr"></span>. You only connect Xaman or Joey when you buy or list something.</p>
     <p><a class="btn ghost" href="holdings.html?side=xrp">View my inventory</a></p>
     <p id="wallet-buttons">
       <button class="btn" type="button" id="btn-xaman">Connect with Xaman</button>
@@ -175,28 +174,24 @@
     if (!_lp) { try { _lp = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
     if (_lp && _lp.xrp && String(_lp.xrp).trim()) linkedXrp = String(_lp.xrp).trim();
   } catch (e) {}
-  var linkedLine = document.getElementById('wallet-linked');
-  var linkedAddrEl = document.getElementById('wallet-linked-addr');
+  var walletCard = document.getElementById('wallet-card');
   var xamanNote = document.getElementById('xaman-note');
   function showConnectButtons(){
+    walletCard.hidden = false;
     walletButtons.hidden = false;
     if (xamanNote) xamanNote.hidden = false;
-  }
-  function hideConnectButtons(){
-    walletButtons.hidden = true;
-    if (xamanNote) xamanNote.hidden = true;
   }
   function askToConnect(msg){
     showConnectButtons();
     txStatus.textContent = msg;
-    document.getElementById('wallet-card').scrollIntoView({ behavior: 'smooth' });
+    walletCard.scrollIntoView({ behavior: 'smooth' });
   }
   if (linkedXrp) {
-    walletStatus.textContent = 'Your XRP wallet is linked on your profile. You only connect Xaman or Joey when you buy or list something.';
-    linkedAddrEl.textContent = shortAddr(linkedXrp);
-    linkedLine.hidden = false;
-    hideConnectButtons();
-    sellHint.textContent = 'These are the Byron pieces in your linked wallet. To list one, connect with Xaman or Joey at the top of the page, then come back here.';
+    /* Linked members already know their wallet, so the whole card stays
+       out of the way until a Buy, List or Cancel needs a signing
+       connection, and that is when it comes back. */
+    walletCard.hidden = true;
+    sellHint.textContent = 'These are the Byron pieces in your linked wallet. To list one, connect with Xaman or Joey when you tap List below.';
     loadSellSide();
   }
 
@@ -353,7 +348,7 @@
   function setConnected(addr){
     myAddr = addr;
     hideQr();
-    if (linkedLine) linkedLine.hidden = true;
+    walletCard.hidden = false;
     walletStatus.textContent = 'Connected. You can buy from the wall and list your own pieces below.';
     walletButtons.hidden = true;
     walletConnected.hidden = false;
