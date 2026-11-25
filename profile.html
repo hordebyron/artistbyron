@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=136">
+<link rel="stylesheet" href="style.css?v=137">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -46,20 +46,21 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
   <p class="small">No password, no seed, ever. Wallet addresses are public on the chain already.</p>
   </div>
 
+  <section class="card" id="unlock-card" hidden>
+    <h2>Unlock your profile on this device</h2>
+    <p>Prove it is you once and this browser stays unlocked for 30 days. Each browser needs its own unlock, once. After that, saving just writes to the shared list. No code for every little edit, ever again.</p>
+    <p class="small">New here? <a href="register.html">Register free</a> first, then unlock here.</p>
+    <p id="unlock-email-row"><label for="unlock-email-addr">Unlock with your email</label><br><input id="unlock-email-addr" type="email" autocomplete="email" placeholder="you@example.com" style="width:min(320px,100%)"> <button class="btn" type="button" id="unlock-email-send">Email me a code</button></p>
+    <p id="unlock-email-code-row" hidden><label for="unlock-email-code">Code from your inbox</label><br><input id="unlock-email-code" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" maxlength="6" style="width:120px"> <button class="btn" type="button" id="unlock-email-go">Unlock</button></p>
+    <p class="small" id="unlock-email-status"></p>
+    <p class="small">Logging in is by email only. Once you are in, you can link your wallets from the edit section below.</p>
+  </section>
+
   <section class="card" id="find-card">
     <h2>Look up a profile</h2>
     <p>Every member has a number. Put a number in and go straight to that page. Viewing is public and needs no login.</p>
     <p><input id="find-no" inputmode="numeric" placeholder="Profile number" style="max-width:220px"> <button class="btn" type="button" id="find-go">Show profile</button></p>
     <p class="small" id="view-note" hidden></p>
-  </section>
-
-  <section class="card" id="unlock-card" hidden>
-    <h2>Unlock your profile on this device</h2>
-    <p>Prove it is you once and this browser stays unlocked for 30 days. Each browser needs its own unlock, once. After that, saving just writes to the shared list. No code for every little edit, ever again.</p>
-    <p id="unlock-email-row"><label for="unlock-email-addr">Unlock with your email</label><br><input id="unlock-email-addr" type="email" autocomplete="email" placeholder="you@example.com" style="width:min(320px,100%)"> <button class="btn" type="button" id="unlock-email-send">Email me a code</button></p>
-    <p id="unlock-email-code-row" hidden><label for="unlock-email-code">Code from your inbox</label><br><input id="unlock-email-code" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" maxlength="6" style="width:120px"> <button class="btn" type="button" id="unlock-email-go">Unlock</button></p>
-    <p class="small" id="unlock-email-status"></p>
-    <p class="small">Logging in is by email only. Once you are in, you can link your wallets from the edit section below.</p>
   </section>
 
   <section class="card" id="profile-view-card" hidden>
@@ -977,7 +978,7 @@ document.getElementById('unlock-email-go').addEventListener('click', async funct
   if (!target) {
     var note2 = document.getElementById('view-note');
     note2.hidden = false;
-    note2.textContent = 'No profile loaded yet. Put your number in above, or unlock with your email below and your own profile loads itself.';
+    note2.textContent = 'No profile loaded yet. Put your number in above, or unlock with your email at the top of this page and your own profile loads itself.';
   }
   document.getElementById('unlock-card').hidden = !!state.session;
   if (state.session) {
