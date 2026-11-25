@@ -11,12 +11,17 @@
 .feature-text h2{margin-top:0}
 .sold{background:#b91c1c;color:#fff;padding:12px 16px;border-radius:9px;font-weight:700}
 .door-closed{opacity:.6}
+.info-q{display:inline-block;width:1.5em;height:1.5em;border-radius:50%;border:1px solid #666;background:transparent;color:#f2f2f2;font:inherit;font-weight:700;cursor:pointer;vertical-align:.15em;margin-left:.25em}
+#info-pop{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:20px}
+.info-pop-card{position:relative;max-width:520px;background:#14141b;border:1px solid #33333f;border-radius:12px;padding:20px;color:#f2f2f2}
+#info-pop-x{position:absolute;top:6px;right:12px;background:none;border:none;color:#f2f2f2;font-size:1.4rem;cursor:pointer}
+#pay-method{font:inherit;padding:9px 10px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;max-width:100%}
 @media (min-width:760px){
   .feature{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
   .feature img{margin-bottom:0}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=139">
+<link rel="stylesheet" href="style.css?v=147">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -25,62 +30,88 @@
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html"><span class="nav-big">Shop</span><span class="nav-sub">physical art and merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <h1>Bush Skull</h1>
-  <p id="sold-banner" class="sold" hidden>This piece is sold. Whoever bought it first took it, and it is gone from every door.</p>
+  <p id="sold-banner" class="sold" hidden>This piece is sold. Whoever bought it first took it, and it is gone.</p>
 
   <section class="card prod feature">
     <div>
     <img src="art/eye-2026-11-24-closeup.png" alt="Bush Skull, original painting">
     </div>
     <div class="feature-text">
-    <h2>One of one, five doors</h2>
+    <h2>One of one <button type="button" class="crypto-gated info-q" id="info-q" hidden aria-label="About the NFT and the shared pool">?</button></h2>
     <p class="price">CA$25 in Canada (about US$17.50) &middot; CA$30 elsewhere (about US$21), shipping included</p>
-    <p>You can pay by credit card or PayPal and still get the NFT. Pick the chain you want it on, and one of the Horde's minions mints it after you pay.</p>
     <p>One of one original. The buyer gets the physical card. <span class="sig">Signed by Byron. Original, one of one, not a print.</span></p>
     <p>Small square painted card, about 5 inches. Introductory special for the new website.</p>
     <p>Shipping is free in Canada, $5 everywhere else. If you want it tracked, contact Byron.</p>
-    <p class="small">One shared pool: whoever buys it first takes it, and it is gone from the rest. Each door is a single one of one, so it cannot sell twice on the same chain.</p>
     </div>
   </section>
 
-  <h2>Pick your door</h2>
-  <div class="card-grid" id="doors">
-    <section class="card prod">
-      <h3>Pay by card or PayPal</h3>
+  <div id="info-pop" hidden>
+    <div class="info-pop-card">
+      <button type="button" id="info-pop-x" aria-label="Close">&times;</button>
+      <p>You can pay by credit card or PayPal and still get the NFT. Pick the chain you want it on, and one of the Horde's minions mints it after you pay.</p>
+      <p class="small">One shared pool: whoever buys it first takes it, and it is gone from the rest. Each door is a single one of one, so it cannot sell twice on the same chain.</p>
+    </div>
+  </div>
+
+  <h2>How do you want to pay?</h2>
+  <section class="card" id="checkout">
+    <p><label for="pay-method">Pay with</label>
+    <select id="pay-method">
+      <option value="card">Credit or debit card</option>
+      <option value="paypal">PayPal</option>
+      <option value="wax" class="crypto-only">WAX &mdash; 5,000 WAX</option>
+      <option value="xrp" class="crypto-only">XRP &mdash; 19 XRP</option>
+      <option value="base" class="crypto-only">Base &mdash; 0.01 ETH</option>
+      <option value="ordinals" class="crypto-only">Ordinals &mdash; 0.00029 BTC</option>
+    </select></p>
+    <div id="pay-card">
       <p class="price">CA$25 in Canada &middot; CA$30 elsewhere, shipping included</p>
-      <p>Pay by debit or credit card right here. At checkout, pick the chain you want the NFT on (WAX, XRP, Base or Ordinals) and type your wallet address. One of the Horde's minions mints it on that chain after payment.</p>
-      <p>PayPal works too. Email <a href="mailto:hordemuse@muse.ai">Horde's minions</a> and one of the Horde's minions will send you the payment link, then mint the NFT on the chain you pick after you pay.</p>
       <p class="btn-row"><a class="btn" href="https://buy.stripe.com/eVqfZicbI87p6Gy0iR8IU0T">Pay by card &mdash; Canada</a><a class="btn" href="https://buy.stripe.com/dRmfZigrYbjBc0Sd5D8IU0U">Pay by card &mdash; Elsewhere</a></p>
       <p class="small">This opens Stripe's secure checkout.</p>
-    </section>
-    <section class="card prod" id="crypto-locked">
-      <h3>Pay with crypto</h3>
-      <p>Log in and link a wallet on your profile, and the crypto doors open here.</p>
-      <p class="btn-row"><a class="btn" href="login.html">Log in</a></p>
-    </section>
-    <section class="card prod crypto-gated" id="wax-door" hidden>
-      <h3>WAX</h3>
+    </div>
+    <div id="pay-paypal" hidden>
+      <p class="price">CA$25 in Canada &middot; CA$30 elsewhere, shipping included</p>
+      <p>Email <a href="mailto:hordemuse@muse.ai">Horde's minions</a> and one of the Horde's minions will send you the PayPal payment link.</p>
+    </div>
+    <div id="pay-wax" hidden>
       <p class="price">5,000 WAX</p>
       <p>Buy the one of one on WAX, straight from Byron's own drop contract. The money goes to Byron in full.</p>
       <p class="btn-row" id="wax-buy"><a class="btn" href="#" onclick="return false;">WAX door opens soon</a></p>
-    </section>
-    <section class="card prod crypto-gated" id="xrp-door" hidden>
-      <h3>XRP</h3>
+    </div>
+    <div id="pay-xrp" hidden>
       <p class="price">19 XRP</p>
       <p>Nothing is minted until you buy it. Send 19 XRP to this wallet with the note BUSH-SKULL, then email your XRP address to <a href="mailto:hordemuse@muse.ai">Horde's minions</a> and one of the Horde's minions mints the one of one straight to you. Burnable, transferable, 13% royalty to Byron on resale.</p>
       <p>This wallet:</p>
       <p>rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH</p>
-    </section>
-    <section class="card prod crypto-gated" hidden>
-      <h3>Base</h3>
+    </div>
+    <div id="pay-base" hidden>
       <p class="price">0.01 ETH</p>
       <p>The Base door opens soon. The contract is getting a burn function first, so every NFT stays burnable. Price when it opens: 0.01 ETH, pay then one of the Horde's minions mints it to your address.</p>
-    </section>
-    <section class="card prod crypto-gated" hidden>
-      <h3>Ordinals</h3>
+    </div>
+    <div id="pay-ordinals" hidden>
       <p class="price">0.00029 BTC</p>
       <p>No inscription exists yet. When you pick this door, you pay, Byron inscribes it to your address, and one of the Horde's minions walks you through it. Email <a href="mailto:hordemuse@muse.ai">Horde's minions</a> to start.</p>
-    </section>
-  </div>
+    </div>
+  </section>
+<script>
+// Bush Skull checkout: one dropdown, one panel at a time. Crypto choices only exist for wallet-linked visitors (the gate below removes them otherwise).
+(function () {
+  var sel = document.getElementById('pay-method');
+  var panels = { card: 'pay-card', paypal: 'pay-paypal', wax: 'pay-wax', xrp: 'pay-xrp', base: 'pay-base', ordinals: 'pay-ordinals' };
+  function show() {
+    Object.keys(panels).forEach(function (k) { var p = document.getElementById(panels[k]); if (p) p.hidden = (k !== sel.value); });
+  }
+  sel.addEventListener('change', show);
+  show();
+  var q = document.getElementById('info-q'), pop = document.getElementById('info-pop'), x = document.getElementById('info-pop-x');
+  if (q && pop) {
+    q.addEventListener('click', function () { pop.hidden = false; });
+    if (x) x.addEventListener('click', function () { pop.hidden = true; });
+    pop.addEventListener('click', function (e) { if (e.target === pop) pop.hidden = true; });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') pop.hidden = true; });
+  }
+})();
+</script>
 
 <script>
 // horde-crypto-gate: the crypto doors stay hidden until the visitor is logged in with a wallet on their profile
@@ -141,12 +172,12 @@
     if (!piece) return;
     if (piece.status === 'sold') {
       document.getElementById('sold-banner').hidden = false;
-      document.querySelectorAll('#doors .btn').forEach(function (b) {
+      document.querySelectorAll('#checkout .btn').forEach(function (b) {
         b.textContent = 'Sold';
         b.href = '#';
         b.onclick = function () { return false; };
       });
-      document.querySelectorAll('#doors .card').forEach(function (c) { c.classList.add('door-closed'); });
+      document.getElementById('checkout').classList.add('door-closed');
       return;
     }
     var wax = piece.doors && piece.doors.wax;
