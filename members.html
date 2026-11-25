@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Members</title>
 <meta name="description" content="Every member of the Horde, with levels, badges and the leaderboard.">
-<link rel="stylesheet" href="style.css?v=127">
+<link rel="stylesheet" href="style.css?v=130">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">Shop</a><span class="nav-menu"><a href="shop.html">Shop, physical art and merch</a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <h1>Horde members</h1>
-  <p>Every member of the Horde, ranked on the leaderboard. Levels come from the Horde pieces a member holds on WAX and XRP, counted fresh from the chains.</p>
+  <p id="members-intro">Every member of the Horde, ranked on the leaderboard. Levels come from the Horde pieces a member holds on WAX and XRP, counted fresh from the chains.</p>
   <p class="small" id="members-status">Loading the Horde…</p>
   <div class="roster" id="members"></div>
 </main>
@@ -118,6 +118,44 @@ async function scanXrp(addr){
       if (extras[w.profile_no][w.chain]) extras[w.profile_no][w.chain].push(w.address);
     });
   } catch (e) {}
+  // Simple view (Byron, 25 Nov 2026): a visitor who is not logged in, or
+  // logged in with no wallet on their profile, sees no piece counts, no
+  // levels, no rank and no crypto badges. Just the picture, the name and
+  // when they joined. The points line joins this view when the points
+  // balance lands. The chain counting is skipped entirely here, so the
+  // page loads faster for them too.
+  var viewerHasWallet = false;
+  try {
+    var vp = JSON.parse(localStorage.getItem('horde_profile') || 'null') || JSON.parse(localStorage.getItem('horde_registration') || 'null');
+    viewerHasWallet = !!(vp && ((vp.wax && String(vp.wax).trim()) || (vp.xrp && String(vp.xrp).trim())));
+  } catch (e) {}
+  if (!viewerHasWallet) {
+    var intro = document.getElementById('members-intro');
+    if (intro) intro.textContent = 'Every member of the Horde, and when they joined.';
+    status.textContent = rows.length + ' member' + (rows.length === 1 ? '' : 's') + ' of the Horde.';
+    rows.forEach(function(r){
+      var card = document.createElement('div');
+      card.className = 'mcard';
+      var img = document.createElement('img');
+      img.src = pfpSrc(r.pfp);
+      img.alt = '';
+      img.loading = 'lazy';
+      img.addEventListener('error', function(){ img.src = 'art/horde-h-black.png'; });
+      card.appendChild(img);
+      var h = document.createElement('h3');
+      h.textContent = r.name || 'Member';
+      card.appendChild(h);
+      var j = joinedText(r.created_at);
+      if (j) {
+        var jp = document.createElement('p');
+        jp.className = 'small';
+        jp.textContent = j;
+        card.appendChild(jp);
+      }
+      box.appendChild(card);
+    });
+    return;
+  }
   var members = rows.map(function(r){
     var card = document.createElement('div');
     card.className = 'mcard';
