@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=142">
+<link rel="stylesheet" href="style.css?v=143">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -445,22 +445,25 @@ function fmtDropEnd(ts){
   else t = h + (mi === '00' ? '' : ':' + mi) + ' ' + ap;
   return get('weekday') + ' ' + get('day') + ' ' + get('month') + ', ' + t + ' ' + tz;
 }
-async function loadDrops(){
+/* The drop list lives here in the page, not in a fetch: the strip's fetch of
+   data/wax-drops.json stalled in the browser even though the file itself loads
+   fine on its own, so the strip never painted. Update this list (and
+   data/wax-drops.json, the record copy) whenever a drop opens or closes. */
+var WAX_DROPS = [
+  { claim_url: 'bush-skull.html', claimed: 0, collection: 'byronartset1', contract: 'hordedrop421', drop_id: 11, end_time: 2000000000, image: 'art/eye-2026-11-24-closeup.png', max_claimable: 1, name: 'Bush Skull', price_text: '5,000 WAX', template_id: 912410 },
+  { claim_url: 'loot-crate.html', claimed: 0, collection: 'myhordeonwax', contract: 'atomicdropsx', drop_id: 92672, end_time: 0, image: 'art/loot-crate-wax.png', max_claimable: 25, name: 'Holiday Loot Crate', price_text: '7,500 WAX (US) / 9,000 WAX (Canada)', template_id: 912384 },
+  { claim_url: 'a-thing.html', claimed: 0, collection: 'byronartset1', contract: 'hordedrop421', drop_id: 2, end_time: 1795731300, image: 'https://gateway.pinata.cloud/ipfs/QmXFWEVYxGusdqS5XHWUqayqUx8V1xxeZY54q7xEeGNoHW', max_claimable: 7, name: 'a thing', price_text: 'Free', template_id: 909606 },
+  { claim_url: 'https://wax.atomichub.io/drops/92668', claimed: 2, collection: 'myhordeonwax', contract: 'atomicdropsx', drop_id: 92668, end_time: 1795888800, image: 'https://gateway.pinata.cloud/ipfs/QmNcuR7f7SAV97bByEaEzJNWKhADGf4UBNqhSGh3ywmKoo', max_claimable: 100, name: 'Head Full of fLies', price_text: '66.6 WAX', template_id: 912375 }
+];
+function loadDrops(){
   var box = document.getElementById('drops-strip');
   var st = document.getElementById('drops-status');
   if (!box) return;
-  var drops = [];
-  try {
-    var r = await fetch('data/wax-drops.json');
-    drops = await r.json();
-  } catch (e) { st.textContent = 'The newest drops could not load just now.'; return; }
   var now = Math.floor(Date.now() / 1000);
-  drops = drops.filter(function(d){ return !d.end_time || d.end_time > now; }).slice(0, 3);
+  var drops = (window.WAX_DROPS || []).filter(function(d){ return !d.end_time || d.end_time > now; }).slice(0, 3);
   if (!drops.length) { st.textContent = 'No drops are open right now. Check back soon.'; box.innerHTML = ''; return; }
-  /* Paint right away from the saved drop list. The strip used to wait on the
-     live claimed-count service before painting anything, and that wait left it
-     stuck on "Loading..." in the browser. The counts refresh in the background
-     afterwards; if they never arrive, the saved counts stand. */
+  /* Paint right away from the list above. The claimed counts refresh in the
+     background afterwards; if they never arrive, the saved counts stand. */
   function paint(){
     try {
       box.innerHTML = '';
