@@ -14,7 +14,7 @@
   .feature img{margin-bottom:0}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=122">
+<link rel="stylesheet" href="style.css?v=125">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -67,6 +67,13 @@
       <p class="price">CA$23.95 in the USA (about US$17) &middot; CA$26.95 in Canada (about US$19), shipping included</p>
       <p>The red Horde H, as a pin. <span class="only">20 left</span></p>
       <p class="btn-row"><a class="btn" href="https://buy.stripe.com/3cIeVea3A9bt7KC2qZ8IU09">Pay by card &mdash; USA</a><a class="btn" href="https://buy.stripe.com/28E4gA6RoevN9SK0iR8IU0a">Pay by card &mdash; Canada</a></p>
+    </section>
+    <section class="card prod">
+      <img class="prod-img" src="art/christmas-tree-pin.png" alt="Zombie Christmas Tree enamel pin">
+      <h3>Zombie Christmas Tree Pin</h3>
+      <p class="price">$15 USD in the USA &middot; $22 CAD in Canada, free shipping to the USA and Canada</p>
+      <p>The Christmas tree, as a pin. About 2 inches tall, two pin posts.<span class="crypto-gated" hidden> Crypto buyers can pay in WAX or XRP, and the NFT is free with the pin if you want it.</span></p>
+      <p class="btn-row"><a class="btn" href="https://buy.stripe.com/5kQ5kEdfM5Zhgh83v38IU0D">Pay by card &mdash; USA</a><a class="btn" href="https://buy.stripe.com/dRmbJ2fnUgDV4yq0iR8IU0E">Pay by card &mdash; Canada</a><a class="btn crypto-gated" href="christmas-tree-pin.html" hidden>Pay with crypto</a></p>
     </section>
     <section class="card prod">
       <img class="prod-img" src="art/lanyard.jpg" alt="The Horde lanyard">
@@ -298,6 +305,18 @@
     }
     send.disabled = false;
   });
+})();
+</script>
+
+<!-- horde-crypto-gate: crypto-gated buttons and lines only show for a logged-in member with a wallet on their profile (Byron, 24 Nov 2026) -->
+<script>
+(function () {
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (!hasWallet) return;
+  document.querySelectorAll('.crypto-gated').forEach(function (el) { el.hidden = false; });
 })();
 </script>
 
