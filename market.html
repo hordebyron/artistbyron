@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=136">
+<link rel="stylesheet" href="style.css?v=140">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -32,11 +32,17 @@
     });
   })();
   </script>
-  <h1>The Horde Market</h1>
+  <h1>The Horde's Market on WAX</h1>
+
+  <section class="card" id="drops-card">
+    <h2>Newest Drop</h2>
+    <div id="drops-strip" class="drops-strip"></div>
+    <p class="small" id="drops-status">Loading the newest drops…</p>
+  </section>
 
   <section class="card">
-    <h2>For sale right now</h2>
-    <p style="margin:12px 0 0"><input type="text" id="sales-search" class="mkt-search" placeholder="Search for NFTs by name" autocomplete="off"></p>
+    <h2>On the Market</h2>
+    <p style="margin:12px 0 0"><input type="text" id="sales-search" class="mkt-search" placeholder="Search by name, mint #, or asset ID" autocomplete="off"></p>
     <div class="mkt-filterrow">
       <p id="sales-filters" class="mkt-filters">
         <button class="btn" type="button" data-coll="">All</button>
@@ -49,6 +55,8 @@
         <option value="new">Newest</option>
         <option value="low">Price, low to high</option>
         <option value="high">Price, high to low</option>
+        <option value="mint-asc">Mint #, low to high</option>
+        <option value="mint-desc">Mint #, high to low</option>
       </select>
     </div>
     <p class="small" id="sales-status">Loading the market…</p>
@@ -72,6 +80,12 @@
     </div>
   </section>
 </main>
+<div id="mkt-modal" class="mkt-modal">
+  <div class="mkt-modal-box" role="dialog" aria-modal="true">
+    <button class="mkt-modal-close" type="button" id="mkt-modal-close" aria-label="Close">&times;</button>
+    <div id="mkt-modal-body"></div>
+  </div>
+</div>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="profile.html">My Horde Profile</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
 
 <script>
@@ -133,6 +147,11 @@ async function loadSales(){
 }
 var salesColl = '', salesQ = '', salesSort = 'new';
 var salesShown = 24;
+function mintOf(s){
+  var a = (s.assets || [])[0] || {};
+  var m = parseInt(a.template_mint, 10);
+  return isFinite(m) ? m : null;
+}
 function renderSales(){
   var grid = document.getElementById('sales-grid');
   var st = document.getElementById('sales-status');
@@ -143,12 +162,18 @@ function renderSales(){
     if (salesQ) {
       var a = (s.assets || [])[0] || {};
       var hay = ((a.name || '') + ' ' + (s.seller || '')).toLowerCase();
-      if (hay.indexOf(salesQ) === -1) return false;
+      var numQ = /^\d+$/.test(salesQ);
+      var mintMatch = numQ && String(a.template_mint == null ? '' : a.template_mint) === salesQ;
+      var assetId = String(a.asset_id == null ? '' : a.asset_id);
+      var assetMatch = numQ && assetId && (assetId === salesQ || (salesQ.length >= 6 && assetId.indexOf(salesQ) !== -1));
+      if (hay.indexOf(salesQ) === -1 && !mintMatch && !assetMatch) return false;
     }
     return true;
   });
   if (salesSort === 'low') list.sort(function(a, b){ return (parseInt(a.price.amount, 10) || 0) - (parseInt(b.price.amount, 10) || 0); });
   else if (salesSort === 'high') list.sort(function(a, b){ return (parseInt(b.price.amount, 10) || 0) - (parseInt(a.price.amount, 10) || 0); });
+  else if (salesSort === 'mint-asc') list.sort(function(a, b){ var ma = mintOf(a), mb = mintOf(b); if (ma === null && mb === null) return 0; if (ma === null) return 1; if (mb === null) return -1; return ma - mb; });
+  else if (salesSort === 'mint-desc') list.sort(function(a, b){ var ma = mintOf(a), mb = mintOf(b); if (ma === null && mb === null) return 0; if (ma === null) return 1; if (mb === null) return -1; return mb - ma; });
   else list.sort(function(a, b){ return (b.sale_id || 0) - (a.sale_id || 0); });
   st.textContent = list.length + ' of ' + allSales.length + ' Horde pieces for sale' + (salesColl ? ' in ' + (COLL_LABEL[salesColl] || salesColl) : '') + '.';
   if (!list.length) { grid.innerHTML = '<p class="small">Nothing matches that filter right now.</p>'; return; }
@@ -170,6 +195,11 @@ function renderSales(){
     else html += '<a class="btn ghost" href="https://wax.atomichub.io/market/sale/' + s.sale_id + '" target="_blank" rel="noopener">AtomicHub</a>';
     html += '</div>';
     card.innerHTML = html;
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', function(e){
+      if (e.target.closest('button, a')) return;
+      openSaleDetail(s);
+    });
     grid.appendChild(card);
   });
   grid.querySelectorAll('[data-buy]').forEach(function(b){
@@ -297,6 +327,11 @@ function renderYourPieces(){
     b.addEventListener('click', function(){ listPiece(a.asset_id, b); });
     foot.appendChild(b);
     card.appendChild(foot);
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', function(e){
+      if (e.target.closest('input, button')) return;
+      openAssetDetail(a);
+    });
     box.appendChild(card);
   });
   st.textContent = yourPieces.length
@@ -336,6 +371,117 @@ async function cancelSale(saleId, btn){
   } catch (e) { st.textContent = 'Cancel did not go through. ' + (e && e.message ? e.message : ''); }
   btn.disabled = false;
 }
+
+/* ---------- detail popup: tap any card for the bigger picture ---------- */
+var mktModal = null, mktModalBody = null;
+function openModal(html){
+  if (!mktModal) { mktModal = document.getElementById('mkt-modal'); mktModalBody = document.getElementById('mkt-modal-body'); }
+  mktModalBody.innerHTML = html;
+  mktModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  var b = mktModalBody.querySelector('[data-modal-buy]');
+  if (b) b.addEventListener('click', function(){
+    closeModal();
+    buySale(b.getAttribute('data-modal-buy'), b);
+  });
+}
+function closeModal(){
+  if (!mktModal) return;
+  mktModal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function detailHtml(o){
+  var h = (o.assetId ? '<p class="mkt-asset">#' + esc(o.assetId) + '</p>' : '')
+    + imgTag(o.img, o.name, true)
+    + '<p class="mkt-name" style="font-size:1.25rem">' + esc(o.name || 'Horde piece') + '</p>'
+    + (o.mint != null && o.mint !== '' ? '<p class="mkt-meta">Mint #' + esc(o.mint) + '</p>' : '')
+    + (o.coll ? '<p class="mkt-meta">' + esc(o.coll) + '</p>' : '')
+    + (o.seller ? '<p class="mkt-meta">Seller: ' + esc(o.seller) + '</p>' : '')
+    + (o.priceText ? '<p class="mkt-price" style="font-size:1.2rem">' + esc(o.priceText) + '</p>' : '')
+    + '<p class="btn-row">';
+  if (o.showBuy && o.saleId) h += '<button class="btn" type="button" data-modal-buy="' + o.saleId + '">Buy</button>';
+  if (o.assetId) h += '<a class="btn ghost" href="https://wax.atomichub.io/explorer/asset/' + esc(o.assetId) + '" target="_blank" rel="noopener">View on AtomicHub</a>';
+  h += '</p><p class="small">Sales history lives on AtomicHub, since the market here only shows what is for sale right now.</p>';
+  return h;
+}
+function openSaleDetail(s){
+  var a = (s.assets || [])[0] || {};
+  var sym = (s.price && s.price.token_symbol) || 'WAX';
+  var priceText = sym === 'WAX'
+    ? fmtWax(s.price.amount) + ' WAX'
+    : (((parseInt(s.price.amount, 10) / Math.pow(10, s.price.token_precision || 8)) || 0).toString()) + ' ' + sym;
+  openModal(detailHtml({
+    img: (a.data && a.data.img) || '', name: a.name, mint: a.template_mint,
+    coll: COLL_LABEL[s.collection_name] || s.collection_name, seller: s.seller,
+    priceText: priceText, saleId: s.sale_id, assetId: a.asset_id, showBuy: sym === 'WAX'
+  }));
+}
+function openAssetDetail(a){
+  var name = a.name || (a.data && a.data.name) || 'Horde piece';
+  openModal(detailHtml({
+    img: (a.data && a.data.img) || '', name: name, mint: a.template_mint,
+    coll: COLL_LABEL[a.collection && a.collection.collection_name] || '',
+    seller: '', priceText: '', saleId: null, assetId: a.asset_id, showBuy: false
+  }));
+}
+document.getElementById('mkt-modal-close').addEventListener('click', closeModal);
+document.getElementById('mkt-modal').addEventListener('click', function(e){ if (e.target === this) closeModal(); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeModal(); });
+
+/* ---------- newest drop strip: Byron's own live drops, newest first ---------- */
+function dropImg(src){
+  if (!src) return '<div class="mkt-img"></div>';
+  var url = /^https:/.test(src) ? src : (/^art\//.test(src) ? src : 'https://gateway.pinata.cloud/ipfs/' + src);
+  return '<img src="' + esc(url) + '" alt="" loading="lazy" decoding="async" class="mkt-img">';
+}
+function fmtDropEnd(ts){
+  var dt = new Date(ts * 1000);
+  var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' }).formatToParts(dt);
+  function get(t){ var p = null; parts.forEach(function(x){ if (x.type === t) p = x.value; }); return p || ''; }
+  var h = get('hour'), mi = get('minute'), ap = get('dayPeriod'), tz = get('timeZoneName');
+  var t;
+  if (h === '12' && mi === '00' && ap === 'PM') t = 'noon';
+  else if (h === '12' && mi === '00' && ap === 'AM') t = 'midnight';
+  else t = h + (mi === '00' ? '' : ':' + mi) + ' ' + ap;
+  return get('weekday') + ' ' + get('day') + ' ' + get('month') + ', ' + t + ' ' + tz;
+}
+async function loadDrops(){
+  var box = document.getElementById('drops-strip');
+  var st = document.getElementById('drops-status');
+  if (!box) return;
+  var drops = [];
+  try {
+    var r = await fetch('data/wax-drops.json');
+    drops = await r.json();
+  } catch (e) { st.textContent = 'The newest drops could not load just now.'; return; }
+  var now = Math.floor(Date.now() / 1000);
+  drops = drops.filter(function(d){ return !d.end_time || d.end_time > now; }).slice(0, 3);
+  if (!drops.length) { st.textContent = 'No drops are open right now. Check back soon.'; box.innerHTML = ''; return; }
+  await Promise.all(drops.map(async function(d){
+    if (d.contract !== 'atomicdropsx') return;
+    try {
+      var rr = await fetch('https://wax.api.atomicassets.io/atomicdrops/v1/drops/' + d.drop_id);
+      var jj = await rr.json();
+      if (jj && jj.success && jj.data && jj.data.current_claimed != null) d.claimed = parseInt(jj.data.current_claimed, 10);
+    } catch (e) {}
+  }));
+  box.innerHTML = '';
+  drops.forEach(function(d){
+    var a = document.createElement('a');
+    a.className = 'drop-card';
+    a.href = d.claim_url;
+    if (/^https:/.test(d.claim_url)) { a.target = '_blank'; a.rel = 'noopener'; }
+    var ends = d.end_time ? 'Ends ' + fmtDropEnd(d.end_time) : 'No end date';
+    var claimed = (d.max_claimable != null) ? '<p class="mkt-meta">' + d.claimed + ' of ' + d.max_claimable + ' claimed</p>' : '';
+    a.innerHTML = dropImg(d.image)
+      + '<p class="mkt-name">' + esc(d.name) + '</p>'
+      + '<p class="mkt-meta">' + esc(d.price_text) + '</p>' + claimed
+      + '<p class="mkt-meta">' + esc(ends) + '</p>';
+    box.appendChild(a);
+  });
+  st.textContent = '';
+}
+loadDrops();
 
 /* ---------- wallet kit, same loader as the profile page ---------- */
 (async function init(){
