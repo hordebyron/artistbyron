@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=127">
+<link rel="stylesheet" href="style.css?v=128">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -77,6 +77,7 @@
     </p>
     <p class="small" id="sales-status">Loading the market…</p>
     <div id="sales-grid" class="mkt-grid"></div>
+    <p style="margin-top:12px"><button class="btn ghost" type="button" id="sales-more" hidden>Load more</button></p>
     <p class="small" id="sales-updated"></p>
   </section>
 
@@ -160,7 +161,7 @@
   var piecesEl = document.getElementById('my-pieces');
   var piecesStatus = document.getElementById('my-pieces-status');
 
-  var offers = [], fIss = '', myAddr = null, myPieces = [], myListings = [], busy = false, gatheredAt = '';
+  var offers = [], fIss = '', myAddr = null, myPieces = [], myListings = [], busy = false, gatheredAt = '', wallShown = 24;
 
   function esc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function shortAddr(a){ return a && a.length > 12 ? a.slice(0, 6) + '...' + a.slice(-4) : (a || ''); }
@@ -378,7 +379,7 @@
     });
     statusEl.textContent = list.length + ' Byron piece' + (list.length === 1 ? '' : 's') + ' offered for sale on XRP right now.';
     grid.innerHTML = '';
-    list.forEach(function(o){
+    list.slice(0, wallShown).forEach(function(o){
       var card = document.createElement('div');
       card.className = 'mkt-card';
       var img = document.createElement('img');
@@ -418,6 +419,8 @@
       card.appendChild(foot);
       grid.appendChild(card);
     });
+    var moreBtn = document.getElementById('sales-more');
+    if (moreBtn) moreBtn.hidden = list.length <= wallShown;
   }
   async function buyOffer(o, btn){
     if (busy) return;
@@ -445,10 +448,12 @@
     fIss = b.getAttribute('data-iss');
     this.querySelectorAll('button').forEach(function(x){ x.className = 'btn ghost'; });
     b.className = 'btn';
+    wallShown = 24;
     renderWall();
   });
-  searchEl.addEventListener('input', renderWall);
-  sortEl.addEventListener('change', renderWall);
+  searchEl.addEventListener('input', function(){ wallShown = 24; renderWall(); });
+  sortEl.addEventListener('change', function(){ wallShown = 24; renderWall(); });
+  document.getElementById('sales-more').addEventListener('click', function(){ wallShown += 24; renderWall(); });
   fetch('data/xrp-sales.json', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(async function(j){
     offers = j.offers || [];
     gatheredAt = j.generated_at || '';
