@@ -325,7 +325,8 @@ h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial 
 .mkt-search{width:100%;box-sizing:border-box;border-radius:999px;padding:12px 18px;border:1px solid var(--line);background:#171310;color:inherit;font:inherit}
 .mkt-filterrow{display:flex;gap:10px;align-items:center;margin:10px 0;flex-wrap:wrap}
 .mkt-filters{display:flex;gap:8px;overflow-x:auto;padding:2px 0;flex:1;min-width:0;margin:0}
-.mkt-filters .btn{border-radius:999px;white-space:nowrap}
+.mkt-filters .btn{border-radius:999px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.mkt-filter-ico{width:20px;height:20px;border-radius:50%;object-fit:cover;flex:none}
 .mkt-sort{border-radius:999px;padding:10px 14px;border:1px solid var(--line);background:#171310;color:inherit;font:inherit;cursor:pointer}
 .mkt-asset{display:inline-block;background:#0f0f14;border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:.8rem;color:#b9b9c4;margin:0 0 8px;width:max-content}
 
