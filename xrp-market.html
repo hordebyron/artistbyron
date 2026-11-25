@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=128">
+<link rel="stylesheet" href="style.css?v=129">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -201,13 +201,29 @@
     if (!path) { imgEl.onerror = function(){ imgEl.style.visibility = 'hidden'; }; imgEl.src = rawUrl; return; }
     if (gwWinners[path]) { imgEl.src = gwWinners[path]; return; }
     var gws = ['https://gateway.pinata.cloud/ipfs/', 'https://ipfs.filebase.io/ipfs/', 'https://ipfs.io/ipfs/'];
-    var done = false;
-    var timer = setTimeout(function(){ if (!done) { done = true; imgEl.style.visibility = 'hidden'; } }, 25000);
-    gws.forEach(function(g){
-      var probe = new Image();
-      probe.onload = function(){ if (!done) { done = true; clearTimeout(timer); gwWinners[path] = g + path; imgEl.src = g + path; } };
-      probe.src = g + path;
-    });
+    var step = 0, done = false, timer = null;
+    function fail(){ if (done) return; done = true; if (timer) clearTimeout(timer); imgEl.style.visibility = 'hidden'; }
+    function arm(){
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(function(){
+        if (done) return;
+        step++;
+        if (step >= gws.length) { fail(); return; }
+        imgEl.src = gws[step] + path;
+        arm();
+      }, 8000);
+    }
+    imgEl.onload = function(){ if (done) return; done = true; if (timer) clearTimeout(timer); gwWinners[path] = gws[step] + path; };
+    imgEl.onerror = function(){
+      if (done) return;
+      if (timer) clearTimeout(timer);
+      step++;
+      if (step >= gws.length) { fail(); return; }
+      imgEl.src = gws[step] + path;
+      arm();
+    };
+    imgEl.src = gws[0] + path;
+    arm();
   }
   function hexToStr(hex){
     try {
@@ -360,9 +376,11 @@
   }
   async function refreshWall(keepNote){
     if (!offers.length) return;
+    var before = offers.map(function(o){ return o.offer; }).join(',');
     var checked = await pool(offers, 6, verifyOffer);
     offers = checked.filter(Boolean);
-    renderWall();
+    var after = offers.map(function(o){ return o.offer; }).join(',');
+    if (before !== after) renderWall();
     if (!keepNote) updatedEl.textContent = (gatheredAt ? 'Wall gathered ' + gatheredAt + '. ' : '') + 'Every offer on this wall was checked against the ledger just now, so what you see is really for sale.';
   }
   function renderWall(){
