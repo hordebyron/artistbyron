@@ -319,6 +319,7 @@ h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial 
 .mkt-img{aspect-ratio:1/1;width:100%;min-width:0;object-fit:contain;background:#171310;border-radius:8px;display:block}
 .mkt-name{margin:10px 0 2px;line-height:1.25;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em}
 .mkt-meta{margin:1px 0;color:#b9b9c4;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mkt-badge{display:inline-block;margin:8px 0 2px;padding:3px 10px;border-radius:999px;background:var(--red);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;width:max-content;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mkt-foot{margin-top:auto;padding-top:10px}
 .mkt-price{margin:0 0 8px;font-weight:700}
 .mkt-foot .btn{width:100%}
@@ -338,7 +339,7 @@ h1,h2,h3,.brand,.door-label b,.pick b{font-family:"Special Elite",Impact,"Arial 
 
 /* Newest Drop strip (WAX market, Nov 2026): the newest live drops first,
    then the filters, then the market wall. On phones the strip scrolls sideways. */
-.drops-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.drops-strip{display:grid;grid-template-columns:repeat(3,minmax(0,280px));gap:14px;justify-content:center}
 .drop-card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel);text-decoration:none;color:var(--ink);min-width:0}
 .drop-card:hover{border-color:var(--red)}
 @media(max-width:640px){.drops-strip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px}.drop-card{flex:0 0 78%;scroll-snap-align:start}}

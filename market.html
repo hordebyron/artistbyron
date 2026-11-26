@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=149">
+<link rel="stylesheet" href="style.css?v=152">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -451,9 +451,9 @@ function fmtDropEnd(ts){
    fine on its own, so the strip never painted. Update this list (and
    data/wax-drops.json, the record copy) whenever a drop opens or closes. */
 var WAX_DROPS = [
-  { claim_url: 'darkside.html', claimed: 0, collection: 'myhordeonwax', contract: 'hordedrop421', drop_id: 12, end_time: 2000000000, image: 'art/emerging-from-the-dark-side-of-white.jpg', max_claimable: 42, name: 'emerging from the dark side of white', price_text: 'Free for founders Thu 10 AM, then 666 DHC / 100 WAX', template_id: 912479 },
-  { claim_url: 'bush-skull.html', claimed: 0, collection: 'byronartset1', contract: 'hordedrop421', drop_id: 11, end_time: 2000000000, image: 'art/eye-2026-11-24-closeup.png', max_claimable: 1, name: 'Bush Skull', price_text: '5,000 WAX', template_id: 912410 },
-  { claim_url: 'loot-crate.html', claimed: 0, collection: 'myhordeonwax', contract: 'atomicdropsx', drop_id: 92672, end_time: 0, image: 'art/loot-crate-wax.png', max_claimable: 25, name: 'Holiday Loot Crate', price_text: '7,500 WAX (US) / 9,000 WAX (Canada)', template_id: 912384 },
+  { claim_url: 'darkside.html', claimed: 0, collection: 'myhordeonwax', contract: 'hordedrop421', drop_id: 12, end_time: 2000000000, image: 'art/emerging-from-the-dark-side-of-white-strip.jpg', max_claimable: 42, name: 'emerging from the dark side of white', price_text: 'Free for founders Thu 10 AM, then 666 DHC / 100 WAX', template_id: 912479, badge: 'FREE for Founders' },
+  { claim_url: 'bush-skull.html', claimed: 0, collection: 'byronartset1', contract: 'hordedrop421', drop_id: 11, end_time: 2000000000, image: 'art/eye-2026-11-24-closeup-strip.jpg', max_claimable: 1, name: 'Bush Skull', price_text: '5,000 WAX', template_id: 912410, badge: '1 of 1, own the original' },
+  { claim_url: 'loot-crate.html', claimed: 0, collection: 'myhordeonwax', contract: 'atomicdropsx', drop_id: 92672, end_time: 0, image: 'art/loot-crate-wax-strip.jpg', max_claimable: 25, name: 'Holiday Loot Crate', price_text: '7,500 WAX (US) / 9,000 WAX (Canada)', template_id: 912384, badge: 'RWA with Utility' },
   { claim_url: 'https://wax.atomichub.io/drops/92668', claimed: 2, collection: 'myhordeonwax', contract: 'atomicdropsx', drop_id: 92668, end_time: 1795888800, image: 'https://gateway.pinata.cloud/ipfs/QmNcuR7f7SAV97bByEaEzJNWKhADGf4UBNqhSGh3ywmKoo', max_claimable: 100, name: 'Head Full of fLies', price_text: '66.6 WAX', template_id: 912375 }
 ];
 function loadDrops(){
@@ -475,8 +475,9 @@ function loadDrops(){
         if (/^https:/.test(d.claim_url)) { a.target = '_blank'; a.rel = 'noopener'; }
         var ends = d.end_time ? 'Ends ' + fmtDropEnd(d.end_time) : 'No end date';
         var claimed = (d.max_claimable != null) ? '<p class="mkt-meta">' + d.claimed + ' of ' + d.max_claimable + ' claimed</p>' : '';
+        var badge = d.badge ? '<p class="mkt-badge">' + esc(d.badge) + '</p>' : '';
         a.innerHTML = dropImg(d.image)
-          + '<p class="mkt-name">' + esc(d.name) + '</p>'
+          + '<p class="mkt-name">' + esc(d.name) + '</p>' + badge
           + '<p class="mkt-meta">' + esc(d.price_text) + '</p>' + claimed
           + '<p class="mkt-meta">' + esc(ends) + '</p>';
         box.appendChild(a);
