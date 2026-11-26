@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=152">
+<link rel="stylesheet" href="style.css?v=153">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -476,8 +476,8 @@ function loadDrops(){
         var ends = d.end_time ? 'Ends ' + fmtDropEnd(d.end_time) : 'No end date';
         var claimed = (d.max_claimable != null) ? '<p class="mkt-meta">' + d.claimed + ' of ' + d.max_claimable + ' claimed</p>' : '';
         var badge = d.badge ? '<p class="mkt-badge">' + esc(d.badge) + '</p>' : '';
-        a.innerHTML = dropImg(d.image)
-          + '<p class="mkt-name">' + esc(d.name) + '</p>' + badge
+        a.innerHTML = badge + dropImg(d.image)
+          + '<p class="mkt-name">' + esc(d.name) + '</p>'
           + '<p class="mkt-meta">' + esc(d.price_text) + '</p>' + claimed
           + '<p class="mkt-meta">' + esc(ends) + '</p>';
         box.appendChild(a);
