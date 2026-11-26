@@ -18,11 +18,14 @@
 .crate-thumb{flex:0 0 auto;width:48px;height:48px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .crate-gallery .crate-thumb img{width:100%;height:100%;object-fit:contain;margin:0;border:0;border-radius:6px;display:block}
 .crate-thumb.is-active{border-color:var(--red)}
+/* Product pictures tap to see larger, like the crypto market pages. */
+.prod-img, #crate-main{cursor:pointer}
+.prod-img:hover, #crate-main:hover{outline:2px solid var(--red);outline-offset:2px}
 @media (min-width:760px){
   .prod.feature{grid-template-columns:220px 1fr;gap:22px}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=164">
+<link rel="stylesheet" href="style.css?v=165">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -267,9 +270,55 @@
 
   <p>Just want to throw a few dollars in the hat? <a href="https://ko-fi.com/artistbyron">Buy Byron a coffee, CA$3 (about US$2)</a>.</p>
   <p class="small">Shipping is inside the price at checkout: originals free in Canada, CA$25 elsewhere; stickers CA$1 worldwide; shirts CA$10 worldwide, free in the USA; pins and lanyard free in the USA, CA$3 in Canada; crates ship free in the CA$35.</p>
+
+  <div id="shop-modal" class="mkt-modal">
+    <div class="mkt-modal-box" role="dialog" aria-modal="true">
+      <button class="mkt-modal-close" type="button" id="shop-modal-close" aria-label="Close">&times;</button>
+      <div id="shop-modal-body"></div>
+    </div>
+  </div>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
 <script src="script.js"></script>
+<script>
+/* Shop lightbox: tap a product picture to see it larger, like the crypto
+   market pages. Close with the X, a tap outside the picture, or Escape. */
+(function(){
+  function esc(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+  var modal = document.getElementById('shop-modal');
+  var body = document.getElementById('shop-modal-body');
+  if (!modal || !body) return;
+  function openShopImg(src, alt){
+    body.innerHTML = '<img src="' + esc(src) + '" alt="' + esc(alt) + '" class="mkt-img" style="max-height:72vh;width:100%;object-fit:contain">'
+      + (alt ? '<p class="mkt-name">' + esc(alt) + '</p>' : '');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeShopImg(){
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('#crate-main, .prod-img').forEach(function(img){
+    img.setAttribute('tabindex', '0');
+    img.setAttribute('role', 'button');
+    img.setAttribute('aria-label', 'See larger: ' + (img.getAttribute('alt') || 'product picture'));
+    img.addEventListener('click', function(){ openShopImg(img.getAttribute('src'), img.getAttribute('alt')); });
+    img.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openShopImg(img.getAttribute('src'), img.getAttribute('alt')); }
+    });
+  });
+  document.getElementById('shop-modal-close').addEventListener('click', closeShopImg);
+  modal.addEventListener('click', function(e){ if (e.target === modal) closeShopImg(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeShopImg(); });
+})();
+</script>
 <script>
 (function(){
   var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
