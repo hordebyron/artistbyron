@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=148">
+<link rel="stylesheet" href="style.css?v=157">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -37,7 +37,7 @@
 
   <section class="card" id="wallet-card">
     <h2>Your wallet</h2>
-    <p id="wallet-status">Connect your wallet to buy a piece or list one of yours for sale. Looking at the wall needs no wallet at all.</p>
+    <p id="wallet-status">Tap Buy on a piece and Xaman opens for you to approve it. Looking at the wall needs no wallet at all.</p>
     <p><a class="btn ghost" href="holdings.html?side=xrp">View my inventory</a></p>
     <p id="wallet-buttons">
       <button class="btn" type="button" id="btn-xaman">Connect with Xaman</button>
@@ -476,8 +476,16 @@
   async function buyOffer(o, btn){
     if (busy) return;
     if (!myAddr) {
-      askToConnect('Connect with Xaman or Joey at the top of the page, then tap Buy again.');
-      return;
+      /* No wallet connected yet. Pull Xaman straight up (a QR code on a
+         computer, the app on a phone) so the buyer can approve, then go
+         right into the purchase. Nobody has to log in or link a wallet
+         first. */
+      txStatus.textContent = 'Scan the code with Xaman to buy ' + (o.name || 'this piece') + ' for ' + priceText(o.price) + '.';
+      try { await connect('xaman'); } catch (e) { /* connect() already reports */ }
+      if (!myAddr) {
+        txStatus.textContent = 'The buy did not go through. Nothing was spent. Tap Buy to try again.';
+        return;
+      }
     }
     busy = true; btn.disabled = true; btn.textContent = 'Opening wallet…';
     txStatus.textContent = 'Your wallet is asking you to approve buying ' + (o.name || 'this piece') + ' for ' + priceText(o.price) + '.';
