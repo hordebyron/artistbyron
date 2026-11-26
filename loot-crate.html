@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Holiday Loot Crate Token - Artist Byron</title>
 <meta name="description" content="The Horde Holiday Loot Crate as a token on WAX and XRP. Claim the physical crate, or hold the token as a credit for what you paid.">
-<link rel="stylesheet" href="style.css?v=176">
+<link rel="stylesheet" href="style.css?v=180">
 <style>
 main.wrap{max-width:900px}
 main.wrap h1{font-size:2rem}
@@ -19,6 +19,10 @@ main.wrap .card{padding:14px;margin:14px 0}
 .buy-btn .bb-top{display:block;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
 .buy-btn .bb-price{display:block;font-size:1.3rem;font-weight:700;margin-top:2px}
 .quote{font-size:1.08rem;line-height:1.5}
+.crate-countdown{text-align:center;font-weight:700;color:var(--red);font-size:1.1rem;margin:10px 0 2px}
+.buy-btn.main-order{padding:16px 20px}
+.buy-btn.main-order .bb-top{font-size:1.05rem;font-weight:700}
+.buy-btn.main-order .bb-price{font-size:1.5rem}
 .who{color:var(--muted);font-size:.9rem;margin-top:8px}
 .shot-img{width:100%;max-width:520px;display:block;margin:10px auto;border-radius:10px}
 </style>
@@ -36,8 +40,9 @@ main.wrap .card{padding:14px;margin:14px 0}
   <section class="card">
     <h2>Buy the crate</h2>
     <p>CA$35, shipping included. Just the crate, on its own.</p>
+    <p class="crate-countdown" id="crate-countdown">Orders close at the end of November</p>
     <p>
-      <a class="btn buy-btn" href="https://buy.stripe.com/4gMdRa0t0bjBfd40iR8IU00"><span class="bb-top">Pay by card</span><span class="bb-price">CA$35</span></a>
+      <a class="btn buy-btn main-order" href="https://buy.stripe.com/4gMdRa0t0bjBfd40iR8IU00"><span class="bb-top">Pay by card</span><span class="bb-price">CA$35</span></a>
       <a class="btn buy-btn" href="https://www.paypal.com/ncp/payment/UKFXWHKBF7FY6"><span class="bb-top">PayPal</span><span class="bb-price">CA$35</span></a>
     </p>
     <p class="small">This opens Stripe's secure checkout. PayPal takes you to PayPal.</p>
@@ -344,6 +349,27 @@ main.wrap .card{padding:14px;margin:14px 0}
   document.querySelectorAll('.crypto-gated').forEach(function (el) { el.hidden = false; });
   var locked = document.getElementById('crypto-locked');
   if (locked) locked.hidden = true;
+})();
+</script>
+
+<script>
+/* Loot Crate countdown: orders close at the end of Mon 30 Nov 2026, Byron's
+   clock (UTC-5). Ticks every second; at zero it says orders closed. */
+(function(){
+  var el = document.getElementById('crate-countdown');
+  if (!el) return;
+  var end = new Date('2026-12-01T00:00:00-05:00').getTime();
+  function tick(){
+    var left = end - Date.now();
+    if (left <= 0) { el.textContent = 'Orders closed'; return; }
+    var s = Math.floor(left / 1000);
+    var d = Math.floor(s / 86400); s -= d * 86400;
+    var h = Math.floor(s / 3600); s -= h * 3600;
+    var m = Math.floor(s / 60); s -= m * 60;
+    el.textContent = d + (d === 1 ? ' day ' : ' days ') + h + (h === 1 ? ' hr ' : ' hrs ') + m + ' min ' + s + ' sec left to order';
+  }
+  tick();
+  setInterval(tick, 1000);
 })();
 </script>
 

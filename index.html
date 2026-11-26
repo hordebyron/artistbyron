@@ -7,7 +7,7 @@
 <meta name="description" content="Artist Byron, Canadian horror artist in ink and paint for 20 years. Zombies, skulls, creepy portraits.">
 
 
-<link rel="stylesheet" href="style.css?v=179">
+<link rel="stylesheet" href="style.css?v=180">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -25,6 +25,7 @@
   </div>
   <h2>The Holiday Loot Crate is here</h2>
   <p>The third Horde crate, and the last one of the year. A box of horror from Byron's desk, contents secret until it lands on your doorstep. $35 CAD, about $24 US, shipping included. Orders close at the end of November, and the crates ship in the first two weeks of December.</p>
+  <p class="crate-countdown" id="crate-countdown">Orders close at the end of November</p>
   <p class="btn-row"><a class="btn cardpay" href="https://buy.stripe.com/4gMdRa0t0bjBfd40iR8IU00"><svg class="card-ico" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="6" y1="10" x2="12" y2="10"/></svg>Debit or Credit Card</a> <a class="btn paypal" href="https://www.paypal.com/ncp/payment/UKFXWHKBF7FY6" aria-label="Pay with PayPal"><span class="pp"><span class="pp-a">Pay</span><span class="pp-b">Pal</span></span></a> <a class="btn cryptopay crypto-gated" href="loot-crate.html" hidden>Pay with crypto</a></p>
   <p class="small">This opens Stripe's secure checkout.</p>
 </section>
@@ -123,6 +124,8 @@
 .horde-intro{text-align:center;font-size:1.05rem;margin:0 auto 12px;max-width:860px}
 .hero-crate-img{cursor:pointer}
 .hero-crate-img:hover{outline:2px solid var(--red);outline-offset:2px}
+.crate-countdown{text-align:center;font-weight:700;color:var(--red);font-size:1.1rem;margin:10px 0 2px}
+.hero-card .btn.cardpay{font-size:1.15rem;padding:14px 22px}
 </style>
 <button id="fb-btn" type="button">See a bug? Tell me</button>
 <div id="fb-panel" hidden>
@@ -220,6 +223,27 @@
   document.getElementById('index-modal-close').addEventListener('click', closeCrateImg);
   modal.addEventListener('click', function(e){ if (e.target === modal) closeCrateImg(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeCrateImg(); });
+})();
+</script>
+
+<script>
+/* Loot Crate countdown: orders close at the end of Mon 30 Nov 2026, Byron's
+   clock (UTC-5). Ticks every second; at zero it says orders closed. */
+(function(){
+  var el = document.getElementById('crate-countdown');
+  if (!el) return;
+  var end = new Date('2026-12-01T00:00:00-05:00').getTime();
+  function tick(){
+    var left = end - Date.now();
+    if (left <= 0) { el.textContent = 'Orders closed'; return; }
+    var s = Math.floor(left / 1000);
+    var d = Math.floor(s / 86400); s -= d * 86400;
+    var h = Math.floor(s / 3600); s -= h * 3600;
+    var m = Math.floor(s / 60); s -= m * 60;
+    el.textContent = d + (d === 1 ? ' day ' : ' days ') + h + (h === 1 ? ' hr ' : ' hrs ') + m + ' min ' + s + ' sec left to order';
+  }
+  tick();
+  setInterval(tick, 1000);
 })();
 </script>
 
