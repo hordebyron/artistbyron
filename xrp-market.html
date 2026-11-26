@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=158">
+<link rel="stylesheet" href="style.css?v=159">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -62,13 +62,7 @@
 
   <section class="card">
     <h2>For sale right now</h2>
-    <p id="sales-filters" style="margin:10px 0">
-      <button class="btn" type="button" data-iss="">All</button>
-      <button class="btn ghost" type="button" data-iss="ArtistByron">ArtistByron</button>
-      <button class="btn ghost" type="button" data-iss="Horde">Horde</button>
-      <button class="btn ghost" type="button" data-iss="with the Horde">with the Horde</button>
-      <button class="btn ghost" type="button" data-iss="Horde Tacos">Horde Tacos</button>
-    </p>
+    <p id="sales-filters" style="margin:10px 0"></p>
     <p style="margin:6px 0">
       <input type="text" id="sales-search" placeholder="Search by name or seller" autocomplete="off" style="max-width:240px">
       <select id="sales-sort">
@@ -137,6 +131,21 @@
     'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 'with the Horde'
   };
   var TACO_ISSUER = 'rhy' + 'gvDyyaNSfPdsN8UzGTENBYXJyxy4eKw', TACO_TAXON = 476671391;
+  /* Collection names by taxon, and the order Byron wants the filter
+     buttons in. The buttons are built from the taxons that actually have
+     pieces for sale, in this order first, then the rest. */
+  var TAXON_NAMES = {
+    1: 'the Horde', 2: 'TV Heads', 4: 'Big Cup of Thanks', 5: 'Byrons Ink',
+    6: 'I Love Zombies', 8: 'Sketchy Cats', 11: 'Signatures and Stuff',
+    111: 'First Slice', 247: 'Daily Editions', 321: 'Pizza Horde',
+    999: 'My Zombie Cats', 1313: 'the Horde Rewards',
+    130001: 'Mental Floss', 0: 'Mental Floss Editions',
+    556: 'Simple Pumpkin Spice', 666: 'Mushroom Cap Collection',
+    1111: 'HORDE Glitch', 66601: 'Faces of the Horde',
+    557: 'I FKN LOVE COFFEE', 1666: 'The Way of the Zombie',
+    66602: 'HODLer', 66603: 'Holiday Loot Crate', 66608: 'Bush Skull'
+  };
+  var TAXON_ORDER = [1, 999, 130001, 247, 321, 5, 2];
   var HORDE_HEX = '24484F5244450000000000000000000000000000';
   var HORDE_ISSUER = 'rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR';
   var XAMAN_API_KEY = '09e6660d-6fce-4f1c-991f-7b0497ef709d';
@@ -163,7 +172,7 @@
   var piecesEl = document.getElementById('my-pieces');
   var piecesStatus = document.getElementById('my-pieces-status');
 
-  var offers = [], fIss = '', myAddr = null, myPieces = [], myListings = [], busy = false, gatheredAt = '', wallShown = 24;
+  var offers = [], fTaxon = '', myAddr = null, myPieces = [], myListings = [], busy = false, gatheredAt = '', wallShown = 24;
 
   /* The wallet already linked on the member's profile. It is the address
      the page shows and reads from. The signing session (myAddr) only ever
@@ -427,13 +436,48 @@
     var checked = await pool(offers, 6, verifyOffer);
     offers = checked.filter(Boolean);
     var after = offers.map(function(o){ return o.offer; }).join(',');
-    if (before !== after) renderWall();
+    if (before !== after) { renderFilters(); renderWall(); }
     if (!keepNote) updatedEl.textContent = (gatheredAt ? 'Wall gathered ' + gatheredAt + '. ' : '') + 'Every offer on this wall was checked against the ledger just now, so what you see is really for sale.';
+  }
+  function taxonLabel(t){
+    if (TAXON_NAMES[t] != null) return TAXON_NAMES[t];
+    return 'Taxon ' + t;
+  }
+  function renderFilters(){
+    var wrap = document.getElementById('sales-filters');
+    if (!wrap) return;
+    var counts = {};
+    offers.forEach(function(o){ var t = o.taxon; counts[t] = (counts[t] || 0) + 1; });
+    var present = Object.keys(counts);
+    var ordered = [];
+    TAXON_ORDER.forEach(function(t){
+      var k = String(t);
+      if (counts[k] != null) ordered.push(k);
+    });
+    var rest = present.filter(function(k){ return TAXON_ORDER.indexOf(+k) === -1; });
+    rest.sort(function(a, b){ return (counts[b] - counts[a]) || (+a - +b); });
+    ordered = ordered.concat(rest);
+    if (fTaxon && counts[fTaxon] == null) fTaxon = '';
+    wrap.innerHTML = '';
+    var all = document.createElement('button');
+    all.className = 'btn' + (fTaxon ? ' ghost' : '');
+    all.type = 'button';
+    all.setAttribute('data-taxon', '');
+    all.textContent = 'All';
+    wrap.appendChild(all);
+    ordered.forEach(function(k){
+      var b = document.createElement('button');
+      b.className = 'btn' + (fTaxon === k ? '' : ' ghost');
+      b.type = 'button';
+      b.setAttribute('data-taxon', k);
+      b.textContent = taxonLabel(k);
+      wrap.appendChild(b);
+    });
   }
   function renderWall(){
     var q = (searchEl.value || '').toLowerCase();
     var list = offers.filter(function(o){
-      if (fIss && o.issuer_name !== fIss) return false;
+      if (fTaxon && String(o.taxon) !== fTaxon) return false;
       if (q && (o.name || '').toLowerCase().indexOf(q) === -1 && (o.seller || '').toLowerCase().indexOf(q) === -1) return false;
       return true;
     });
@@ -516,11 +560,10 @@
     busy = false;
   }
   document.getElementById('sales-filters').addEventListener('click', function(e){
-    var b = e.target.closest('button[data-iss]'); if (!b) return;
-    fIss = b.getAttribute('data-iss');
-    this.querySelectorAll('button').forEach(function(x){ x.className = 'btn ghost'; });
-    b.className = 'btn';
+    var b = e.target.closest('button[data-taxon]'); if (!b) return;
+    fTaxon = b.getAttribute('data-taxon');
     wallShown = 24;
+    renderFilters();
     renderWall();
   });
   searchEl.addEventListener('input', function(){ wallShown = 24; renderWall(); });
@@ -530,6 +573,7 @@
     offers = j.offers || [];
     gatheredAt = j.generated_at || '';
     if (gatheredAt) updatedEl.textContent = 'Wall gathered ' + gatheredAt + '. Checking every offer against the ledger…';
+    renderFilters();
     renderWall();
     await refreshWall();
   }).catch(function(){ statusEl.textContent = 'The market could not load just now. Try again in a bit.'; });
