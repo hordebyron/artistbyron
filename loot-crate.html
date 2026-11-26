@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Holiday Loot Crate Token - Artist Byron</title>
 <meta name="description" content="The Horde Holiday Loot Crate as a token on WAX and XRP. Claim the physical crate, or hold the token as a credit for what you paid.">
-<link rel="stylesheet" href="style.css?v=181">
+<link rel="stylesheet" href="style.css?v=182">
 <style>
 main.wrap{max-width:900px}
 main.wrap h1{font-size:2rem}
@@ -264,7 +264,7 @@ main.wrap .card{padding:14px;margin:14px 0}
   var w = null;
   try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
   if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
-  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()) || (w.base && String(w.base).trim()) || (w.sol && String(w.sol).trim())));
   if (hasWallet) return;
   document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
   document.querySelectorAll('a[href="market.html"], a[href="xrp-market.html"], a[href="nft-gallery.html"]').forEach(function (m) { m.remove(); });
@@ -334,7 +334,7 @@ main.wrap .card{padding:14px;margin:14px 0}
   var w = null;
   try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
   if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
-  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()) || (w.base && String(w.base).trim()) || (w.sol && String(w.sol).trim())));
   if (!hasWallet) return;
   document.querySelectorAll('.crypto-gated').forEach(function (el) { el.hidden = false; });
   var locked = document.getElementById('crypto-locked');
