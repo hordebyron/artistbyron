@@ -22,14 +22,19 @@
 .prod-img, #crate-main{cursor:pointer}
 .prod-img:hover, #crate-main:hover{outline:2px solid var(--red);outline-offset:2px}
 /* Merch buy rows: one dropdown picks the variant, one button buys it. */
-.buy-select{flex:1 1 180px;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);color:var(--ink);font:inherit;font-size:.95rem}
+.buy-select, .crypto-select{flex:1 1 100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);color:var(--ink);font:inherit;font-size:.95rem}
+/* Wallet address in the crypto pay modal: one copyable line. */
+.wallet-line{font-family:monospace;word-break:break-all;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px}
+/* NFT opt-in beside the crypto buy button. */
+.nft-opt{display:flex;align-items:center;gap:6px;font-size:.95rem;cursor:pointer}
+.nft-opt input{width:18px;height:18px;accent-color:var(--red)}
 /* "Pick your own designs" sits at the top of the sticker card, big. */
 .pick-btn{display:block;text-align:center;font-size:1.05rem;padding:12px}
 @media (min-width:760px){
   .prod.feature{grid-template-columns:220px 1fr;gap:22px}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=166">
+<link rel="stylesheet" href="style.css?v=169">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -91,7 +96,8 @@
       <p><a class="btn pick-btn" href="stickers.html">Pick your own designs</a></p>
       <p class="price">from CA$5 &middot; about US$3.50, shipping included</p>
       <p>Packs of three, five or ten, or a single sticker. Zombie and skull stickers from Byron's art.</p>
-      <p class="btn-row"><select class="buy-select" aria-label="Choose a sticker pack"><option value="https://buy.stripe.com/7sY5kE3Fc1J12qid5D8IU1d">1 sticker &middot; CA$5 (about US$3.50)</option><option value="https://buy.stripe.com/eVq8wQb7E9btfd45Db8IU1e">Pack of 3 &middot; CA$11 (about US$7.75)</option><option value="https://buy.stripe.com/cNi9AU4JgcnFe902qZ8IU1f">Pack of 5 &middot; CA$13 (about US$9.15)</option><option value="https://buy.stripe.com/bJe9AU5NkdrJ2qi4z78IU1g">Pack of 10 &middot; CA$19 (about US$13.40)</option></select><a class="btn buy-btn" href="https://buy.stripe.com/7sY5kE3Fc1J12qid5D8IU1d">Pay by card</a><a class="btn paypal" href="https://www.paypal.com/ncp/payment/TGGJG6ERUGN2C" aria-label="Pay with PayPal"><span class="pp"><span class="pp-a">Pay</span><span class="pp-b">Pal</span></span></a></p>
+      <p class="btn-row"><select class="buy-select" aria-label="Choose a sticker pack"><option value="https://buy.stripe.com/7sY5kE3Fc1J12qid5D8IU1d">1 sticker &middot; CA$5</option><option value="https://buy.stripe.com/eVq8wQb7E9btfd45Db8IU1e">Pack of 3 &middot; CA$11</option><option value="https://buy.stripe.com/cNi9AU4JgcnFe902qZ8IU1f">Pack of 5 &middot; CA$13</option><option value="https://buy.stripe.com/bJe9AU5NkdrJ2qi4z78IU1g">Pack of 10 &middot; CA$19</option></select><a class="btn buy-btn" href="https://buy.stripe.com/7sY5kE3Fc1J12qid5D8IU1d">Pay by card</a><a class="btn paypal" href="https://www.paypal.com/ncp/payment/TGGJG6ERUGN2C" aria-label="Pay with PayPal"><span class="pp"><span class="pp-a">Pay</span><span class="pp-b">Pal</span></span></a></p>
+      <p class="btn-row crypto-gated" hidden><select class="crypto-select" aria-label="Choose a crypto to pay with"><option value="wax" data-amount="1,000" data-denom="WAX" data-wallet="hordesmuse42" data-memo="STICKERS-1" data-item="1 sticker">1 sticker &middot; 1,000 WAX</option><option value="xrp" data-amount="4" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="STICKERS-1" data-item="1 sticker">1 sticker &middot; 4 XRP</option><option value="wax" data-amount="2,300" data-denom="WAX" data-wallet="hordesmuse42" data-memo="STICKERS-3" data-item="Pack of 3">Pack of 3 &middot; 2,300 WAX</option><option value="xrp" data-amount="8" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="STICKERS-3" data-item="Pack of 3">Pack of 3 &middot; 8 XRP</option><option value="wax" data-amount="2,700" data-denom="WAX" data-wallet="hordesmuse42" data-memo="STICKERS-5" data-item="Pack of 5">Pack of 5 &middot; 2,700 WAX</option><option value="xrp" data-amount="10" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="STICKERS-5" data-item="Pack of 5">Pack of 5 &middot; 10 XRP</option><option value="wax" data-amount="4,000" data-denom="WAX" data-wallet="hordesmuse42" data-memo="STICKERS-10" data-item="Pack of 10">Pack of 10 &middot; 4,000 WAX</option><option value="xrp" data-amount="14" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="STICKERS-10" data-item="Pack of 10">Pack of 10 &middot; 14 XRP</option></select><label class="nft-opt"><input type="checkbox" class="nft-check"> Add the NFT, free</label><button class="btn crypto-btn" type="button">Pay with crypto</button></p>
       <p class="small">This opens Stripe's secure checkout. PayPal takes all six pack sizes, including 50 and 100.</p>
     </section>
     <section class="card prod">
@@ -99,7 +105,8 @@
       <h3>Zombie Enamel Pin</h3>
       <p class="price">from CA$23.95 &middot; about US$17, shipping included</p>
       <p>The colourful green zombie, as a pin. Or get the pin and lanyard together below and save CA$7. <span class="only">19 left</span></p>
-      <p class="btn-row"><select class="buy-select" aria-label="Choose pin and shipping"><option value="https://buy.stripe.com/aFa28sa3A0EX6Gy3v38IU07">Pin only &mdash; USA &middot; CA$23.95 (about US$17)</option><option value="https://buy.stripe.com/00w3cwb7EbjBc0S5Db8IU08">Pin only &mdash; Canada &middot; CA$26.95 (about US$19)</option><option value="https://buy.stripe.com/6oU00k2B8gDVgh82qZ8IU0b">Pin + lanyard &mdash; USA &middot; CA$29.95</option><option value="https://buy.stripe.com/14A28sejQ5Zhgh87Lj8IU0c">Pin + lanyard &mdash; Canada &middot; CA$32.95</option></select><a class="btn buy-btn" href="https://buy.stripe.com/aFa28sa3A0EX6Gy3v38IU07">Pay by card</a></p>
+      <p class="btn-row"><select class="buy-select" aria-label="Choose pin and shipping"><option value="https://buy.stripe.com/aFa28sa3A0EX6Gy3v38IU07">Pin only, USA &middot; CA$23.95</option><option value="https://buy.stripe.com/00w3cwb7EbjBc0S5Db8IU08">Pin only, Canada &middot; CA$26.95</option><option value="https://buy.stripe.com/6oU00k2B8gDVgh82qZ8IU0b">Pin + lanyard, USA &middot; CA$29.95</option><option value="https://buy.stripe.com/14A28sejQ5Zhgh87Lj8IU0c">Pin + lanyard, Canada &middot; CA$32.95</option></select><a class="btn buy-btn" href="https://buy.stripe.com/aFa28sa3A0EX6Gy3v38IU07">Pay by card</a></p>
+      <p class="btn-row crypto-gated" hidden><select class="crypto-select" aria-label="Choose a crypto to pay with"><option value="wax" data-amount="5,100" data-denom="WAX" data-wallet="hordesmuse42" data-memo="ZOMBIE-PIN" data-item="Zombie Enamel Pin">Pin only &middot; 5,100 WAX</option><option value="xrp" data-amount="18" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="ZOMBIE-PIN" data-item="Zombie Enamel Pin">Pin only &middot; 18 XRP</option><option value="wax" data-amount="6,300" data-denom="WAX" data-wallet="hordesmuse42" data-memo="ZOMBIE-PIN-LANYARD" data-item="Zombie Enamel Pin + lanyard">Pin + lanyard &middot; 6,300 WAX</option><option value="xrp" data-amount="23" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="ZOMBIE-PIN-LANYARD" data-item="Zombie Enamel Pin + lanyard">Pin + lanyard &middot; 23 XRP</option></select><label class="nft-opt"><input type="checkbox" class="nft-check"> Add the NFT, free</label><button class="btn crypto-btn" type="button">Pay with crypto</button></p>
       <p class="small">This opens Stripe's secure checkout.</p>
     </section>
     <section class="card prod">
@@ -107,7 +114,8 @@
       <h3>Horde Logo Enamel Pin</h3>
       <p class="price">from CA$23.95 &middot; about US$17, shipping included</p>
       <p>The red Horde H, as a pin. <span class="only">20 left</span></p>
-      <p class="btn-row"><select class="buy-select" aria-label="Choose pin and shipping"><option value="https://buy.stripe.com/3cIeVea3A9bt7KC2qZ8IU09">Pin &mdash; USA &middot; CA$23.95 (about US$17)</option><option value="https://buy.stripe.com/28E4gA6RoevN9SK0iR8IU0a">Pin &mdash; Canada &middot; CA$26.95 (about US$19)</option></select><a class="btn buy-btn" href="https://buy.stripe.com/3cIeVea3A9bt7KC2qZ8IU09">Pay by card</a></p>
+      <p class="btn-row"><select class="buy-select" aria-label="Choose pin and shipping"><option value="https://buy.stripe.com/3cIeVea3A9bt7KC2qZ8IU09">USA &middot; CA$23.95</option><option value="https://buy.stripe.com/28E4gA6RoevN9SK0iR8IU0a">Canada &middot; CA$26.95</option></select><a class="btn buy-btn" href="https://buy.stripe.com/3cIeVea3A9bt7KC2qZ8IU09">Pay by card</a></p>
+      <p class="btn-row crypto-gated" hidden><select class="crypto-select" aria-label="Choose a crypto to pay with"><option value="wax" data-amount="5,100" data-denom="WAX" data-wallet="hordesmuse42" data-memo="LOGO-PIN" data-item="Horde Logo Enamel Pin">5,100 WAX</option><option value="xrp" data-amount="18" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="LOGO-PIN" data-item="Horde Logo Enamel Pin">18 XRP</option></select><label class="nft-opt"><input type="checkbox" class="nft-check"> Add the NFT, free</label><button class="btn crypto-btn" type="button">Pay with crypto</button></p>
       <p class="small">This opens Stripe's secure checkout.</p>
     </section>
     <section class="card prod">
@@ -115,7 +123,8 @@
       <h3>Zombie Christmas Tree Pin</h3>
       <p class="price">from $15 USD &middot; $22 CAD, free shipping</p>
       <p>The Christmas tree, as a pin. About 2 inches tall, two pin posts. <span class="only">13 left</span><span class="crypto-gated" hidden> Crypto buyers can pay in WAX or XRP, and the NFT is free with the pin if you want it.</span></p>
-      <p class="btn-row"><select class="buy-select" aria-label="Choose pin and shipping"><option value="https://buy.stripe.com/dRmeVe5Nk9btc0S6Hf8IU0V">Pin &mdash; USA &middot; $15 USD</option><option value="https://buy.stripe.com/dRm14o4JggDVc0Sc1z8IU0W">Pin &mdash; Canada &middot; $22 CAD</option></select><a class="btn buy-btn" href="https://buy.stripe.com/dRmeVe5Nk9btc0S6Hf8IU0V">Pay by card</a><a class="btn crypto-gated" href="christmas-tree-pin.html" hidden>Pay with crypto</a></p>
+      <p class="btn-row"><select class="buy-select" aria-label="Choose pin and shipping"><option value="https://buy.stripe.com/dRmeVe5Nk9btc0S6Hf8IU0V">USA &middot; $15 USD</option><option value="https://buy.stripe.com/dRm14o4JggDVc0Sc1z8IU0W">Canada &middot; $22 CAD</option></select><a class="btn buy-btn" href="https://buy.stripe.com/dRmeVe5Nk9btc0S6Hf8IU0V">Pay by card</a></p>
+      <p class="btn-row crypto-gated" hidden><select class="crypto-select" aria-label="Choose a crypto to pay with"><option value="wax" data-amount="4,500" data-denom="WAX" data-wallet="hordesmuse42" data-memo="PIN" data-item="Zombie Christmas Tree Pin">4,500 WAX</option><option value="xrp" data-amount="16" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="PIN" data-item="Zombie Christmas Tree Pin">16 XRP</option></select><label class="nft-opt"><input type="checkbox" class="nft-check"> Add the NFT, free</label><button class="btn crypto-btn" type="button">Pay with crypto</button></p>
       <p class="small">This opens Stripe's secure checkout.</p>
     </section>
     <section class="card prod">
@@ -123,7 +132,8 @@
       <h3>The Horde Lanyard</h3>
       <p class="price">from CA$13 &middot; about US$9, shipping included</p>
       <p>Black lanyard printed with red THE HORDE lettering.</p>
-      <p class="btn-row"><select class="buy-select" aria-label="Choose lanyard and shipping"><option value="https://buy.stripe.com/fZu14o2B8drJ4yq5Db8IU0d">Lanyard &mdash; USA &middot; CA$13 (about US$9)</option><option value="https://buy.stripe.com/6oU6oI0t0fzRe908Pn8IU0e">Lanyard &mdash; Canada &middot; CA$16 (about US$11)</option></select><a class="btn buy-btn" href="https://buy.stripe.com/fZu14o2B8drJ4yq5Db8IU0d">Pay by card</a></p>
+      <p class="btn-row"><select class="buy-select" aria-label="Choose lanyard and shipping"><option value="https://buy.stripe.com/fZu14o2B8drJ4yq5Db8IU0d">USA &middot; CA$13</option><option value="https://buy.stripe.com/6oU6oI0t0fzRe908Pn8IU0e">Canada &middot; CA$16</option></select><a class="btn buy-btn" href="https://buy.stripe.com/fZu14o2B8drJ4yq5Db8IU0d">Pay by card</a></p>
+      <p class="btn-row crypto-gated" hidden><select class="crypto-select" aria-label="Choose a crypto to pay with"><option value="wax" data-amount="2,700" data-denom="WAX" data-wallet="hordesmuse42" data-memo="LANYARD" data-item="The Horde Lanyard">2,700 WAX</option><option value="xrp" data-amount="10" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="LANYARD" data-item="The Horde Lanyard">10 XRP</option></select><label class="nft-opt"><input type="checkbox" class="nft-check"> Add the NFT, free</label><button class="btn crypto-btn" type="button">Pay with crypto</button></p>
       <p class="small">This opens Stripe's secure checkout.</p>
     </section>
     <section class="card prod">
@@ -131,7 +141,8 @@
       <h3>Custom T-Shirt</h3>
       <p class="price">from CA$27 &middot; about US$19, shipping included</p>
       <p>Pick the image, the shirt colour and your size, and Byron's zombie art goes on it. Tell us your size, colour and image choice at checkout.</p>
-      <p class="btn-row"><select class="buy-select" aria-label="Choose t-shirt and shipping"><option value="https://buy.stripe.com/3cI14ogrY73l1me8Pn8IU0f">T-Shirt &mdash; USA &middot; CA$27 (about US$19)</option><option value="https://buy.stripe.com/3cI4gAejQ0EX6Gy0iR8IU0g">T-Shirt &mdash; Elsewhere &middot; CA$37 (about US$26)</option></select><a class="btn buy-btn" href="https://buy.stripe.com/3cI14ogrY73l1me8Pn8IU0f">Pay by card</a></p>
+      <p class="btn-row"><select class="buy-select" aria-label="Choose t-shirt and shipping"><option value="https://buy.stripe.com/3cI14ogrY73l1me8Pn8IU0f">USA &middot; CA$27</option><option value="https://buy.stripe.com/3cI4gAejQ0EX6Gy0iR8IU0g">Elsewhere &middot; CA$37</option></select><a class="btn buy-btn" href="https://buy.stripe.com/3cI14ogrY73l1me8Pn8IU0f">Pay by card</a></p>
+      <p class="btn-row crypto-gated" hidden><select class="crypto-select" aria-label="Choose a crypto to pay with"><option value="wax" data-amount="5,700" data-denom="WAX" data-wallet="hordesmuse42" data-memo="SHIRT" data-item="Custom T-Shirt">5,700 WAX</option><option value="xrp" data-amount="20" data-denom="XRP" data-wallet="rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH" data-memo="SHIRT" data-item="Custom T-Shirt">20 XRP</option></select><label class="nft-opt"><input type="checkbox" class="nft-check"> Add the NFT, free</label><button class="btn crypto-btn" type="button">Pay with crypto</button></p>
       <p class="small">This opens Stripe's secure checkout.</p>
     </section>
   </div>
@@ -281,6 +292,12 @@
       <div id="shop-modal-body"></div>
     </div>
   </div>
+  <div id="crypto-modal" class="mkt-modal">
+    <div class="mkt-modal-box" role="dialog" aria-modal="true">
+      <button class="mkt-modal-close" type="button" id="crypto-modal-close" aria-label="Close">&times;</button>
+      <div id="crypto-modal-body"></div>
+    </div>
+  </div>
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
 <script src="script.js"></script>
@@ -332,6 +349,67 @@
     sel.addEventListener('change', sync);
     sync();
   });
+})();
+/* Crypto pay modal: pick a denomination in a merch card crypto dropdown,
+   tap Pay with crypto, and the modal shows the wallet, memo and next step. */
+(function(){
+  function esc(s){
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  var modal = document.getElementById('crypto-modal');
+  var body = document.getElementById('crypto-modal-body');
+  if (!modal || !body) return;
+  function openCrypto(o){
+    var kind = o.denom === 'XRP' ? 'note' : 'memo';
+    var html = '<h3 class="mkt-name">Pay with ' + esc(o.denom) + '</h3>'
+      + '<p class="price">' + esc(o.amount) + ' ' + esc(o.denom) + ' &middot; ' + esc(o.item) + '</p>'
+      + '<p>Send ' + esc(o.amount) + ' ' + esc(o.denom) + ' to this wallet. Use the ' + kind + ' <strong>' + esc(o.memo) + '</strong>.</p>'
+      + '<p>This wallet:</p>'
+      + '<p class="wallet-line">' + esc(o.wallet) + '</p>'
+      + '<p><button class="btn" type="button" id="crypto-copy">Copy wallet</button></p>'
+      + (o.note ? '<p>' + esc(o.note) + '</p>' : '')
+      + (o.wantNft ? '<p>Include your ' + esc(o.denom) + ' wallet address in your email so the NFT can be minted to you.</p>' : '')
+      + '<p>Then email your shipping address to <a href="mailto:hordemuse@muse.ai">hordemuse@muse.ai</a>. A minion sees the payment right away and sends it on to Byron.</p>';
+    body.innerHTML = html;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    var copy = document.getElementById('crypto-copy');
+    if (copy) copy.addEventListener('click', function(){
+      var done = function(){ copy.textContent = 'Copied'; };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(o.wallet).then(done, done);
+      } else { done(); }
+    });
+  }
+  function closeCrypto(){
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.crypto-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var row = btn.closest('.btn-row');
+      var sel = row ? row.querySelector('.crypto-select') : null;
+      if (!sel || !sel.options.length) return;
+      var opt = sel.options[sel.selectedIndex];
+      var d = opt.dataset || {};
+      var check = row ? row.querySelector('.nft-check') : null;
+      var wantNft = !!(check && check.checked);
+      var memo = d.memo || '';
+      if (wantNft && memo) memo = memo + '-NFT';
+      openCrypto({
+        amount: d.amount || '',
+        denom: d.denom || '',
+        wallet: d.wallet || '',
+        memo: memo,
+        item: d.item || '',
+        note: d.note || '',
+        wantNft: wantNft
+      });
+    });
+  });
+  document.getElementById('crypto-modal-close').addEventListener('click', closeCrypto);
+  modal.addEventListener('click', function(e){ if (e.target === modal) closeCrypto(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeCrypto(); });
 })();
 </script>
 <script>
