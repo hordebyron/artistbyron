@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>emerging from the dark side of white - Horde on WAX</title>
 <meta name="description" content="A new ink piece on WAX, 42 in total. Founders claim free for 24 hours, then 666 DHC or 100 WAX, claimed right here on artistbyron.ca.">
-<link rel="stylesheet" href="style.css?v=150">
+<link rel="stylesheet" href="style.css?v=151">
 <style>#pay-method{font:inherit;padding:9px 10px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;max-width:100%}</style>
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
@@ -36,7 +36,6 @@
   </section>
 
   <section class="card" id="claim-card">
-    <h2>Claim it here</h2>
     <p>Log in with your WAX wallet, Anchor or Cloud Wallet. Claiming signs one transaction in your wallet. On a paid drop the payment and the claim go together, and the NFT mints straight to you. If the claim fails for any reason, the payment fails with it, so your money never leaves without the NFT.</p>
     <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button></p>
     <p class="small" id="login-status">Not logged in yet.</p>
@@ -66,16 +65,24 @@ var TEMPLATE_ID = 912479;
 // these, so switching the dropdown re-points the whole claim flow.
 var SEL = 0;
 var DROP_ID = 0, PRICE_STR = '', TOKEN_CONTRACT = '', TOKEN_SYMBOL = '', MAX_CLAIMABLE = 0, ACCOUNT_LIMIT = 0, WHITELIST = [], START_TIME = 0, END_TIME = 0, START_TEXT = '', END_TEXT = '';
+// Display price: the on-chain price string carries 8 decimals for the
+// transfer, but the page shows the plain number (100 WAX, 666 DHC).
+function dispPrice(s) {
+  if (!s) return 'Free';
+  var p = String(s).split(' ');
+  var n = parseFloat(p[0]);
+  return (isNaN(n) ? p[0] : String(n)) + (p[1] ? ' ' + p[1] : '');
+}
 function applySelection() {
   var d = DROPS[SEL];
   DROP_ID = d.id; PRICE_STR = d.price || ''; TOKEN_CONTRACT = d.tokenContract || ''; TOKEN_SYMBOL = d.tokenSymbol || '';
   MAX_CLAIMABLE = d.maxClaimable; ACCOUNT_LIMIT = d.accountLimit; WHITELIST = d.whitelist;
   START_TIME = d.start; END_TIME = d.end; START_TEXT = d.startText; END_TEXT = d.endText;
-  document.getElementById('info-price').textContent = PRICE_STR || 'Free';
+  document.getElementById('info-price').textContent = dispPrice(PRICE_STR);
   document.getElementById('info-limit').textContent = ACCOUNT_LIMIT >= MAX_CLAIMABLE ? 'No per wallet limit, ' + MAX_CLAIMABLE + ' total' : ACCOUNT_LIMIT + ' per wallet, ' + MAX_CLAIMABLE + ' total';
   document.getElementById('info-starts').textContent = START_TEXT;
   document.getElementById('info-ends').textContent = END_TEXT;
-  claimBtn.textContent = PRICE_STR ? 'Pay ' + PRICE_STR + ' and claim' : 'Claim free';
+  claimBtn.textContent = PRICE_STR ? 'Pay ' + dispPrice(PRICE_STR) + ' and claim' : 'Claim free';
 }
 // ===================================================================
 var dropStatusEl = document.getElementById('drop-status');
@@ -149,7 +156,14 @@ async function refreshDrop() {
 }
 function updateClaimBtn() {
   if (!DROP_ID) { claimBtn.disabled = true; return; }
-  if (!session) { claimBtn.disabled = true; return; }
+  if (!session) {
+    // The claim button is the login trigger: it stays tappable while the
+    // drop is live, and logging in leads straight into the claim.
+    if (!dropLive) { claimBtn.disabled = true; claimStatusEl.textContent = 'The drop is not live right now. It opens ' + START_TEXT + '.'; return; }
+    claimBtn.disabled = false;
+    claimStatusEl.textContent = 'Tap to log in with your WAX wallet, then approve the claim in your wallet.';
+    return;
+  }
   var name = String(session.actor);
   if (WHITELIST.length && WHITELIST.indexOf(name) === -1) {
     claimBtn.disabled = true;
@@ -167,7 +181,7 @@ function updateClaimBtn() {
     return;
   }
   claimBtn.disabled = false;
-  claimStatusEl.textContent = PRICE_STR ? 'Tap Claim, then approve the one transaction in your wallet. It pays ' + PRICE_STR + ' and mints to you.' : 'Tap Claim, then approve it in your wallet. It mints straight to you, free.';
+  claimStatusEl.textContent = PRICE_STR ? 'Tap Claim, then approve the one transaction in your wallet. It pays ' + dispPrice(PRICE_STR) + ' and mints to you.' : 'Tap Claim, then approve it in your wallet. It mints straight to you, free.';
 }
 (function () {
   refreshDrop();
@@ -186,7 +200,7 @@ function updateClaimBtn() {
         ui: new m[1].WebRenderer(),
         walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
       });
-      loginBtn.addEventListener('click', async function () {
+      async function doLogin() {
         loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
         try {
           var res = await sessionKit.login();
@@ -196,22 +210,30 @@ function updateClaimBtn() {
           logoutBtn.hidden = false;
           loginBtn.disabled = true;
           refreshDrop();
+          return true;
         } catch (e) {
           statusEl.textContent = 'Login cancelled or failed. Try again.';
           loginBtn.disabled = false;
+          return false;
         }
-      });
+      }
+      loginBtn.addEventListener('click', doLogin);
       logoutBtn.addEventListener('click', async function () {
         try { await sessionKit.logout(session); } catch (e) {}
         session = null;
         loginBtn.disabled = false;
         logoutBtn.hidden = true;
         statusEl.textContent = 'Logged out.';
-        claimBtn.disabled = true;
-        claimStatusEl.textContent = '';
+        updateClaimBtn();
       });
       claimBtn.addEventListener('click', async function () {
-        if (!session) return;
+        if (!session) {
+          claimStatusEl.textContent = 'Opening your wallet to log in…';
+          var ok = await doLogin();
+          if (!ok) return;
+          updateClaimBtn();
+          if (claimBtn.disabled) return;
+        }
         var name = String(session.actor);
         claimBtn.disabled = true;
         if (PRICE_STR) {
@@ -220,7 +242,7 @@ function updateClaimBtn() {
             var have = parseFloat(bal);
             var need = parseFloat(PRICE_STR);
             if (!isNaN(have) && !isNaN(need) && have < need) {
-              claimStatusEl.textContent = 'This wallet holds ' + bal + '. The price is ' + PRICE_STR + ', so there is not enough ' + TOKEN_SYMBOL + ' in it for this drop.';
+              claimStatusEl.textContent = 'This wallet holds ' + dispPrice(bal) + '. The price is ' + dispPrice(PRICE_STR) + ', so there is not enough ' + TOKEN_SYMBOL + ' in it for this drop.';
               claimBtn.disabled = false;
               return;
             }
@@ -233,7 +255,7 @@ function updateClaimBtn() {
           actions.push({ account: CONTRACT, name: 'claim', authorization: [{ actor: name, permission: 'active' }], data: { claimer: name, drop_id: DROP_ID } });
           var r = await session.transact({ actions: actions }, { broadcast: true });
           var tx = r.response && r.response.transaction_id ? r.response.transaction_id : '';
-          claimStatusEl.textContent = 'Claimed! ' + DROP_NAME + ' is on its way to ' + name + (PRICE_STR ? ', and ' + PRICE_STR + ' went to Byron.' : '.') + (tx ? ' Transaction: ' + tx : '');
+          claimStatusEl.textContent = 'Claimed! ' + DROP_NAME + ' is on its way to ' + name + (PRICE_STR ? ', and ' + dispPrice(PRICE_STR) + ' went to Byron.' : '.') + (tx ? ' Transaction: ' + tx : '');
           refreshDrop();
         } catch (e) {
           var msg = (e && e.message) ? e.message : String(e);
