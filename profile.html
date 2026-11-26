@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=148">
+<link rel="stylesheet" href="style.css?v=173">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -98,6 +98,9 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
       <div>
         <img class="pfp" id="pfp-preview" src="art/horde-h-black.png" alt="Your profile picture">
         <p class="small">Your picture comes from your own pieces. Open a collection below, tap a piece, and choose Make this my picture.</p>
+        <p class="small">Or upload a picture of your own. It gets shrunk to fit and becomes your profile picture.</p>
+        <p><input type="file" id="pfp-file" accept="image/jpeg,image/png,image/webp"> <button class="btn ghost" type="button" id="pfp-upload-btn">Upload picture</button></p>
+        <p class="small" id="pfp-upload-status"></p>
       </div>
       <div class="pfp-fields">
         <p class="small" id="edit-who"></p>
@@ -138,12 +141,6 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <p style="font-size:1.6rem;letter-spacing:.2em;margin:8px 0" id="link-code"></p>
         <p class="small" id="link-status" aria-live="polite"></p>
       </div>
-    </div>
-    <div id="pfp-upload">
-      <h3>Your picture</h3>
-      <p class="small">Pick a piece from your own collections below, or upload a picture of your own. It gets shrunk to fit and becomes your profile picture.</p>
-      <p><input type="file" id="pfp-file" accept="image/jpeg,image/png,image/webp"> <button class="btn ghost" type="button" id="pfp-upload-btn">Upload picture</button></p>
-      <p class="small" id="pfp-upload-status"></p>
     </div>
   </section>
 
