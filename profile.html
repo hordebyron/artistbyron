@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=176">
+<link rel="stylesheet" href="style.css?v=181">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -148,11 +148,13 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
 
   <section class="card" id="pieces-card" hidden>
     <h2>Your Horde pieces</h2>
-    <p class="small">Only Horde pieces show here, from Byron's own collections on both chains. Nothing else from your wallets.</p>
+    <p class="small">Only Horde pieces show here, from Byron's own collections on WAX, XRP and Base. The Solana side lists every single-edition token in that wallet, as Horde pieces there have no collection marker yet. Nothing else from your wallets.</p>
     <p class="small" id="pieces-status"></p>
     <div class="sides">
       <div><h3>Your WAX side</h3><p class="small" id="side-wax-wallet"></p><div id="coll-wax"></div><details id="unheld-wax-wrap" hidden><summary id="unheld-wax-summary"></summary><div id="unheld-wax" class="small"></div></details></div>
       <div><h3>Your XRP side</h3><p class="small" id="side-xrp-wallet"></p><div id="coll-xrp"></div><details id="unheld-xrp-wrap" hidden><summary id="unheld-xrp-summary"></summary><div id="unheld-xrp" class="small"></div></details></div>
+      <div id="side-base-wrap" hidden><h3>Your Base side</h3><p class="small" id="side-base-wallet"></p><div id="coll-base"></div></div>
+      <div id="side-sol-wrap" hidden><h3>Your Solana side</h3><p class="small" id="side-sol-wallet"></p><div id="coll-sol"></div></div>
     </div>
   </section>
 
@@ -217,7 +219,7 @@ async function sbByNo(n){
   } catch (e) { return null; }
 }
 async function sbExtras(no){
-  var out = { xrp: [], wax: [] };
+  var out = { xrp: [], wax: [], btc: [] };
   try {
     var res = await fetch(SB_URL + '/rest/v1/profile_wallets?select=chain,address,visibility,is_main&profile_no=eq.' + encodeURIComponent(no), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
     if (!res.ok) { res = await fetch(SB_URL + '/rest/v1/profile_wallets?select=chain,address,visibility&profile_no=eq.' + encodeURIComponent(no), { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } }); }
@@ -226,6 +228,15 @@ async function sbExtras(no){
     (rows || []).forEach(function(r){ if (r && out[r.chain]) out[r.chain].push({ address: r.address || '', visibility: r.visibility || 'public', isMain: !!r.is_main }); });
   } catch (e) {}
   return out;
+}
+// One fetch of the extra wallets per profile view, shared by the view
+// card (BTC line) and the pieces section, so the page never asks twice.
+var extrasCache = { no: 0, data: null };
+async function getExtras(no){
+  if (extrasCache.no === no && extrasCache.data) return extrasCache.data;
+  var d = await sbExtras(no);
+  extrasCache = { no: no, data: d };
+  return d;
 }
 function rowToP(row){
   return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', email_verified: row.email_verified || false, x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', base: row.base || '', sol: row.sol || '', points: (typeof row.points === 'number' ? row.points : 0) };
@@ -252,7 +263,7 @@ async function chainPost(host, path, body){
 async function loadBalances(p){
   var el = document.getElementById('balances-text');
   if (!el) return;
-  if (!p.wax && !p.xrp) { el.textContent = 'no wallets on this profile yet.'; return; }
+  if (!p.wax && !p.xrp && !p.base && !p.sol) { el.textContent = 'no wallets on this profile yet.'; return; }
   var parts = [];
   var hasHorde = false;
   if (p.wax) {
@@ -283,6 +294,19 @@ async function loadBalances(p){
           break;
         }
       }
+    } catch (e) {}
+  }
+  if (p.base) {
+    try {
+      var wei = await baseRpc('eth_getBalance', [p.base, 'latest']);
+      var eth = parseInt(wei, 16) / 1e18;
+      parts.push(eth.toLocaleString('en-US', { maximumFractionDigits: 4 }) + ' ETH (Base)');
+    } catch (e) {}
+  }
+  if (p.sol) {
+    try {
+      var sj = await solRpc('getBalance', [p.sol]);
+      if (sj && typeof sj.value === 'number') parts.push((sj.value / 1e9).toLocaleString('en-US', { maximumFractionDigits: 4 }) + ' SOL');
     } catch (e) {}
   }
   el.textContent = parts.length ? parts.join(' · ') : 'could not load just now.';
@@ -319,6 +343,8 @@ function renderBadges(p, hasKey){
   var defs = [
     { label: 'WAX', on: !!p.wax },
     { label: 'XRP', on: !!p.xrp },
+    { label: 'Base', on: !!p.base },
+    { label: 'Solana', on: !!p.sol },
     { label: 'Verified', on: !!p.email_verified },
     { label: 'Discord', on: !!p.discord },
     { label: 'HODLer', on: !!hasKey }
@@ -371,6 +397,15 @@ async function renderProfile(row){
   if (p.xrp) w.push('<div><strong>XRP wallet:</strong> ' + esc(p.xrp) + '</div>');
   if (p.base) w.push('<div><strong>Base wallet:</strong> ' + esc(p.base) + '</div>');
   if (p.sol) w.push('<div><strong>Solana wallet:</strong> ' + esc(p.sol) + '</div>');
+  // BTC has no column on profiles, so it reads from profile_wallets
+  // chain 'btc', public rows only. There is no way to set it from this
+  // page yet: the save action only takes the fields the checker knows.
+  var extras = await getExtras(row.profile_no);
+  var btcRows = (extras.btc || []).filter(function(r){ return r.address && r.visibility !== 'private'; });
+  var btcMain = null;
+  btcRows.forEach(function(r){ if (r.isMain && !btcMain) btcMain = r; });
+  var btcShow = btcMain || btcRows[0];
+  if (btcShow) w.push('<div><strong>BTC wallet:</strong> ' + esc(btcShow.address) + '</div>');
   document.getElementById('view-wallets').innerHTML = w.length ? w.join('') : 'No wallets on this profile yet.';
   var l = [];
   if (p.discord) l.push('Discord: ' + p.discord);
@@ -626,15 +661,149 @@ async function openWaxCollection(collName, displayName){
     renderModalMore();
   } catch (e) { document.getElementById('modal-status').textContent = 'Could not load this collection just now.'; }
 }
+/* Base and Solana pieces. The HordeOnBase v2 contract has no
+   Enumerable, so there is no tokenOfOwnerByIndex: a wallet's tokens
+   are found by scanning Transfer events since the contract was
+   deployed (block 62649834). balanceOf is checked first, so wallets
+   with nothing skip the scan entirely. The scan remembers how far it
+   got in this browser, so repeat visits only read the new blocks. */
+var BASE_RPC = ['https://base.publicnode.com', 'https://mainnet.base.org'];
+var HORDE_BASE = '0x08C62d76fD4297715AEda1ef6EADf1A916978d11';
+var BASE_DEPLOY_BLOCK = 62649834;
+var BASE_TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+async function baseRpc(method, params){
+  var body = JSON.stringify({ jsonrpc: '2.0', id: 1, method: method, params: params });
+  for (var i = 0; i < BASE_RPC.length; i++) {
+    try {
+      var r = await fetch(BASE_RPC[i], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body });
+      var j = await r.json();
+      if (j && j.error) throw new Error(j.error.message || 'rpc error');
+      if (j && j.result !== undefined) return j.result;
+    } catch (e) {}
+  }
+  throw new Error('base rpc down');
+}
+async function solRpc(method, params){
+  var hosts = ['https://api.mainnet-beta.solana.com', 'https://solana.publicnode.com'];
+  var body = JSON.stringify({ jsonrpc: '2.0', id: 1, method: method, params: params });
+  for (var i = 0; i < hosts.length; i++) {
+    try {
+      var r = await fetch(hosts[i], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body });
+      var j = await r.json();
+      if (j && j.error) throw new Error(j.error.message || 'rpc error');
+      if (j && j.result !== undefined) return j.result;
+    } catch (e) {}
+  }
+  throw new Error('solana rpc down');
+}
+function padTopic(addr){ return '0x000000000000000000000000' + String(addr).toLowerCase().replace(/^0x/, ''); }
+function decodeEthString(hex){
+  if (!hex || hex === '0x') return '';
+  var h = hex.slice(2);
+  if (h.length < 128) return '';
+  var len = parseInt(h.slice(64, 128), 16);
+  var dataHex = h.slice(128, 128 + len * 2);
+  var bytes = new Uint8Array(len);
+  for (var i = 0; i < len; i++) bytes[i] = parseInt(dataHex.slice(i * 2, i * 2 + 2), 16);
+  try { return new TextDecoder().decode(bytes); } catch (e) { return ''; }
+}
+async function baseBalanceOf(wallet){
+  var data = '0x70a08231' + padTopic(wallet).slice(2);
+  var res = await baseRpc('eth_call', [{ to: HORDE_BASE, data: data }, 'latest']);
+  return parseInt(res, 16) || 0;
+}
+async function baseTokenUri(id){
+  var data = '0xc87b56dd' + Number(id).toString(16).padStart(64, '0');
+  var res = await baseRpc('eth_call', [{ to: HORDE_BASE, data: data }, 'latest']);
+  return decodeEthString(res);
+}
+async function scanBaseOwned(wallet){
+  var addr = String(wallet).toLowerCase();
+  var owned = {};
+  var latest = parseInt(await baseRpc('eth_blockNumber', []), 16);
+  var from = BASE_DEPLOY_BLOCK;
+  try {
+    var cache = JSON.parse(localStorage.getItem('horde_base_scan_' + addr) || 'null');
+    if (cache && cache.toBlock && cache.toBlock >= from) {
+      from = cache.toBlock + 1;
+      (cache.ids || []).forEach(function(id){ owned[id] = true; });
+    }
+  } catch (e) {}
+  var CHUNK = 45000;
+  while (from <= latest) {
+    var to = Math.min(from + CHUNK - 1, latest);
+    var range = { fromBlock: '0x' + from.toString(16), toBlock: '0x' + to.toString(16), address: HORDE_BASE };
+    var inLogs = await baseRpc('eth_getLogs', [Object.assign({}, range, { topics: [BASE_TRANSFER_TOPIC, null, padTopic(addr)] })]);
+    var outLogs = await baseRpc('eth_getLogs', [Object.assign({}, range, { topics: [BASE_TRANSFER_TOPIC, padTopic(addr), null] })]);
+    inLogs.forEach(function(l){ owned[parseInt(l.topics[3], 16)] = true; });
+    outLogs.forEach(function(l){ delete owned[parseInt(l.topics[3], 16)]; });
+    from = to + 1;
+  }
+  try { localStorage.setItem('horde_base_scan_' + addr, JSON.stringify({ toBlock: latest, ids: Object.keys(owned) })); } catch (e) {}
+  return Object.keys(owned).map(function(x){ return parseInt(x, 10); }).sort(function(a, b){ return a - b; });
+}
+async function openBaseCollection(ids){
+  openModal('the Horde on Base');
+  document.getElementById('modal-status').textContent = 'Loading ' + ids.length + ' pieces…';
+  for (var i = 0; i < ids.length; i++) {
+    var id = ids[i];
+    var name = 'Horde on Base #' + id, img = '';
+    try {
+      var uri = await baseTokenUri(id);
+      if (uri) {
+        var mr = await fetch(ipfsUrl(uri));
+        var mj = await mr.json();
+        name = mj.name || name;
+        img = ipfsUrl(mj.image || mj.image_url || '');
+      }
+    } catch (e) {}
+    if (img) modalItems.push({ img: img, name: name, mint: id });
+    if (!modalShown) renderModalMore();
+  }
+  modalShown = 0;
+  document.getElementById('modal-grid').innerHTML = '';
+  if (!modalItems.length) { document.getElementById('modal-status').textContent = 'No pictures could load for this collection.'; return; }
+  renderModalMore();
+}
+async function scanSolNfts(wallet){
+  var res = await solRpc('getTokenAccountsByOwner', [wallet, { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' }, { encoding: 'jsonParsed' }]);
+  var out = [];
+  ((res && res.value) || []).forEach(function(a){
+    var info = a.account && a.account.data && a.account.data.parsed && a.account.data.parsed.info;
+    if (!info) return;
+    var ta = info.tokenAmount;
+    if (ta && ta.amount === '1' && ta.decimals === 0) out.push(info.mint);
+  });
+  return out;
+}
+function openSolCollection(mints){
+  openModal('Solana NFTs');
+  var grid = document.getElementById('modal-grid');
+  grid.innerHTML = '';
+  document.getElementById('modal-status').textContent = mints.length + ' single-edition tokens. No pictures yet: Horde pieces on Solana do not carry a collection marker, so this lists every one the wallet holds. Tap a mint to see it on Solscan.';
+  mints.forEach(function(m){
+    var d = document.createElement('div');
+    d.className = 'small';
+    d.style.wordBreak = 'break-all';
+    var a = document.createElement('a');
+    a.href = 'https://solscan.io/token/' + m;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = m;
+    d.appendChild(a);
+    grid.appendChild(d);
+  });
+  modalShown = mints.length;
+}
 async function loadPieces(p){
   var card = document.getElementById('pieces-card');
   var status = document.getElementById('pieces-status');
   var xbox = document.getElementById('coll-xrp');
   var wbox = document.getElementById('coll-wax');
-  if (!p.xrp && !p.wax) { var ht0 = document.getElementById('holdings-text'); if (ht0) ht0.textContent = 'No wallets on this profile yet.'; return; }
+  if (!p.xrp && !p.wax && !p.base && !p.sol) { var ht0 = document.getElementById('holdings-text'); if (ht0) ht0.textContent = 'No wallets on this profile yet.'; return; }
   card.hidden = false;
   profWallets = { xrp: p.xrp || '', wax: p.wax || '' };
-  var extras = await sbExtras(p.no);
+  var extras = await getExtras(p.no);
   var xrpShow = [], xrpHide = [], waxShow = [], waxHide = [];
   if (p.xrp) xrpShow.push(p.xrp);
   if (p.wax) waxShow.push(p.wax);
@@ -648,7 +817,7 @@ async function loadPieces(p){
   var moreX = extras.xrp.length - mainX.length, moreW = extras.wax.length - mainW.length;
   if (sx && moreX > 0) sx.textContent += ' (+' + moreX + (moreX === 1 ? ' more wallet' : ' more wallets') + ' on this profile)';
   if (sw && moreW > 0) sw.textContent += ' (+' + moreW + (moreW === 1 ? ' more wallet' : ' more wallets') + ' on this profile)';
-  status.textContent = 'Counting your collections on both chains…';
+  status.textContent = 'Counting your collections on every chain…';
   var totals = [];
   var piecesW = 0, piecesX = 0;
   xrpGroups = {};
@@ -735,6 +904,45 @@ async function loadPieces(p){
       piecesW = totalW + hideW;
       totals.push(piecesW + ' pieces on WAX in ' + Object.keys(aggW).length + (Object.keys(aggW).length === 1 ? ' collection' : ' collections'));
     } catch (e) { wbox.innerHTML = '<p class="small">WAX collections could not load just now.</p>'; }
+  }
+  if (p.base) {
+    var bbox = document.getElementById('coll-base');
+    var bwrap = document.getElementById('side-base-wrap');
+    var sb = document.getElementById('side-base-wallet');
+    if (bwrap) bwrap.hidden = false;
+    if (sb) sb.textContent = 'Wallet: ' + p.base;
+    try {
+      var bal = await baseBalanceOf(p.base);
+      if (!bal) {
+        bbox.innerHTML = '<p class="small">No Horde pieces found on Base for this wallet.</p>';
+      } else {
+        var ids = await scanBaseOwned(p.base);
+        if (!ids.length) {
+          bbox.innerHTML = '<p class="small">No Horde pieces found on Base for this wallet.</p>';
+        } else {
+          bbox.innerHTML = '';
+          bbox.appendChild(collRow('the Horde on Base', ids.length, 'art/horde-h-black.png', function(){ openBaseCollection(ids); }));
+          totals.push(ids.length + ' pieces on Base in 1 collection');
+        }
+      }
+    } catch (e) { bbox.innerHTML = '<p class="small">Base pieces could not load just now.</p>'; }
+  }
+  if (p.sol) {
+    var sobox = document.getElementById('coll-sol');
+    var sowrap = document.getElementById('side-sol-wrap');
+    var ss = document.getElementById('side-sol-wallet');
+    if (sowrap) sowrap.hidden = false;
+    if (ss) ss.textContent = 'Wallet: ' + p.sol;
+    try {
+      var mints = await scanSolNfts(p.sol);
+      if (!mints.length) {
+        sobox.innerHTML = '<p class="small">No single-edition tokens found on Solana for this wallet.</p>';
+      } else {
+        sobox.innerHTML = '';
+        sobox.appendChild(collRow('Solana NFTs', mints.length, 'art/horde-h-black.png', function(){ openSolCollection(mints); }));
+        totals.push(mints.length + ' tokens on Solana');
+      }
+    } catch (e) { sobox.innerHTML = '<p class="small">Solana pieces could not load just now.</p>'; }
   }
   status.textContent = totals.length ? totals.join(' · ') + '.' : '';
   var ht = document.getElementById('holdings-text');

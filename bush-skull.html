@@ -16,12 +16,14 @@
 .info-pop-card{position:relative;max-width:520px;background:#14141b;border:1px solid #33333f;border-radius:12px;padding:20px;color:#f2f2f2}
 #info-pop-x{position:absolute;top:6px;right:12px;background:none;border:none;color:#f2f2f2;font-size:1.4rem;cursor:pointer}
 #pay-method{font:inherit;padding:9px 10px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;max-width:100%}
+/* Simple crypto checkout: Pay triggers the wallet, QR only as fallback. */
+.crypto-result img.qr{width:220px;height:220px;display:block;margin:10px auto;background:#fff;padding:8px;border-radius:8px}
 @media (min-width:760px){
   .feature{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
   .feature img{margin-bottom:0}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=172">
+<link rel="stylesheet" href="style.css?v=181">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -80,9 +82,9 @@
     </div>
     <div id="pay-xrp" hidden>
       <p class="price">19 XRP</p>
-      <p>Nothing is minted until you buy it. Send 19 XRP to this wallet with the note BUSH-SKULL, then email your XRP address to <a href="mailto:hordemuse@muse.ai">Horde's minions</a> and one of the Horde's minions mints the one of one straight to you. Burnable, transferable, 13% royalty to Byron on resale.</p>
-      <p>This wallet:</p>
-      <p>rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH</p>
+      <p>Nothing is minted until you buy it. Tap Pay and approve the 19 XRP in your wallet, with the note BUSH-SKULL. Then email your XRP address and your shipping address to <a href="mailto:hordemuse@muse.ai">Horde's minions</a> and one of the Horde's minions mints the one of one straight to you. Burnable, transferable, 13% royalty to Byron on resale.</p>
+      <p class="btn-row"><button class="btn" type="button" id="xrp-pay">Pay 19 XRP</button></p>
+      <div id="xrp-result" class="crypto-result" hidden></div>
     </div>
     <div id="pay-base" hidden>
       <p class="price">0.01 ETH</p>
@@ -178,6 +180,7 @@
         b.onclick = function () { return false; };
       });
       document.getElementById('checkout').classList.add('door-closed');
+      var xr = document.getElementById('xrp-result'); if (xr) { xr.hidden = true; xr.innerHTML = ''; }
       return;
     }
     var wax = piece.doors && piece.doors.wax;
@@ -245,6 +248,397 @@
       msg.textContent = 'Could not send just now. Try again in a bit.';
     }
     send.disabled = false;
+  });
+})();
+</script>
+
+<script>
+/* Simple crypto checkout (Byron, 26 Nov 2026): Yes/No, chain, price, Pay.
+   Pay triggers the wallet in-page. The QR is only a fallback when no wallet
+   is detected in the browser. Prices, wallets and memos come from the page's
+   own crypto options; nothing is re-priced here. */
+(function(){
+  function esc(s){
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function setR(result, html, my){
+    if (my !== undefined && result._attempt !== my) return;
+    result.innerHTML = html;
+  }
+  function hexEncode(s){
+    var h = '';
+    for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i).toString(16); h += (c.length < 2 ? '0' : '') + c; }
+    return h.toUpperCase();
+  }
+  function decToBase(amountStr, decimals){
+    var parts = String(amountStr).split('.');
+    var whole = (parts[0] || '0').replace(/^0+/, '') || '0';
+    var frac = parts[1] || '';
+    while (frac.length < decimals) frac += '0';
+    frac = frac.slice(0, decimals);
+    var out = (whole + frac).replace(/^0+/, '');
+    return out || '0';
+  }
+  function waxQty(amountStr){
+    var n = String(amountStr).replace(/,/g, '').trim();
+    var parts = n.split('.');
+    var whole = parts[0] || '0';
+    var frac = parts[1] || '';
+    while (frac.length < 8) frac += '0';
+    frac = frac.slice(0, 8);
+    return whole + '.' + frac + ' WAX';
+  }
+  function xrpToDrops(amountStr){ return decToBase(amountStr, 6); }
+  function ethToWei(amountStr){ return decToBase(amountStr, 18); }
+  function btcToSats(amountStr){ return parseInt(decToBase(amountStr, 8), 10); }
+  function solToLamports(amountStr){ return parseInt(decToBase(amountStr, 9), 10); }
+  function withTimeout(promise, ms){
+    return new Promise(function(resolve, reject){
+      var done = false;
+      var to = setTimeout(function(){ if (!done) { done = true; reject(new Error('the wallet tools took too long to load')); } }, ms);
+      promise.then(function(v){ if (!done) { done = true; clearTimeout(to); resolve(v); } }, function(e){ if (!done) { done = true; clearTimeout(to); reject(e); } });
+    });
+  }
+  function loadScript(src){
+    return withTimeout(new Promise(function(resolve, reject){
+      var ex = document.querySelector('script[src="' + src + '"]');
+      if (ex) return resolve();
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = function(){ resolve(); };
+      s.onerror = function(){ reject(new Error('the wallet tools could not load')); };
+      document.head.appendChild(s);
+    }), 8000);
+  }
+  var qrLibPromise = null;
+  function loadQrLib(){
+    if (typeof qrcode === 'function') return Promise.resolve();
+    if (qrLibPromise) return qrLibPromise;
+    qrLibPromise = loadScript('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js');
+    return qrLibPromise;
+  }
+  function makeQrImg(uri){
+    return loadQrLib().then(function(){
+      var qr = qrcode(0, 'M');
+      qr.addData(uri);
+      qr.make();
+      var img = document.createElement('img');
+      img.className = 'qr';
+      img.src = qr.createDataURL(6, 0);
+      img.alt = 'Scan to pay';
+      return img;
+    });
+  }
+  function payUri(o){
+    if (o.denom === 'XRP') return 'https://xumm.app/detect/request:' + o.wallet + '?amount=' + o.amount;
+    if (o.denom === 'BTC') return 'bitcoin:' + o.wallet + '?amount=' + o.amount + '&label=' + encodeURIComponent('Artist Byron') + '&message=' + encodeURIComponent(o.memo);
+    if (o.denom === 'ETH') return 'ethereum:' + o.wallet + '?value=' + ethToWei(o.amount);
+    if (o.denom === 'SOL') return 'solana:' + o.wallet + '?amount=' + o.amount + '&label=' + encodeURIComponent('Artist Byron') + '&message=' + encodeURIComponent(o.item) + '&memo=' + encodeURIComponent(o.memo);
+    return '';
+  }
+  function emailTail(o){
+    var s = '';
+    if (o.denom === 'WAX') {
+      s = '<p>Then email your shipping address to <a href="mailto:hordemuse@muse.ai">hordemuse@muse.ai</a>. A minion sees the payment right away and sends it on to Byron.</p>';
+    } else if (o.denom === 'XRP') {
+      s = '<p>Then email your shipping address and the transaction hash to <a href="mailto:hordemuse@muse.ai">hordemuse@muse.ai</a>. A minion matches the payment by the hash and sends it on to Byron.</p>';
+    } else {
+      s = '<p>After you send it, email <a href="mailto:hordemuse@muse.ai">hordemuse@muse.ai</a> with the transaction hash, the code <strong>' + esc(o.memo) + '</strong>, and your shipping address. A minion sees your email and sends it on to Byron.</p>';
+    }
+    if (o.wantNft) s += '<p>Include your ' + esc(o.denom) + ' wallet address in your email so the NFT can be minted to you.</p>';
+    return s;
+  }
+  function paidHtml(o, txid){
+    var h = '<p><strong>Paid.</strong> ' + esc(o.amount) + ' ' + esc(o.denom) + ' is on its way to Byron.</p>';
+    if (txid) h += '<p class="small">Transaction: ' + esc(String(txid)) + '</p>';
+    h += emailTail(o);
+    return h;
+  }
+  function scanLine(o){
+    if (o.denom === 'XRP') return 'Scan with Xaman. The amount is already filled in. The note <strong>' + esc(o.memo) + '</strong> is optional, you can skip it. After you send it, email your shipping address and the transaction hash to hordemuse@muse.ai, that is how the payment gets matched.';
+    if (o.denom === 'SOL') return 'Scan with your Solana wallet. The amount and the note <strong>' + esc(o.memo) + '</strong> are already filled in.';
+    return 'Scan with your wallet. The amount is already filled in. The code is <strong>' + esc(o.memo) + '</strong> - put it in your email after you send it.';
+  }
+  function showQrFallback(o, result, my){
+    var uri = payUri(o);
+    var openLabel = o.denom === 'XRP' ? 'Open in Xaman' : 'Open in your wallet';
+    setR(result, '<p class="price">' + esc(o.amount) + ' ' + esc(o.denom) + ' &middot; ' + esc(o.item) + '</p>'
+      + '<p>' + scanLine(o) + '</p>'
+      + '<div class="qr-slot"></div>'
+      + '<p><a class="btn" href="' + esc(uri) + '">' + openLabel + '</a></p>'
+      + emailTail(o), my);
+    makeQrImg(uri).then(function(img){
+      if (my !== undefined && result._attempt !== my) return;
+      var slot = result.querySelector('.qr-slot');
+      if (slot) slot.appendChild(img);
+    }).catch(function(){});
+  }
+  /* ---------- WAX: in-page WharfKit signing, like the market page ---------- */
+  var waxKit = null, waxSess = null;
+  async function getWaxSession(){
+    if (waxSess) return waxSess;
+    if (!waxKit) {
+      var m = await withTimeout(Promise.all([
+        import('https://esm.sh/@wharfkit/session@4.0.2'),
+        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+      ]), 15000);
+      waxKit = new m[0].SessionKit({ appName: 'artistbyron', chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }], ui: new m[1].WebRenderer(), walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()] });
+    }
+    var res = await waxKit.login();
+    waxSess = res.session;
+    return waxSess;
+  }
+  async function payWax(o, result, my){
+    setR(result, '<p>Your WAX wallet is asking you to approve the payment...</p>', my);
+    var sess = await getWaxSession();
+    if (result._attempt !== my) return;
+    var actor = String(sess.actor);
+    await sess.transact({ actions: [{ account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: o.wallet, quantity: waxQty(o.amount), memo: o.memo } }] });
+    setR(result, paidHtml(o, null), my);
+  }
+  /* ---------- XRP: XRPLWalletKit (Xaman + Joey), like xrp-market.html ---------- */
+  var xrpKit = null, xrpAddr = null, kitQrTarget = null, xamanAutoOpened = false;
+  function isPhone(){
+    try { return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window); } catch (e) { return false; }
+  }
+  function normAddr(a){
+    if (!a) return null;
+    if (typeof a === 'string') return a;
+    if (typeof a === 'object') return a.address || a.account || a.id || null;
+    return null;
+  }
+  function showKitQr(ev){
+    if (!kitQrTarget || !ev || kitQrTarget.hidden) return;
+    var slot = kitQrTarget.querySelector('.kit-qr');
+    if (!slot) { slot = document.createElement('div'); slot.className = 'kit-qr'; kitQrTarget.appendChild(slot); }
+    var uri = ev.uri || ev.deeplink || '';
+    var link = ev.deeplink || ev.uri || '';
+    slot.innerHTML = '';
+    if (ev.qrPng) {
+      var img0 = document.createElement('img');
+      img0.className = 'qr'; img0.src = ev.qrPng; img0.alt = 'Scan with Xaman';
+      slot.appendChild(img0);
+    } else if (uri) {
+      makeQrImg(uri).then(function(img){ slot.appendChild(img); }).catch(function(){});
+    }
+    if (link) {
+      var p = document.createElement('p');
+      var a = document.createElement('a');
+      a.className = 'btn'; a.href = link; a.textContent = 'Open in Xaman';
+      p.appendChild(a); slot.appendChild(p);
+      if (!xamanAutoOpened && isPhone()) {
+        xamanAutoOpened = true;
+        setTimeout(function(){ window.location.href = link; }, 400);
+      }
+    }
+  }
+  async function getXrpKit(){
+    if (xrpKit) return xrpKit;
+    await loadScript('https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.3/dist/xrpl-wallet-kit.iife.js');
+    if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) throw new Error('the wallet tools could not load');
+    xrpKit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman', 'joey-wallet'], xamanClientId: '09e6660d-6fce-4f1c-991f-7b0497ef709d', autoReconnect: true });
+    var mgr = xrpKit.manager || xrpKit;
+    if (mgr && typeof mgr.on === 'function') mgr.on('qr', showKitQr);
+    return xrpKit;
+  }
+  async function payXrp(o, result, my){
+    var kit;
+    try { kit = await getXrpKit(); } catch (e) { showQrFallback(o, result, my); return; }
+    var mgr = kit.manager || kit;
+    kitQrTarget = result;
+    xamanAutoOpened = false;
+    if (!xrpAddr) {
+      try {
+        if (mgr && typeof mgr.autoReconnect === 'function') {
+          try { await mgr.autoReconnect(); } catch (e2) {}
+          var acct = (typeof mgr.getAccount === 'function') ? mgr.getAccount() : null;
+          xrpAddr = normAddr(acct);
+        }
+      } catch (e3) {}
+    }
+    if (!xrpAddr) {
+      setR(result, '<p>Opening Xaman. Scan the code with your Xaman app, or tap the link on your phone.</p><div class="kit-qr"></div>', my);
+      try {
+        var res = await kit.connect('xaman');
+        xrpAddr = normAddr(res && res.account);
+      } catch (e4) {
+        setR(result, '<p>The connection did not go through. Nothing was spent.</p><p><button class="btn" type="button" data-qr-fallback="1">Show the QR code instead</button></p>', my);
+        var fb = result.querySelector('[data-qr-fallback]');
+        if (fb) fb.addEventListener('click', function(){ showQrFallback(o, result, my); });
+        return;
+      }
+      if (!xrpAddr) { setR(result, '<p>The wallet did not return an address. Tap Pay to try again.</p>', my); return; }
+    }
+    if (result._attempt !== my) return;
+    setR(result, '<p>Your wallet is asking you to approve sending ' + esc(o.amount) + ' XRP with the note <strong>' + esc(o.memo) + '</strong>.</p><div class="kit-qr"></div>', my);
+    var tx = { TransactionType: 'Payment', Account: xrpAddr, Destination: o.wallet, Amount: xrpToDrops(o.amount), Memos: [{ Memo: { MemoData: hexEncode(o.memo) } }] };
+    var signed = await mgr.signAndSubmit({ txJson: tx, methodHint: 'sendPayment' });
+    if (signed && signed.rejected) throw new Error('cancelled in the wallet');
+    setR(result, paidHtml(o, null), my);
+  }
+  /* ---------- ETH / Base: injected EVM provider, else EIP-681 QR ---------- */
+  async function payEth(o, result, my){
+    if (!window.ethereum || typeof window.ethereum.request !== 'function') { showQrFallback(o, result, my); return; }
+    setR(result, '<p>Your wallet is asking you to approve sending ' + esc(o.amount) + ' ETH.</p>', my);
+    var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if (result._attempt !== my) return;
+    var from = accounts && accounts[0];
+    if (!from) throw new Error('no account was shared');
+    var txHash = await window.ethereum.request({ method: 'eth_sendTransaction', params: [{ from: from, to: o.wallet, value: '0x' + BigInt(ethToWei(o.amount)).toString(16) }] });
+    setR(result, paidHtml(o, txHash), my);
+  }
+  /* ---------- SOL: injected Solana provider, else Solana Pay QR ---------- */
+  async function paySol(o, result, my){
+    if (!window.solana || typeof window.solana.signAndSendTransaction !== 'function') { showQrFallback(o, result, my); return; }
+    try {
+      await loadScript('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js');
+    } catch (e) { showQrFallback(o, result, my); return; }
+    if (typeof solanaWeb3 === 'undefined') { showQrFallback(o, result, my); return; }
+    setR(result, '<p>Your Solana wallet is asking you to approve sending ' + esc(o.amount) + ' SOL.</p>', my);
+    var provider = window.solana;
+    await provider.connect();
+    if (result._attempt !== my) return;
+    var from = provider.publicKey;
+    var connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+    var tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(o.wallet), lamports: solToLamports(o.amount) }));
+    tx.feePayer = from;
+    tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+    if (result._attempt !== my) return;
+    var sig = await provider.signAndSendTransaction(tx);
+    var signature = (sig && sig.signature) || sig;
+    setR(result, paidHtml(o, signature), my);
+  }
+  /* ---------- BTC: UniSat or Xverse, else BIP-21 QR ---------- */
+  async function payBtc(o, result, my){
+    var sats = btcToSats(o.amount);
+    if (window.unisat && typeof window.unisat.sendBitcoin === 'function') {
+      setR(result, '<p>Your UniSat wallet is asking you to approve sending ' + esc(o.amount) + ' BTC.</p>', my);
+      await window.unisat.requestAccounts();
+      if (result._attempt !== my) return;
+      var txid = await window.unisat.sendBitcoin(o.wallet, sats);
+      setR(result, paidHtml(o, txid), my);
+      return;
+    }
+    if (window.XverseProviders) {
+      setR(result, '<p>Your Xverse wallet is asking you to approve sending ' + esc(o.amount) + ' BTC.</p>', my);
+      try {
+        var sc = await import('https://esm.sh/sats-connect@4.2.1');
+        if (result._attempt !== my) return;
+        var resp = await sc.request('sendTransfer', { recipients: [{ address: o.wallet, amount: sats }] });
+        if (resp && resp.error) throw new Error((resp.error && resp.error.message) || 'the wallet declined');
+        var txid2 = resp && resp.result && resp.result.txid;
+        setR(result, paidHtml(o, txid2), my);
+        return;
+      } catch (e) {
+        var msg = String((e && e.message) || '');
+        if (/reject|cancel|denied/i.test(msg)) throw e;
+        showQrFallback(o, result, my);
+        return;
+      }
+    }
+    showQrFallback(o, result, my);
+  }
+  /* ---------- dispatcher ---------- */
+  async function payNow(o, btn, result){
+    if (!o) return;
+    result._attempt = (result._attempt || 0) + 1;
+    var my = result._attempt;
+    btn.disabled = true;
+    result.hidden = false;
+    xamanAutoOpened = false;
+    setR(result, '<p>Opening your wallet...</p>', my);
+    try {
+      if (o.denom === 'WAX') await payWax(o, result, my);
+      else if (o.denom === 'XRP') await payXrp(o, result, my);
+      else if (o.denom === 'ETH') await payEth(o, result, my);
+      else if (o.denom === 'BTC') await payBtc(o, result, my);
+      else if (o.denom === 'SOL') await paySol(o, result, my);
+      else setR(result, '<p>That chain is not set up here yet.</p>', my);
+    } catch (e) {
+      setR(result, '<p>That did not go through. Nothing was spent. ' + esc(e && e.message ? e.message : '') + '</p>', my);
+    }
+    if (result._attempt === my) btn.disabled = false;
+  }
+  window.__hordePay = payNow;
+  /* ---------- wire the Yes/No toggles ---------- */
+  document.querySelectorAll('.crypto-ask').forEach(function(ask){
+    var card = ask.closest('section') || ask.parentElement;
+    var yesBox = card.querySelector('.crypto-yes');
+    if (!yesBox) return;
+    var hideEls = card.querySelectorAll('.card-pay-row, .card-pay-note');
+    var result = yesBox.querySelector('.crypto-result');
+    ask.querySelectorAll('.crypto-yn').forEach(function(b){
+      b.addEventListener('click', function(){
+        var yes = b.getAttribute('data-yn') === 'yes';
+        ask.querySelectorAll('.crypto-yn').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        hideEls.forEach(function(el){ el.hidden = yes; });
+        yesBox.hidden = !yes;
+        if (!yes && result) { result._attempt = (result._attempt || 0) + 1; result.hidden = true; result.innerHTML = ''; }
+      });
+    });
+  });
+  /* ---------- wire each pay block (chain + item + Pay) ---------- */
+  document.querySelectorAll('[data-pay-block]').forEach(function(block){
+    var chainSel = block.querySelector('.chain-select');
+    var itemSel = block.querySelector('.item-select');
+    var priceEl = block.querySelector('.crypto-price');
+    var check = block.querySelector('.nft-check');
+    var payBtn = block.querySelector('.crypto-pay');
+    var result = block.querySelector('.crypto-result');
+    var dataSel = block.querySelector('.crypto-select');
+    if (!payBtn || !result || !dataSel) return;
+    var items = [];
+    Array.prototype.forEach.call(dataSel.options, function(o){ var it = o.dataset.item || ''; if (it && items.indexOf(it) < 0) items.push(it); });
+    if (itemSel) {
+      items.forEach(function(it){ var op = document.createElement('option'); op.value = it; op.textContent = it; itemSel.appendChild(op); });
+    }
+    function findOpt(){
+      var wantItem = itemSel ? itemSel.value : items[0];
+      var wantChain = chainSel ? chainSel.value : null;
+      var found = null;
+      Array.prototype.forEach.call(dataSel.options, function(o){
+        if (wantChain && (o.dataset.denom || '').toLowerCase() !== wantChain) return;
+        if (o.dataset.item !== wantItem) return;
+        found = o;
+      });
+      return found;
+    }
+    function current(){
+      var o = findOpt();
+      if (!o) return null;
+      var memo = o.dataset.memo || '';
+      if (check && check.checked && memo) memo += '-NFT';
+      return { amount: o.dataset.amount, denom: o.dataset.denom, wallet: o.dataset.wallet, memo: memo, item: o.dataset.item, wantNft: !!(check && check.checked) };
+    }
+    function sync(){
+      var c = current();
+      if (!c) return;
+      if (priceEl) priceEl.textContent = c.amount + ' ' + c.denom + ' · ' + c.item;
+      payBtn.textContent = 'Pay ' + c.amount + ' ' + c.denom;
+      if (result) { result._attempt = (result._attempt || 0) + 1; result.hidden = true; result.innerHTML = ''; }
+    }
+    if (chainSel) chainSel.addEventListener('change', sync);
+    if (itemSel) itemSel.addEventListener('change', sync);
+    if (check) check.addEventListener('change', sync);
+    sync();
+    payBtn.addEventListener('click', function(){ payNow(current(), payBtn, result); });
+  });
+})();
+
+</script>
+
+<script>
+/* Bush Skull XRP: one tap pays 19 XRP with the note BUSH-SKULL. */
+(function(){
+  var btn = document.getElementById('xrp-pay');
+  var result = document.getElementById('xrp-result');
+  if (!btn || !result || typeof window.__hordePay !== 'function') return;
+  btn.addEventListener('click', function(){
+    var banner = document.getElementById('sold-banner');
+    if (banner && !banner.hidden) { result.hidden = false; result.innerHTML = '<p>This piece is sold.</p>'; return; }
+    window.__hordePay({ amount: '19', denom: 'XRP', wallet: 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH', memo: 'BUSH-SKULL', item: 'Bush Skull', wantNft: false }, btn, result);
   });
 })();
 </script>

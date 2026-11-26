@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Holiday Loot Crate Token - Artist Byron</title>
 <meta name="description" content="The Horde Holiday Loot Crate as a token on WAX and XRP. Claim the physical crate, or hold the token as a credit for what you paid.">
-<link rel="stylesheet" href="style.css?v=180">
+<link rel="stylesheet" href="style.css?v=181">
 <style>
 main.wrap{max-width:900px}
 main.wrap h1{font-size:2rem}
@@ -24,6 +24,12 @@ main.wrap .card{padding:14px;margin:14px 0}
 .buy-btn.main-order .bb-top{font-size:1.05rem;font-weight:700}
 .buy-btn.main-order .bb-price{font-size:1.5rem}
 .who{color:var(--muted);font-size:.9rem;margin-top:8px}
+/* Simple crypto checkout: Yes/No, chain, tier, Pay. */
+.crypto-ask{font-weight:600}
+.crypto-yn{padding:8px 16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.crypto-yn[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.chain-select,.tier-select{flex:1 1 100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);color:var(--ink);font:inherit;font-size:.95rem}
+.crypto-yes p{margin:.55em 0}
 .shot-img{width:100%;max-width:520px;display:block;margin:10px auto;border-radius:10px}
 </style>
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
@@ -37,44 +43,28 @@ main.wrap .card{padding:14px;margin:14px 0}
   <p>The Holiday Loot Crate is CA$35 with shipping included. Orders until near the end of November, shipping in the first two weeks of December. What is inside is a secret until it arrives.</p>
   <p class="crypto-gated" hidden>The Horde Holiday Loot Crate, sold as a token on WAX and on XRP. The token IS the crate. Claim it and the physical crate ships to you. Or never claim it, and the token stands as a credit toward future purchases from Byron, for the full amount you paid for it.</p>
 
-  <section class="card">
+  <section class="card" id="buy-crate-card">
     <h2>Buy the crate</h2>
     <p>CA$35, shipping included. Just the crate, on its own.</p>
     <p class="crate-countdown" id="crate-countdown">Orders close at the end of November</p>
-    <p>
+    <p class="card-pay-row">
       <a class="btn buy-btn main-order" href="https://buy.stripe.com/4gMdRa0t0bjBfd40iR8IU00"><span class="bb-top">Pay by card</span><span class="bb-price">CA$35</span></a>
       <a class="btn buy-btn" href="https://www.paypal.com/ncp/payment/UKFXWHKBF7FY6"><span class="bb-top">PayPal</span><span class="bb-price">CA$35</span></a>
     </p>
-    <p class="small">This opens Stripe's secure checkout. PayPal takes you to PayPal.</p>
-  </section>
-
-  <section class="card" id="crypto-locked">
-    <h2>Buy the token with crypto</h2>
-    <p>Log in and link a wallet on your profile, and the WAX and XRP doors open here.</p>
-    <p class="btn-row"><a class="btn" href="login.html">Log in</a></p>
-  </section>
-
-  <section class="card crypto-gated" hidden>
-    <div class="chain-grid">
-      <div class="chain">
-        <img src="art/loot-crate-wax.png" alt="Horde Holiday Loot Crate token, WAX version">
-        <h3>Buy with WAX</h3>
-        <a class="btn buy-btn" href="https://wax.atomichub.io/drops/92672"><span class="bb-top">USA shipping</span><span class="bb-price">7,500 WAX</span></a>
-        <a class="btn buy-btn" href="https://wax.atomichub.io/drops/92673"><span class="bb-top">Canada shipping</span><span class="bb-price">9,000 WAX</span></a>
-        <p class="small" id="wax-stock">Checking how many are left on WAX…</p>
-      </div>
-      <div class="chain">
-        <img src="art/loot-crate-xrp.png" alt="Horde Holiday Loot Crate token, XRP version">
-        <h3>Buy with XRP</h3>
-        <a class="btn buy-btn" href="xrp-market.html"><span class="bb-top">USA shipping</span><span class="bb-price">27 XRP</span></a>
-        <a class="btn buy-btn" href="xrp-market.html"><span class="bb-top">Canada shipping</span><span class="bb-price">32 XRP</span></a>
-        <p class="small">Sold from the Horde's own XRP market page.</p>
-      </div>
+    <p class="small card-pay-note">This opens Stripe's secure checkout. PayPal takes you to PayPal.</p>
+    <p class="crypto-ask crypto-gated" hidden>Paying with crypto? <button type="button" class="crypto-yn" data-yn="no" aria-pressed="true">No</button><button type="button" class="crypto-yn" data-yn="yes" aria-pressed="false">Yes</button></p>
+    <div class="crypto-yes" hidden>
+      <p class="btn-row"><select class="chain-select" aria-label="Choose a chain"><option value="wax">WAX</option><option value="xrp">XRP</option></select><select class="tier-select" aria-label="Choose shipping"><option value="usa">USA shipping</option><option value="canada">Canada shipping</option></select></p>
+      <p class="price crypto-price"></p>
+      <p class="btn-row"><a class="btn buy-btn crate-pay" href="https://wax.atomichub.io/drops/92672"><span class="bb-top">Buy on WAX</span><span class="bb-price">7,500 WAX &middot; USA shipping</span></a></p>
+      <p class="small" id="wax-stock">Checking how many are left on WAX&hellip;</p>
+      <p>The price includes shipping, and the USA price is about $25 US (about CA$36), Canada about $30 US (about CA$43). Overseas is not offered yet, it is coming later.</p>
+      <p>Pick your own country honestly. When you claim, your shipping address is the check: if the address does not match the tier you bought, the difference comes due before the crate ships.</p>
+      <p class="small">25 tokens on each chain. On WAX, 25 claims for the USA tier and 25 for Canada. On XRP, 15 tokens are priced for the USA and 10 for Canada. When they are gone, they are gone.</p>
     </div>
-    <p>The price includes shipping, and the USA price is about $25 US (about CA$36), Canada about $30 US (about CA$43). Overseas is not offered yet, it is coming later.</p>
-    <p>Pick your own country honestly. When you claim, your shipping address is the check: if the address does not match the tier you bought, the difference comes due before the crate ships.</p>
-    <p class="small">25 tokens on each chain. On WAX, 25 claims for the USA tier and 25 for Canada. On XRP, 15 tokens are priced for the USA and 10 for Canada. When they are gone, they are gone.</p>
   </section>
+
+
 
   <section class="card crypto-gated" hidden>
     <h2>Or pay by card, and still get the token</h2>
@@ -370,6 +360,49 @@ main.wrap .card{padding:14px;margin:14px 0}
   }
   tick();
   setInterval(tick, 1000);
+})();
+</script>
+
+<script>
+/* Loot Crate crypto: Yes/No, chain, tier, then the existing door. The token
+   itself still comes from its AtomicHub drop (WAX) or the XRP market page;
+   a plain transfer would not mint a token, so the doors stay as links. */
+(function(){
+  var card = document.getElementById('buy-crate-card');
+  if (!card) return;
+  var ask = card.querySelector('.crypto-ask');
+  var yesBox = card.querySelector('.crypto-yes');
+  if (!ask || !yesBox) return;
+  var payEls = card.querySelectorAll('.card-pay-row, .card-pay-note');
+  var chainSel = yesBox.querySelector('.chain-select');
+  var tierSel = yesBox.querySelector('.tier-select');
+  var priceEl = yesBox.querySelector('.crypto-price');
+  var payLink = yesBox.querySelector('.crate-pay');
+  var stock = document.getElementById('wax-stock');
+  var doors = {
+    wax: { usa: { price: '7,500 WAX', href: 'https://wax.atomichub.io/drops/92672' }, canada: { price: '9,000 WAX', href: 'https://wax.atomichub.io/drops/92673' } },
+    xrp: { usa: { price: '27 XRP', href: 'xrp-market.html' }, canada: { price: '32 XRP', href: 'xrp-market.html' } }
+  };
+  function sync(){
+    var chain = chainSel.value, tier = tierSel.value;
+    var d = doors[chain][tier];
+    var ship = tier === 'usa' ? 'USA shipping' : 'Canada shipping';
+    priceEl.textContent = d.price + ' \u00b7 ' + ship;
+    payLink.href = d.href;
+    payLink.innerHTML = '<span class="bb-top">Buy on ' + (chain === 'wax' ? 'WAX' : 'XRP') + '</span><span class="bb-price">' + d.price + ' \u00b7 ' + ship + '</span>';
+    if (stock) stock.hidden = (chain !== 'wax');
+  }
+  chainSel.addEventListener('change', sync);
+  tierSel.addEventListener('change', sync);
+  sync();
+  ask.querySelectorAll('.crypto-yn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var yes = b.getAttribute('data-yn') === 'yes';
+      ask.querySelectorAll('.crypto-yn').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      payEls.forEach(function(el){ el.hidden = yes; });
+      yesBox.hidden = !yes;
+    });
+  });
 })();
 </script>
 
