@@ -5,7 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=153">
+<link rel="stylesheet" href="style.css?v=178">
+<style>
+/* WAX market basket: one basket, one signature buys it all. */
+.cart-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:14px 0 0}
+.cart-bar .small{margin:0}
+#cart-drawer{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.65);display:none;align-items:flex-start;justify-content:center;padding:40px 14px;overflow-y:auto}
+#cart-drawer.open{display:flex}
+.cart-box{width:min(560px,100%);background:#14141b;border:1px solid #33333f;border-radius:12px;padding:18px;color:#f2f2f2;box-shadow:0 10px 34px rgba(0,0,0,.55)}
+.cart-box h3{margin:.1em 0 .6em;font-size:1.15rem;color:#f2f2f2}
+.cart-item{display:flex;gap:10px;align-items:center;border-top:1px solid #2a2a34;padding:10px 0}
+.cart-item .mkt-img{width:56px;height:56px;flex:0 0 auto;margin:0}
+.cart-item-info{flex:1;min-width:0}
+.cart-item-info p{margin:0 0 2px}
+.cart-item .mkt-name{color:#f2f2f2}
+.cart-item .mkt-meta{color:#b9b9c4}
+.cart-item .mkt-price{margin:0;white-space:nowrap;color:#f2f2f2}
+.cart-empty{color:#b9b9c4}
+.cart-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.cart-total{font-weight:700}
+.cart-status{font-size:.9rem;min-height:1.2em;margin:.6em 0 0;color:#b9b9c4}
+</style>
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -38,6 +58,8 @@
     <div id="drops-strip" class="drops-strip"></div>
     <p class="small" id="drops-status">Loading the newest drops…</p>
   </section>
+
+  <p class="cart-bar"><button class="btn" type="button" id="cart-open-btn">Basket (0) · 0 WAX</button><span class="small" id="cart-bar-note">Add pieces to your basket and buy them all with one signature.</span></p>
 
   <h1>The Horde's Market on WAX</h1>
 
@@ -85,6 +107,19 @@
   <div class="mkt-modal-box" role="dialog" aria-modal="true">
     <button class="mkt-modal-close" type="button" id="mkt-modal-close" aria-label="Close">&times;</button>
     <div id="mkt-modal-body"></div>
+  </div>
+</div>
+<div id="cart-drawer" role="dialog" aria-modal="true" aria-label="Your basket">
+  <div class="cart-box">
+    <h3>Your basket</h3>
+    <div id="cart-items"></div>
+    <p class="cart-status" id="cart-status"></p>
+    <div class="cart-actions">
+      <button class="btn" type="button" id="cart-buyall-btn">Buy all</button>
+      <button class="btn ghost" type="button" id="cart-clear-btn">Clear basket</button>
+      <button class="btn ghost" type="button" id="cart-close-btn">Close</button>
+      <span class="cart-total" id="cart-total"></span>
+    </div>
   </div>
 </div>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="profile.html">My Horde Profile</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
@@ -192,7 +227,7 @@ function renderSales(){
       + '<p class="mkt-meta">' + esc(COLL_LABEL[s.collection_name] || s.collection_name || '') + '</p>'
       + '<p class="mkt-meta">Seller: ' + esc(s.seller || '') + '</p>'
       + '<div class="mkt-foot"><p class="mkt-price">' + (sym === 'WAX' ? fmtWax(s.price.amount) : esc(((parseInt(s.price.amount, 10) / Math.pow(10, s.price.token_precision || 8)) || 0).toString())) + ' ' + esc(sym) + '</p>';
-    if (sym === 'WAX') html += '<button class="btn" type="button" data-buy="' + s.sale_id + '">Buy</button>';
+    if (sym === 'WAX') html += '<button class="btn" type="button" data-buy="' + s.sale_id + '">Buy</button>' + '<button class="btn ghost" type="button" data-cart="' + s.sale_id + '">' + (cartHas(s.sale_id) ? 'In basket' : 'Add to basket') + '</button>';
     else html += '<a class="btn ghost" href="https://wax.atomichub.io/market/sale/' + s.sale_id + '" target="_blank" rel="noopener">AtomicHub</a>';
     html += '</div>';
     card.innerHTML = html;
@@ -205,6 +240,9 @@ function renderSales(){
   });
   grid.querySelectorAll('[data-buy]').forEach(function(b){
     b.addEventListener('click', function(){ buySale(b.getAttribute('data-buy'), b); });
+  });
+  grid.querySelectorAll('[data-cart]').forEach(function(b){
+    b.addEventListener('click', function(){ toggleCartSale(b.getAttribute('data-cart'), b); });
   });
   var moreBtn = document.getElementById('sales-more');
   if (moreBtn) moreBtn.hidden = list.length <= salesShown;
@@ -249,10 +287,173 @@ async function buySale(saleId, btn){
       { account: 'atomicmarket', name: 'purchasesale', authorization: [sess.authorization], data: { buyer: actor, sale_id: sale.sale_id, intended_delisting_memo: '', taker_marketplace: '' } }
     ] });
     st.textContent = 'Bought. The piece is in your wallet now. Refreshing the market…';
+    cartRemove(saleId);
     loadSales(); loadYourStuff();
   } catch (e) { st.textContent = 'Buy did not go through. ' + (e && e.message ? e.message : ''); }
   btn.disabled = false;
 }
+
+/* ---------- basket: one basket, one signature buys it all ---------- */
+var CART_KEY = 'horde_wax_cart';
+function loadCart(){
+  try { var c = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); return Array.isArray(c) ? c : []; } catch (e) { return []; }
+}
+function saveCart(c){
+  try { localStorage.setItem(CART_KEY, JSON.stringify(c)); } catch (e) {}
+  updateCartBar();
+}
+function cartHas(saleId){
+  var found = false;
+  loadCart().forEach(function(it){ if (String(it.sale_id) === String(saleId)) found = true; });
+  return found;
+}
+function cartRemove(saleId){
+  var c = loadCart().filter(function(it){ return String(it.sale_id) !== String(saleId); });
+  saveCart(c);
+  renderCart();
+}
+function cartClear(){
+  saveCart([]);
+  renderCart();
+}
+function cartTotalRaw(){
+  var t = 0;
+  loadCart().forEach(function(it){ t += parseInt(it.amount, 10) || 0; });
+  return t;
+}
+function cartItemFromSale(s){
+  var a = (s.assets || [])[0] || {};
+  return { sale_id: s.sale_id, name: a.name || 'Horde piece', mint: (a.template_mint == null ? '' : String(a.template_mint)), seller: s.seller || '', amount: String(s.price.amount), img: (a.data && a.data.img) || '', coll: COLL_LABEL[s.collection_name] || s.collection_name || '' };
+}
+function toggleCartSale(saleId, btn){
+  var sale = null;
+  allSales.forEach(function(s){ if (String(s.sale_id) === String(saleId)) sale = s; });
+  if (cartHas(saleId)) {
+    cartRemove(saleId);
+    if (btn) { btn.textContent = 'Add to basket'; btn.className = 'btn ghost'; }
+    return;
+  }
+  if (!sale) { document.getElementById('mkt-status').textContent = 'That listing is gone. Refresh the market.'; return; }
+  var c = loadCart();
+  c.push(cartItemFromSale(sale));
+  saveCart(c);
+  renderCart();
+  if (btn) { btn.textContent = 'In basket'; btn.className = 'btn ghost'; }
+}
+function updateCartBar(){
+  var b = document.getElementById('cart-open-btn');
+  if (!b) return;
+  var c = loadCart();
+  b.textContent = 'Basket (' + c.length + ') · ' + fmtWax(cartTotalRaw()) + ' WAX';
+}
+function renderCart(){
+  var box = document.getElementById('cart-items');
+  var tot = document.getElementById('cart-total');
+  if (!box) return;
+  var c = loadCart();
+  tot.textContent = c.length ? ('Total: ' + fmtWax(cartTotalRaw()) + ' WAX') : '';
+  if (!c.length) { box.innerHTML = '<p class="cart-empty">Your basket is empty. Tap "Add to basket" on any WAX listing.</p>'; return; }
+  box.innerHTML = '';
+  c.forEach(function(it){
+    var row = document.createElement('div');
+    row.className = 'cart-item';
+    row.innerHTML = imgTag(it.img, it.name)
+      + '<div class="cart-item-info"><p class="mkt-name">' + esc(it.name) + '</p>'
+      + (it.mint !== '' ? '<p class="mkt-meta">Mint #' + esc(it.mint) + '</p>' : '')
+      + '<p class="mkt-meta">' + esc(it.coll) + '</p>'
+      + '<p class="mkt-meta">Seller: ' + esc(it.seller) + '</p></div>'
+      + '<p class="mkt-price">' + fmtWax(it.amount) + ' WAX</p>';
+    var rm = document.createElement('button');
+    rm.className = 'btn ghost'; rm.type = 'button'; rm.textContent = 'Remove';
+    rm.addEventListener('click', function(){ cartRemove(it.sale_id); renderSales(); });
+    row.appendChild(rm);
+    box.appendChild(row);
+  });
+}
+function openCart(){
+  renderCart();
+  document.getElementById('cart-drawer').classList.add('open');
+}
+function closeCart(){
+  document.getElementById('cart-drawer').classList.remove('open');
+}
+async function buyAll(){
+  var cst = document.getElementById('cart-status');
+  var btn = document.getElementById('cart-buyall-btn');
+  var cart = loadCart();
+  if (!cart.length) { cst.textContent = 'Your basket is empty.'; return; }
+  if (!await ensureLogin()) return;
+  btn.disabled = true;
+  cst.textContent = 'Checking every listing is still there at the same price…';
+  var live = [];
+  var removed = [];
+  var fetched = null;
+  try {
+    var ids = cart.map(function(it){ return it.sale_id; }).join(',');
+    var r = await fetch(AM + '/sales?ids=' + encodeURIComponent(ids));
+    var j = await r.json();
+    fetched = {};
+    (j.data || []).forEach(function(s){ fetched[String(s.sale_id)] = s; });
+  } catch (e) { fetched = null; }
+  if (!fetched) {
+    cst.textContent = 'Could not check the listings just now. Try again in a bit.';
+    btn.disabled = false;
+    return;
+  }
+  cart.forEach(function(it){
+    var sale = fetched[String(it.sale_id)] || null;
+    if (!sale || sale.state !== 1) { removed.push(it.name + ' (no longer listed)'); return; }
+    if (String(sale.price.amount) !== String(it.amount)) { removed.push(it.name + ' (price changed)'); return; }
+    if (sale.seller === actor) { removed.push(it.name + ' (that one is yours)'); return; }
+    live.push(sale);
+  });
+  if (removed.length) {
+    var kept = loadCart().filter(function(it){
+      return live.some(function(s){ return String(s.sale_id) === String(it.sale_id); });
+    });
+    saveCart(kept);
+    renderCart();
+    renderSales();
+  }
+  var removedNote = removed.length ? ('Removed from your basket: ' + removed.join(', ') + '.') : '';
+  if (!live.length) {
+    cst.textContent = removedNote || 'Nothing left to buy.';
+    btn.disabled = false;
+    return;
+  }
+  cst.textContent = (removedNote ? removedNote + ' ' : '') + 'Your wallet is asking you to approve the buy…';
+  var actions = [];
+  live.forEach(function(sale){
+    actions.push(
+      { account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: '' } },
+      { account: 'atomicmarket', name: 'purchasesale', authorization: [sess.authorization], data: { buyer: actor, sale_id: sale.sale_id, intended_delisting_memo: '', taker_marketplace: '' } }
+    );
+  });
+  try {
+    await sess.transact({ actions: actions });
+    var n = live.length;
+    cartClear();
+    cst.textContent = 'Bought ' + n + ' item' + (n === 1 ? '' : 's') + '. The pieces are in your wallet now.' + (removedNote ? ' ' + removedNote : '');
+    document.getElementById('mkt-status').textContent = 'Bought ' + n + ' item' + (n === 1 ? '' : 's') + ' from your basket.';
+    loadSales(); loadYourStuff();
+  } catch (e) {
+    cst.textContent = 'Buy did not go through. ' + (e && e.message ? e.message : '');
+    document.getElementById('mkt-status').textContent = 'Basket buy did not go through. ' + (e && e.message ? e.message : '');
+    loadSales();
+  }
+  btn.disabled = false;
+}
+document.getElementById('cart-open-btn').addEventListener('click', openCart);
+document.getElementById('cart-close-btn').addEventListener('click', closeCart);
+document.getElementById('cart-clear-btn').addEventListener('click', function(){
+  cartClear();
+  document.getElementById('cart-status').textContent = 'Basket cleared.';
+});
+document.getElementById('cart-buyall-btn').addEventListener('click', buyAll);
+document.getElementById('cart-drawer').addEventListener('click', function(e){ if (e.target === this) closeCart(); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeCart(); });
+updateCartBar();
+renderCart();
 
 /* ---------- selling ---------- */
 function onLogin(){
@@ -385,6 +586,10 @@ function openModal(html){
     closeModal();
     buySale(b.getAttribute('data-modal-buy'), b);
   });
+  var cb = mktModalBody.querySelector('[data-modal-cart]');
+  if (cb) cb.addEventListener('click', function(){
+    toggleCartSale(cb.getAttribute('data-modal-cart'), cb);
+  });
 }
 function closeModal(){
   if (!mktModal) return;
@@ -400,7 +605,7 @@ function detailHtml(o){
     + (o.seller ? '<p class="mkt-meta">Seller: ' + esc(o.seller) + '</p>' : '')
     + (o.priceText ? '<p class="mkt-price" style="font-size:1.2rem">' + esc(o.priceText) + '</p>' : '')
     + '<p class="btn-row">';
-  if (o.showBuy && o.saleId) h += '<button class="btn" type="button" data-modal-buy="' + o.saleId + '">Buy</button>';
+  if (o.showBuy && o.saleId) h += '<button class="btn" type="button" data-modal-buy="' + o.saleId + '">Buy</button>' + '<button class="btn ghost" type="button" data-modal-cart="' + o.saleId + '">' + (cartHas(o.saleId) ? 'In basket' : 'Add to basket') + '</button>';
   if (o.assetId) h += '<a class="btn ghost" href="https://wax.atomichub.io/explorer/asset/' + esc(o.assetId) + '" target="_blank" rel="noopener">View on AtomicHub</a>';
   h += '</p><p class="small">Sales history lives on AtomicHub, since the market here only shows what is for sale right now.</p>';
   return h;
