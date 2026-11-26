@@ -9,19 +9,20 @@
 .prod img{width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);display:block;margin-bottom:10px}
 .prod h3{margin-top:0}
 .feature-text h2{margin-top:0}
-/* Crate gallery: one main picture, thumbnails to switch views. Keeps the
-   crate card short so the merch below starts showing on the first screen. */
+/* Crate gallery: one small main picture, thumbnails to switch views, words
+   beside it on every screen so the card stays short and merch shows below. */
+.feature{display:grid;grid-template-columns:180px 1fr;gap:16px;align-items:start}
+.feature img{margin-bottom:0}
 .crate-gallery #crate-main{width:100%;aspect-ratio:1/1;object-fit:contain;background:#171310;margin-bottom:0}
-.crate-thumbs{display:flex;gap:8px;margin-top:8px}
-.crate-thumb{flex:0 0 auto;width:64px;height:64px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
+.crate-thumbs{display:flex;gap:6px;margin-top:6px}
+.crate-thumb{flex:0 0 auto;width:48px;height:48px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
 .crate-gallery .crate-thumb img{width:100%;height:100%;object-fit:contain;margin:0;border:0;border-radius:6px;display:block}
 .crate-thumb.is-active{border-color:var(--red)}
 @media (min-width:760px){
-  .feature{display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start}
-  .feature img{margin-bottom:0}
+  .feature{grid-template-columns:220px 1fr;gap:22px}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=162">
+<link rel="stylesheet" href="style.css?v=163">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
