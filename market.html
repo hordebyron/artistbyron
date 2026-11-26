@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=179">
+<link rel="stylesheet" href="style.css?v=183">
 <style>
 /* WAX market basket: one basket, one signature buys it all. */
 .cart-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:14px 0 0}
@@ -283,8 +283,8 @@ async function buySale(saleId, btn){
   st.textContent = 'Your wallet is asking you to approve the buy…';
   try {
     await sess.transact({ actions: [
-      { account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: 'deposit' } },
-      { account: 'atomicmarket', name: 'purchasesale', authorization: [sess.authorization], data: { buyer: actor, sale_id: sale.sale_id, intended_delphi_median: 0, taker_marketplace: '' } }
+      { account: 'eosio.token', name: 'transfer', authorization: [{ actor: actor, permission: 'active' }], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: 'deposit' } },
+      { account: 'atomicmarket', name: 'purchasesale', authorization: [{ actor: actor, permission: 'active' }], data: { buyer: actor, sale_id: sale.sale_id, intended_delphi_median: 0, taker_marketplace: '' } }
     ] });
     st.textContent = 'Bought. The piece is in your wallet now. Refreshing the market…';
     cartRemove(saleId);
@@ -425,8 +425,8 @@ async function buyAll(){
   var actions = [];
   live.forEach(function(sale){
     actions.push(
-      { account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: 'deposit' } },
-      { account: 'atomicmarket', name: 'purchasesale', authorization: [sess.authorization], data: { buyer: actor, sale_id: sale.sale_id, intended_delphi_median: 0, taker_marketplace: '' } }
+      { account: 'eosio.token', name: 'transfer', authorization: [{ actor: actor, permission: 'active' }], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: 'deposit' } },
+      { account: 'atomicmarket', name: 'purchasesale', authorization: [{ actor: actor, permission: 'active' }], data: { buyer: actor, sale_id: sale.sale_id, intended_delphi_median: 0, taker_marketplace: '' } }
     );
   });
   try {
@@ -552,8 +552,8 @@ async function listPiece(assetId, btn){
   st.textContent = 'Your wallet is asking you to approve the listing…';
   try {
     await sess.transact({ actions: [
-      { account: 'atomicmarket', name: 'announcesale', authorization: [sess.authorization], data: { seller: actor, asset_ids: [assetId], listing_price: qty, settlement_symbol: '8,WAX', maker_marketplace: '' } },
-      { account: 'atomicassets', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', asset_ids: [assetId], memo: 'sale' } }
+      { account: 'atomicmarket', name: 'announcesale', authorization: [{ actor: actor, permission: 'active' }], data: { seller: actor, asset_ids: [assetId], listing_price: qty, settlement_symbol: '8,WAX', maker_marketplace: '' } },
+      { account: 'atomicassets', name: 'transfer', authorization: [{ actor: actor, permission: 'active' }], data: { from: actor, to: 'atomicmarket', asset_ids: [assetId], memo: 'sale' } }
     ] });
     st.textContent = 'Listed. It is on the market wall now.';
     loadSales(); loadYourStuff();
@@ -566,7 +566,7 @@ async function cancelSale(saleId, btn){
   st.textContent = 'Your wallet is asking you to approve the cancel…';
   try {
     await sess.transact({ actions: [
-      { account: 'atomicmarket', name: 'declinesale', authorization: [sess.authorization], data: { sale_id: saleId } }
+      { account: 'atomicmarket', name: 'declinesale', authorization: [{ actor: actor, permission: 'active' }], data: { sale_id: saleId } }
     ] });
     st.textContent = 'Listing cancelled. The piece is back in your wallet.';
     loadSales(); loadYourStuff();

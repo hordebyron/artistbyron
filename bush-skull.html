@@ -23,7 +23,7 @@
   .feature img{margin-bottom:0}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=182">
+<link rel="stylesheet" href="style.css?v=183">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -395,7 +395,7 @@
     var sess = await getWaxSession();
     if (result._attempt !== my) return;
     var actor = String(sess.actor);
-    await sess.transact({ actions: [{ account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: o.wallet, quantity: waxQty(o.amount), memo: o.memo } }] });
+    await sess.transact({ actions: [{ account: 'eosio.token', name: 'transfer', authorization: [{ actor: actor, permission: 'active' }], data: { from: actor, to: o.wallet, quantity: waxQty(o.amount), memo: o.memo } }] });
     setR(result, paidHtml(o, null), my);
   }
   /* ---------- XRP: XRPLWalletKit (Xaman + Joey), like xrp-market.html ---------- */
