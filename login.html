@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log in · Artist Byron</title>
 <meta name="description" content="Log in to the Horde. One login, one profile, both chains.">
-<link rel="stylesheet" href="style.css?v=148">
+<link rel="stylesheet" href="style.css?v=172">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <style>
 .door-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line)}
@@ -38,6 +38,19 @@
     <p id="email-login-done" hidden><a class="btn" id="email-login-profile" href="profile.html">Go to my profile</a></p>
     <p class="small">Your profile number only views a profile, it does not log you in. A code from your inbox is what makes this device yours.</p>
     <p class="small">Note: email sign in only works if you registered with that email. New here counts as not registered, use the register button above first, then the email sign in will know you. Wallet login still lives on the WAX and XRP door pages.</p>
+  </section>
+
+  <section class="card" id="link-email-card">
+    <h2>Joined before email login?</h2>
+    <p>If you registered before email login, your profile has no email yet, so the code sign in above cannot find you. Connect the WAX wallet on your profile to prove it is yours, then link your email here. After that, email sign in works.</p>
+    <p><button class="btn" type="button" id="link-wax-btn">Connect WAX wallet</button></p>
+    <p class="small" id="link-status"></p>
+    <div id="link-email-form" hidden>
+      <p><strong id="link-found"></strong></p>
+      <p><label for="link-email">Your email</label><br><input id="link-email" type="email" autocomplete="email" placeholder="you@example.com" style="width:min(320px,100%)"> <button class="btn" type="button" id="link-send">Email me a code</button></p>
+      <p id="link-code-row" hidden><label for="link-code">Code from your inbox</label><br><input id="link-code" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" maxlength="6" style="width:120px"> <button class="btn" type="button" id="link-go">Link my email</button></p>
+      <p class="small" id="link-email-status"></p>
+    </div>
   </section>
 
   <p class="small">No password, no seed, ever. Wallet addresses are public on the chain already.</p>
@@ -134,6 +147,83 @@ document.getElementById('email-login-go').addEventListener('click', async functi
   var row = await sbByNo(j.profile_no);
   if (row) { sbMirrorLocal(row); try { localStorage.setItem('horde_profile', JSON.stringify(row)); } catch (e) {} }
 });
+</script>
+<script>
+/* Link an email to an existing profile that has none yet (members who
+   registered before email login). The member proves the profile is theirs
+   by connecting the WAX wallet on that profile, then proves the email
+   with a code. Uses the same confirm action the register page uses.
+   WAX only here: every no-email member except Sasha has a WAX wallet,
+   and Sasha's email is set directly. */
+(function(){
+  var linkProfileNo = null;
+  var linkKit = null;
+  var linkSess = null;
+  var linkActor = null;
+  var st = document.getElementById('link-status');
+  var form = document.getElementById('link-email-form');
+  var foundEl = document.getElementById('link-found');
+  var emailSt = document.getElementById('link-email-status');
+  function setSt(t){ st.textContent = t; }
+  async function loadKit(){
+    if (linkKit) return linkKit;
+    var m = await Promise.all([
+      import('https://esm.sh/@wharfkit/session@4.0.2'),
+      import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+      import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+      import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+    ]);
+    linkKit = new m[0].SessionKit({ appName: 'artistbyron', chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }], ui: new m[1].WebRenderer(), walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()] });
+    window.__loginKit = linkKit;
+    return linkKit;
+  }
+  document.getElementById('link-wax-btn').addEventListener('click', async function(){
+    setSt('Opening your wallet…');
+    try {
+      var kit = await loadKit();
+      var res = await kit.login();
+      linkSess = res.session; linkActor = String(linkSess.actor);
+    } catch (e) {
+      setSt('WAX login could not load, or was cancelled. Try again.');
+      return;
+    }
+    setSt('Looking up the profile for ' + linkActor + '…');
+    var row = await sbFind(linkActor, null);
+    if (!row) { setSt('No Horde profile uses the WAX name ' + linkActor + ' yet. Register first, then come back here.'); return; }
+    if (row.email) { setSt('Profile #' + row.profile_no + ' already has an email. Use the email sign in above.'); return; }
+    linkProfileNo = row.profile_no;
+    foundEl.textContent = 'Found profile #' + row.profile_no + (row.name ? ' (' + row.name + ')' : '') + '. Link your email to it.';
+    form.hidden = false;
+    setSt('');
+    document.getElementById('link-email').focus();
+  });
+  document.getElementById('link-send').addEventListener('click', async function(){
+    var em = document.getElementById('link-email').value.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { emailSt.textContent = 'Type your email address first.'; return; }
+    emailSt.textContent = 'Sending your code…';
+    var j;
+    try { j = await emailLoginCall({ action: 'request', email: em }); }
+    catch (e) { emailSt.textContent = 'The code could not be sent just now. Try again in a bit.'; return; }
+    if (!j || !j.ok) { emailSt.textContent = (j && j.error) || 'The code could not be sent just now. Try again in a bit.'; return; }
+    document.getElementById('link-code-row').hidden = false;
+    emailSt.textContent = 'Code sent to ' + em + '. It lives for 10 minutes.';
+    document.getElementById('link-code').focus();
+  });
+  document.getElementById('link-go').addEventListener('click', async function(){
+    var em = document.getElementById('link-email').value.trim().toLowerCase();
+    var code = document.getElementById('link-code').value.trim();
+    if (!/^\d{6}$/.test(code)) { emailSt.textContent = 'Type the 6-digit code from your inbox.'; return; }
+    if (!linkProfileNo) { emailSt.textContent = 'Connect your WAX wallet first.'; return; }
+    emailSt.textContent = 'Linking…';
+    var j;
+    try { j = await emailLoginCall({ action: 'confirm', email: em, code: code, profile_no: linkProfileNo }); }
+    catch (e) { emailSt.textContent = 'Could not link just now. Try again in a bit.'; return; }
+    if (!j || !j.ok) { emailSt.textContent = (j && j.error) || 'That code did not work.'; return; }
+    form.hidden = true;
+    setSt('Email linked to profile #' + linkProfileNo + '. Now sign in with your email above, it will send you a fresh code.');
+    document.getElementById('link-wax-btn').hidden = true;
+  });
+})();
 </script>
 <script>
 (function(){

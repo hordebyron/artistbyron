@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- FILL IN per drop: title, description, h1, blurb, info lines, picture, and the CONFIG block in the script. This page is the paid sibling of a-thing.html: same login, same claim, with the payment attached in front of the claim in ONE wallet transaction. Local template only until a real drop fills it in and Byron approves the push. -->
-<title>Paid drop - Horde on WAX</title>
-<meta name="description" content="A paid WAX drop on the Horde's own drop contract, claimed right here on artistbyron.ca.">
-<link rel="stylesheet" href="style.css?v=151">
+<title>Bush Skull - Horde on WAX</title>
+<meta name="description" content="Bush Skull, a one of one original by Byron. Buy it on WAX, straight from the Horde's own drop contract, right here on artistbyron.ca.">
+<link rel="stylesheet" href="style.css?v=172">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
 <body>
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><a href="gallery.html">Gallery</a><span class="nav-drop"><a href="shop.html">SHOP</a><span class="nav-menu"><a href="shop.html#original-art"><span class="nav-big">Original Art</span></a><a href="shop.html#merch"><span class="nav-big">Merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><a href="profile.html">Profile</a><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
-  <h1 id="drop-name">Paid drop</h1>
+  <h1 id="drop-name">Bush Skull</h1>
   <p id="drop-blurb"></p>
 
   <section class="card">
@@ -36,29 +36,29 @@
     <p><button class="btn" type="button" id="claim-btn" disabled>Claim</button></p>
     <p class="small" id="claim-status"></p>
     <p><button class="btn ghost" type="button" id="wax-logout-btn" hidden>Log out</button></p>
-    <p><a href="wax.html">&larr; Back to WAX side</a></p>
+    <p><a href="bush-skull.html">&larr; Back to Bush Skull</a></p>
   </section>
 </main>
-<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="game.html">Play the Game</a> &middot; <a href="profile.html">My Horde Profile</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><a href="gallery.html">Gallery</a> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="profile.html">My Horde Profile</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p></div></footer>
 <script>
 // ===== DROP CONFIG: fill in when the drop is created on chain. =====
 var CONTRACT = 'hordedrop421';
-var DROP_ID = 0;                    // 0 = not set up yet, the page stays closed
-var DROP_NAME = 'Paid drop';
-var DROP_BLURB = '';
-var DROP_IMG = '';                  // picture hosted on this site, art/drops/...
-var COLLECTION_LABEL = '';          // e.g. HORDE on WAX (myhordeonwax)
-var TEMPLATE_ID = 0;
-var PRICE_STR = '0.00000000 DHC';   // amount + symbol, decimals included, exactly as setprice got it
-var TOKEN_CONTRACT = 'dahordescoin';
-var TOKEN_SYMBOL = 'DHC';
-var MAX_CLAIMABLE = 0;
-var ACCOUNT_LIMIT = 0;              // per wallet; the contract's "unlimited" is ACCOUNT_LIMIT = MAX_CLAIMABLE
-var WHITELIST = [];                 // empty = public drop
+var DROP_ID = 11;
+var DROP_NAME = 'Bush Skull';
+var DROP_BLURB = 'One of one original by Byron. The buyer gets the physical card. First buyer takes it, and it is gone from every door.';
+var DROP_IMG = 'art/eye-2026-11-24-closeup.png';
+var COLLECTION_LABEL = 'Art of Byron (byronartset1)';
+var TEMPLATE_ID = 912410;
+var PRICE_STR = '5000.00000000 WAX';
+var TOKEN_CONTRACT = 'eosio.token';
+var TOKEN_SYMBOL = 'WAX';
+var MAX_CLAIMABLE = 1;
+var ACCOUNT_LIMIT = 1;
+var WHITELIST = [];
 var START_TIME = 0;
-var END_TIME = 0;
-var START_TEXT = '';
-var END_TEXT = '';
+var END_TIME = 2000000000;
+var START_TEXT = 'now';
+var END_TEXT = 'No end date';
 // ===================================================================
 var dropStatusEl = document.getElementById('drop-status');
 var statusEl = document.getElementById('login-status');
