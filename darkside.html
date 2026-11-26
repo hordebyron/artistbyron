@@ -5,8 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>emerging from the dark side of white - Horde on WAX</title>
 <meta name="description" content="A new ink piece on WAX, 42 in total. Founders claim free for 24 hours, then 666 DHC or 100 WAX, claimed right here on artistbyron.ca.">
-<link rel="stylesheet" href="style.css?v=151">
-<style>#pay-method{font:inherit;padding:9px 10px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;max-width:100%}</style>
+<link rel="stylesheet" href="style.css?v=175">
+<style>#pay-method{font:inherit;padding:9px 10px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;max-width:100%}
+.drop-main{text-align:center}
+#drop-name{text-align:center}
+#drop-blurb{text-align:center}
+#drop-timer{font-size:1.6rem;font-weight:700;margin:16px 0 4px}
+#drop-info{display:grid;grid-template-columns:120px 1fr;gap:4px 14px;text-align:left;max-width:520px;margin:16px auto}
+#drop-info .dl{color:#9a9aa5}
+#info-price{font-size:1.25rem;font-weight:700}</style>
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -17,14 +24,18 @@
   <h1 id="drop-name">emerging from the dark side of white</h1>
   <p id="drop-blurb"></p>
 
-  <section class="card">
-    <img id="drop-img" src="" alt="" style="width:100%;max-width:520px;display:block;margin:0 auto;">
-    <p id="drop-info"><strong>Collection:</strong> <span id="info-collection"></span><br>
-    <strong>Template:</strong> <span id="info-template"></span><br>
-    <strong>Price:</strong> <span id="info-price"></span><br>
-    <strong>Limit:</strong> <span id="info-limit"></span><br>
-    <strong>Starts:</strong> <span id="info-starts"></span><br>
-    <strong>Ends:</strong> <span id="info-ends"></span></p>
+  <section class="card drop-main">
+    <img id="drop-img" src="" alt="" style="width:100%;max-width:480px;display:block;margin:0 auto;">
+    <p id="drop-timer">Checking the time…</p>
+    <div id="drop-info">
+      <span class="dl">Collection</span><span id="info-collection"></span>
+      <span class="dl">Template</span><span id="info-template"></span>
+      <span class="dl">Price</span><span id="info-price"></span>
+      <span class="dl">Limit</span><span id="info-limit"></span>
+      <span class="dl">Starts</span><span id="info-starts"></span>
+      <span class="dl">Ends</span><span id="info-ends"></span>
+      <span class="dl">Claimed</span><span id="info-claimed"></span>
+    </div>
     <p><label for="pay-method">How do you want to claim it?</label>
     <select id="pay-method">
       <option value="0">Free, founders only</option>
@@ -35,7 +46,7 @@
     <p class="small">This drop runs on the Horde's own drop contract (hordedrop421). There is no AtomicHub or NFTHive drop for it. You pay and claim right here, you never have to leave this site. The price goes in full to Byron, the contract takes no fee.</p>
   </section>
 
-  <section class="card" id="claim-card">
+  <section class="card drop-main" id="claim-card">
     <p>Log in with your WAX wallet, Anchor or Cloud Wallet. Claiming signs one transaction in your wallet. On a paid drop the payment and the claim go together, and the NFT mints straight to you. If the claim fails for any reason, the payment fails with it, so your money never leaves without the NFT.</p>
     <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button></p>
     <p class="small" id="login-status">Not logged in yet.</p>
@@ -126,6 +137,37 @@ async function tokenBalance(account) {
   var arr = await res.json();
   return (arr && arr.length) ? arr[0] : '0.00000000 ' + TOKEN_SYMBOL;
 }
+// ===== COUNTDOWN TIMER =====
+// Big, easy to read, ticks every second. Uses the live on-chain start
+// and end times once refreshDrop has read them, the page config before
+// that. Times are shown in the visitor's own clock; the drop times are
+// stored as unix seconds so the countdown is the same for everyone.
+var liveStart = 0, liveEnd = 0;
+function fmtDur(s){
+  if (s < 0) s = 0;
+  var d = Math.floor(s / 86400); s -= d * 86400;
+  var h = Math.floor(s / 3600); s -= h * 3600;
+  var m = Math.floor(s / 60); var sec = s - m * 60;
+  var parts = [];
+  if (d > 0) parts.push(d + 'd');
+  parts.push(h + 'h');
+  parts.push((m < 10 ? '0' : '') + m + 'm');
+  parts.push((sec < 10 ? '0' : '') + sec + 's');
+  return parts.join(' ');
+}
+function updateTimer(){
+  var el = document.getElementById('drop-timer');
+  if (!el) return;
+  // The timer is only there if the drop has not started yet. Once it
+  // starts, there is no timer, the drop is just live.
+  if (!DROP_ID) { el.style.display = 'none'; return; }
+  var now = Math.floor(Date.now() / 1000);
+  var st = liveStart || START_TIME;
+  if (now >= st) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  el.textContent = 'Opens in ' + fmtDur(st - now);
+}
+setInterval(updateTimer, 1000);
 async function refreshDrop() {
   if (!DROP_ID) { dropStatusEl.textContent = 'This drop is not set up yet.'; return; }
   try {
@@ -134,6 +176,10 @@ async function refreshDrop() {
     for (var i = 0; i < rows.length; i++) { if (rows[i].drop_id === DROP_ID) drop = rows[i]; }
     if (!drop) { dropStatusEl.textContent = 'Drop not found on chain yet.'; return; }
     claimedCount = parseInt(drop.claimed, 10);
+    liveStart = parseInt(drop.start_time, 10) || 0;
+    liveEnd = parseInt(drop.end_time, 10) || 0;
+    var clEl = document.getElementById('info-claimed');
+    if (clEl) clEl.textContent = claimedCount + ' of ' + MAX_CLAIMABLE;
     var prices = await tableRows(CONTRACT, CONTRACT, 'dropprices');
     priceOnChain = !PRICE_STR; // free drop: no price row to check
     for (var j = 0; j < prices.length; j++) {
@@ -149,6 +195,7 @@ async function refreshDrop() {
     dropLive = now >= drop.start_time && now <= drop.end_time && claimedCount < MAX_CLAIMABLE && priceOnChain;
     var state = !priceOnChain ? 'The price is not set on chain yet.' : now < drop.start_time ? 'Opens ' + START_TEXT + '.' : now > drop.end_time ? 'This drop has ended.' : claimedCount >= MAX_CLAIMABLE ? 'All ' + MAX_CLAIMABLE + ' claimed.' : 'Live now.';
     dropStatusEl.textContent = claimedCount + ' of ' + MAX_CLAIMABLE + ' claimed. ' + state;
+    updateTimer();
     updateClaimBtn();
   } catch (e) {
     dropStatusEl.textContent = 'Could not check the drop just now. Reload in a moment.';
