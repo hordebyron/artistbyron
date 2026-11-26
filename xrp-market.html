@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=159">
+<link rel="stylesheet" href="style.css?v=160">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -32,6 +32,12 @@
     });
   })();
   </script>
+  <section class="card" id="drops-card">
+    <h2>Newest Drop</h2>
+    <div id="xrp-drops-strip" class="drops-strip"></div>
+    <p class="small" id="xrp-drops-status">Loading the newest drops…</p>
+  </section>
+
   <h1>The XRP Market</h1>
   <p>This is the Horde's own market. Byron pieces on XRP, offered for sale by the people who hold them, bought and sold right here on this page. You sign in your own wallet, the ledger settles it wallet to wallet, and nobody takes a marketplace cut. Not us, not anyone.</p>
   <p>To buy, log in and link a wallet on your profile first. Then tap Buy and approve it in Xaman.</p>
@@ -146,6 +152,58 @@
     66602: 'HODLer', 66603: 'Holiday Loot Crate', 66608: 'Bush Skull'
   };
   var TAXON_ORDER = [1, 999, 130001, 247, 321, 5, 2];
+
+  /* ---------- newest drops strip, same shape as the WAX page ---------- */
+  function dropImg(src){
+    if (!src) return '<div class="mkt-img"></div>';
+    var url = /^https:/.test(src) ? src : (/^art\//.test(src) ? src : 'https://gateway.pinata.cloud/ipfs/' + src);
+    return '<img src="' + esc(url) + '" alt="" loading="lazy" decoding="async" class="mkt-img">';
+  }
+  function fmtDropEnd(ts){
+    var dt = new Date(ts * 1000);
+    var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' }).formatToParts(dt);
+    function get(t){ var p = null; parts.forEach(function(x){ if (x.type === t) p = x.value; }); return p || ''; }
+    var h = get('hour'), mi = get('minute'), ap = get('dayPeriod'), tz = get('timeZoneName');
+    var t;
+    if (h === '12' && mi === '00' && ap === 'PM') t = 'noon';
+    else if (h === '12' && mi === '00' && ap === 'AM') t = 'midnight';
+    else t = h + (mi === '00' ? '' : ':' + mi) + ' ' + ap;
+    return get('weekday') + ' ' + get('day') + ' ' + get('month') + ', ' + t + ' ' + tz;
+  }
+  /* The drop list lives here in the page, not in a fetch: paint from the
+     saved list first. Update it whenever a drop opens or closes. */
+  var XRP_DROPS = [
+    { claim_url: 'loot-crate.html', claimed: 0, image: 'art/loot-crate-wax-strip.jpg', max_claimable: 25, name: 'Holiday Loot Crate', price_text: '27 XRP', badge: 'RWA with Utility', end_time: 0 },
+    { claim_url: 'bush-skull.html', claimed: 0, image: 'art/eye-2026-11-24-closeup-strip.jpg', max_claimable: 1, name: 'Bush Skull', price_text: '19 XRP', badge: '1 of 1, own the original', end_time: 0 },
+    { claim_url: 'https://imcollectibles.io/artists/artistbyron', claimed: 60, image: 'https://gateway.pinata.cloud/ipfs/QmPZAeN7j4r4KH6FF8uuhnkeAsnS9s6Uh1F7d3nKRH8aUy', max_claimable: 666, name: 'Faces of the Horde v1', price_text: 'Free for both-holders', badge: 'Free', end_time: 0 }
+  ];
+  function loadXrpDrops(){
+    var box = document.getElementById('xrp-drops-strip');
+    var st = document.getElementById('xrp-drops-status');
+    if (!box) return;
+    var now = Math.floor(Date.now() / 1000);
+    var drops = (window.XRP_DROPS || []).filter(function(d){ return !d.end_time || d.end_time > now; }).slice(0, 3);
+    if (!drops.length) { if (st) st.textContent = 'No drops are open right now. Check back soon.'; box.innerHTML = ''; return; }
+    try {
+      box.innerHTML = '';
+      drops.forEach(function(d){
+        var a = document.createElement('a');
+        a.className = 'drop-card';
+        a.href = d.claim_url;
+        if (/^https:/.test(d.claim_url)) { a.target = '_blank'; a.rel = 'noopener'; }
+        var ends = d.end_time ? 'Ends ' + fmtDropEnd(d.end_time) : 'No end date';
+        var claimed = (d.max_claimable != null) ? '<p class="mkt-meta">' + d.claimed + ' of ' + d.max_claimable + ' claimed</p>' : '';
+        var badge = d.badge ? '<p class="mkt-badge">' + esc(d.badge) + '</p>' : '';
+        a.innerHTML = badge + dropImg(d.image)
+          + '<p class="mkt-name">' + esc(d.name) + '</p>'
+          + '<p class="mkt-meta">' + esc(d.price_text) + '</p>' + claimed
+          + '<p class="mkt-meta">' + esc(ends) + '</p>';
+        box.appendChild(a);
+      });
+      if (st) st.textContent = '';
+    } catch (e) { if (st) st.textContent = 'The newest drops could not load just now.'; }
+  }
+  loadXrpDrops();
   var HORDE_HEX = '24484F5244450000000000000000000000000000';
   var HORDE_ISSUER = 'rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR';
   var XAMAN_API_KEY = '09e6660d-6fce-4f1c-991f-7b0497ef709d';
