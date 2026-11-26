@@ -9,12 +9,19 @@
 .prod img{width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);display:block;margin-bottom:10px}
 .prod h3{margin-top:0}
 .feature-text h2{margin-top:0}
+/* Crate gallery: one main picture, thumbnails to switch views. Keeps the
+   crate card short so the merch below starts showing on the first screen. */
+.crate-gallery #crate-main{width:100%;aspect-ratio:1/1;object-fit:contain;background:#171310;margin-bottom:0}
+.crate-thumbs{display:flex;gap:8px;margin-top:8px}
+.crate-thumb{flex:0 0 auto;width:64px;height:64px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
+.crate-gallery .crate-thumb img{width:100%;height:100%;object-fit:contain;margin:0;border:0;border-radius:6px;display:block}
+.crate-thumb.is-active{border-color:var(--red)}
 @media (min-width:760px){
-  .feature{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+  .feature{display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start}
   .feature img{margin-bottom:0}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=155">
+<link rel="stylesheet" href="style.css?v=162">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -28,9 +35,12 @@
   <div class="badges"><span class="badge">Original, one of one</span><span class="badge">Ships from Canada and the USA</span><span class="badge">Secure checkout</span><span class="badge">Human-made, no AI</span></div>
 
   <section class="card prod feature">
-    <div>
-    <img src="art/loot-crate-holiday.jpg" alt="Horde Holiday Loot Crate, stickers, prints and more">
-    <img src="art/meg-crate.jpg" alt="A Horde crate opened at a buyer's home" style="margin-top:10px">
+    <div class="crate-gallery">
+    <img id="crate-main" src="art/loot-crate-holiday.jpg" alt="Horde Holiday Loot Crate, stickers, prints and more">
+    <div class="crate-thumbs" role="group" aria-label="Crate pictures">
+      <button type="button" class="crate-thumb is-active" data-src="art/loot-crate-holiday.jpg" data-alt="Horde Holiday Loot Crate, stickers, prints and more" aria-label="Show the crate" aria-pressed="true"><img src="art/loot-crate-holiday.jpg" alt=""></button>
+      <button type="button" class="crate-thumb" data-src="art/meg-crate.jpg" data-alt="A Horde crate opened at a buyer's home" aria-label="Show the opened crate" aria-pressed="false"><img src="art/meg-crate.jpg" alt=""></button>
+    </div>
     </div>
     <div class="feature-text">
     <h2>Horde's Holiday Loot Crate</h2>
@@ -45,6 +55,25 @@
     <p><a class="btn reviews-btn" href="testimonials.html">★ See what past buyers said</a></p>
     </div>
   </section>
+  <script>
+  (function(){
+    var main = document.getElementById('crate-main');
+    var thumbs = document.querySelectorAll('.crate-thumb');
+    if (!main || !thumbs.length) return;
+    thumbs.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var src = btn.getAttribute('data-src');
+        var alt = btn.getAttribute('data-alt');
+        if (!src) return;
+        main.src = src;
+        if (alt) main.alt = alt;
+        thumbs.forEach(function(b){ b.classList.remove('is-active'); b.setAttribute('aria-pressed', 'false'); });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-pressed', 'true');
+      });
+    });
+  })();
+  </script>
 
   <h2 id="merch">Merch</h2>
   <div class="card-grid">
