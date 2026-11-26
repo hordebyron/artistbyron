@@ -33,6 +33,7 @@ nav a:hover,nav a.active{border-color:var(--red);background:var(--red);color:#ff
 .hero p.lede{font-size:1.15rem}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:18px 0}
 .card h2,.card h3{margin-top:0}
+.card.hero-card h2{font-size:clamp(1.9rem,5.5vw,2.6rem);line-height:1.05}
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}
 .stat{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:14px;text-align:center}
 .stat b{display:block;font-size:1.7rem;color:#fff}
