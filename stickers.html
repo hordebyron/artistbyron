@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pick your stickers - Artist Byron</title>
+<meta name="description" content="Pick your own stickers from Byron's designs. Tap the ones you want, doubles allowed, and your picks become a number line to paste into the note at checkout.">
+<style>
+.sticker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.sticker-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:8px;cursor:pointer;position:relative;text-align:center;margin:0}
+.sticker-card img{width:100%;height:auto;display:block;border-radius:8px}
+.sticker-num{position:absolute;top:6px;left:6px;background:var(--red);color:#fff;font-weight:700;font-size:1rem;width:34px;height:34px;line-height:34px;border-radius:50%;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.4)}
+.sticker-count{position:absolute;top:6px;right:6px;background:var(--gold);color:#171310;font-weight:700;font-size:1rem;min-width:34px;height:34px;line-height:34px;border-radius:999px;text-align:center;padding:0 8px;box-shadow:0 1px 6px rgba(0,0,0,.4)}
+.sticker-card.picked{outline:3px solid var(--gold);outline-offset:-3px}
+.sticker-minus{margin-top:6px;background:none;border:1px solid var(--line);border-radius:999px;padding:2px 12px;font:inherit;cursor:pointer;color:inherit}
+.picks-bar{position:sticky;bottom:0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin:18px 0;box-shadow:0 -4px 18px rgba(0,0,0,.35);z-index:5}
+.picks-line{font-size:1.15rem;font-weight:700;word-break:break-all}
+</style>
+<link rel="stylesheet" href="style.css?v=155">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html" class="active">SHOP</a><span class="nav-menu"><a href="shop.html#original-art"><span class="nav-big">Original Art</span></a><a href="shop.html#merch"><span class="nav-big">Merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>Pick your stickers</h1>
+  <p>Tap a sticker to add it to your pack. Doubles allowed, tap again for another of the same one. Your picks become a number line below. Copy it and paste it into the note at checkout, so Sasha knows exactly which stickers to pack.</p>
+  <p class="price">1 for CA$5 &middot; 3 for CA$11 &middot; 5 for CA$13 &middot; 10 for CA$19 &middot; 50 for CA$75 &middot; 100 for CA$125, shipping included</p>
+  <div class="sticker-grid" id="sticker-grid">
+    <figure class="sticker-card" data-num="1" tabindex="0"><span class="sticker-num">1</span><span class="sticker-count" hidden></span><img src="art/stickers/aron.jpg" alt="Sticker 1" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="2" tabindex="0"><span class="sticker-num">2</span><span class="sticker-count" hidden></span><img src="art/stickers/bedheadderp.jpg" alt="Sticker 2" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="3" tabindex="0"><span class="sticker-num">3</span><span class="sticker-count" hidden></span><img src="art/stickers/bigbirdcutout.jpg" alt="Sticker 3" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="4" tabindex="0"><span class="sticker-num">4</span><span class="sticker-count" hidden></span><img src="art/stickers/cbskull1.jpg" alt="Sticker 4" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="5" tabindex="0"><span class="sticker-num">5</span><span class="sticker-count" hidden></span><img src="art/stickers/coffeecreep1.jpg" alt="Sticker 5" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="6" tabindex="0"><span class="sticker-num">6</span><span class="sticker-count" hidden></span><img src="art/stickers/coffeederp.jpg" alt="Sticker 6" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="7" tabindex="0"><span class="sticker-num">7</span><span class="sticker-count" hidden></span><img src="art/stickers/cthulhukitty.jpg" alt="Sticker 7" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="8" tabindex="0"><span class="sticker-num">8</span><span class="sticker-count" hidden></span><img src="art/stickers/derp-boyle.jpg" alt="Sticker 8" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="9" tabindex="0"><span class="sticker-num">9</span><span class="sticker-count" hidden></span><img src="art/stickers/derpcat-patch.jpg" alt="Sticker 9" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="10" tabindex="0"><span class="sticker-num">10</span><span class="sticker-count" hidden></span><img src="art/stickers/derpeyes.jpg" alt="Sticker 10" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="11" tabindex="0"><span class="sticker-num">11</span><span class="sticker-count" hidden></span><img src="art/stickers/derpgreennose.jpg" alt="Sticker 11" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="12" tabindex="0"><span class="sticker-num">12</span><span class="sticker-count" hidden></span><img src="art/stickers/eyespyderp.jpg" alt="Sticker 12" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="13" tabindex="0"><span class="sticker-num">13</span><span class="sticker-count" hidden></span><img src="art/stickers/floweryderp.jpg" alt="Sticker 13" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="14" tabindex="0"><span class="sticker-num">14</span><span class="sticker-count" hidden></span><img src="art/stickers/heartderp.jpg" alt="Sticker 14" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="15" tabindex="0"><span class="sticker-num">15</span><span class="sticker-count" hidden></span><img src="art/stickers/incognitoderp.jpg" alt="Sticker 15" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="16" tabindex="0"><span class="sticker-num">16</span><span class="sticker-count" hidden></span><img src="art/stickers/planetderp.jpg" alt="Sticker 16" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="17" tabindex="0"><span class="sticker-num">17</span><span class="sticker-count" hidden></span><img src="art/stickers/pufferderp.jpg" alt="Sticker 17" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="18" tabindex="0"><span class="sticker-num">18</span><span class="sticker-count" hidden></span><img src="art/stickers/punkderp.jpg" alt="Sticker 18" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="19" tabindex="0"><span class="sticker-num">19</span><span class="sticker-count" hidden></span><img src="art/stickers/purplederpskull.jpg" alt="Sticker 19" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="20" tabindex="0"><span class="sticker-num">20</span><span class="sticker-count" hidden></span><img src="art/stickers/santacanes.jpg" alt="Sticker 20" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="21" tabindex="0"><span class="sticker-num">21</span><span class="sticker-count" hidden></span><img src="art/stickers/scaredycat.jpg" alt="Sticker 21" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="22" tabindex="0"><span class="sticker-num">22</span><span class="sticker-count" hidden></span><img src="art/stickers/smilesonly.jpg" alt="Sticker 22" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="23" tabindex="0"><span class="sticker-num">23</span><span class="sticker-count" hidden></span><img src="art/stickers/spherederp.jpg" alt="Sticker 23" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="24" tabindex="0"><span class="sticker-num">24</span><span class="sticker-count" hidden></span><img src="art/stickers/trippingskulls.jpg" alt="Sticker 24" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="25" tabindex="0"><span class="sticker-num">25</span><span class="sticker-count" hidden></span><img src="art/stickers/trshcat.jpg" alt="Sticker 25" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="26" tabindex="0"><span class="sticker-num">26</span><span class="sticker-count" hidden></span><img src="art/stickers/tvheadog.jpg" alt="Sticker 26" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+    <figure class="sticker-card" data-num="27" tabindex="0"><span class="sticker-num">27</span><span class="sticker-count" hidden></span><img src="art/stickers/unicorn2.jpg" alt="Sticker 27" loading="lazy"><button class="sticker-minus" type="button" hidden>&minus; one</button></figure>
+  </div>
+  <div class="picks-bar" id="picks-bar">
+    <p><strong>Your picks (<span id="picks-total">0</span>):</strong> <span class="picks-line" id="picks-line">Nothing picked yet. Tap a sticker above.</span></p>
+    <p id="picks-hint" class="small"></p>
+    <p class="btn-row"><button class="btn" id="copy-picks" type="button" disabled>Copy my number line</button><button class="btn" id="clear-picks" type="button" disabled>Clear picks</button></p>
+  </div>
+  <h2>Check out</h2>
+  <p>Pick your pack size, then paste your number line into the note at checkout.</p>
+  <p class="btn-row"><a class="btn" href="https://buy.stripe.com/7sY5kE3Fc1J12qid5D8IU1d">1 sticker &mdash; CA$5</a><a class="btn" href="https://buy.stripe.com/eVq8wQb7E9btfd45Db8IU1e">Pack of 3 &mdash; CA$11</a><a class="btn" href="https://buy.stripe.com/cNi9AU4JgcnFe902qZ8IU1f">Pack of 5 &mdash; CA$13</a><a class="btn" href="https://buy.stripe.com/bJe9AU5NkdrJ2qi4z78IU1g">Pack of 10 &mdash; CA$19</a><a class="btn paypal" href="https://www.paypal.com/ncp/payment/TGGJG6ERUGN2C" aria-label="Pay with PayPal"><span class="pp"><span class="pp-a">Pay</span><span class="pp-b">Pal</span></span></a></p>
+  <p class="small">PayPal takes all six pack sizes, including 50 and 100. This opens Stripe's secure checkout.</p>
+  <p><a href="shop.html#merch">Back to the shop</a></p>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
+
+<script>
+(function () {
+  var picks = {};
+  var grid = document.getElementById('sticker-grid');
+  var line = document.getElementById('picks-line');
+  var totalEl = document.getElementById('picks-total');
+  var hint = document.getElementById('picks-hint');
+  var copyBtn = document.getElementById('copy-picks');
+  var clearBtn = document.getElementById('clear-picks');
+  var PACKS = [1, 3, 5, 10, 50, 100];
+  function numberLine() {
+    var out = [];
+    Object.keys(picks).sort(function (a, b) { return a - b; }).forEach(function (n) {
+      for (var i = 0; i < picks[n]; i++) out.push(n);
+    });
+    return out.join(', ');
+  }
+  function total() {
+    var t = 0;
+    Object.keys(picks).forEach(function (n) { t += picks[n]; });
+    return t;
+  }
+  function render() {
+    var t = total();
+    totalEl.textContent = t;
+    line.textContent = t ? numberLine() : 'Nothing picked yet. Tap a sticker above.';
+    copyBtn.disabled = !t;
+    clearBtn.disabled = !t;
+    if (!t) { hint.textContent = ''; }
+    else if (PACKS.indexOf(t) > -1) { hint.textContent = 'That is a pack of ' + t + '. Pick it below and paste your number line into the note.'; }
+    else if (PACKS.indexOf(t + 1) > -1) { hint.textContent = 'One more fills a pack of ' + (t + 1) + '.'; }
+    else { hint.textContent = 'Packs are 1, 3, 5, 10, 50 and 100.'; }
+    grid.querySelectorAll('.sticker-card').forEach(function (card) {
+      var n = card.getAttribute('data-num');
+      var c = picks[n] || 0;
+      var badge = card.querySelector('.sticker-count');
+      var minus = card.querySelector('.sticker-minus');
+      badge.hidden = !c;
+      badge.textContent = 'x' + c;
+      minus.hidden = !c;
+      card.classList.toggle('picked', !!c);
+    });
+  }
+  grid.addEventListener('click', function (e) {
+    var card = e.target.closest('.sticker-card');
+    if (!card) return;
+    var n = card.getAttribute('data-num');
+    if (e.target.classList.contains('sticker-minus')) {
+      if (picks[n]) { picks[n]--; if (!picks[n]) delete picks[n]; }
+    } else {
+      picks[n] = (picks[n] || 0) + 1;
+    }
+    render();
+  });
+  grid.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var card = e.target.closest('.sticker-card');
+    if (!card || e.target.classList.contains('sticker-minus')) return;
+    e.preventDefault();
+    var n = card.getAttribute('data-num');
+    picks[n] = (picks[n] || 0) + 1;
+    render();
+  });
+  copyBtn.addEventListener('click', function () {
+    var nl = numberLine();
+    if (!nl) return;
+    function done() {
+      copyBtn.textContent = 'Copied!';
+      setTimeout(function () { copyBtn.textContent = 'Copy my number line'; }, 2000);
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = nl;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (err) {}
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(nl).then(done, fallback);
+    } else { fallback(); }
+  });
+  clearBtn.addEventListener('click', function () { picks = {}; render(); });
+  render();
+})();
+</script>
+
+<!-- horde-crypto-gate: crypto-gated buttons and lines only show for a logged-in member with a wallet on their profile (Byron, 24 Nov 2026) -->
+<script>
+(function () {
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (!hasWallet) return;
+  document.querySelectorAll('.crypto-gated').forEach(function (el) { el.hidden = false; });
+})();
+</script>
+
+<script data-goatcounter="https://artistbyron.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
