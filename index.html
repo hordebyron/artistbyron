@@ -7,7 +7,7 @@
 <meta name="description" content="Artist Byron, Canadian horror artist in ink and paint for 20 years. Zombies, skulls, creepy portraits.">
 
 
-<link rel="stylesheet" href="style.css?v=176">
+<link rel="stylesheet" href="style.css?v=179">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -16,9 +16,11 @@
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">SHOP</a><span class="nav-menu"><a href="shop.html#original-art"><span class="nav-big">Original Art</span></a><a href="shop.html#merch"><span class="nav-big">Merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
 
+<p class="horde-intro">The Horde is my crew. Collectors, regulars, and anyone who shows up for the art.</p>
+
 <section class="card hero-card">
   <div class="duo">
-    <img src="art/loot-crate-holiday.jpg" alt="The Horde Holiday Loot Crate">
+    <img class="hero-crate-img" src="art/loot-crate-holiday.jpg" alt="The Horde Holiday Loot Crate">
     <img src="art/finderfound-crate.jpg" alt="A Horde crate opened at a buyer's home, contents spread out">
   </div>
   <h2>The Holiday Loot Crate is here</h2>
@@ -116,6 +118,11 @@
 #fb-panel .fb-kinds button.on{background:#b91c1c;border-color:#b91c1c;color:#fff}
 #fb-send{width:100%;padding:11px;border:none;border-radius:8px;background:#b91c1c;color:#fff;font-family:inherit;font-weight:700;cursor:pointer}
 #fb-msg{font-size:.88rem;min-height:1.2em;margin:.5em 0 0}
+/* Front page Horde intro line above the crate card, and the crate picture
+   taps to see larger, like the shop product pictures. */
+.horde-intro{text-align:center;font-size:1.05rem;margin:0 auto 12px;max-width:860px}
+.hero-crate-img{cursor:pointer}
+.hero-crate-img:hover{outline:2px solid var(--red);outline-offset:2px}
 </style>
 <button id="fb-btn" type="button">See a bug? Tell me</button>
 <div id="fb-panel" hidden>
@@ -176,6 +183,52 @@
 })();
 </script>
 
+<script>
+/* Front page lightbox: tap the crate picture to see it larger, like the
+   shop page. Close with the X, a tap outside the picture, or Escape. */
+(function(){
+  function esc(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+  var modal = document.getElementById('index-modal');
+  var body = document.getElementById('index-modal-body');
+  if (!modal || !body) return;
+  function openCrateImg(src, alt){
+    body.innerHTML = '<img src="' + esc(src) + '" alt="' + esc(alt) + '" class="mkt-img" style="max-height:72vh;width:100%;object-fit:contain">'
+      + (alt ? '<p class="mkt-name">' + esc(alt) + '</p>' : '');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCrateImg(){
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.hero-crate-img').forEach(function(img){
+    img.setAttribute('tabindex', '0');
+    img.setAttribute('role', 'button');
+    img.setAttribute('aria-label', 'See larger: ' + (img.getAttribute('alt') || 'crate picture'));
+    img.addEventListener('click', function(){ openCrateImg(img.getAttribute('src'), img.getAttribute('alt')); });
+    img.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCrateImg(img.getAttribute('src'), img.getAttribute('alt')); }
+    });
+  });
+  document.getElementById('index-modal-close').addEventListener('click', closeCrateImg);
+  modal.addEventListener('click', function(e){ if (e.target === modal) closeCrateImg(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeCrateImg(); });
+})();
+</script>
+
 <script data-goatcounter="https://artistbyron.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<div id="index-modal" class="mkt-modal" role="dialog" aria-modal="true" aria-label="Crate picture, enlarged">
+  <div class="mkt-modal-box">
+    <button class="mkt-modal-close" type="button" id="index-modal-close" aria-label="Close">&times;</button>
+    <div id="index-modal-body"></div>
+  </div>
+</div>
 </body>
 </html>

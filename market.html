@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=178">
+<link rel="stylesheet" href="style.css?v=179">
 <style>
 /* WAX market basket: one basket, one signature buys it all. */
 .cart-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:14px 0 0}
@@ -283,8 +283,8 @@ async function buySale(saleId, btn){
   st.textContent = 'Your wallet is asking you to approve the buy…';
   try {
     await sess.transact({ actions: [
-      { account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: '' } },
-      { account: 'atomicmarket', name: 'purchasesale', authorization: [sess.authorization], data: { buyer: actor, sale_id: sale.sale_id, intended_delisting_memo: '', taker_marketplace: '' } }
+      { account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: 'deposit' } },
+      { account: 'atomicmarket', name: 'purchasesale', authorization: [sess.authorization], data: { buyer: actor, sale_id: sale.sale_id, intended_delphi_median: 0, taker_marketplace: '' } }
     ] });
     st.textContent = 'Bought. The piece is in your wallet now. Refreshing the market…';
     cartRemove(saleId);
@@ -425,8 +425,8 @@ async function buyAll(){
   var actions = [];
   live.forEach(function(sale){
     actions.push(
-      { account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: '' } },
-      { account: 'atomicmarket', name: 'purchasesale', authorization: [sess.authorization], data: { buyer: actor, sale_id: sale.sale_id, intended_delisting_memo: '', taker_marketplace: '' } }
+      { account: 'eosio.token', name: 'transfer', authorization: [sess.authorization], data: { from: actor, to: 'atomicmarket', quantity: qtyFromRaw(sale.price.amount), memo: 'deposit' } },
+      { account: 'atomicmarket', name: 'purchasesale', authorization: [sess.authorization], data: { buyer: actor, sale_id: sale.sale_id, intended_delphi_median: 0, taker_marketplace: '' } }
     );
   });
   try {
