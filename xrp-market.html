@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=160">
+<link rel="stylesheet" href="style.css?v=161">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -182,7 +182,7 @@
     var st = document.getElementById('xrp-drops-status');
     if (!box) return;
     var now = Math.floor(Date.now() / 1000);
-    var drops = (window.XRP_DROPS || []).filter(function(d){ return !d.end_time || d.end_time > now; }).slice(0, 3);
+    var drops = XRP_DROPS.filter(function(d){ return !d.end_time || d.end_time > now; }).slice(0, 3);
     if (!drops.length) { if (st) st.textContent = 'No drops are open right now. Check back soon.'; box.innerHTML = ''; return; }
     try {
       box.innerHTML = '';
