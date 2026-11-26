@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=157">
+<link rel="stylesheet" href="style.css?v=158">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -34,6 +34,7 @@
   </script>
   <h1>The XRP Market</h1>
   <p>This is the Horde's own market. Byron pieces on XRP, offered for sale by the people who hold them, bought and sold right here on this page. You sign in your own wallet, the ledger settles it wallet to wallet, and nobody takes a marketplace cut. Not us, not anyone.</p>
+  <p>To buy, log in and link a wallet on your profile first. Then tap Buy and approve it in Xaman.</p>
 
   <section class="card" id="wallet-card">
     <h2>Your wallet</h2>
@@ -126,6 +127,7 @@
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.3/dist/xrpl-wallet-kit.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <script>
 (function(){
   'use strict';
@@ -308,8 +310,20 @@
   function isPhone(){ try { return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window); } catch (e) { return false; } }
   function showQr(ev){
     if (!ev) return;
-    if (ev.qrPng) qrImg.src = ev.qrPng;
     var link = ev.deeplink || ev.uri || null;
+    var qrData = ev.uri || ev.deeplink || null;
+    if (ev.qrPng) {
+      qrImg.src = ev.qrPng;
+    } else if (qrData && typeof qrcode === 'function') {
+      /* The wallet tool hands us a link but not the picture, so draw the
+         QR code from the link ourselves. */
+      try {
+        var qr = qrcode(0, 'M');
+        qr.addData(qrData);
+        qr.make();
+        qrImg.src = qr.createDataURL(4, 0);
+      } catch (e) { /* leave the image blank; Open in Xaman still works */ }
+    }
     if (link) {
       qrLink.href = link;
       /* On a phone you cannot scan your own screen, so open Xaman directly.
