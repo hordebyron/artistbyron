@@ -6,7 +6,7 @@
 <!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays Muse, then Muse mints the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
 <title>Axe Ready - Minion 001 - pay</title>
 <meta name="description" content="Mint Minion 001 NoName, Axe Ready, with XRP, ETH or SOL. 50 cents for registered Horde members, a dollar for everyone else. You pay Muse, Muse mints your Minion to you.">
-<link rel="stylesheet" href="style.css?v=205">
+<link rel="stylesheet" href="style.css?v=206">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
     <div id="sol-qr" hidden>
       <p><strong>Or scan with your phone wallet</strong> (Phantom, Solflare, or any Solana wallet). Point your wallet at this code and approve the payment, then tap "Tell Muse you paid" below.</p>
       <p id="sol-qr-img"></p>
-      <p class="small"><a id="sol-qr-link" href="#">Open in your wallet</a></p>
+      <p class="small" id="sol-qr-link-row"><a id="sol-qr-link" href="#">Open in your wallet</a></p>
     </div>
     <p id="tell-muse" hidden><a class="btn" id="tell-muse-link" href="#">Tell Muse you paid</a></p>
     <p class="small" id="manual-note" hidden>No wallet on this device? Send the exact amount above to the address above yourself (XRP: add the note MINION-001), then tap "Tell Muse you paid" and send the email with your payment details.</p>
@@ -237,7 +237,10 @@ function showSolQr(){
   box.hidden = false;
   var uri = solPayUri();
   var link = document.getElementById('sol-qr-link');
+  var linkRow = document.getElementById('sol-qr-link-row');
+  var isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   if (link) link.href = uri;
+  if (linkRow) linkRow.hidden = !isMobile;
   var slot = document.getElementById('sol-qr-img');
   if (slot && !slot.firstChild) {
     loadQrLib().then(function(){
@@ -261,7 +264,7 @@ function solBlockhash(connection){
       new Promise(function(_, reject){ setTimeout(function(){ reject(new Error('timeout')); }, 8000); })
     ]).catch(function(){
       if (tries < 3) return attempt();
-      throw new Error('Solana is being slow right now and the payment could not start. Tap Pay to try again, or send the SOL yourself and tap "Tell Muse you paid" below.');
+      throw new Error('Solana would not answer this page, so the payment could not start. Scan the code below with your phone wallet instead, then tap "Tell Muse you paid".');
     });
   }
   return attempt();
@@ -334,7 +337,7 @@ payBtn.addEventListener('click', async function(){
       tellMuseLink.href = mailtoLink('(paid manually)', '(your receiving address)');
       tellMuse.hidden = false;
       if (CHAIN === 'xrp') xrpOfferNote.hidden = false;
-    } else if (msg.indexOf('Solana is being slow') === 0) {
+    } else if (msg.indexOf('Solana would not answer') === 0) {
       setStatus('Nothing was spent. ' + msg);
       tellMuseLink.href = mailtoLink('(paid manually)', '(your receiving address)');
       tellMuse.hidden = false;
