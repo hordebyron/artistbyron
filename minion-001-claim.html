@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Minion 001 NoName (Axe Ready) claim page: same login, same claim as sub-drop.html, with the payment attached in front of the claim in ONE wallet transaction. The drop is chosen by ?d= in the address. -->
+<title>Axe Ready - Minion 001 - pay with WAX</title>
+<meta name="description" content="Mint Minion 001 NoName, Axe Ready, with WAX. 50 cents for registered Horde members, a dollar for everyone else. Your Minion mints the moment you pay, right here on artistbyron.ca.">
+<link rel="stylesheet" href="style.css?v=191">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">SHOP</a><span class="nav-menu"><a href="shop.html#original-art"><span class="nav-big">Original Art</span></a><a href="shop.html#merch"><span class="nav-big">Merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a><a href="minion-001.html" class="crypto-only">Minion 001</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1 id="drop-name">Paid drop</h1>
+  <p id="drop-blurb"></p>
+
+  <section class="card">
+    <img id="drop-img" src="" alt="" style="width:100%;max-width:520px;display:block;margin:0 auto;">
+    <p id="drop-info"><strong>Collection:</strong> <span id="info-collection"></span><br>
+    <strong>Template:</strong> <span id="info-template"></span><br>
+    <strong>Price:</strong> <span id="info-price"></span><br>
+    <strong>Limit:</strong> <span id="info-limit"></span><br>
+    <strong>Starts:</strong> <span id="info-starts"></span><br>
+    <strong>Ends:</strong> <span id="info-ends"></span></p>
+    <p class="small" id="drop-status">Checking the drop…</p>
+    <p class="small">This mint runs on the Horde's own drop contract. You pay and claim right here, you never have to leave this site. The price goes in full to Byron, the contract takes no fee. Five per wallet, 100 total across all chains.</p>
+  </section>
+
+  <section class="card" id="claim-card">
+    <p>Log in with your WAX wallet, Anchor or Cloud Wallet. Claiming signs one transaction in your wallet: the payment and the claim together, and the NFT mints straight to you. If the claim fails for any reason, the payment fails with it, so your money never leaves without the NFT.</p>
+    <p><button class="btn" type="button" id="wax-login-btn">Log in with WAX</button></p>
+    <p class="small" id="login-status">Not logged in yet.</p>
+    <p><button class="btn" type="button" id="claim-btn" disabled>Claim</button></p>
+    <p class="small" id="claim-status"></p>
+    <p><button class="btn ghost" type="button" id="wax-logout-btn" hidden>Log out</button></p>
+    <p><a href="minion-001.html">&larr; Back to Axe Ready</a></p>
+  </section>
+</main>
+<footer class="foot"><div class="wrap small">
+  <p>Artist Byron · Morden, Manitoba · <a href="https://ko-fi.com/artistbyron" target="_blank" rel="noopener">Ko-fi</a> · <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">Discord, The House of the Horde</a></p>
+<p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
+<script>
+// ===== MINION 001 DROP CONFIG: the drop is chosen by ?d= in the address.
+// Prices here are checked against the chain's own price table before the
+// page will sell anything, so a wrong price in this list cannot sell.
+// Drop 17 is the member price (50 cents), drop 18 is the everyone price ($1).
+// Both are WAX at the live rate when the drops were built (27 Nov 2026).
+var DROP_CONFIGS = {
+  17: { name: 'Axe Ready - Minion 001 NoName', price: '144.73000000 WAX', token: 'eosio.token', symbol: 'WAX', template: 912505, img: 'art/minion-001-noname.jpg', blurb: 'Registered Horde member price, 50 cents in WAX. Your Minion 001 mints the moment you pay. Five per wallet, 100 total across all chains.' },
+  18: { name: 'Axe Ready - Minion 001 NoName', price: '289.45000000 WAX', token: 'eosio.token', symbol: 'WAX', template: 912505, img: 'art/minion-001-noname.jpg', blurb: 'Everyone price, $1 in WAX. Your Minion 001 mints the moment you pay. Five per wallet, 100 total across all chains.' }
+};
+var DID = 0;
+try { DID = parseInt(new URLSearchParams(location.search).get('d') || '0', 10); } catch (e) {}
+var C = DROP_CONFIGS[DID] || null;
+var CONTRACT = 'hordedrop421';
+var DROP_ID = C ? DID : 0;
+var DROP_NAME = C ? C.name : 'Axe Ready - Minion 001 NoName';
+var DROP_BLURB = C ? C.blurb : 'Pick a chain on the Axe Ready page first.';
+var DROP_IMG = C ? C.img : '';
+var COLLECTION_LABEL = 'Horde Art Gallery (myhordeonwax)';
+var TEMPLATE_ID = C ? C.template : 0;
+var PRICE_STR = C ? C.price : '0.00000000 WAX';
+var TOKEN_CONTRACT = C ? C.token : 'eosio.token';
+var TOKEN_SYMBOL = C ? C.symbol : 'WAX';
+var MAX_CLAIMABLE = 100;
+var ACCOUNT_LIMIT = 5;
+var WHITELIST = [];
+var START_TIME = 0;
+var END_TIME = 2000000000;
+var START_TEXT = '11:00 AM, Friday 27 November 2026';
+var END_TEXT = 'No end date';
+// ===================================================================
+var dropStatusEl = document.getElementById('drop-status');
+var statusEl = document.getElementById('login-status');
+var claimBtn = document.getElementById('claim-btn');
+var claimStatusEl = document.getElementById('claim-status');
+var loginBtn = document.getElementById('wax-login-btn');
+var logoutBtn = document.getElementById('wax-logout-btn');
+var sessionKit = null, session = null, dropLive = false, claimedCount = null, myClaims = 0, priceOnChain = false;
+
+// Display price: the on-chain price string carries 8 decimals for the
+// transfer, but the page shows the plain number (100 WAX, 666 DHC).
+function dispPrice(s) {
+  if (!s) return 'Free';
+  var p = String(s).split(' ');
+  var n = parseFloat(p[0]);
+  return (isNaN(n) ? p[0] : String(n)) + (p[1] ? ' ' + p[1] : '');
+}
+
+document.getElementById('drop-name').textContent = DROP_NAME;
+document.title = DROP_NAME + ' - Horde on WAX';
+document.getElementById('drop-blurb').textContent = DROP_BLURB;
+var imgEl = document.getElementById('drop-img');
+imgEl.src = DROP_IMG; imgEl.alt = DROP_NAME;
+document.getElementById('info-collection').textContent = COLLECTION_LABEL;
+document.getElementById('info-template').textContent = TEMPLATE_ID || '';
+document.getElementById('info-price').textContent = dispPrice(PRICE_STR);
+document.getElementById('info-limit').textContent = ACCOUNT_LIMIT >= MAX_CLAIMABLE ? 'No per wallet limit, ' + MAX_CLAIMABLE + ' total' : ACCOUNT_LIMIT + ' per wallet, ' + MAX_CLAIMABLE + ' total';
+document.getElementById('info-starts').textContent = START_TEXT;
+document.getElementById('info-ends').textContent = END_TEXT;
+claimBtn.textContent = 'Pay ' + dispPrice(PRICE_STR) + ' and claim';
+
+async function tableRows(code, scope, table, lower, upper) {
+  var body = { json: true, code: code, scope: scope, table: table, limit: 100 };
+  if (lower !== undefined) { body.lower_bound = lower; body.upper_bound = upper; }
+  var res = await fetch('https://wax.greymass.com/v1/chain/get_table_rows', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('table ' + table + ' ' + res.status);
+  var json = await res.json();
+  return json.rows || [];
+}
+async function tokenBalance(account) {
+  var res = await fetch('https://wax.greymass.com/v1/chain/get_currency_balance', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: TOKEN_CONTRACT, account: account, symbol: TOKEN_SYMBOL })
+  });
+  if (!res.ok) throw new Error('balance ' + res.status);
+  var arr = await res.json();
+  return (arr && arr.length) ? arr[0] : '0.00000000 ' + TOKEN_SYMBOL;
+}
+async function refreshDrop() {
+  if (!DROP_ID) { dropStatusEl.textContent = 'This drop is not set up yet.'; return; }
+  try {
+    var rows = await tableRows(CONTRACT, CONTRACT, 'drops');
+    var drop = null;
+    for (var i = 0; i < rows.length; i++) { if (rows[i].drop_id === DROP_ID) drop = rows[i]; }
+    if (!drop) { dropStatusEl.textContent = 'Drop not found on chain yet.'; return; }
+    claimedCount = parseInt(drop.claimed, 10);
+    /* Shared pool: both drops mint from the one template, so the count that
+       matters is the template's issued supply across both drops, not this
+       drop's own claimed count. Fall back to the drop's count if the
+       template read fails. */
+    try {
+      var trows = await tableRows('atomicassets', 'myhordeonwax', 'templates', TEMPLATE_ID, TEMPLATE_ID);
+      if (trows.length && trows[0].issued_supply !== undefined) claimedCount = parseInt(trows[0].issued_supply, 10);
+    } catch (e) {}
+    var prices = await tableRows(CONTRACT, CONTRACT, 'dropprices');
+    priceOnChain = false;
+    for (var j = 0; j < prices.length; j++) {
+      if (prices[j].drop_id === DROP_ID && prices[j].listing_price === PRICE_STR && prices[j].token_contract === TOKEN_CONTRACT) priceOnChain = true;
+    }
+    if (session) {
+      var claims = await tableRows(CONTRACT, String(DROP_ID), 'claims');
+      myClaims = 0;
+      var me = String(session.actor);
+      for (var k = 0; k < claims.length; k++) { if (claims[k].account === me) myClaims = parseInt(claims[k].count, 10); }
+    }
+    var now = Math.floor(Date.now() / 1000);
+    dropLive = now >= drop.start_time && now <= drop.end_time && claimedCount < MAX_CLAIMABLE && priceOnChain;
+    var state = !priceOnChain ? 'The price is not set on chain yet.' : now < drop.start_time ? 'Opens ' + START_TEXT + '.' : now > drop.end_time ? 'This drop has ended.' : claimedCount >= MAX_CLAIMABLE ? 'All ' + MAX_CLAIMABLE + ' claimed.' : 'Live now.';
+    dropStatusEl.textContent = claimedCount + ' of ' + MAX_CLAIMABLE + ' claimed. ' + state;
+    updateClaimBtn();
+  } catch (e) {
+    dropStatusEl.textContent = 'Could not check the drop just now. Reload in a moment.';
+  }
+}
+function updateClaimBtn() {
+  if (!DROP_ID) { claimBtn.disabled = true; return; }
+  if (!session) {
+    // The claim button is the login trigger: it stays tappable while the
+    // drop is live, and logging in leads straight into the claim.
+    if (!dropLive) { claimBtn.disabled = true; claimStatusEl.textContent = 'The drop is not live right now. It opens ' + START_TEXT + '.'; return; }
+    claimBtn.disabled = false;
+    claimStatusEl.textContent = 'Tap to log in with your WAX wallet, then approve the claim in your wallet.';
+    return;
+  }
+  var name = String(session.actor);
+  if (WHITELIST.length && WHITELIST.indexOf(name) === -1) {
+    claimBtn.disabled = true;
+    claimStatusEl.textContent = name + ' is not on the whitelist for this drop.';
+    return;
+  }
+  if (myClaims >= ACCOUNT_LIMIT) {
+    claimBtn.disabled = true;
+    claimStatusEl.textContent = 'You already claimed your limit for this drop (' + myClaims + ').';
+    return;
+  }
+  if (!dropLive) {
+    claimBtn.disabled = true;
+    claimStatusEl.textContent = 'The drop is not live right now. It opens ' + START_TEXT + '.';
+    return;
+  }
+  claimBtn.disabled = false;
+  claimStatusEl.textContent = 'Tap Claim, then approve the one transaction in your wallet. It pays ' + dispPrice(PRICE_STR) + ' and mints to you.';
+}
+(function () {
+  refreshDrop();
+  setInterval(refreshDrop, 60000);
+  async function init() {
+    try {
+      var m = await Promise.all([
+        import('https://esm.sh/@wharfkit/session@4.0.2'),
+        import('https://esm.sh/@wharfkit/web-renderer@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-anchor@4.0.2'),
+        import('https://esm.sh/@wharfkit/wallet-plugin-cloudwallet@4.0.2')
+      ]);
+      sessionKit = new m[0].SessionKit({
+        appName: 'artistbyron',
+        chains: [{ id: '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4', url: 'https://wax.greymass.com' }],
+        ui: new m[1].WebRenderer(),
+        walletPlugins: [new m[2].WalletPluginAnchor(), new m[3].WalletPluginCloudWallet()]
+      });
+      async function doLogin() {
+        loginBtn.disabled = true; statusEl.textContent = 'Opening your wallet…';
+        try {
+          var res = await sessionKit.login();
+          session = res.session;
+          var name = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + name + ', proven by your wallet.';
+          logoutBtn.hidden = false;
+          loginBtn.disabled = true;
+          refreshDrop();
+          return true;
+        } catch (e) {
+          statusEl.textContent = 'Login cancelled or failed. Try again.';
+          loginBtn.disabled = false;
+          return false;
+        }
+      }
+      loginBtn.addEventListener('click', doLogin);
+      logoutBtn.addEventListener('click', async function () {
+        try { await sessionKit.logout(session); } catch (e) {}
+        session = null;
+        loginBtn.disabled = false;
+        logoutBtn.hidden = true;
+        statusEl.textContent = 'Logged out.';
+        updateClaimBtn();
+      });
+      claimBtn.addEventListener('click', async function () {
+        if (!session) {
+          claimStatusEl.textContent = 'Opening your wallet to log in…';
+          var ok = await doLogin();
+          if (!ok) return;
+          updateClaimBtn();
+          if (claimBtn.disabled) return;
+        }
+        var name = String(session.actor);
+        claimBtn.disabled = true;
+        try {
+          var bal = await tokenBalance(name);
+          var have = parseFloat(bal);
+          var need = parseFloat(PRICE_STR);
+          if (!isNaN(have) && !isNaN(need) && have < need) {
+            claimStatusEl.textContent = 'This wallet holds ' + dispPrice(bal) + '. The price is ' + dispPrice(PRICE_STR) + ', so there is not enough ' + TOKEN_SYMBOL + ' in it for this drop.';
+            claimBtn.disabled = false;
+            return;
+          }
+        } catch (e) { /* the chain is the judge, carry on */ }
+        claimStatusEl.textContent = 'Sending your payment and claim, approve it in your wallet…';
+        try {
+          var actions = [
+            { account: TOKEN_CONTRACT, name: 'transfer', authorization: [{ actor: name, permission: 'active' }], data: { from: name, to: CONTRACT, quantity: PRICE_STR, memo: 'drop:' + DROP_ID } },
+            { account: CONTRACT, name: 'claim', authorization: [{ actor: name, permission: 'active' }], data: { claimer: name, drop_id: DROP_ID } }
+          ];
+          var r = await session.transact({ actions: actions }, { broadcast: true });
+          var tx = r.response && r.response.transaction_id ? r.response.transaction_id : '';
+          claimStatusEl.textContent = 'Claimed! ' + DROP_NAME + ' is on its way to ' + name + ', and ' + dispPrice(PRICE_STR) + ' went to Byron.' + (tx ? ' Transaction: ' + tx : '');
+          refreshDrop();
+        } catch (e) {
+          var msg = (e && e.message) ? e.message : String(e);
+          if (msg.indexOf('short of the price') !== -1) msg = 'The payment did not cover the price. Nothing was taken.';
+          else if (msg.indexOf('this drop is paid') !== -1) msg = 'The payment did not reach the contract with the claim. Nothing was minted, try again.';
+          else if (msg.indexOf('already claimed its limit') !== -1) msg = 'You already claimed your limit for this drop.';
+          else if (msg.indexOf('sold out') !== -1) msg = 'The drop just sold out.';
+          else if (msg.indexOf('insufficient') !== -1 || msg.indexOf('overdrawn') !== -1) msg = 'Not enough ' + TOKEN_SYMBOL + ' in this wallet for the price.';
+          claimStatusEl.textContent = 'Claim did not go through: ' + msg;
+          updateClaimBtn();
+        }
+      });
+      try {
+        session = await sessionKit.restore();
+        if (session) {
+          var name2 = String(session.actor);
+          statusEl.textContent = 'Logged in as ' + name2 + '.';
+          loginBtn.disabled = true;
+          logoutBtn.hidden = false;
+          refreshDrop();
+        }
+      } catch (e) {}
+    } catch (e) {
+      statusEl.textContent = 'WAX login could not load just now. Reload the page and try again.';
+    }
+  }
+  init();
+})();
+</script>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  links.forEach(function(a){
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
+    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+  });
+})();
+</script>
+<!-- horde-crypto-gate: crypto nav links and crypto-only elements stay hidden until the visitor is logged in with a wallet on their profile (Byron, 24 Nov 2026) -->
+<script>
+(function () {
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim())));
+  if (hasWallet) return;
+  document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+  document.querySelectorAll('a[href="market.html"], a[href="xrp-market.html"], a[href="nft-gallery.html"]').forEach(function (m) { m.remove(); });
+})();
+</script>
+</body>
+</html>
