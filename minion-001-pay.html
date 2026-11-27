@@ -6,7 +6,7 @@
 <!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays Muse, then Muse mints the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
 <title>Axe Ready - Minion 001 - pay</title>
 <meta name="description" content="Mint Minion 001 NoName, Axe Ready, with XRP, ETH or SOL. 50 cents for registered Horde members, a dollar for everyone else. You pay Muse, Muse mints your Minion to you.">
-<link rel="stylesheet" href="style.css?v=204">
+<link rel="stylesheet" href="style.css?v=205">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -33,6 +33,11 @@
     <p id="pay-how"></p>
     <p><button class="btn" type="button" id="pay-btn" disabled>Pay</button></p>
     <p class="small" id="pay-result"></p>
+    <div id="sol-qr" hidden>
+      <p><strong>Or scan with your phone wallet</strong> (Phantom, Solflare, or any Solana wallet). Point your wallet at this code and approve the payment, then tap "Tell Muse you paid" below.</p>
+      <p id="sol-qr-img"></p>
+      <p class="small"><a id="sol-qr-link" href="#">Open in your wallet</a></p>
+    </div>
     <p id="tell-muse" hidden><a class="btn" id="tell-muse-link" href="#">Tell Muse you paid</a></p>
     <p class="small" id="manual-note" hidden>No wallet on this device? Send the exact amount above to the address above yourself (XRP: add the note MINION-001), then tap "Tell Muse you paid" and send the email with your payment details.</p>
     <p><a href="minion-001.html">&larr; Back to Axe Ready</a></p>
@@ -223,6 +228,30 @@ async function payBase(){
   var txHash = await window.ethereum.request({ method: 'eth_sendTransaction', params: [{ from: from, to: C.payTo, value: '0x' + BigInt(T.wei).toString(16) }] });
   showPaid(txHash, from);
 }
+function solPayUri(){
+  return 'solana:' + C.payTo + '?amount=' + T.amount + '&label=' + encodeURIComponent('Artist Byron') + '&message=' + encodeURIComponent('Minion 001 NoName (Axe Ready)') + '&memo=' + encodeURIComponent('MINION-001');
+}
+function showSolQr(){
+  var box = document.getElementById('sol-qr');
+  if (!box) return;
+  box.hidden = false;
+  var uri = solPayUri();
+  var link = document.getElementById('sol-qr-link');
+  if (link) link.href = uri;
+  var slot = document.getElementById('sol-qr-img');
+  if (slot && !slot.firstChild) {
+    loadQrLib().then(function(){
+      var qr = qrcode(0, 'M');
+      qr.addData(uri);
+      qr.make();
+      var img = document.createElement('img');
+      img.className = 'qr';
+      img.src = qr.createDataURL(6, 0);
+      img.alt = 'Scan to pay with Solana';
+      slot.appendChild(img);
+    });
+  }
+}
 function solBlockhash(connection){
   var tries = 0;
   function attempt(){
@@ -287,6 +316,7 @@ function init(){
   payBtn.disabled = false;
   payBtn.textContent = 'Pay ' + T.amount + ' ' + C.symbol;
   manualNote.hidden = false;
+  if (CHAIN === 'sol') showSolQr();
 }
 payBtn.addEventListener('click', async function(){
   if (payBtn.disabled) return;
