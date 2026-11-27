@@ -6,7 +6,7 @@
 <!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays Muse, then Muse mints the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
 <title>Axe Ready - Minion 001 - pay</title>
 <meta name="description" content="Mint Minion 001 NoName, Axe Ready, with XRP, ETH or SOL. 50 cents for registered Horde members, a dollar for everyone else. You pay Muse, Muse mints your Minion to you.">
-<link rel="stylesheet" href="style.css?v=206">
+<link rel="stylesheet" href="style.css?v=207">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -255,12 +255,16 @@ function showSolQr(){
     });
   }
 }
-function solBlockhash(connection){
+var SOL_BLOCKHASH_URL = 'https://tuzzavnacfzveucwhdeq.supabase.co/functions/v1/solana-blockhash';
+var SB_ANON_KEY = 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-';
+function solBlockhash(){
   var tries = 0;
   function attempt(){
     tries++;
     return Promise.race([
-      connection.getLatestBlockhash().then(function(r){ return r.blockhash; }),
+      fetch(SOL_BLOCKHASH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_ANON_KEY, Authorization: 'Bearer ' + SB_ANON_KEY }, body: '{}' })
+        .then(function(r){ if (!r.ok) throw new Error('blockhash ' + r.status); return r.json(); })
+        .then(function(j){ if (!j.blockhash) throw new Error('no blockhash'); return j.blockhash; }),
       new Promise(function(_, reject){ setTimeout(function(){ reject(new Error('timeout')); }, 8000); })
     ]).catch(function(){
       if (tries < 3) return attempt();
@@ -279,8 +283,7 @@ async function paySol(){
   var from = provider.publicKey;
   if (!from) throw new Error('your wallet did not share an address');
   setStatus('Connected. Getting the latest Solana block…');
-  var connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
-  var blockhash = await solBlockhash(connection);
+  var blockhash = await solBlockhash();
   var tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(C.payTo), lamports: T.lamports }));
   tx.feePayer = from;
   tx.recentBlockhash = blockhash;
