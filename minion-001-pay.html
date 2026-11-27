@@ -6,7 +6,7 @@
 <!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays Muse, then Muse mints the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
 <title>Axe Ready - Minion 001 - pay</title>
 <meta name="description" content="Mint Minion 001 NoName, Axe Ready, with XRP, ETH or SOL. 50 cents for registered Horde members, a dollar for everyone else. You pay Muse, Muse mints your Minion to you.">
-<link rel="stylesheet" href="style.css?v=200">
+<link rel="stylesheet" href="style.css?v=204">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -223,18 +223,36 @@ async function payBase(){
   var txHash = await window.ethereum.request({ method: 'eth_sendTransaction', params: [{ from: from, to: C.payTo, value: '0x' + BigInt(T.wei).toString(16) }] });
   showPaid(txHash, from);
 }
+function solBlockhash(connection){
+  var tries = 0;
+  function attempt(){
+    tries++;
+    return Promise.race([
+      connection.getLatestBlockhash().then(function(r){ return r.blockhash; }),
+      new Promise(function(_, reject){ setTimeout(function(){ reject(new Error('timeout')); }, 8000); })
+    ]).catch(function(){
+      if (tries < 3) return attempt();
+      throw new Error('Solana is being slow right now and the payment could not start. Tap Pay to try again, or send the SOL yourself and tap "Tell Muse you paid" below.');
+    });
+  }
+  return attempt();
+}
 async function paySol(){
   if (!window.solana || typeof window.solana.signAndSendTransaction !== 'function') throw new Error('no wallet on this device');
   await loadScript('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js');
   if (typeof solanaWeb3 === 'undefined') throw new Error('the Solana tools could not load');
-  setStatus('Your Solana wallet is asking you to approve sending ' + T.amount + ' SOL.');
   var provider = window.solana;
+  setStatus('Connecting your Solana wallet…');
   await provider.connect();
   var from = provider.publicKey;
+  if (!from) throw new Error('your wallet did not share an address');
+  setStatus('Connected. Getting the latest Solana block…');
   var connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+  var blockhash = await solBlockhash(connection);
   var tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(C.payTo), lamports: T.lamports }));
   tx.feePayer = from;
-  tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  tx.recentBlockhash = blockhash;
+  setStatus('Your Solana wallet is asking you to approve sending ' + T.amount + ' SOL.');
   var sig = await provider.signAndSendTransaction(tx);
   var signature = (sig && sig.signature) || sig;
   showPaid(signature, String(from));
@@ -286,6 +304,10 @@ payBtn.addEventListener('click', async function(){
       tellMuseLink.href = mailtoLink('(paid manually)', '(your receiving address)');
       tellMuse.hidden = false;
       if (CHAIN === 'xrp') xrpOfferNote.hidden = false;
+    } else if (msg.indexOf('Solana is being slow') === 0) {
+      setStatus('Nothing was spent. ' + msg);
+      tellMuseLink.href = mailtoLink('(paid manually)', '(your receiving address)');
+      tellMuse.hidden = false;
     } else {
       setStatus('Nothing was spent. ' + msg + ' Tap Pay to try again.');
     }

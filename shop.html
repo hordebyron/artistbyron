@@ -48,7 +48,7 @@
   .prod.feature{grid-template-columns:220px 1fr;gap:22px}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=190">
+<link rel="stylesheet" href="style.css?v=204">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -595,22 +595,43 @@
     setR(result, paidHtml(o, txHash), my);
   }
   /* ---------- SOL: injected Solana provider, else Solana Pay QR ---------- */
+  function solBlockhash(connection){
+    var tries = 0;
+    function attempt(){
+      tries++;
+      return Promise.race([
+        connection.getLatestBlockhash().then(function(r){ return r.blockhash; }),
+        new Promise(function(_, reject){ setTimeout(function(){ reject(new Error('timeout')); }, 8000); })
+      ]).catch(function(){
+        if (tries < 3) return attempt();
+        throw new Error('slow');
+      });
+    }
+    return attempt();
+  }
   async function paySol(o, result, my){
     if (!window.solana || typeof window.solana.signAndSendTransaction !== 'function') { showQrFallback(o, result, my); return; }
     try {
       await loadScript('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js');
     } catch (e) { showQrFallback(o, result, my); return; }
     if (typeof solanaWeb3 === 'undefined') { showQrFallback(o, result, my); return; }
-    setR(result, '<p>Your Solana wallet is asking you to approve sending ' + esc(o.amount) + ' SOL.</p>', my);
+    setR(result, '<p>Connecting your Solana wallet…</p>', my);
     var provider = window.solana;
-    await provider.connect();
+    try { await provider.connect(); } catch (e) { showQrFallback(o, result, my); return; }
     if (result._attempt !== my) return;
     var from = provider.publicKey;
+    if (!from) { showQrFallback(o, result, my); return; }
     var connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+    var blockhash;
+    try {
+      setR(result, '<p>Connected. Getting the latest Solana block…</p>', my);
+      blockhash = await solBlockhash(connection);
+    } catch (e) { showQrFallback(o, result, my); return; }
     var tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(o.wallet), lamports: solToLamports(o.amount) }));
     tx.feePayer = from;
-    tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+    tx.recentBlockhash = blockhash;
     if (result._attempt !== my) return;
+    setR(result, '<p>Your Solana wallet is asking you to approve sending ' + esc(o.amount) + ' SOL.</p>', my);
     var sig = await provider.signAndSendTransaction(tx);
     var signature = (sig && sig.signature) || sig;
     setR(result, paidHtml(o, signature), my);
