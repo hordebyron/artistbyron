@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solana Market · Artist Byron</title>
+<meta name="description" content="The Horde secondary market on Solana. Horde pieces, sold by the people who hold them. Mint on demand from the Horde Art Gallery.">
+<link rel="stylesheet" href="style.css?v=198">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">SHOP</a><span class="nav-menu"><a href="shop.html#original-art"><span class="nav-big">Original Art</span></a><a href="shop.html#merch"><span class="nav-big">Merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a><a href="solana-market.html">Solana Market</a><a href="minion-001.html" class="crypto-only">Minion 001</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <section class="card" id="crypto-locked">
+    <h2>This part of the Horde is for members with a wallet</h2>
+    <p>Log in and link a wallet on your profile, and the market opens here.</p>
+    <p class="btn-row"><a class="btn" href="login.html">Log in</a></p>
+  </section>
+  <script>
+  (function () {
+    var w = null;
+    try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+    if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+    var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()) || (w.base && String(w.base).trim()) || (w.sol && String(w.sol).trim())));
+    var locked = document.getElementById('crypto-locked');
+    if (hasWallet) { if (locked) locked.hidden = true; return; }
+    var main = document.querySelector('main');
+    if (main) Array.from(main.children).forEach(function (el) {
+      if (el !== locked && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') el.hidden = true;
+    });
+  })();
+  </script>
+
+  <section class="card" id="drops-card">
+    <h2>Newest Drop</h2>
+    <div id="sol-drops-strip" class="drops-strip"></div>
+    <p class="small" id="sol-drops-status">Loading the newest drops…</p>
+  </section>
+
+  <h1>The Horde's Market on Solana</h1>
+
+  <section class="card">
+    <h2>The Horde Art Gallery on Solana</h2>
+    <p>The gallery lives on Solana as a Metaplex Core collection. Every piece is minted on demand, numbered Mint 1 of 100 to Mint 100 of 100 in the order they are claimed, in one shared pool across WAX, XRP, Base and Solana.</p>
+    <p>Core Collection — Horde Art Gallery</p>
+    <p><code>HV9X2FGutfjj5iLtE51wApJND5SSxGB52RwZP7E6dQs8</code> <button class="btn ghost" type="button" data-copy="HV9X2FGutfjj5iLtE51wApJND5SSxGB52RwZP7E6dQs8">Copy</button></p>
+    <p><a href="https://solscan.io/account/HV9X2FGutfjj5iLtE51wApJND5SSxGB52RwZP7E6dQs8" target="_blank" rel="noopener">View the collection on Solscan</a></p>
+    <p>Mint wallet — this is where you pay</p>
+    <p><code>JCEcDz3p6piPJdeTCnwhHENZhT31ntvFRaS1b4ZvmJV9</code> <button class="btn ghost" type="button" data-copy="JCEcDz3p6piPJdeTCnwhHENZhT31ntvFRaS1b4ZvmJV9">Copy</button></p>
+    <p><a href="https://solscan.io/account/JCEcDz3p6piPJdeTCnwhHENZhT31ntvFRaS1b4ZvmJV9" target="_blank" rel="noopener">View the wallet on Solscan</a></p>
+  </section>
+
+  <section class="card">
+    <h2>How to buy</h2>
+    <p>Nothing here is pre-minted. A piece is minted only when someone buys it, on the chain they pick.</p>
+    <ol>
+      <li>Pick Minion 001 on the <a href="minion-001.html">mint page</a>.</li>
+      <li>Pay in SOL: 0.0069 SOL for registered Horde members, 0.0139 SOL for everyone else. Pay from your own wallet, never an exchange.</li>
+      <li>Tell Muse your receiving Solana address and the payment signature, and Muse mints the piece to your wallet. The piece is numbered Mint N of 100 in claim order across all four chains.</li>
+    </ol>
+    <p class="btn-row"><a class="btn" href="minion-001.html">Mint Minion 001</a></p>
+  </section>
+
+  <section class="card">
+    <h2>On the Market</h2>
+    <p class="small" id="sol-sales-status">No pieces listed yet. Nothing has been minted on Solana yet, so there is nothing to resell. When a holder lists a Horde piece, it shows up here.</p>
+    <div id="sol-sales-grid" class="mkt-grid"></div>
+  </section>
+
+  <section class="card">
+    <h2>Sell your Solana pieces</h2>
+    <p>Selling opens once the first pieces are minted and in holders' wallets. There is no on-chain Solana market contract yet, so a sale is arranged with Muse for now. If you hold a Horde piece on Solana and want to sell it, <a href="mailto:hordemuse@muse.ai">email the Horde's minions</a>.</p>
+  </section>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="profile.html">My Horde Profile</a> &middot; <a href="register.html">Register</a> &middot; <a href="holders.html">Leaderboard</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
+
+<script>
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+/* ---------- newest drop strip: Byron's own live drops, newest first ---------- */
+function solDropImg(src){
+  if (!src) return '<div class="mkt-img"></div>';
+  var url = /^https:/.test(src) ? src : (/^art\//.test(src) ? src : 'https://gateway.pinata.cloud/ipfs/' + src);
+  return '<img src="' + esc(url) + '" alt="" loading="lazy" decoding="async" class="mkt-img">';
+}
+function fmtDropEnd(ts){
+  var dt = new Date(ts * 1000);
+  var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' }).formatToParts(dt);
+  function get(t){ var p = null; parts.forEach(function(x){ if (x.type === t) p = x.value; }); return p || ''; }
+  var h = get('hour'), mi = get('minute'), ap = get('dayPeriod'), tz = get('timeZoneName');
+  var t;
+  if (h === '12' && mi === '00' && ap === 'PM') t = 'noon';
+  else if (h === '12' && mi === '00' && ap === 'AM') t = 'midnight';
+  else t = h + (mi === '00' ? '' : ':' + mi) + ' ' + ap;
+  return get('weekday') + ' ' + get('day') + ' ' + get('month') + ', ' + t + ' ' + tz;
+}
+/* The drop list lives here in the page, not in a fetch: paint from the
+   saved list first. Update it whenever a drop opens or closes. */
+var SOL_DROPS = [
+  { claim_url: 'minion-001.html', claimed: 0, image: 'art/minion-001-noname.jpg', max_claimable: 100, name: 'Minion 001 NoName', price_text: '0.0069 SOL members / 0.0139 SOL everyone', badge: 'HORDE HISTORY', end_time: 0 }
+];
+function loadSolDrops(){
+  var box = document.getElementById('sol-drops-strip');
+  var st = document.getElementById('sol-drops-status');
+  if (!box) return;
+  var now = Math.floor(Date.now() / 1000);
+  var drops = SOL_DROPS.filter(function(d){ return !d.end_time || d.end_time > now; }).slice(0, 3);
+  if (!drops.length) { st.textContent = 'No drops are open right now. Check back soon.'; box.innerHTML = ''; return; }
+  /* Paint right away from the list above. The claimed count refreshes in the
+     background afterwards; if it never arrives, the saved count stands. */
+  function paint(){
+    try {
+      box.innerHTML = '';
+      drops.forEach(function(d){
+        var a = document.createElement('a');
+        a.className = 'drop-card';
+        a.href = d.claim_url;
+        if (/^https:/.test(d.claim_url)) { a.target = '_blank'; a.rel = 'noopener'; }
+        var ends = d.end_time ? 'Ends ' + fmtDropEnd(d.end_time) : 'No end date';
+        var claimed = (d.max_claimable != null) ? '<p class="mkt-meta">' + d.claimed + ' of ' + d.max_claimable + ' claimed</p>' : '';
+        var badge = d.badge ? '<p class="mkt-badge">' + esc(d.badge) + '</p>' : '';
+        a.innerHTML = badge + solDropImg(d.image)
+          + '<p class="mkt-name">' + esc(d.name) + '</p>'
+          + '<p class="mkt-meta">' + esc(d.price_text) + '</p>' + claimed
+          + '<p class="mkt-meta">' + esc(ends) + '</p>';
+        box.appendChild(a);
+      });
+      st.textContent = '';
+    } catch (e) { st.textContent = 'The newest drops could not load just now.'; }
+  }
+  paint();
+  /* The Solana claimed count comes from the shared counter file (the
+     solana field). If it never arrives, the saved count stands. */
+  try {
+    fetch('data/minion-001-counter.json?t=' + Date.now())
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        var n = Number(j && j.solana) || 0;
+        SOL_DROPS.forEach(function(d){ if (d.name === 'Minion 001 NoName') d.claimed = n; });
+        paint();
+      })
+      .catch(function(){});
+  } catch (e) {}
+}
+loadSolDrops();
+
+/* ---------- copy an address ---------- */
+function fallbackCopy(t){
+  var ta = document.createElement('textarea');
+  ta.value = t; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+}
+document.querySelectorAll('[data-copy]').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.getAttribute('data-copy');
+    var done = function(){ b.textContent = 'Copied'; setTimeout(function(){ b.textContent = 'Copy'; }, 1500); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(done, function(){ fallbackCopy(t); done(); });
+    } else { fallbackCopy(t); done(); }
+  });
+});
+</script>
+<script>
+(function(){
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  links.forEach(function(a){
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__mktKit) await window.__mktKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+  });
+})();
+</script>
+<!-- horde-crypto-gate: crypto nav links and crypto-only elements stay hidden until the visitor is logged in with a wallet on their profile (Byron, 24 Nov 2026) -->
+<script>
+(function () {
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()) || (w.base && String(w.base).trim()) || (w.sol && String(w.sol).trim())));
+  if (hasWallet) return;
+  document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+  document.querySelectorAll('a[href="market.html"], a[href="xrp-market.html"], a[href="solana-market.html"], a[href="nft-gallery.html"]').forEach(function (m) { m.remove(); });
+})();
+</script>
+<!-- horde-feedback: floating bug report / suggestion box -->
+<style>
+#fb-btn{position:fixed;right:14px;bottom:14px;z-index:9998;background:#b91c1c;color:#fff;border:none;border-radius:999px;padding:8px 13px;font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+#fb-panel{position:fixed;right:14px;bottom:60px;z-index:9998;width:min(330px,calc(100vw - 28px));background:#14141b;border:1px solid #33333f;border-radius:12px;padding:16px;color:#f2f2f2;box-shadow:0 10px 34px rgba(0,0,0,.55)}
+#fb-panel h3{margin:.1em 0 .4em;font-size:1.05rem}
+#fb-panel p{font-size:.88rem;color:#b9b9c4;margin:.2em 0 .6em}
+#fb-panel textarea,#fb-panel input[type=text]{width:100%;box-sizing:border-box;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;margin:0 0 8px}
+#fb-panel .fb-kinds{display:flex;gap:8px;margin:0 0 8px}
+#fb-panel .fb-kinds button{flex:1;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-panel .fb-kinds button.on{background:#b91c1c;border-color:#b91c1c;color:#fff}
+#fb-send{width:100%;padding:11px;border:none;border-radius:8px;background:#b91c1c;color:#fff;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-msg{font-size:.88rem;min-height:1.2em;margin:.5em 0 0}
+</style>
+<button id="fb-btn" type="button">See a bug? Tell me</button>
+<div id="fb-panel" hidden>
+  <h3>Report a bug, or make a suggestion</h3>
+  <p>One of the Horde's minions reads every one of these, and we fix what we can.</p>
+  <div class="fb-kinds">
+    <button type="button" id="fb-kind-bug" class="on">Bug</button>
+    <button type="button" id="fb-kind-sug">Suggestion</button>
+  </div>
+  <textarea id="fb-text" rows="4" maxlength="2000" placeholder="What happened, or what would make this better?"></textarea>
+  <input type="text" id="fb-name" maxlength="80" placeholder="Your name (optional)">
+  <button id="fb-send" type="button">Send it</button>
+  <p id="fb-msg"></p>
+</div>
+<script>
+(function(){
+  var btn = document.getElementById('fb-btn'), panel = document.getElementById('fb-panel');
+  var kind = 'bug';
+  var kb = document.getElementById('fb-kind-bug'), ks = document.getElementById('fb-kind-sug');
+  function setKind(k){ kind = k; kb.className = k === 'bug' ? 'on' : ''; ks.className = k === 'suggestion' ? 'on' : ''; }
+  kb.addEventListener('click', function(){ setKind('bug'); });
+  ks.addEventListener('click', function(){ setKind('suggestion'); });
+  btn.addEventListener('click', function(){ panel.hidden = !panel.hidden; });
+  document.getElementById('fb-send').addEventListener('click', async function(){
+    var msg = document.getElementById('fb-msg');
+    var text = document.getElementById('fb-text').value.trim();
+    if (!text) { msg.textContent = 'Type a few words first.'; return; }
+    var send = document.getElementById('fb-send');
+    send.disabled = true; msg.textContent = 'Sending…';
+    try {
+      var r = await fetch('https://tuzzavnacfzveucwhdeq.supabase.co/rest/v1/site_feedback', {
+        method: 'POST',
+        headers: { apikey: 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', Authorization: 'Bearer sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
+      });
+      if (!r.ok) throw new Error('bad');
+      msg.textContent = 'Got it, thank you. One of the Horde\'s minions will read it.';
+      document.getElementById('fb-text').value = '';
+    } catch (e) {
+      msg.textContent = 'Could not send just now. Try again in a bit.';
+    }
+    send.disabled = false;
+  });
+})();
+</script>
+
+<script data-goatcounter="https://artistbyron.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
