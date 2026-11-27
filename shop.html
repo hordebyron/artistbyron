@@ -35,11 +35,20 @@
 .nft-opt input{width:18px;height:18px;accent-color:var(--red)}
 /* "Pick your own designs" sits at the top of the sticker card, big. */
 .pick-btn{display:block;text-align:center;font-size:1.05rem;padding:12px}
+/* Clean tiles (Byron, 27 Nov 2026): the card shows image, title and price
+   only. Everything else lives in .prod-details, hidden on the card and
+   shown in the popup. Titles get room for two lines so prices line up. */
+.card-grid .prod{cursor:pointer}
+.card-grid .prod:hover{outline:2px solid var(--red);outline-offset:2px}
+.card-grid .prod h3{min-height:2.4em}
+.card-grid .prod-details{display:none}
+.mkt-modal-box .prod-details{display:block}
+.mkt-modal-box .shop-modal-img{width:100%;max-height:52vh;object-fit:contain;background:var(--panel2);border-radius:10px;margin-bottom:10px}
 @media (min-width:760px){
   .prod.feature{grid-template-columns:220px 1fr;gap:22px}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=189">
+<link rel="stylesheet" href="style.css?v=190">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -48,7 +57,7 @@
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html" class="active">SHOP</a><span class="nav-menu"><a href="shop.html#original-art"><span class="nav-big">Original Art</span></a><a href="shop.html#merch"><span class="nav-big">Merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a><a href="minion-001.html" class="crypto-only">Minion 001</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
   <h1>Shop</h1>
-  <p>Everything here is physical and ships from Byron's desk. Every card buys right here by card, no hunting through another shop. Prices are in Canadian dollars, and the US dollar figure beside each one is a close estimate at today's rate.</p>
+  <p>Everything here is physical and ships from Byron's desk. Every card buys right here by card, no hunting through another shop. Tap a card to see it bigger, with the full story and the buy buttons. Prices are in Canadian dollars, and the US dollar figure beside each one is a close estimate at today's rate.</p>
 
   <div class="badges"><span class="badge">Original, one of one</span><span class="badge">Ships from Canada and the USA</span><span class="badge">Secure checkout</span><span class="badge">Human-made, no AI</span></div>
 
@@ -723,6 +732,81 @@
   });
 })();
 
+</script>
+<script>
+/* Clean shop tiles (Byron, 27 Nov 2026): each merch / originals card shows
+   image, title and price only. The rest moves into .prod-details, hidden on
+   the card, and pops up in the shop modal when the card is tapped, like the
+   market pages. Also wires the variant dropdown, so Pay by card follows the
+   pack you pick (it did not before). */
+(function(){
+  var modal = document.getElementById('shop-modal');
+  var modalBody = document.getElementById('shop-modal-body');
+  if (!modal || !modalBody) return;
+  var openCard = null, openDetails = null;
+  function closeShopModal(){
+    if (!modal.classList.contains('open')) return;
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    if (openCard && openDetails) openCard.appendChild(openDetails);
+    openCard = null; openDetails = null;
+  }
+  document.getElementById('shop-modal-close').addEventListener('click', closeShopModal);
+  modal.addEventListener('click', function(e){ if (e.target === modal) closeShopModal(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeShopModal(); });
+  /* Variant dropdowns: the Pay by card button follows the pack you pick. */
+  document.querySelectorAll('.card-pay-row').forEach(function(row){
+    var sel = row.querySelector('.buy-select');
+    var btn = row.querySelector('.buy-btn');
+    if (!sel || !btn) return;
+    sel.addEventListener('change', function(){ btn.href = sel.value; });
+  });
+  /* Tiles: image + title + price on the card, the rest in the popup. */
+  document.querySelectorAll('.card-grid .prod').forEach(function(card){
+    var img = card.querySelector('.prod-img');
+    if (!img) return; /* memberships stay as they are */
+    var title = card.querySelector('h3');
+    var price = card.querySelector('.price');
+    if (!title || !price) return;
+    var details = document.createElement('div');
+    details.className = 'prod-details';
+    /* Keep image, title and price on the card; everything else goes in the
+       popup, wherever it sat in the card (the stickers "Pick your own
+       designs" button sits above the price). */
+    Array.prototype.slice.call(card.childNodes).forEach(function(node){
+      if (node === img || node === title || node === price) return;
+      details.appendChild(node);
+    });
+    card.appendChild(details);
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', title.textContent.trim() + ', tap to see more');
+    function open(){
+      if (openDetails && openCard && openCard !== card) closeShopModal();
+      openCard = card; openDetails = details;
+      modalBody.innerHTML = '';
+      var big = document.createElement('img');
+      big.className = 'shop-modal-img';
+      big.src = img.getAttribute('src');
+      big.alt = img.getAttribute('alt') || '';
+      modalBody.appendChild(big);
+      var name = document.createElement('h3');
+      name.textContent = title.textContent;
+      modalBody.appendChild(name);
+      var pr = document.createElement('p');
+      pr.className = 'price';
+      pr.innerHTML = price.innerHTML;
+      modalBody.appendChild(pr);
+      modalBody.appendChild(details);
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+    });
+  });
+})();
 </script>
 <script>
 (function(){
