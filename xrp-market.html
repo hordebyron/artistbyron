@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XRP Market · Artist Byron</title>
 <meta name="description" content="The Horde's own secondary market on XRP. Buy and sell Byron pieces right here, signed in your wallet, settled on the ledger. No marketplace cut.">
-<link rel="stylesheet" href="style.css?v=197">
+<link rel="stylesheet" href="style.css?v=199">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -204,6 +204,28 @@
     } catch (e) { if (st) st.textContent = 'The newest drops could not load just now.'; }
   }
   loadXrpDrops();
+  // Minion 001 is a shared pool across chains: refresh its claimed count from the WAX template + the other chains' counter.
+  (function refreshMinionXrp(){
+    var m = null;
+    for (var i = 0; i < XRP_DROPS.length; i++) { if (XRP_DROPS[i].name === 'Minion 001 NoName') { m = XRP_DROPS[i]; break; } }
+    if (!m) return;
+    fetch('https://wax.api.atomicassets.io/atomicassets/v1/templates/myhordeonwax/912505')
+      .then(function(rr){ return rr.json(); })
+      .then(function(jj){
+        var waxN = (jj && jj.success && jj.data && jj.data.issued_supply != null) ? parseInt(jj.data.issued_supply, 10) : 0;
+        return fetch('data/minion-001-counter.json?t=' + Date.now())
+          .then(function(r2){ return r2.json(); })
+          .then(function(c){
+            var extra = (c && typeof c === 'object') ? ((c.xrp || 0) + (c.base || 0) + (c.solana || 0)) : 0;
+            return waxN + extra;
+          })
+          .catch(function(){ return waxN; });
+      })
+      .then(function(total){
+        if (total != null && total !== m.claimed) { m.claimed = total; loadXrpDrops(); }
+      })
+      .catch(function(){});
+  })();
   var HORDE_HEX = '24484F5244450000000000000000000000000000';
   var HORDE_ISSUER = 'rwdZkUex3qhVdEHCoX9bno2gVe411LLfeR';
   var XAMAN_API_KEY = '09e6660d-6fce-4f1c-991f-7b0497ef709d';

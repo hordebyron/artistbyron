@@ -6,7 +6,7 @@
 <!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays Muse, then Muse mints the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
 <title>Axe Ready - Minion 001 - pay</title>
 <meta name="description" content="Mint Minion 001 NoName, Axe Ready, with XRP, ETH or SOL. 50 cents for registered Horde members, a dollar for everyone else. You pay Muse, Muse mints your Minion to you.">
-<link rel="stylesheet" href="style.css?v=193">
+<link rel="stylesheet" href="style.css?v=199">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -93,6 +93,56 @@ function isMember(){
     return !!(p || r);
   } catch (e) { return false; }
 }
+var xrpKit = null;
+var qrLibPromise = null;
+function loadQrLib(){
+  if (typeof qrcode === 'function') return Promise.resolve();
+  if (qrLibPromise) return qrLibPromise;
+  qrLibPromise = loadScript('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js');
+  return qrLibPromise;
+}
+function makeQrImg(uri){
+  return loadQrLib().then(function(){
+    var qr = qrcode(0, 'M');
+    qr.addData(uri);
+    qr.make();
+    var img = document.createElement('img');
+    img.className = 'qr';
+    img.src = qr.createDataURL(6, 0);
+    img.alt = 'Scan with Xaman';
+    return img;
+  });
+}
+function showKitQr(ev){
+  if (!payResult || !ev) return;
+  var slot = payResult.querySelector('.kit-qr');
+  if (!slot) { slot = document.createElement('div'); slot.className = 'kit-qr'; payResult.appendChild(slot); }
+  var uri = ev.uri || ev.deeplink || '';
+  var link = ev.deeplink || ev.uri || '';
+  slot.innerHTML = '';
+  if (ev.qrPng) {
+    var img0 = document.createElement('img');
+    img0.className = 'qr'; img0.src = ev.qrPng; img0.alt = 'Scan with Xaman';
+    slot.appendChild(img0);
+  } else if (uri) {
+    makeQrImg(uri).then(function(img){ slot.appendChild(img); }).catch(function(){});
+  }
+  if (link) {
+    var p = document.createElement('p');
+    var a = document.createElement('a');
+    a.className = 'btn'; a.href = link; a.textContent = 'Open in Xaman';
+    p.appendChild(a); slot.appendChild(p);
+  }
+}
+async function getXrpKit(){
+  if (xrpKit) return xrpKit;
+  await loadScript('https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.3/dist/xrpl-wallet-kit.iife.js');
+  if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) throw new Error('the wallet tools could not load');
+  xrpKit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman', 'joey-wallet'], xamanClientId: '09e6660d-6fce-4f1c-991f-7b0497ef709d', autoReconnect: true });
+  var mgr = xrpKit.manager || xrpKit;
+  if (mgr && typeof mgr.on === 'function') mgr.on('qr', showKitQr);
+  return xrpKit;
+}
 function loadScript(src){
   return new Promise(function(resolve, reject){
     var s = document.createElement('script');
@@ -120,9 +170,7 @@ function showPaid(txHash, fromAddr){
   setStatus('Payment sent. Tap "Tell Muse you paid" so your Minion gets minted to ' + fromAddr + '.');
 }
 async function payXrp(){
-  await loadScript('https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.3/dist/xrpl-wallet-kit.iife.js');
-  if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) throw new Error('the wallet tools could not load');
-  var kit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman', 'joey-wallet'], xamanClientId: '09e6660d-6fce-4f1c-991f-7b0497ef709d', autoReconnect: true });
+  var kit = await getXrpKit();
   var mgr = kit.manager || kit;
   var acct = null;
   try {
@@ -132,10 +180,14 @@ async function payXrp(){
   var fromAddr = acct && (acct.address || acct.account || acct.id || null);
   if (!fromAddr) {
     setStatus('Opening Xaman. Scan the code with your Xaman app, or tap the link on your phone.');
-    var res = await kit.connect('xaman');
-    fromAddr = res && res.account && (res.account.address || res.account.account || res.account.id || res.account);
+    try {
+      var res = await kit.connect('xaman');
+      fromAddr = res && res.account && (res.account.address || res.account.account || res.account.id || res.account);
+    } catch (e4) {
+      throw new Error('the Xaman connection did not go through. Nothing was spent. Tap Pay to try again, or send the amount yourself below.');
+    }
   }
-  if (!fromAddr) throw new Error('the wallet did not return an address');
+  if (!fromAddr) throw new Error('the wallet did not return an address. Tap Pay to try again.');
   setStatus('Your wallet is asking you to approve sending ' + T.amount + ' XRP with the note MINION-001.');
   var tx = { TransactionType: 'Payment', Account: fromAddr, Destination: C.payTo, Amount: T.drops, Memos: [{ Memo: { MemoData: hexEncode(C.memo) } }] };
   var signed = await mgr.signAndSubmit({ txJson: tx, methodHint: 'sendPayment' });

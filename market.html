@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Horde Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on WAX. Horde pieces, sold by the people who hold them. The market contract settles every sale.">
-<link rel="stylesheet" href="style.css?v=198">
+<link rel="stylesheet" href="style.css?v=199">
 <style>
 /* WAX market basket: one basket, one signature buys it all. */
 .cart-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:14px 0 0}
@@ -693,21 +693,42 @@ function loadDrops(){
   }
   paint();
   drops.forEach(function(d){
-    if (d.contract !== 'atomicdropsx') return;
     var settled = false;
-    var to = setTimeout(function(){ settled = true; }, 5000);
-    fetch('https://wax.api.atomicassets.io/atomicdrops/v1/drops/' + d.drop_id)
-      .then(function(rr){ return rr.json(); })
-      .then(function(jj){
-        if (settled) return;
-        clearTimeout(to);
-        settled = true;
-        if (jj && jj.success && jj.data && jj.data.current_claimed != null) {
-          d.claimed = parseInt(jj.data.current_claimed, 10);
-          paint();
-        }
-      })
-      .catch(function(){ clearTimeout(to); settled = true; });
+    var to = setTimeout(function(){ settled = true; }, 8000);
+    function done(n){
+      if (settled) return;
+      clearTimeout(to);
+      settled = true;
+      if (n != null && !isNaN(n)) { d.claimed = n; paint(); }
+    }
+    if (d.contract === 'atomicdropsx') {
+      fetch('https://wax.api.atomicassets.io/atomicdrops/v1/drops/' + d.drop_id)
+        .then(function(rr){ return rr.json(); })
+        .then(function(jj){
+          if (jj && jj.success && jj.data && jj.data.current_claimed != null) done(parseInt(jj.data.current_claimed, 10));
+          else done(null);
+        })
+        .catch(function(){ done(null); });
+    } else if (d.contract === 'hordedrop421') {
+      fetch('https://wax.api.atomicassets.io/atomicassets/v1/templates/' + d.collection + '/' + d.template_id)
+        .then(function(rr){ return rr.json(); })
+        .then(function(jj){
+          var waxN = (jj && jj.success && jj.data && jj.data.issued_supply != null) ? parseInt(jj.data.issued_supply, 10) : null;
+          if (waxN == null) { done(null); return; }
+          if (d.template_id === 912505) {
+            fetch('data/minion-001-counter.json?t=' + Date.now())
+              .then(function(r2){ return r2.json(); })
+              .then(function(c){
+                var extra = (c && typeof c === 'object') ? ((c.xrp || 0) + (c.base || 0) + (c.solana || 0)) : 0;
+                done(waxN + extra);
+              })
+              .catch(function(){ done(waxN); });
+          } else {
+            done(waxN);
+          }
+        })
+        .catch(function(){ done(null); });
+    }
   });
 }
 loadDrops();
