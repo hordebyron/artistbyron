@@ -18,7 +18,7 @@
 .drops-table .btn{display:block;width:100%;margin:2px 0;padding:7px 10px;font-size:.88rem;white-space:nowrap}
 .mint-btn:disabled{opacity:.55;cursor:not-allowed}
 </style>
-<link rel="stylesheet" href="style.css?v=192">
+<link rel="stylesheet" href="style.css?v=193">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -53,24 +53,33 @@
         </tr>
         <tr>
           <td><strong>XRP</strong></td>
-          <td>$0.50 in XRP</td>
-          <td>$1 in XRP</td>
+          <td>0.53 XRP</td>
+          <td>1.05 XRP</td>
           <td>—</td>
-          <td><button class="btn mint-btn" type="button" data-chain="xrp" disabled>Coming soon</button></td>
+          <td>
+            <button class="btn mint-btn" type="button" data-chain="xrp" data-kind="member" disabled>Mint, member</button>
+            <button class="btn mint-btn" type="button" data-chain="xrp" data-kind="public" disabled>Mint, $1</button>
+          </td>
         </tr>
         <tr>
           <td><strong>Base</strong></td>
-          <td>$0.50 in ETH</td>
-          <td>$1 in ETH</td>
+          <td>0.00029927 ETH</td>
+          <td>0.00059853 ETH</td>
           <td>—</td>
-          <td><button class="btn mint-btn" type="button" data-chain="base" disabled>Coming soon</button></td>
+          <td>
+            <button class="btn mint-btn" type="button" data-chain="base" data-kind="member" disabled>Mint, member</button>
+            <button class="btn mint-btn" type="button" data-chain="base" data-kind="public" disabled>Mint, $1</button>
+          </td>
         </tr>
         <tr>
           <td><strong>Solana</strong></td>
-          <td>$0.50 in SOL</td>
-          <td>$1 in SOL</td>
+          <td>0.0069 SOL</td>
+          <td>0.0139 SOL</td>
           <td>—</td>
-          <td><button class="btn mint-btn" type="button" data-chain="sol" disabled>Coming soon</button></td>
+          <td>
+            <button class="btn mint-btn" type="button" data-chain="sol" data-kind="member" disabled>Mint, member</button>
+            <button class="btn mint-btn" type="button" data-chain="sol" data-kind="public" disabled>Mint, $1</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -91,7 +100,7 @@
 
   <section class="card">
     <h2>Same price, every chain</h2>
-    <p>The price is the same on every chain. 50 cents for members, a dollar for everyone else, converted to WAX, XRP, ETH and SOL at the live rate when you pay.</p>
+    <p>The price is the same on every chain. 50 cents for members, a dollar for everyone else, converted to WAX, XRP, ETH and SOL when the drop was set up.</p>
   </section>
 
   <section class="card">
@@ -116,9 +125,9 @@
   var btns = document.querySelectorAll('.mint-btn');
   var MINT = {
     wax: { member: 'minion-001-claim.html?d=19', public: 'minion-001-claim.html?d=20' },
-    xrp: { url: '' },
-    base: { url: '' },
-    sol: { url: '' }
+    xrp: { member: 'minion-001-pay.html?chain=xrp&tier=member', public: 'minion-001-pay.html?chain=xrp&tier=public' },
+    base: { member: 'minion-001-pay.html?chain=base&tier=member', public: 'minion-001-pay.html?chain=base&tier=public' },
+    sol: { member: 'minion-001-pay.html?chain=sol&tier=member', public: 'minion-001-pay.html?chain=sol&tier=public' }
   };
   window.__minionMint = MINT;
   function isMember(){
@@ -143,10 +152,10 @@
       var c = b.getAttribute('data-chain');
       var kind = b.getAttribute('data-kind');
       var url = '';
-      if (c === 'wax' && kind === 'member') url = MINT.wax.member;
-      else if (c === 'wax' && kind === 'public') url = MINT.wax.public;
+      if (kind === 'member') url = MINT[c] && MINT[c].member;
+      else if (kind === 'public') url = MINT[c] && MINT[c].public;
       else if (MINT[c]) url = MINT[c].url;
-      var memberOnly = (c === 'wax' && kind === 'member' && !isMember());
+      var memberOnly = (kind === 'member' && !isMember());
       if (live && url && !memberOnly) {
         b.disabled = false;
         b.setAttribute('data-href', url);
@@ -155,8 +164,8 @@
         b.disabled = true;
         b.removeAttribute('data-href');
         if (memberOnly) b.textContent = 'Mint, member (members only)';
-        else if (c === 'wax' && kind === 'member') b.textContent = 'Mint, member';
-        else if (c === 'wax' && kind === 'public') b.textContent = 'Mint, $1';
+        else if (kind === 'member') b.textContent = 'Mint, member';
+        else if (kind === 'public') b.textContent = 'Mint, $1';
         else b.textContent = 'Coming soon';
       }
     });

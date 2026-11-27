@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays Muse, then Muse mints the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
+<title>Axe Ready - Minion 001 - pay</title>
+<meta name="description" content="Mint Minion 001 NoName, Axe Ready, with XRP, ETH or SOL. 50 cents for registered Horde members, a dollar for everyone else. You pay Muse, Muse mints your Minion to you.">
+<link rel="stylesheet" href="style.css?v=193">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">SHOP</a><span class="nav-menu"><a href="shop.html#original-art"><span class="nav-big">Original Art</span></a><a href="shop.html#merch"><span class="nav-big">Merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a><a href="minion-001.html" class="crypto-only">Minion 001</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1 id="pay-name">Axe Ready - Minion 001 NoName</h1>
+  <p id="pay-blurb"></p>
+
+  <section class="card">
+    <img src="art/minion-001-noname.jpg" alt="Minion 001 NoName, Axe Ready" style="width:100%;max-width:520px;display:block;margin:0 auto;">
+    <p id="pay-info"><strong>Chain:</strong> <span id="info-chain"></span><br>
+    <strong>Price:</strong> <span id="info-price"></span><br>
+    <strong>Pay to:</strong> <span id="info-payto"></span><br>
+    <strong>Limit:</strong> 5 per wallet, 100 total across all chains<br>
+    <strong>Opens:</strong> 1:00 PM, Friday 27 November 2026</p>
+    <p class="small" id="pay-status">Checking the mint…</p>
+    <p class="small">This is a mint-on-demand piece. You pay Muse here, and Muse mints your Minion to the address you paid from. Nothing is pre-minted. Every piece is numbered Mint 1 of 100 to Mint 100 of 100, in the order they are claimed across all chains. The price goes in full to Byron.</p>
+    <p class="small" id="xrp-offer-note" hidden>On XRP, your Minion arrives as a free offer. After you pay, watch for the offer in your wallet and accept it — that is how your Minion lands. It costs only the tiny transaction fee to accept, and the offer never expires.</p>
+  </section>
+
+  <section class="card" id="pay-card">
+    <p id="pay-how"></p>
+    <p><button class="btn" type="button" id="pay-btn" disabled>Pay</button></p>
+    <p class="small" id="pay-result"></p>
+    <p id="tell-muse" hidden><a class="btn" id="tell-muse-link" href="#">Tell Muse you paid</a></p>
+    <p class="small" id="manual-note" hidden>No wallet on this device? Send the exact amount above to the address above yourself (XRP: add the note MINION-001), then tap "Tell Muse you paid" and send the email with your payment details.</p>
+    <p><a href="minion-001.html">&larr; Back to Axe Ready</a></p>
+  </section>
+</main>
+<footer class="foot"><div class="wrap small">
+  <p>Artist Byron · Morden, Manitoba · <a href="https://ko-fi.com/artistbyron" target="_blank" rel="noopener">Ko-fi</a> · <a href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">Discord, The House of the Horde</a></p>
+<p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
+<script>
+// ===== MINION 001 PAY CONFIG: chain and tier come from ?chain= and ?tier=.
+// Prices are FIXED at setup from the live rate (27 Nov 2026), the same as
+// the WAX drops. XRP $0.949554, ETH $1670.76, SOL $72.13 (CoinGecko, 11:12 AM).
+// Amounts are exact integers (drops / wei / lamports) so the wallet sends
+// precisely what the mint script checks for.
+var PAY_CONFIGS = {
+  xrp: {
+    label: 'XRP', symbol: 'XRP',
+    payTo: 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH',
+    memo: 'MINION-001',
+    member: { amount: '0.53', drops: '530000', blurb: 'Registered Horde member price, 50 cents in XRP.' },
+    public: { amount: '1.05', drops: '1050000', blurb: 'Everyone price, $1 in XRP.' }
+  },
+  base: {
+    label: 'Base (ETH)', symbol: 'ETH',
+    payTo: '0xa0a290233b72232687055Cf9A01C0A30Ec42950D',
+    member: { amount: '0.00029927', wei: '299265005147358', blurb: 'Registered Horde member price, 50 cents in ETH.' },
+    public: { amount: '0.00059853', wei: '598530010294716', blurb: 'Everyone price, $1 in ETH.' }
+  },
+  sol: {
+    label: 'Solana', symbol: 'SOL',
+    payTo: 'JCEcDz3p6piPJdeTCnwhHENZhT31ntvFRaS1b4ZvmJV9',
+    member: { amount: '0.0069', lamports: 6900000, blurb: 'Registered Horde member price, 50 cents in SOL.' },
+    public: { amount: '0.0139', lamports: 13900000, blurb: 'Everyone price, $1 in SOL.' }
+  }
+};
+var LAUNCH = new Date('2026-11-27T13:00:00-05:00').getTime();
+var MUSE_MAIL = 'hordemuse@muse.ai';
+var params = new URLSearchParams(location.search);
+var CHAIN = (params.get('chain') || '').toLowerCase();
+var TIER = (params.get('tier') || '').toLowerCase();
+var C = PAY_CONFIGS[CHAIN] || null;
+var T = (C && (TIER === 'member' ? C.member : TIER === 'public' ? C.public : null)) || null;
+var payName = document.getElementById('pay-name');
+var payBlurb = document.getElementById('pay-blurb');
+var payStatus = document.getElementById('pay-status');
+var payBtn = document.getElementById('pay-btn');
+var payResult = document.getElementById('pay-result');
+var payHow = document.getElementById('pay-how');
+var tellMuse = document.getElementById('tell-muse');
+var tellMuseLink = document.getElementById('tell-muse-link');
+var manualNote = document.getElementById('manual-note');
+var xrpOfferNote = document.getElementById('xrp-offer-note');
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function isMember(){
+  try {
+    var p = JSON.parse(localStorage.getItem('horde_profile') || 'null');
+    var r = JSON.parse(localStorage.getItem('horde_registration') || 'null');
+    return !!(p || r);
+  } catch (e) { return false; }
+}
+function loadScript(src){
+  return new Promise(function(resolve, reject){
+    var s = document.createElement('script');
+    s.src = src; s.onload = resolve; s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+function hexEncode(str){
+  return Array.from(new TextEncoder().encode(str)).map(function(b){ return b.toString(16).padStart(2, '0'); }).join('').toUpperCase();
+}
+function setStatus(msg){ if (payStatus) payStatus.textContent = msg; }
+function setResult(html){ if (payResult) payResult.innerHTML = html; }
+function mailtoLink(txHash, fromAddr){
+  var subject = 'Minion 001 - ' + C.label + ' - ' + (TIER === 'member' ? 'member' : 'everyone');
+  var body = 'Hi Muse, I paid for Minion 001 NoName (Axe Ready).\n\nChain: ' + C.label + '\nTier: ' + (TIER === 'member' ? 'member (50 cents)' : 'everyone ($1)') + '\nAmount: ' + T.amount + ' ' + C.symbol + '\nPaid to: ' + C.payTo + '\nPayment tx: ' + txHash + '\nMy receiving address: ' + fromAddr + '\n\nPlease mint my Minion to that address. Thank you.';
+  return 'mailto:' + MUSE_MAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+function showPaid(txHash, fromAddr){
+  setResult('<strong>Paid.</strong> Payment: <span style="word-break:break-all">' + esc(txHash) + '</span><br>From: <span style="word-break:break-all">' + esc(fromAddr) + '</span>');
+  tellMuseLink.href = mailtoLink(txHash, fromAddr);
+  tellMuse.hidden = false;
+  if (CHAIN === 'xrp') xrpOfferNote.hidden = false;
+  payBtn.disabled = true;
+  payBtn.textContent = 'Paid';
+  setStatus('Payment sent. Tap "Tell Muse you paid" so your Minion gets minted to ' + fromAddr + '.');
+}
+async function payXrp(){
+  await loadScript('https://cdn.jsdelivr.net/npm/@xrpl-wallet-kit/browser@0.3.3/dist/xrpl-wallet-kit.iife.js');
+  if (typeof XRPLWalletKit === 'undefined' || !XRPLWalletKit.createWalletKit) throw new Error('the wallet tools could not load');
+  var kit = XRPLWalletKit.createWalletKit({ network: 'mainnet', wallets: ['xaman', 'joey-wallet'], xamanClientId: '09e6660d-6fce-4f1c-991f-7b0497ef709d', autoReconnect: true });
+  var mgr = kit.manager || kit;
+  var acct = null;
+  try {
+    if (mgr && typeof mgr.autoReconnect === 'function') { try { await mgr.autoReconnect(); } catch (e2) {} }
+    acct = (typeof mgr.getAccount === 'function') ? mgr.getAccount() : null;
+  } catch (e3) {}
+  var fromAddr = acct && (acct.address || acct.account || acct.id || null);
+  if (!fromAddr) {
+    setStatus('Opening Xaman. Scan the code with your Xaman app, or tap the link on your phone.');
+    var res = await kit.connect('xaman');
+    fromAddr = res && res.account && (res.account.address || res.account.account || res.account.id || res.account);
+  }
+  if (!fromAddr) throw new Error('the wallet did not return an address');
+  setStatus('Your wallet is asking you to approve sending ' + T.amount + ' XRP with the note MINION-001.');
+  var tx = { TransactionType: 'Payment', Account: fromAddr, Destination: C.payTo, Amount: T.drops, Memos: [{ Memo: { MemoData: hexEncode(C.memo) } }] };
+  var signed = await mgr.signAndSubmit({ txJson: tx, methodHint: 'sendPayment' });
+  if (signed && signed.rejected) throw new Error('cancelled in the wallet');
+  var hash = (signed && (signed.hash || signed.txHash || (signed.result && signed.result.hash))) || '';
+  showPaid(hash || 'sent, check your wallet history', fromAddr);
+}
+async function payBase(){
+  if (!window.ethereum || typeof window.ethereum.request !== 'function') throw new Error('no wallet on this device');
+  setStatus('Your wallet is asking you to approve sending ' + T.amount + ' ETH.');
+  var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+  var from = accounts && accounts[0];
+  if (!from) throw new Error('no account was shared');
+  var txHash = await window.ethereum.request({ method: 'eth_sendTransaction', params: [{ from: from, to: C.payTo, value: '0x' + BigInt(T.wei).toString(16) }] });
+  showPaid(txHash, from);
+}
+async function paySol(){
+  if (!window.solana || typeof window.solana.signAndSendTransaction !== 'function') throw new Error('no wallet on this device');
+  await loadScript('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js');
+  if (typeof solanaWeb3 === 'undefined') throw new Error('the Solana tools could not load');
+  setStatus('Your Solana wallet is asking you to approve sending ' + T.amount + ' SOL.');
+  var provider = window.solana;
+  await provider.connect();
+  var from = provider.publicKey;
+  var connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+  var tx = new solanaWeb3.Transaction().add(solanaWeb3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new solanaWeb3.PublicKey(C.payTo), lamports: T.lamports }));
+  tx.feePayer = from;
+  tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  var sig = await provider.signAndSendTransaction(tx);
+  var signature = (sig && sig.signature) || sig;
+  showPaid(signature, String(from));
+}
+function init(){
+  if (!C || !T) {
+    payBlurb.textContent = 'Pick a chain on the Axe Ready page first.';
+    setStatus('No chain or price was chosen. Go back to the Axe Ready page and tap a Mint button.');
+    payBtn.disabled = true;
+    return;
+  }
+  payBlurb.textContent = T.blurb + ' Your Minion 001 mints after you pay. Five per wallet, 100 total across all chains.';
+  document.getElementById('info-chain').textContent = C.label;
+  document.getElementById('info-price').textContent = T.amount + ' ' + C.symbol + (TIER === 'member' ? ' (member)' : ' (everyone)');
+  document.getElementById('info-payto').textContent = C.payTo;
+  var walletName = CHAIN === 'xrp' ? 'Xaman or Joey' : CHAIN === 'base' ? 'your Base wallet (MetaMask, Phantom, or any EVM wallet)' : 'Phantom';
+  payHow.textContent = 'Tap Pay to send ' + T.amount + ' ' + C.symbol + ' to Muse with ' + walletName + '. ' + (CHAIN === 'xrp' ? 'The payment carries the note MINION-001.' : 'After you pay, tap "Tell Muse you paid" so your Minion gets minted to your address.');
+  if (TIER === 'member' && !isMember()) {
+    setStatus('The member price is for registered Horde members only. Register first, then come back, or pay the everyone price of $1.');
+    payBtn.disabled = true;
+    payBtn.textContent = 'Members only';
+    return;
+  }
+  if (Date.now() < LAUNCH) {
+    setStatus('The mint opens at 1:00 PM, Friday 27 November 2026. Come back then.');
+    payBtn.disabled = true;
+    payBtn.textContent = 'Opens at 1:00 PM';
+    manualNote.hidden = false;
+    return;
+  }
+  setStatus('Ready. Tap Pay to send ' + T.amount + ' ' + C.symbol + '.');
+  payBtn.disabled = false;
+  payBtn.textContent = 'Pay ' + T.amount + ' ' + C.symbol;
+  manualNote.hidden = false;
+}
+payBtn.addEventListener('click', async function(){
+  if (payBtn.disabled) return;
+  payBtn.disabled = true;
+  payBtn.textContent = 'Paying…';
+  setResult('');
+  try {
+    if (CHAIN === 'xrp') await payXrp();
+    else if (CHAIN === 'base') await payBase();
+    else if (CHAIN === 'sol') await paySol();
+  } catch (e) {
+    var msg = (e && e.message) || 'the payment did not go through';
+    if (msg === 'no wallet on this device' || msg === 'the wallet tools could not load' || msg === 'the Solana tools could not load') {
+      setStatus('No wallet was found on this device. Send the amount above yourself and tap "Tell Muse you paid" below.');
+      tellMuseLink.href = mailtoLink('(paid manually)', '(your receiving address)');
+      tellMuse.hidden = false;
+      if (CHAIN === 'xrp') xrpOfferNote.hidden = false;
+    } else {
+      setStatus('Nothing was spent. ' + msg + ' Tap Pay to try again.');
+    }
+    payBtn.disabled = false;
+    payBtn.textContent = 'Pay ' + T.amount + ' ' + C.symbol;
+  }
+});
+init();
+</script>
+<script>
+(function(){
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
+  var known = false;
+  try { known = !!(localStorage.getItem('horde_profile') || localStorage.getItem('horde_registration')); } catch (e) {}
+  if (known) links.forEach(function(a){ a.textContent = 'My Profile'; a.href = 'profile.html'; });
+})();
+</script>
+</body>
+</html>
