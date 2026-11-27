@@ -18,7 +18,7 @@
 .drops-table .btn{display:block;width:100%;margin:2px 0;padding:7px 10px;font-size:.88rem;white-space:nowrap}
 .mint-btn:disabled{opacity:.55;cursor:not-allowed}
 </style>
-<link rel="stylesheet" href="style.css?v=191">
+<link rel="stylesheet" href="style.css?v=192">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
   <section class="card" id="mint-card">
     <h2>Opens today</h2>
     <p class="mint-timer" id="mint-timer">Opens in ...</p>
-    <p>Opens Friday 27 November 2026 at 11:00 AM CST. 50 cents for registered Horde members, a dollar for everyone else. One shared pool of 100 across WAX, XRP, Base and Solana. Hedera opens when funded.</p>
+    <p>Opens Friday 27 November 2026 at 1:00 PM CST. 50 cents for registered Horde members, a dollar for everyone else. One shared pool of 100 across WAX, XRP, Base and Solana. Hedera opens when funded.</p>
     <div class="drops-wrap">
     <table class="drops-table">
       <thead><tr><th>Chain</th><th>Member</th><th>Everyone</th><th>Claimed</th><th>Mint</th></tr></thead>
@@ -75,7 +75,7 @@
       </tbody>
     </table>
     </div>
-    <p class="small" id="mint-note">The mint opens at 11:00 AM. Each chain's button lights up as its mint is ready. The claimed count is the shared pool across all chains.</p>
+    <p class="small" id="mint-note">The mint opens at 1:00 PM. Each chain's button lights up as its mint is ready. The claimed count is the shared pool across all chains.</p>
     <p>Not registered yet? <a href="register.html">Register first</a>. Registration is the list.</p>
   </section>
 
@@ -102,20 +102,20 @@
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
 <script>
 /* Minion 001 mint countdown + drops list (Byron, 27 Nov 2026): counts down
-   to the 11:00 AM launch, then lights up each drop's Mint button as its
+   to the 1:00 PM launch, then lights up each drop's Mint button as its
    mint is ready. Fill in a chain's URLs in MINT when its leg is built; a
    button with no URL stays on "coming soon" instead of going nowhere.
    The member-price button is members only: it stays locked unless this
    device knows a Horde profile. The claimed count is the template's
    issued supply, so it counts both WAX drops together (the shared pool). */
 (function(){
-  var launch = new Date('2026-11-27T11:00:00-05:00').getTime();
+  var launch = new Date('2026-11-27T13:00:00-05:00').getTime();
   var timer = document.getElementById('mint-timer');
   var note = document.getElementById('mint-note');
   var claimedCell = document.getElementById('wax-claimed');
   var btns = document.querySelectorAll('.mint-btn');
   var MINT = {
-    wax: { member: 'minion-001-claim.html?d=17', public: 'minion-001-claim.html?d=18' },
+    wax: { member: 'minion-001-claim.html?d=19', public: 'minion-001-claim.html?d=20' },
     xrp: { url: '' },
     base: { url: '' },
     sol: { url: '' }
@@ -160,7 +160,7 @@
         else b.textContent = 'Coming soon';
       }
     });
-    if (note) note.textContent = live ? 'Live now. Each chain\'s button lights up as its mint is ready. The claimed count is the shared pool across all chains.' : 'The mint opens at 11:00 AM. Each chain\'s button lights up as its mint is ready. The claimed count is the shared pool across all chains.';
+    if (note) note.textContent = live ? 'Live now. Each chain\'s button lights up as its mint is ready. The claimed count is the shared pool across all chains.' : 'The mint opens at 1:00 PM. Each chain\'s button lights up as its mint is ready. The claimed count is the shared pool across all chains.';
   }
   async function refreshClaimed(){
     if (!claimedCell) return;

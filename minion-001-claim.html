@@ -6,7 +6,7 @@
 <!-- Minion 001 NoName (Axe Ready) claim page: same login, same claim as sub-drop.html, with the payment attached in front of the claim in ONE wallet transaction. The drop is chosen by ?d= in the address. -->
 <title>Axe Ready - Minion 001 - pay with WAX</title>
 <meta name="description" content="Mint Minion 001 NoName, Axe Ready, with WAX. 50 cents for registered Horde members, a dollar for everyone else. Your Minion mints the moment you pay, right here on artistbyron.ca.">
-<link rel="stylesheet" href="style.css?v=191">
+<link rel="stylesheet" href="style.css?v=192">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -46,11 +46,11 @@
 // ===== MINION 001 DROP CONFIG: the drop is chosen by ?d= in the address.
 // Prices here are checked against the chain's own price table before the
 // page will sell anything, so a wrong price in this list cannot sell.
-// Drop 17 is the member price (50 cents), drop 18 is the everyone price ($1).
+// Drop 19 is the member price (50 cents), drop 20 is the everyone price ($1).
 // Both are WAX at the live rate when the drops were built (27 Nov 2026).
 var DROP_CONFIGS = {
-  17: { name: 'Axe Ready - Minion 001 NoName', price: '144.73000000 WAX', token: 'eosio.token', symbol: 'WAX', template: 912505, img: 'art/minion-001-noname.jpg', blurb: 'Registered Horde member price, 50 cents in WAX. Your Minion 001 mints the moment you pay. Five per wallet, 100 total across all chains.' },
-  18: { name: 'Axe Ready - Minion 001 NoName', price: '289.45000000 WAX', token: 'eosio.token', symbol: 'WAX', template: 912505, img: 'art/minion-001-noname.jpg', blurb: 'Everyone price, $1 in WAX. Your Minion 001 mints the moment you pay. Five per wallet, 100 total across all chains.' }
+  19: { name: 'Axe Ready - Minion 001 NoName', price: '144.73000000 WAX', token: 'eosio.token', symbol: 'WAX', template: 912505, img: 'art/minion-001-noname.jpg', blurb: 'Registered Horde member price, 50 cents in WAX. Your Minion 001 mints the moment you pay. Five per wallet, 100 total across all chains.' },
+  20: { name: 'Axe Ready - Minion 001 NoName', price: '289.45000000 WAX', token: 'eosio.token', symbol: 'WAX', template: 912505, img: 'art/minion-001-noname.jpg', blurb: 'Everyone price, $1 in WAX. Your Minion 001 mints the moment you pay. Five per wallet, 100 total across all chains.' }
 };
 var DID = 0;
 try { DID = parseInt(new URLSearchParams(location.search).get('d') || '0', 10); } catch (e) {}
@@ -70,7 +70,7 @@ var ACCOUNT_LIMIT = 5;
 var WHITELIST = [];
 var START_TIME = 0;
 var END_TIME = 2000000000;
-var START_TEXT = '11:00 AM, Friday 27 November 2026';
+var START_TEXT = '1:00 PM, Friday 27 November 2026';
 var END_TEXT = 'No end date';
 // ===================================================================
 var dropStatusEl = document.getElementById('drop-status');
