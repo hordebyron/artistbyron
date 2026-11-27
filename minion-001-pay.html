@@ -6,7 +6,7 @@
 <!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays Muse, then Muse mints the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
 <title>Axe Ready - Minion 001 - pay</title>
 <meta name="description" content="Mint Minion 001 NoName, Axe Ready, with XRP, ETH or SOL. 50 cents for registered Horde members, a dollar for everyone else. You pay Muse, Muse mints your Minion to you.">
-<link rel="stylesheet" href="style.css?v=199">
+<link rel="stylesheet" href="style.css?v=200">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -197,7 +197,26 @@ async function payXrp(){
 }
 async function payBase(){
   if (!window.ethereum || typeof window.ethereum.request !== 'function') throw new Error('no wallet on this device');
-  setStatus('Your wallet is asking you to approve sending ' + T.amount + ' ETH.');
+  var chainId = await window.ethereum.request({ method: 'eth_chainId' });
+  if (parseInt(chainId, 16) !== 8453) {
+    setStatus('Switching your wallet to the Base network.');
+    try {
+      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x2105' }] });
+    } catch (e5) {
+      if (e5 && e5.code === 4902) {
+        try {
+          await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{ chainId: '0x2105', chainName: 'Base', nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, rpcUrls: ['https://mainnet.base.org'], blockExplorerUrls: ['https://basescan.org'] }] });
+        } catch (e6) {
+          throw new Error('your wallet is not on the Base network. Switch to Base and tap Pay again. Nothing was spent.');
+        }
+      } else {
+        throw new Error('your wallet is not on the Base network. Switch to Base and tap Pay again. Nothing was spent.');
+      }
+    }
+    chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    if (parseInt(chainId, 16) !== 8453) throw new Error('your wallet is not on the Base network. Switch to Base and tap Pay again. Nothing was spent.');
+  }
+  setStatus('Your wallet is asking you to approve sending ' + T.amount + ' ETH on Base.');
   var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
   var from = accounts && accounts[0];
   if (!from) throw new Error('no account was shared');
