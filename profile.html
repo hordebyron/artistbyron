@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Horde Profile</title>
 <meta name="description" content="Your Horde profile. One person, one profile, WAX and XRPL wallets tied together, with a profile picture and your links.">
-<link rel="stylesheet" href="style.css?v=189">
+<link rel="stylesheet" href="style.css?v=202">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -72,6 +72,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <p id="view-badges" style="margin:2px 0"></p>
         <p id="view-points" style="margin:2px 0"></p>
         <p class="small" id="view-points-note" hidden></p>
+        <p><button class="btn" id="claim-points-btn" hidden>Claim your reward · +10 points</button></p>
       </div>
       <div>
         <p style="margin-top:0"><strong id="view-name" style="font-size:1.3rem"></strong></p>
@@ -239,7 +240,7 @@ async function getExtras(no){
   return d;
 }
 function rowToP(row){
-  return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', email_verified: row.email_verified || false, x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', base: row.base || '', sol: row.sol || '', points: (typeof row.points === 'number' ? row.points : 0) };
+  return { no: row.profile_no, name: row.name || '', wax: row.wax || '', xrp: row.xrp || '', discord: row.discord || '', email_verified: row.email_verified || false, x: row.x_handle || '', about: row.about || '', pfp: row.pfp || '', base: row.base || '', sol: row.sol || '', points: (typeof row.points === 'number' ? row.points : 0), last_daily_points: row.last_daily_points || '' };
 }
 
 var OUR_ISSUERS = { 'rnVwvg7GmJr2DJWXwWKTFHsox1FqcDwney': 1, 'rMf25RxNs7kXEASdhphjw3xfLkY9pqNubf': 1, 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH': 1 };
@@ -450,20 +451,31 @@ async function renderProfile(row){
   } catch (e) {}
   k.textContent = keys.length ? 'yes · ' + keys.join(' and ') : 'not yet. HODLers are sent by hand for now: message Byron on X (@ArtistByron) or in the Discord and he will send yours.';
   if (keys.length) renderBadges(p, true);
-  // Horde points: the balance shows on every profile, and your own
-  // visit once a day banks +10 into the same pot the game and trading
-  // feed. The server checks the date, so refreshes never double-pay.
-  // Until the points columns and the daily action are live, this just
-  // shows the balance and stays quiet.
+  // Horde points: the balance shows on every profile. On your own
+  // profile, first visit each day shows a "Claim your reward" button;
+  // tap it to bank +10. The server checks the date, so refreshes and
+  // double-taps never double-pay.
   var ptsEl = document.getElementById('view-points');
   if (ptsEl) ptsEl.innerHTML = '<strong>Horde Points: ' + (p.points || 0) + '</strong>';
   if (state.mine && state.session) {
-    checkerPost({ action: 'daily', token: state.session.token }).then(function(d){
-      if (!d || !d.ok) return;
-      if (ptsEl) ptsEl.innerHTML = '<strong>Horde Points: ' + d.points + '</strong>';
-      var nEl = document.getElementById('view-points-note');
-      if (nEl) { nEl.hidden = false; nEl.textContent = d.awarded ? 'You showed up today: +10 points.' : 'Come back tomorrow for +10 more.'; }
-    }).catch(function(){});
+    var nEl = document.getElementById('view-points-note');
+    var cBtn = document.getElementById('claim-points-btn');
+    var today5 = new Date(Date.now() - 5 * 3600 * 1000).toISOString().slice(0, 10);
+    if (p.last_daily_points === today5) {
+      if (nEl) { nEl.hidden = false; nEl.textContent = 'Come back tomorrow for +10 more.'; }
+    } else if (cBtn) {
+      cBtn.hidden = false;
+      cBtn.addEventListener('click', function(){
+        cBtn.disabled = true;
+        cBtn.textContent = 'Claiming...';
+        checkerPost({ action: 'daily', token: state.session.token }).then(function(d){
+          if (!d || !d.ok) { cBtn.disabled = false; cBtn.textContent = 'Claim your reward · +10 points'; return; }
+          if (ptsEl) ptsEl.innerHTML = '<strong>Horde Points: ' + d.points + '</strong>';
+          if (nEl) { nEl.hidden = false; nEl.textContent = d.awarded ? 'You claimed +10 points!' : 'Come back tomorrow for +10 more.'; }
+          cBtn.hidden = true;
+        }).catch(function(){ cBtn.disabled = false; cBtn.textContent = 'Claim your reward · +10 points'; });
+      });
+    }
   }
   loadPieces(p);
 }
