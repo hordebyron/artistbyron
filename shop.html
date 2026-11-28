@@ -48,7 +48,7 @@
   .prod.feature{grid-template-columns:220px 1fr;gap:22px}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=207">
+<link rel="stylesheet" href="style.css?v=219">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -484,7 +484,7 @@
     var msg = paidMessage(o, txid);
     var mailto = 'mailto:hordemuse@muse.ai?subject=' + encodeURIComponent('Shop payment - ' + o.item) + '&body=' + encodeURIComponent(msg);
     var h = '<div class="tell-muse-block">'
-      + '<p><strong>Paid. Now tell Muse so your order gets sent.</strong></p>'
+      + '<p><strong>Paid. Now let the minions know so your order gets sent.</strong></p>'
       + '<p class="small" style="background:#221f1d;border:1px solid #3a3633;border-radius:10px;padding:12px 14px;word-break:break-word;">'
       + 'Item: ' + esc(o.item) + '<br>Amount: ' + esc(o.amount) + ' ' + esc(o.denom)
       + '<br>Payment tx: ' + esc(txid || '(your transaction hash)')
