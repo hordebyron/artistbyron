@@ -48,7 +48,7 @@
   .prod.feature{grid-template-columns:220px 1fr;gap:22px}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=222">
+<link rel="stylesheet" href="style.css?v=223">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -660,6 +660,18 @@
   }
   async function paySol(o, result, my){
     if (!window.solana || typeof window.solana.signAndSendTransaction !== 'function') { showQrFallback(o, result, my); return; }
+    if (typeof Buffer === 'undefined') {
+      try {
+        var bufMod = await import('https://esm.sh/buffer@6.0.3');
+        window.Buffer = bufMod.Buffer || bufMod.default;
+      } catch (e1) {
+        try {
+          var bufMod2 = await import('https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm');
+          window.Buffer = bufMod2.Buffer || bufMod2.default;
+        } catch (e2) { showQrFallback(o, result, my); return; }
+      }
+      if (typeof Buffer === 'undefined') { showQrFallback(o, result, my); return; }
+    }
     try {
       await loadScript('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js');
     } catch (e) { showQrFallback(o, result, my); return; }

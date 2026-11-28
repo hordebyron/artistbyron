@@ -6,7 +6,7 @@
 <!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays the Horde, then the minions mint the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
 <title>Axe Ready - Minion 001 - pay</title>
 <meta name="description" content="Mint Minion 001 NoName, Axe Ready, with XRP, ETH or SOL. 50 cents for registered Horde members, a dollar for everyone else. You pay, the minions mint your Minion to you.">
-<link rel="stylesheet" href="style.css?v=222">
+<link rel="stylesheet" href="style.css?v=223">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -316,6 +316,20 @@ function solBlockhash(){
 }
 async function paySol(){
   if (!window.solana || typeof window.solana.signAndSendTransaction !== 'function') throw new Error('no wallet on this device');
+  if (typeof Buffer === 'undefined') {
+    try {
+      var bufMod = await import('https://esm.sh/buffer@6.0.3');
+      window.Buffer = bufMod.Buffer || bufMod.default;
+    } catch (e1) {
+      try {
+        var bufMod2 = await import('https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm');
+        window.Buffer = bufMod2.Buffer || bufMod2.default;
+      } catch (e2) {
+        throw new Error('the Solana tools could not load. Tap Pay to try again.');
+      }
+    }
+    if (typeof Buffer === 'undefined') throw new Error('the Solana tools could not load. Tap Pay to try again.');
+  }
   await loadScript('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js');
   if (typeof solanaWeb3 === 'undefined') throw new Error('the Solana tools could not load');
   var provider = window.solana;
