@@ -441,28 +441,73 @@
     if (o.denom === 'SOL') return 'solana:' + o.wallet + '?amount=' + o.amount + '&label=' + encodeURIComponent('Artist Byron') + '&message=' + encodeURIComponent(o.item) + '&memo=' + encodeURIComponent(o.memo);
     return '';
   }
-  function emailTail(o){
-    var s = '';
-    if (o.denom === 'WAX') {
-      s = '<p>Then email your shipping address to <a href="mailto:hordemuse@muse.ai">hordemuse@muse.ai</a>. A minion sees the payment right away and sends it on to Byron.</p>';
-    } else if (o.denom === 'XRP') {
-      s = '<p>Then email your shipping address and the transaction hash to <a href="mailto:hordemuse@muse.ai">hordemuse@muse.ai</a>. A minion matches the payment by the hash and sends it on to Byron.</p>';
-    } else {
-      s = '<p>After you send it, email <a href="mailto:hordemuse@muse.ai">hordemuse@muse.ai</a> with the transaction hash, the code <strong>' + esc(o.memo) + '</strong>, and your shipping address. A minion sees your email and sends it on to Byron.</p>';
+  /* After a crypto payment, the buyer has to report it so Muse can match it
+     and ship. Email alone fails on phones with no mail app set up, so the
+     first path is copy + paste in the Horde Discord; email stays as a backup. */
+  function copyText(text, btn){
+    var box = btn ? (btn.closest ? btn.closest('.tell-muse-block') : null) : null;
+    var status = box ? box.querySelector('[data-copy-status]') : null;
+    function done(ok){
+      if (status) status.textContent = ok ? 'Copied. Paste it in #general on the Horde Discord.' : 'Copy did not work. Select the details above and copy them by hand.';
     }
-    if (o.wantNft) s += '<p>Include your ' + esc(o.denom) + ' wallet address in your email so the NFT can be minted to you.</p>';
-    return s;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ fallbackCopy(text, done); });
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+  function fallbackCopy(text, done){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    done(ok);
+  }
+  document.addEventListener('click', function(e){
+    var b = e.target && e.target.closest ? e.target.closest('[data-copy-paid]') : null;
+    if (!b) return;
+    var msg = '';
+    try { msg = decodeURIComponent(b.getAttribute('data-copy-paid') || ''); } catch (err) { msg = ''; }
+    copyText(msg, b);
+  });
+  function paidMessage(o, txid){
+    var lines = ['Hi Muse, I paid for ' + o.item + ' on the shop.', '', 'Item: ' + o.item, 'Amount: ' + o.amount + ' ' + o.denom, 'Payment tx: ' + (txid || '(your transaction hash)'), 'Code: ' + o.memo];
+    if (o.wantNft) lines.push('My ' + o.denom + ' wallet address: (your wallet address)');
+    lines.push('Shipping address: (your shipping address)', '', 'Please send it on. Thank you.');
+    return lines.join('\n');
+  }
+  function tellMuseBlock(o, txid){
+    var msg = paidMessage(o, txid);
+    var mailto = 'mailto:hordemuse@muse.ai?subject=' + encodeURIComponent('Shop payment - ' + o.item) + '&body=' + encodeURIComponent(msg);
+    var h = '<div class="tell-muse-block">'
+      + '<p><strong>Paid. Now tell Muse so your order gets sent.</strong></p>'
+      + '<p class="small" style="background:#221f1d;border:1px solid #3a3633;border-radius:10px;padding:12px 14px;word-break:break-word;">'
+      + 'Item: ' + esc(o.item) + '<br>Amount: ' + esc(o.amount) + ' ' + esc(o.denom)
+      + '<br>Payment tx: ' + esc(txid || '(your transaction hash)')
+      + '<br>Code: ' + esc(o.memo)
+      + (o.wantNft ? '<br>Your ' + esc(o.denom) + ' wallet address: (add it to the message)' : '')
+      + '<br>Shipping address: (add it to the message)</p>'
+      + '<p><button class="btn" type="button" data-copy-paid="' + encodeURIComponent(msg) + '">Copy payment details</button> '
+      + '<a class="btn" href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">Paste it in #general on Discord</a></p>'
+      + '<p class="small" data-copy-status></p>'
+      + '<p class="small">No Discord? <a href="' + esc(mailto) + '">Email the same details to hordemuse@muse.ai</a> instead.</p>'
+      + '</div>';
+    return h;
   }
   function paidHtml(o, txid){
     var h = '<p><strong>Paid.</strong> ' + esc(o.amount) + ' ' + esc(o.denom) + ' is on its way to Byron.</p>';
     if (txid) h += '<p class="small">Transaction: ' + esc(String(txid)) + '</p>';
-    h += emailTail(o);
+    h += tellMuseBlock(o, txid);
     return h;
   }
   function scanLine(o){
-    if (o.denom === 'XRP') return 'Scan with Xaman. The amount is already filled in. The note <strong>' + esc(o.memo) + '</strong> is optional, you can skip it. After you send it, email your shipping address and the transaction hash to hordemuse@muse.ai, that is how the payment gets matched.';
+    if (o.denom === 'XRP') return 'Scan with Xaman. The amount is already filled in. The note <strong>' + esc(o.memo) + '</strong> is optional, you can skip it. After you send it, copy the details below and paste them in #general on the Horde Discord, that is how the payment gets matched.';
     if (o.denom === 'SOL') return 'Scan with your Solana wallet. The amount and the note <strong>' + esc(o.memo) + '</strong> are already filled in.';
-    return 'Scan with your wallet. The amount is already filled in. The code is <strong>' + esc(o.memo) + '</strong> - put it in your email after you send it.';
+    return 'Scan with your wallet. The amount is already filled in. The code is <strong>' + esc(o.memo) + '</strong> - put it in your message after you send it.';
   }
   function showQrFallback(o, result, my){
     var uri = payUri(o);
@@ -471,7 +516,7 @@
       + '<p>' + scanLine(o) + '</p>'
       + '<div class="qr-slot"></div>'
       + '<p><a class="btn" href="' + esc(uri) + '">' + openLabel + '</a></p>'
-      + emailTail(o), my);
+      + tellMuseBlock(o, null), my);
     makeQrImg(uri).then(function(img){
       if (my !== undefined && result._attempt !== my) return;
       var slot = result.querySelector('.qr-slot');

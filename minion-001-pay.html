@@ -34,12 +34,19 @@
     <p><button class="btn" type="button" id="pay-btn" disabled>Pay</button></p>
     <p class="small" id="pay-result"></p>
     <div id="sol-qr" hidden>
-      <p><strong>Or scan with your phone wallet</strong> (Phantom, Solflare, or any Solana wallet). Point your wallet at this code and approve the payment, then tap "Tell Muse you paid" below.</p>
+      <p><strong>Or scan with your phone wallet</strong> (Phantom, Solflare, or any Solana wallet). Point your wallet at this code and approve the payment, then copy the payment details below and paste them in #general on the Horde Discord.</p>
       <p id="sol-qr-img"></p>
       <p class="small" id="sol-qr-link-row"><a id="sol-qr-link" href="#">Open in your wallet</a></p>
     </div>
-    <p id="tell-muse" hidden><a class="btn" id="tell-muse-link" href="#">Tell Muse you paid</a></p>
-    <p class="small" id="manual-note" hidden>No wallet on this device? Send the exact amount above to the address above yourself (XRP: add the note MINION-001), then tap "Tell Muse you paid" and send the email with your payment details.</p>
+    <div id="tell-muse" hidden>
+      <p><strong>Paid. Now tell Muse so your Minion gets minted.</strong></p>
+      <p class="small" id="tell-muse-details" style="background:#221f1d;border:1px solid #3a3633;border-radius:10px;padding:12px 14px;word-break:break-word;"></p>
+      <p><button class="btn" type="button" id="copy-paid-btn">Copy payment details</button>
+      <a class="btn" href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">Paste it in #general on Discord</a></p>
+      <p class="small" id="copy-paid-status"></p>
+      <p class="small">No Discord? <a id="tell-muse-email" href="#">Email the same details to hordemuse@muse.ai</a> instead.</p>
+    </div>
+    <p class="small" id="manual-note" hidden>No wallet on this device? Send the exact amount above to the address above yourself (XRP: add the note MINION-001), then copy the payment details below and paste them in #general on the Horde Discord.</p>
     <p><a href="minion-001.html">&larr; Back to Axe Ready</a></p>
   </section>
 </main>
@@ -87,7 +94,6 @@ var payBtn = document.getElementById('pay-btn');
 var payResult = document.getElementById('pay-result');
 var payHow = document.getElementById('pay-how');
 var tellMuse = document.getElementById('tell-muse');
-var tellMuseLink = document.getElementById('tell-muse-link');
 var manualNote = document.getElementById('manual-note');
 var xrpOfferNote = document.getElementById('xrp-offer-note');
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -165,14 +171,49 @@ function mailtoLink(txHash, fromAddr){
   var body = 'Hi Muse, I paid for Minion 001 NoName (Axe Ready).\n\nChain: ' + C.label + '\nTier: ' + (TIER === 'member' ? 'member (50 cents)' : 'everyone ($1)') + '\nAmount: ' + T.amount + ' ' + C.symbol + '\nPaid to: ' + C.payTo + '\nPayment tx: ' + txHash + '\nMy receiving address: ' + fromAddr + '\n\nPlease mint my Minion to that address. Thank you.';
   return 'mailto:' + MUSE_MAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
+function paidMessage(txHash, fromAddr){
+  return 'Hi Muse, I paid for Minion 001 NoName (Axe Ready).\n\nChain: ' + C.label + '\nTier: ' + (TIER === 'member' ? 'member (50 cents)' : 'everyone ($1)') + '\nAmount: ' + T.amount + ' ' + C.symbol + '\nPaid to: ' + C.payTo + '\nPayment tx: ' + txHash + '\nMy receiving address: ' + fromAddr + '\n\nPlease mint my Minion to that address. Thank you.';
+}
+function copyText(text, statusEl){
+  function done(ok){
+    if (!statusEl) return;
+    statusEl.textContent = ok ? 'Copied. Paste it in #general on the Horde Discord.' : 'Copy did not work. Select the details above and copy them by hand.';
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ fallbackCopy(text, done); });
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+function fallbackCopy(text, done){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+  document.body.removeChild(ta);
+  done(ok);
+}
+function showTellMuse(txHash, fromAddr){
+  var details = document.getElementById('tell-muse-details');
+  if (details) details.innerHTML = 'Item: Minion 001 NoName (Axe Ready)<br>Chain: ' + esc(C.label) + '<br>Amount: ' + esc(T.amount) + ' ' + esc(C.symbol) + '<br>Paid to: <span style="word-break:break-all">' + esc(C.payTo) + '</span><br>Payment tx: <span style="word-break:break-all">' + esc(txHash) + '</span><br>Your address: <span style="word-break:break-all">' + esc(fromAddr) + '</span>';
+  var emailLink = document.getElementById('tell-muse-email');
+  if (emailLink) emailLink.href = mailtoLink(txHash, fromAddr);
+  var statusEl = document.getElementById('copy-paid-status');
+  if (statusEl) statusEl.textContent = '';
+  var copyBtn = document.getElementById('copy-paid-btn');
+  if (copyBtn) copyBtn.onclick = function(){ copyText(paidMessage(txHash, fromAddr), statusEl); };
+  tellMuse.hidden = false;
+}
 function showPaid(txHash, fromAddr){
   setResult('<strong>Paid.</strong> Payment: <span style="word-break:break-all">' + esc(txHash) + '</span><br>From: <span style="word-break:break-all">' + esc(fromAddr) + '</span>');
-  tellMuseLink.href = mailtoLink(txHash, fromAddr);
-  tellMuse.hidden = false;
+  showTellMuse(txHash, fromAddr);
   if (CHAIN === 'xrp') xrpOfferNote.hidden = false;
   payBtn.disabled = true;
   payBtn.textContent = 'Paid';
-  setStatus('Payment sent. Tap "Tell Muse you paid" so your Minion gets minted to ' + fromAddr + '.');
+  setStatus('Payment sent. Copy the details below and paste them in #general on the Horde Discord so your Minion gets minted to ' + fromAddr + '.');
 }
 async function payXrp(){
   var kit = await getXrpKit();
@@ -268,7 +309,7 @@ function solBlockhash(){
       new Promise(function(_, reject){ setTimeout(function(){ reject(new Error('timeout')); }, 8000); })
     ]).catch(function(){
       if (tries < 3) return attempt();
-      throw new Error('Solana would not answer this page, so the payment could not start. Scan the code below with your phone wallet instead, then tap "Tell Muse you paid".');
+      throw new Error('Solana would not answer this page, so the payment could not start. Scan the code below with your phone wallet instead, then copy the payment details below and paste them in #general on the Horde Discord.');
     });
   }
   return attempt();
@@ -304,7 +345,7 @@ function init(){
   document.getElementById('info-price').textContent = T.amount + ' ' + C.symbol + (TIER === 'member' ? ' (member)' : ' (everyone)');
   document.getElementById('info-payto').textContent = C.payTo;
   var walletName = CHAIN === 'xrp' ? 'Xaman or Joey' : CHAIN === 'base' ? 'your Base wallet (MetaMask, Phantom, or any EVM wallet)' : 'Phantom';
-  payHow.textContent = 'Tap Pay to send ' + T.amount + ' ' + C.symbol + ' to Muse with ' + walletName + '. ' + (CHAIN === 'xrp' ? 'The payment carries the note MINION-001.' : 'After you pay, tap "Tell Muse you paid" so your Minion gets minted to your address.');
+  payHow.textContent = 'Tap Pay to send ' + T.amount + ' ' + C.symbol + ' to Muse with ' + walletName + '. ' + (CHAIN === 'xrp' ? 'The payment carries the note MINION-001.' : 'After you pay, copy the payment details below and paste them in #general on the Horde Discord so your Minion gets minted to your address.');
   if (TIER === 'member' && !isMember()) {
     setStatus('The member price is for registered Horde members only. Register first, then come back, or pay the everyone price of $1.');
     payBtn.disabled = true;
@@ -336,14 +377,12 @@ payBtn.addEventListener('click', async function(){
   } catch (e) {
     var msg = (e && e.message) || 'the payment did not go through';
     if (msg === 'no wallet on this device' || msg === 'the wallet tools could not load' || msg === 'the Solana tools could not load') {
-      setStatus('No wallet was found on this device. Send the amount above yourself and tap "Tell Muse you paid" below.');
-      tellMuseLink.href = mailtoLink('(paid manually)', '(your receiving address)');
-      tellMuse.hidden = false;
+      setStatus('No wallet was found on this device. Send the amount above yourself, then copy the payment details below and paste them in #general on the Horde Discord.');
+      showTellMuse('(your payment tx hash)', '(your receiving wallet address)');
       if (CHAIN === 'xrp') xrpOfferNote.hidden = false;
     } else if (msg.indexOf('Solana would not answer') === 0) {
       setStatus('Nothing was spent. ' + msg);
-      tellMuseLink.href = mailtoLink('(paid manually)', '(your receiving address)');
-      tellMuse.hidden = false;
+      showTellMuse('(your payment tx hash)', '(your receiving wallet address)');
     } else {
       setStatus('Nothing was spent. ' + msg + ' Tap Pay to try again.');
     }
