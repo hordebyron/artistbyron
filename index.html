@@ -16,13 +16,6 @@
 <header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">SHOP</a><span class="nav-menu"><a href="shop.html#original-art"><span class="nav-big">Original Art</span></a><a href="shop.html#merch"><span class="nav-big">Merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a><a href="minion-001.html" class="crypto-only">Minion 001</a></span></span><a href="blog.html">Blog</a><a href="commissions.html">Commissions</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
 <main class="wrap">
 
-<div class="ad-slot" id="ad-slot" role="region" aria-label="Horde ads">
-  <a class="ad-slide" id="ad-link" href="loot-crate.html"><span class="ad-tag" id="ad-tag">HORDE</span><span class="ad-text" id="ad-text"></span></a>
-  <span class="ad-dots" id="ad-dots" aria-hidden="true"></span>
-  <button class="ad-nav" id="ad-prev" type="button" aria-label="Previous ad">&#8249;</button>
-  <button class="ad-nav" id="ad-next" type="button" aria-label="Next ad">&#8250;</button>
-</div>
-
 <p class="horde-intro">The Horde is my crew. Collectors, regulars, and anyone who shows up for the art.</p>
 
 <section class="card hero-card">
@@ -134,20 +127,6 @@
 .hero-crate-img:hover{outline:2px solid var(--red);outline-offset:2px}
 .crate-countdown{text-align:center;font-weight:700;color:var(--red);font-size:1.1rem;margin:10px 0 2px}
 .hero-card .btn.cardpay{font-size:1.15rem;padding:14px 22px}
-/* Banner ad slot at the top of the front page: rotates Byron's promos
-   and gag ads. Slim, dark, one line, prev/next plus dots. */
-.ad-slot{max-width:860px;margin:0 auto 14px;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:8px 10px}
-.ad-slide{flex:1;min-width:0;display:flex;align-items:baseline;gap:10px;text-decoration:none;color:var(--ink)}
-.ad-slide:hover .ad-text{text-decoration:underline}
-.ad-tag{flex:none;font-size:.68rem;font-weight:700;letter-spacing:.08em;color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:2px 6px}
-.ad-tag.gag{color:#c084fc;border-color:#c084fc}
-.ad-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ad-nav{flex:none;width:30px;height:30px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--ink);font-size:1.1rem;line-height:1;cursor:pointer}
-.ad-nav:hover{border-color:var(--red2)}
-.ad-dots{flex:none;display:flex;gap:5px}
-.ad-dots button{width:8px;height:8px;border:none;border-radius:50%;background:var(--line);padding:0;cursor:pointer}
-.ad-dots button.on{background:var(--gold)}
-@media (max-width:640px){.ad-text{white-space:normal}}
 </style>
 <button id="fb-btn" type="button">See a bug? Tell me</button>
 <div id="fb-panel" hidden>
@@ -266,49 +245,6 @@
   }
   tick();
   setInterval(tick, 1000);
-})();
-</script>
-
-<script>
-/* Front-page banner ads: rotates Byron's promos and gag ads every 6s,
-   with prev/next and dots. Pauses while the mouse is over it. */
-(function(){
-  var ads = [
-    {tag:'HORDE', text:'Holiday Loot Crate · $35 CAD · Orders close Mon 30 Nov', href:'loot-crate.html'},
-    {tag:'HORDE', text:'Minion 001 AXE READY · 100 editions, four chains · 5 of 100 minted', href:'minion-001.html'},
-    {tag:'HORDE', text:'Sketch commissions coming soon', href:'commissions.html'},
-    {tag:'HORDE', text:'Join the Horde · Register free · First 100 entered to win a Horde Reward', href:'register.html'},
-    {tag:'GAG AD', gag:true, text:'Horde Brand Zombie Repellent. Now with 0% effectiveness.', href:'shop.html'},
-    {tag:'GAG AD', gag:true, text:'Ghost Insurance. Because your art is haunted anyway.', href:'shop.html'},
-    {tag:'GAG AD', gag:true, text:'Buy my art so I can afford to eat. Please.', href:'shop.html'}
-  ];
-  var i = 0, timer = null;
-  var link = document.getElementById('ad-link'), tag = document.getElementById('ad-tag'), text = document.getElementById('ad-text'), dots = document.getElementById('ad-dots');
-  if (!link) return;
-  ads.forEach(function(_, n){
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.setAttribute('aria-label', 'Show ad ' + (n + 1));
-    b.addEventListener('click', function(){ show(n); restart(); });
-    dots.appendChild(b);
-  });
-  function show(n){
-    i = (n + ads.length) % ads.length;
-    var a = ads[i];
-    link.href = a.href;
-    tag.textContent = a.tag;
-    tag.className = 'ad-tag' + (a.gag ? ' gag' : '');
-    text.textContent = a.text;
-    var ds = dots.children;
-    for (var k = 0; k < ds.length; k++) ds[k].className = k === i ? 'on' : '';
-  }
-  function restart(){ if (timer) clearInterval(timer); timer = setInterval(function(){ show(i + 1); }, 6000); }
-  document.getElementById('ad-prev').addEventListener('click', function(){ show(i - 1); restart(); });
-  document.getElementById('ad-next').addEventListener('click', function(){ show(i + 1); restart(); });
-  var slot = document.getElementById('ad-slot');
-  slot.addEventListener('mouseenter', function(){ if (timer) clearInterval(timer); });
-  slot.addEventListener('mouseleave', restart);
-  show(0); restart();
 })();
 </script>
 
