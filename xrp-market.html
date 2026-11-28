@@ -32,6 +32,15 @@
     });
   })();
   </script>
+  <section class="card" id="crate-feature">
+    <h2>Holiday Loot Crate</h2>
+    <p><img src="art/loot-crate-wax-strip.jpg" alt="Holiday Loot Crate" style="width:100%;max-width:420px;display:block;border-radius:8px" loading="lazy"></p>
+    <p>Byron's third Loot Crate, and the last one of the year. Contents are secret. Orders close Mon 30 Nov, ships in the first two weeks of December.</p>
+    <p><strong>27 XRP</strong> · <span id="crate-count">Checking how many are left…</span></p>
+    <p class="btn-row"><button class="btn" type="button" id="crate-buy" disabled>Buy a Loot Crate token — 27 XRP</button> <a class="btn ghost" href="loot-crate.html">About the crate</a></p>
+    <p class="small" id="crate-buy-status"></p>
+  </section>
+
   <section class="card" id="drops-card">
     <h2>Newest Drop</h2>
     <div id="xrp-drops-strip" class="drops-strip"></div>
@@ -518,6 +527,7 @@
     var after = offers.map(function(o){ return o.offer; }).join(',');
     if (before !== after) { renderFilters(); renderWall(); }
     if (!keepNote) updatedEl.textContent = (gatheredAt ? 'Wall gathered ' + gatheredAt + '. ' : '') + 'Every offer on this wall was checked against the ledger just now, so what you see is really for sale.';
+    updateCrateFeature();
   }
   function taxonLabel(t){
     if (TAXON_NAMES[t] != null) return TAXON_NAMES[t];
@@ -566,6 +576,14 @@
       var bv = b.price && b.price.currency === 'XRP' ? b.price.value : Infinity;
       return sortEl.value === 'high' ? bv - av : av - bv;
     });
+    /* Byron's rule: never more than 5 of the same item in a row. Cap
+       each identical name at 5 tiles on the wall. */
+    var perName = {};
+    list = list.filter(function(o){
+      var k = o.name || o.token;
+      perName[k] = (perName[k] || 0) + 1;
+      return perName[k] <= 5;
+    });
     statusEl.textContent = list.length + ' Byron piece' + (list.length === 1 ? '' : 's') + ' offered for sale on XRP right now.';
     grid.innerHTML = '';
     list.slice(0, wallShown).forEach(function(o){
@@ -611,6 +629,34 @@
     var moreBtn = document.getElementById('sales-more');
     if (moreBtn) moreBtn.hidden = list.length <= wallShown;
   }
+  /* ---------- featured Holiday Loot Crate ---------- */
+  var crateBtn = document.getElementById('crate-buy');
+  var crateCount = document.getElementById('crate-count');
+  var crateStatus = document.getElementById('crate-buy-status');
+  function cheapestCrate(){
+    var best = null;
+    offers.forEach(function(o){
+      if (o.taxon !== 66603) return;
+      if (!o.price || o.price.currency !== 'XRP') return;
+      if (!best || o.price.value < best.price.value) best = o;
+    });
+    return best;
+  }
+  function updateCrateFeature(){
+    if (!crateBtn) return;
+    var n = offers.filter(function(o){ return o.taxon === 66603; }).length;
+    if (crateCount) crateCount.textContent = n ? (n + ' token' + (n === 1 ? '' : 's') + ' for sale on the ledger') : 'None for sale right now.';
+    crateBtn.disabled = !cheapestCrate();
+  }
+  if (crateBtn) crateBtn.addEventListener('click', function(){
+    var o = cheapestCrate();
+    if (!o) { if (crateStatus) crateStatus.textContent = 'No Loot Crate tokens are for sale right now.'; return; }
+    buyOffer(o, crateBtn).then(function(){
+      crateBtn.disabled = false;
+      crateBtn.textContent = 'Buy a Loot Crate token — 27 XRP';
+      updateCrateFeature();
+    });
+  });
   async function buyOffer(o, btn){
     if (busy) return;
     if (!myAddr) {
@@ -656,7 +702,8 @@
     renderFilters();
     renderWall();
     await refreshWall();
-  }).catch(function(){ statusEl.textContent = 'The market could not load just now. Try again in a bit.'; });
+    updateCrateFeature();
+  }).catch(function(){ statusEl.textContent = 'The market could not load just now. Try again in a bit.'; if (crateCount) crateCount.textContent = 'Could not check just now.'; });
 
   /* ---------- sell side ---------- */
   function issuerNameFor(nft){
