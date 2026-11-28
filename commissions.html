@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commissions - Artist Byron</title>
+<meta name="description" content="Commissions are coming soon. Byron will be taking sketch commissions. Details and prices coming.">
+<link rel="stylesheet" href="style.css?v=208">
+<link rel="icon" type="image/png" href="art/horde-h-black.png">
+<link rel="shortcut icon" href="art/horde-h-black.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topnav"><div class="topnav-inner"><a class="topnav-brand" href="index.html"><img src="art/horde-h-black.png" alt="" class="topnav-mark">Artist Byron</a><input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu"><label for="nav-toggle" class="nav-burger" aria-hidden="true">&#9776;</label><nav class="topnav-links" aria-label="Main"><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span><span class="nav-drop"><a href="shop.html">SHOP</a><span class="nav-menu"><a href="shop.html#original-art"><span class="nav-big">Original Art</span></a><a href="shop.html#merch"><span class="nav-big">Merch</span></a><a href="subscribe.html">Subscriptions</a><a href="market.html">WAX Market</a><a href="xrp-market.html">XRP Market</a><a href="minion-001.html" class="crypto-only">Minion 001</a></span></span><a href="blog.html">Blog</a><span class="nav-drop"><a href="profile.html">Profile</a><span class="nav-menu"><a href="profile.html">My Profile</a><a href="members.html">Members</a></span></span><a href="login.html" id="nav-login">Log in</a></nav></div></header>
+<main class="wrap">
+  <h1>Commissions</h1>
+  <p>Commissions are coming soon.</p>
+
+  <section class="card">
+    <h2>Sketch commissions</h2>
+    <p>Byron will be taking sketch commissions. If you have ever wanted a piece drawn just for you, in his ink, this is where it will happen.</p>
+    <p>Details and prices are coming. Check back soon.</p>
+  </section>
+
+  <section class="card">
+    <h2>While you wait</h2>
+    <p>Have a look at the <a href="gallery.html">Gallery</a> and the <a href="shop.html">Shop</a> for originals and merch that are ready now. And if you want first word when commissions open, <a href="index.html#email">join the email list</a>.</p>
+  </section>
+</main>
+<footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
+<script>
+(function(){
+  var links = document.querySelectorAll('#nav-login'); if (!links.length) return;
+  var known = false;
+  try { var p = JSON.parse(localStorage.getItem('horde_profile') || 'null'); var r = JSON.parse(localStorage.getItem('horde_registration') || 'null'); var w = p || r; known = !!(w && (w.name || w.wax || w.xrp)); } catch (e) {}
+  if (!known) return;
+  links.forEach(function(a){
+  a.textContent = 'Log out';
+  a.href = '#';
+  a.addEventListener('click', async function(e){
+    e.preventDefault();
+    try { localStorage.removeItem('horde_profile'); localStorage.removeItem('horde_registration'); localStorage.removeItem('horde_proven'); } catch (err) {}
+    try { if (window.__waxKit) await window.__waxKit.logout(); } catch (err) {}
+    try { if (window.__loginKit) await window.__loginKit.logout(); } catch (err) {}
+    location.href = 'index.html';
+  });
+  });
+})();
+</script>
+<!-- horde-crypto-gate: crypto nav links and crypto-only elements stay hidden until the visitor is logged in with a wallet on their profile (Byron, 24 Nov 2026) -->
+<script>
+(function () {
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()) || (w.base && String(w.base).trim()) || (w.sol && String(w.sol).trim())));
+  if (hasWallet) return;
+  document.querySelectorAll('.crypto-only').forEach(function (m) { m.remove(); });
+  document.querySelectorAll('a[href="market.html"], a[href="xrp-market.html"], a[href="nft-gallery.html"]').forEach(function (m) { m.remove(); });
+})();
+</script>
+<!-- horde-feedback: floating bug report / suggestion box -->
+<style>
+#fb-btn{position:fixed;right:14px;bottom:14px;z-index:9998;background:#b91c1c;color:#fff;border:none;border-radius:999px;padding:8px 13px;font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+#fb-panel{position:fixed;right:14px;bottom:60px;z-index:9998;width:min(330px,calc(100vw - 28px));background:#14141b;border:1px solid #33333f;border-radius:12px;padding:16px;color:#f2f2f2;box-shadow:0 10px 34px rgba(0,0,0,.55)}
+#fb-panel h3{margin:.1em 0 .4em;font-size:1.05rem}
+#fb-panel p{font-size:.88rem;color:#b9b9c4;margin:.2em 0 .6em}
+#fb-panel textarea,#fb-panel input[type=text]{width:100%;box-sizing:border-box;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;margin:0 0 8px}
+#fb-panel .fb-kinds{display:flex;gap:8px;margin:0 0 8px}
+#fb-panel .fb-kinds button{flex:1;padding:9px;border-radius:8px;border:1px solid #33333f;background:#0f0f14;color:#f2f2f2;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-panel .fb-kinds button.on{background:#b91c1c;border-color:#b91c1c;color:#fff}
+#fb-send{width:100%;padding:11px;border:none;border-radius:8px;background:#b91c1c;color:#fff;font-family:inherit;font-weight:700;cursor:pointer}
+#fb-msg{font-size:.88rem;min-height:1.2em;margin:.5em 0 0}
+</style>
+<button id="fb-btn" type="button">See a bug? Tell me</button>
+<div id="fb-panel" hidden>
+  <h3>Report a bug, or make a suggestion</h3>
+  <p>One of the Horde's minions reads every one of these, and we fix what we can.</p>
+  <div class="fb-kinds">
+    <button type="button" id="fb-kind-bug" class="on">Bug</button>
+    <button type="button" id="fb-kind-sug">Suggestion</button>
+  </div>
+  <textarea id="fb-text" rows="4" maxlength="2000" placeholder="What happened, or what would make this better?"></textarea>
+  <input type="text" id="fb-name" maxlength="80" placeholder="Your name (optional)">
+  <button id="fb-send" type="button">Send it</button>
+  <p id="fb-msg"></p>
+</div>
+<script>
+(function(){
+  var btn = document.getElementById('fb-btn'), panel = document.getElementById('fb-panel');
+  var kind = 'bug';
+  var kb = document.getElementById('fb-kind-bug'), ks = document.getElementById('fb-kind-sug');
+  function setKind(k){ kind = k; kb.className = k === 'bug' ? 'on' : ''; ks.className = k === 'suggestion' ? 'on' : ''; }
+  kb.addEventListener('click', function(){ setKind('bug'); });
+  ks.addEventListener('click', function(){ setKind('suggestion'); });
+  btn.addEventListener('click', function(){ panel.hidden = !panel.hidden; });
+  document.getElementById('fb-send').addEventListener('click', async function(){
+    var msg = document.getElementById('fb-msg');
+    var text = document.getElementById('fb-text').value.trim();
+    if (!text) { msg.textContent = 'Type a few words first.'; return; }
+    var send = document.getElementById('fb-send');
+    send.disabled = true; msg.textContent = 'Sending…';
+    try {
+      var r = await fetch('https://tuzzavnacfzveucwhdeq.supabase.co/rest/v1/site_feedback', {
+        method: 'POST',
+        headers: { apikey: 'sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', Authorization: 'Bearer sb_publishable_YBqWUrDOLRuRb-XmBWLN6Q_JcNQ2Xn-', 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ kind: kind, name: document.getElementById('fb-name').value.trim() || null, page: location.pathname, message: text })
+      });
+      if (!r.ok) throw new Error('bad');
+      msg.textContent = 'Got it, thank you. One of the Horde\'s minions will read it.';
+      document.getElementById('fb-text').value = '';
+    } catch (e) {
+      msg.textContent = 'Could not send just now. Try again in a bit.';
+    }
+    send.disabled = false;
+  });
+})();
+</script>
+
+<!-- horde-crypto-gate: crypto-gated buttons and lines only show for a logged-in member with a wallet on their profile (Byron, 24 Nov 2026) -->
+<script>
+(function () {
+  var w = null;
+  try { w = JSON.parse(localStorage.getItem('horde_profile') || 'null'); } catch (e) {}
+  if (!w) { try { w = JSON.parse(localStorage.getItem('horde_registration') || 'null'); } catch (e) {} }
+  var hasWallet = !!(w && ((w.wax && String(w.wax).trim()) || (w.xrp && String(w.xrp).trim()) || (w.base && String(w.base).trim()) || (w.sol && String(w.sol).trim())));
+  if (!hasWallet) return;
+  document.querySelectorAll('.crypto-gated').forEach(function (el) { el.hidden = false; });
+})();
+</script>
+
+<script data-goatcounter="https://artistbyron.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
