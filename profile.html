@@ -70,6 +70,7 @@ details summary{cursor:pointer;color:var(--muted);margin-top:10px}
         <img class="pfp" id="view-pfp" src="art/horde-h-black.png" alt="Profile picture">
         <p class="char-level" id="view-level"></p>
         <p id="view-badges" style="margin:2px 0"></p>
+        <p id="view-buyer-badges" style="margin:2px 0" hidden></p>
         <p id="view-points" style="margin:2px 0"></p>
         <p class="small" id="view-points-note" hidden></p>
         <p><button class="btn" id="claim-points-btn" hidden>Claim your reward · +10 points</button></p>
@@ -350,8 +351,27 @@ function renderBadges(p, hasKey){
     { label: 'Discord', on: !!p.discord },
     { label: 'HODLer', on: !!hasKey }
   ];
+  // Face of the Horde: a stamp for setting a profile picture (Byron,
+  // 27 Nov 2026). Only ever shown when earned, never dimmed: a member
+  // with no picture simply has no stamp.
+  if (p.pfp) defs.push({ label: 'Face of the Horde', on: true });
   document.getElementById('view-badges').innerHTML = defs.map(function(d){ return '<span class="pbadge' + (d.on ? ' on' : '') + '">' + d.label + '</span>'; }).join('');
   if (!window.__levelSet) document.getElementById('view-level').innerHTML = '<strong>Level 0 · Initiate</strong>';
+}
+// Chain buyer badges (Byron, 27 Nov 2026): one badge per chain the
+// member has bought a site drop on. The flags are filled in by
+// loadPieces as each chain's holdings are read, and this re-renders
+// the row. Only earned badges ever show; a chain that cannot be read
+// (no wallet, read failed) simply shows nothing.
+window.__chainBuyer = { wax: false, xrp: false, base: false, sol: false };
+function renderBuyerBadges(){
+  var el = document.getElementById('view-buyer-badges');
+  if (!el) return;
+  var order = [['wax', 'WAX'], ['xrp', 'XRP'], ['base', 'Base'], ['sol', 'SOL']];
+  var got = order.filter(function(pair){ return window.__chainBuyer[pair[0]]; });
+  if (!got.length) { el.hidden = true; el.innerHTML = ''; return; }
+  el.hidden = false;
+  el.innerHTML = '<span class="small" style="margin-right:4px">Bought on:</span>' + got.map(function(pair){ return '<span class="pbadge on">' + pair[1] + '</span>'; }).join('');
 }
 function fillForm(p){
   document.getElementById('pf-about').value = p.about || '';
@@ -426,6 +446,10 @@ async function renderProfile(row){
   if (state.mine) fillForm(p);
   loadBalances(p);
   renderBadges(p, false);
+  // Chain buyer badges start empty on every render; loadPieces fills
+  // them in as each chain's holdings are read.
+  window.__chainBuyer = { wax: false, xrp: false, base: false, sol: false };
+  renderBuyerBadges();
   var k = document.getElementById('key-text');
   var keys = [];
   try {
@@ -878,6 +902,15 @@ async function loadPieces(p){
         document.getElementById('unheld-xrp').textContent = unheld.join(' · ');
       }
       piecesX = mine.length + hideCountX;
+      // Chain buyer badge: a site drop on XRP is a token from Muse's
+      // wallet in the Loot Crate (66603), Bush Skull (66608) or Minion
+      // 001 (66609) taxon. The HODLer taxon 66602 is sent by hand, not
+      // bought, so it does not count. Private wallets count too: their
+      // issuer|taxon keys are in hideKeysX.
+      var SITE_XRP_TAXONS = { 66603: 1, 66608: 1, 66609: 1 };
+      var xrpBought = mine.some(function(n){ var iss = n.Issuer || n.issuer, tax = (n.NFTokenTaxon !== undefined ? n.NFTokenTaxon : n.nftoken_taxon); return iss === 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH' && SITE_XRP_TAXONS[tax]; });
+      if (!xrpBought) Object.keys(hideKeysX).forEach(function(k){ var parts = k.split('|'); if (parts[0] === 'rGvSnJHaq3cpyYRSuxr7mQ1NWUXFhSMdoH' && SITE_XRP_TAXONS[parts[1]]) xrpBought = true; });
+      if (xrpBought) { window.__chainBuyer.xrp = true; renderBuyerBadges(); }
       totals.push(piecesX + ' pieces on XRP in ' + keys.length + (keys.length === 1 ? ' collection' : ' collections'));
     } catch (e) { xbox.innerHTML = '<p class="small">XRP collections could not load just now.</p>'; }
   }
@@ -914,6 +947,22 @@ async function loadPieces(p){
         document.getElementById('unheld-wax').textContent = unheldW.join(' · ');
       }
       piecesW = totalW + hideW;
+      // Chain buyer badge: a site drop on WAX is one of the site
+      // templates: Minion 001 (912505), darkside (912479), the four
+      // subscription templates (912399-912402), Bush Skull (912410).
+      // The HODLer key (912283) is sent by hand, not bought.
+      var SITE_WAX_TEMPLATES = [912505, 912479, 912399, 912400, 912401, 912402, 912410];
+      var waxBought = false;
+      var waxAddrs = waxShow.concat(waxHide);
+      for (var wi2 = 0; wi2 < waxAddrs.length && !waxBought; wi2++) {
+        try {
+          var wFound = await Promise.all(SITE_WAX_TEMPLATES.map(function(tid){
+            return fetch('https://wax.api.atomicassets.io/atomicassets/v1/assets?owner=' + encodeURIComponent(waxAddrs[wi2]) + '&template_id=' + tid + '&limit=1').then(function(r){ return r.json(); }).then(function(j){ return !!(j.data && j.data.length); }).catch(function(){ return false; });
+          }));
+          if (wFound.some(function(x){ return x; })) waxBought = true;
+        } catch (e) {}
+      }
+      if (waxBought) { window.__chainBuyer.wax = true; renderBuyerBadges(); }
       totals.push(piecesW + ' pieces on WAX in ' + Object.keys(aggW).length + (Object.keys(aggW).length === 1 ? ' collection' : ' collections'));
     } catch (e) { wbox.innerHTML = '<p class="small">WAX collections could not load just now.</p>'; }
   }
@@ -935,6 +984,9 @@ async function loadPieces(p){
           bbox.innerHTML = '';
           bbox.appendChild(collRow('the Horde on Base', ids.length, 'art/horde-h-black.png', function(){ openBaseCollection(ids); }));
           totals.push(ids.length + ' pieces on Base in 1 collection');
+          // Chain buyer badge: every token on the HordeOnBase v2
+          // contract is a site drop, so holding one means bought on Base.
+          window.__chainBuyer.base = true; renderBuyerBadges();
         }
       }
     } catch (e) { bbox.innerHTML = '<p class="small">Base pieces could not load just now.</p>'; }
@@ -954,6 +1006,16 @@ async function loadPieces(p){
         sobox.appendChild(collRow('Solana NFTs', mints.length, 'art/horde-h-black.png', function(){ openSolCollection(mints); }));
         totals.push(mints.length + ' tokens on Solana');
       }
+      // Chain buyer badge: the Minion 001 Solana pieces are Metaplex
+      // Core NFTs, invisible to the SPL-token read above, so ask the
+      // solana-collection-check function (Helius DAS) whether this
+      // wallet holds one from the Horde Art Gallery collection. Any
+      // failure just means no badge, never an error on the page.
+      try {
+        var sc = await fetch(SB_URL + '/functions/v1/solana-collection-check', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ wallet: p.sol, collection: 'HV9X2FGutfjj5iLtE51wApJND5SSxGB52RwZP7E6dQs8' }) });
+        var sj = await sc.json();
+        if (sj && sj.holds) { window.__chainBuyer.sol = true; renderBuyerBadges(); }
+      } catch (e2) {}
     } catch (e) { sobox.innerHTML = '<p class="small">Solana pieces could not load just now.</p>'; }
   }
   status.textContent = totals.length ? totals.join(' · ') + '.' : '';
@@ -1002,7 +1064,7 @@ document.getElementById('profile-form').addEventListener('submit', async functio
     window.__pendingPfp = null;
     var row = await sbByNo(state.session.profile_no);
     if (row) { await renderProfile(row); document.getElementById('edit-card').hidden = false; }
-    status.textContent = 'Saved to the shared list. Everyone sees it now.';
+    status.textContent = (res.points_awarded ? 'Saved to the shared list. +50 Horde Points for setting your profile picture!' : 'Saved to the shared list. Everyone sees it now.');
   } else if (res && res.ok && res.status === 'unchanged') {
     status.textContent = 'Everything already matches the shared list. Nothing new to save.';
   } else if (res && res.error === 'Not logged in.') {
@@ -1145,7 +1207,7 @@ document.getElementById('pfp-upload-btn').addEventListener('click', async functi
   try { j = await checkerPost({ action: 'pfp', token: state.session.token, type: 'image/jpeg', data: b64 }); }
   catch (e) { st.textContent = 'Upload could not be reached just now. Try again in a bit.'; return; }
   if (!j || !j.ok) { st.textContent = (j && j.error) || 'Upload did not go through. Try again.'; return; }
-  st.textContent = 'Uploaded. That is your profile picture now.';
+  st.textContent = (j.points_awarded ? 'Uploaded. +50 Horde Points for setting your profile picture!' : 'Uploaded. That is your profile picture now.');
   document.getElementById('pfp-preview').src = j.pfp;
   var row = await sbByNo(state.session.profile_no);
   if (row) await renderProfile(row);
