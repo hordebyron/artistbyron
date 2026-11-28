@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AXE READY - Minion 001 on XRP - Artist Byron</title>
-<meta name="description" content="AXE READY: the Minion 001 NoName pieces minted on the XRP Ledger. Three minted so far, all held by Scott, Dead Reckoning.">
+<meta name="description" content="AXE READY: the Minion 001 NoName pieces minted on the XRP Ledger. 5 of 100 minted so far: 3 on XRP, all held by Scott, Dead Reckoning, and 2 on WAX.">
 <style>
 .axe-art{display:block;width:100%;max-width:520px;height:auto;border-radius:var(--radius);border:1px solid var(--line);margin:0 auto 14px}
 .axe-sub{font-size:1.05rem;color:var(--muted);margin-top:-8px}
@@ -29,6 +29,26 @@
 .mint-status{font-size:.9rem;color:var(--muted)}
 .mint-status.live{color:var(--ink)}
 @media (min-width:760px){ .mint-grid{grid-template-columns:repeat(3,1fr)} }
+/* Get yours (same pattern as minion-001.html): member/everyone switch,
+   four big chain-coloured buttons with the price in each, live counter. */
+.mint-count{font-size:1.4rem;font-weight:700;text-align:center;margin:.2em 0 .4em}
+.mint-bar{height:18px;border-radius:9px;background:var(--line);overflow:hidden;margin:0 0 14px}
+.mint-bar-fill{height:100%;background:var(--red);width:0%;transition:width .5s}
+.chain-btns{display:grid;gap:10px}
+.chain-btn{display:block;width:100%;padding:14px 16px;font-size:1.05rem;text-align:center}
+.chain-btn.btn-wax{background:#E8821E !important}
+.chain-btn.btn-wax:hover{background:#D1730F !important}
+.chain-btn.btn-xrp{background:#fff !important;color:#111 !important;border:1px solid #c9d4dd}
+.chain-btn.btn-xrp:hover{background:#eef4f8 !important}
+.chain-btn.btn-base{background:#0052FF !important}
+.chain-btn.btn-base:hover{background:#0041CC !important}
+.chain-btn.btn-sol{background:linear-gradient(90deg,#9945FF,#14F195) !important}
+.chain-btn.btn-sol:hover{filter:brightness:.92}
+.chain-btn:disabled{opacity:.55;cursor:not-allowed}
+@media (min-width:760px){
+  .chain-btns{grid-template-columns:repeat(4,1fr)}
+  .chain-btn{padding:14px 8px;font-size:1rem;line-height:1.3}
+}
 </style>
 <link rel="stylesheet" href="style.css?v=208">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
@@ -43,8 +63,11 @@
     <div class="axe-copy">
       <h1>AXE READY</h1>
       <p class="axe-sub">Minion 001 NoName &middot; minted on XRP</p>
-      <p>The Minion 001 pieces minted on the XRP Ledger. One artwork, 100 editions across four chains, and these are the ones that live on XRP. All three minted so far are held by Scott, Dead Reckoning.</p>
-      <div class="badges"><span class="badge">XRP</span><span class="badge">3 minted</span><span class="badge">Taxon 66609</span><span class="badge">Human-made, no AI</span></div>
+      <p>The Minion 001 pieces minted on the XRP Ledger. One artwork, 100 editions across four chains, and these are the ones that live on XRP. All three minted on XRP so far are held by Scott, Dead Reckoning.</p>
+      <p class="mint-count" id="axe-count">5 of 100 minted</p>
+      <div class="mint-bar"><div class="mint-bar-fill" id="axe-bar-fill" style="width:5%"></div></div>
+      <p class="small" id="axe-breakdown">3 on XRP &middot; 2 on WAX &middot; 0 on Base &middot; 0 on Solana</p>
+      <div class="badges"><span class="badge">XRP</span><span class="badge" id="axe-total-badge">5 of 100 minted</span><span class="badge">Taxon 66609</span><span class="badge">Human-made, no AI</span></div>
     </div>
   </div>
 
@@ -86,9 +109,17 @@
     </section>
   </div>
 
-  <section class="card">
-    <h2>Want one?</h2>
-    <p>Minion 001 is still minting. 100 editions across WAX, XRP, Base and Solana, 50 cents for registered Horde members, a dollar for everyone else. <a href="minion-001.html">Get yours on the Minion 001 page</a>.</p>
+  <section class="card" id="get-yours">
+    <h2>Get yours</h2>
+    <p>Minion 001 is still minting. One shared pool of 100 across WAX, XRP, Base and Solana. Members pay 50 cents, everyone else a dollar. Tap your chain.</p>
+    <div class="chain-btns">
+      <button class="btn chain-btn btn-wax" type="button" data-chain="wax" disabled>Mint on WAX &middot; 144.73 WAX</button>
+      <button class="btn chain-btn btn-xrp" type="button" data-chain="xrp" disabled>Mint on XRP &middot; 0.53 XRP</button>
+      <button class="btn chain-btn btn-base" type="button" data-chain="base" disabled>Mint on Base &middot; $0.50</button>
+      <button class="btn chain-btn btn-sol" type="button" data-chain="sol" disabled>Mint on Solana &middot; 0.0069 SOL</button>
+    </div>
+    <p class="small" id="axe-mint-note">Tap your chain to buy.</p>
+    <p>Not registered yet? <a href="register.html">Register first</a>. Registration is the list.</p>
     <p>More about the gallery: <a href="hag.html">Horde Art Gallery</a>.</p>
   </section>
 </main>
@@ -155,6 +186,99 @@
     }
   }
   check();
+})();
+</script>
+<script>
+/* AXE READY total count + Get yours buttons (same pattern as
+   minion-001.html, but NO Member/Everyone toggle: the price is picked
+   automatically. If this device knows a Horde profile, the buttons show
+   member pricing; otherwise they show everyone pricing. The total is
+   the shared pool across all four chains: WAX comes live from the
+   template's issued supply; XRP, Base and Solana come from
+   data/minion-001-counter.json. */
+(function(){
+  var countEl = document.getElementById('axe-count');
+  var barFill = document.getElementById('axe-bar-fill');
+  var breakdownEl = document.getElementById('axe-breakdown');
+  var totalBadge = document.getElementById('axe-total-badge');
+  var note = document.getElementById('axe-mint-note');
+  var chainBtns = document.querySelectorAll('#get-yours .chain-btn');
+  var MINT = {
+    wax: { member: 'minion-001-claim.html?d=19', public: 'minion-001-claim.html?d=20' },
+    xrp: { member: 'minion-001-pay.html?chain=xrp&tier=member', public: 'minion-001-pay.html?chain=xrp&tier=public' },
+    base: { member: 'minion-001-pay.html?chain=base&tier=member', public: 'minion-001-pay.html?chain=base&tier=public' },
+    sol: { member: 'minion-001-pay.html?chain=sol&tier=member', public: 'minion-001-pay.html?chain=sol&tier=public' }
+  };
+  var PRICE = {
+    wax: { member: '144.73 WAX', public: '289.45 WAX' },
+    xrp: { member: '0.53 XRP', public: '1.05 XRP' },
+    base: { member: '$0.50', public: '$1.00' },
+    sol: { member: '0.0069 SOL', public: '0.0139 SOL' }
+  };
+  var CHAIN_NAME = { wax: 'WAX', xrp: 'XRP', base: 'Base', sol: 'Solana' };
+  var totalMinted = 5;
+  function isMember(){
+    try {
+      var p = JSON.parse(localStorage.getItem('horde_profile') || 'null');
+      var r = JSON.parse(localStorage.getItem('horde_registration') || 'null');
+      return !!(p || r);
+    } catch (e) { return false; }
+  }
+  var tier = isMember() ? 'member' : 'public';
+  function renderButtons(){
+    var soldOut = totalMinted >= 100;
+    chainBtns.forEach(function(b){
+      var c = b.getAttribute('data-chain');
+      var price = PRICE[c] && PRICE[c][tier];
+      var url = MINT[c] && MINT[c][tier];
+      var name = CHAIN_NAME[c] || c.toUpperCase();
+      if (soldOut) {
+        b.disabled = true;
+        b.removeAttribute('data-href');
+        b.textContent = 'Sold out \u00b7 ' + name;
+      } else {
+        b.disabled = false;
+        b.setAttribute('data-href', url);
+        b.textContent = 'Mint on ' + name + ' \u00b7 ' + price;
+      }
+    });
+    if (note) note.textContent = soldOut ? 'Sold out. All 100 Minions are minted.' : (tier === 'member' ? 'Member price, because this device knows your Horde profile. Tap your chain.' : 'Everyone price. Register and this device will show the member price.');
+  }
+  async function refreshCount(){
+    var wax = 2, xrp = 3, base = 0, sol = 0;
+    try {
+      var res = await fetch('https://wax.greymass.com/v1/chain/get_table_rows', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ json: true, code: 'atomicassets', scope: 'myhordeonwax', table: 'templates', lower_bound: 912505, upper_bound: 912505, limit: 1 })
+      });
+      var json = await res.json();
+      var row = json.rows && json.rows[0];
+      if (row && row.issued_supply !== undefined) wax = Number(row.issued_supply) || 0;
+    } catch (e) { /* keep the saved count */ }
+    try {
+      var r2 = await fetch('data/minion-001-counter.json?t=' + Date.now());
+      var j2 = await r2.json();
+      xrp = Number(j2.xrp) || 0; base = Number(j2.base) || 0; sol = Number(j2.solana) || 0;
+    } catch (e2) { /* keep the saved count */ }
+    totalMinted = wax + xrp + base + sol;
+    if (totalMinted > 100) totalMinted = 100;
+    if (countEl) countEl.textContent = totalMinted + ' of 100 minted';
+    if (barFill) barFill.style.width = totalMinted + '%';
+    if (breakdownEl) breakdownEl.textContent = xrp + ' on XRP \u00b7 ' + wax + ' on WAX \u00b7 ' + base + ' on Base \u00b7 ' + sol + ' on Solana';
+    if (totalBadge) totalBadge.textContent = totalMinted + ' of 100 minted';
+    renderButtons();
+  }
+  chainBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      if (b.disabled) return;
+      var url = b.getAttribute('data-href');
+      if (url) location.href = url;
+    });
+  });
+  renderButtons();
+  refreshCount();
+  setInterval(refreshCount, 60000);
 })();
 </script>
 <script>
