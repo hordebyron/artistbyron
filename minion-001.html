@@ -23,18 +23,15 @@
   .chain-btns{grid-template-columns:repeat(4,1fr)}
   .chain-btn{padding:14px 8px;font-size:1rem;line-height:1.3}
 }
-/* Mint (Option B, Byron, 27 Nov 2026): one member/everyone switch, four big
-   chain-coloured buttons with the price in each, and a counter for the
-   shared pool. Chain colours: WAX orange, XRP white, Base blue,
+/* Mint (Byron, 27 Nov 2026): the price is picked automatically, member
+   price when this device knows a Horde profile, everyone price otherwise.
+   Four big chain-coloured buttons with the price in each, and a counter
+   for the shared pool. Chain colours: WAX orange, XRP white, Base blue,
    Solana purple-green gradient. */
 .mint-timer{font-size:1.7rem;font-weight:700;text-align:center;margin:.2em 0 .6em}
 .mint-count{font-size:1.4rem;font-weight:700;text-align:center;margin:.2em 0 .4em}
-.mint-bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:0 0 14px}
+.mint-bar{height:22px;border-radius:11px;background:var(--line);overflow:hidden;margin:0 0 14px}
 .mint-bar-fill{height:100%;background:var(--red);width:0%;transition:width .5s}
-.tier-switch{display:flex;gap:8px;margin:0 0 12px}
-.tier-switch .tier-btn{flex:1;background:transparent;border:1px solid var(--line);color:var(--ink) !important}
-.tier-switch .tier-btn.on{background:var(--ink);color:var(--bg) !important;border-color:var(--ink)}
-.tier-switch .tier-btn:disabled{opacity:.5;cursor:not-allowed}
 .chain-btns{display:grid;gap:10px}
 .chain-btn{display:block;width:100%;padding:14px 16px;font-size:1.05rem;text-align:center}
 .chain-btn.btn-wax{background:#E8821E !important}
@@ -72,17 +69,13 @@
     <p>Opens Friday 27 November 2026 at 1:00 PM CST. 50 cents for registered Horde members, a dollar for everyone else. One shared pool of 100 across WAX, XRP, Base and Solana. Hedera opens when funded.</p>
     <p class="mint-count" id="mint-count">0 of 100 minted</p>
     <div class="mint-bar"><div class="mint-bar-fill" id="mint-bar-fill" style="width:0%"></div></div>
-    <div class="tier-switch" role="group" aria-label="Price">
-      <button class="btn tier-btn" type="button" id="tier-member" data-tier="member">Member &middot; 50&cent;</button>
-      <button class="btn tier-btn" type="button" id="tier-public" data-tier="public">Everyone &middot; $1</button>
-    </div>
     <div class="chain-btns">
       <button class="btn chain-btn btn-wax" type="button" data-chain="wax" disabled>Mint on WAX</button>
       <button class="btn chain-btn btn-xrp" type="button" data-chain="xrp" disabled>Mint on XRP</button>
       <button class="btn chain-btn btn-base" type="button" data-chain="base" disabled>Mint on Base</button>
       <button class="btn chain-btn btn-sol" type="button" data-chain="sol" disabled>Mint on Solana</button>
     </div>
-    <p class="small" id="mint-note">The mint opens at 1:00 PM. Pick Member or Everyone above, then tap your chain. The counter is the shared pool across all chains.</p>
+    <p class="small" id="mint-note">The mint opens at 1:00 PM. Tap your chain below when it opens. The counter is the shared pool across all chains.</p>
     <p>Not registered yet? <a href="register.html">Register first</a>. Registration is the list.</p>
   </section>
 
@@ -108,22 +101,19 @@
 </main>
 <footer><div class="wrap"><p>Artist Byron &middot; The Horde &middot; Come for the art, stay for the Horde.</p><p><span class="nav-drop"><a href="gallery.html">Gallery</a><span class="nav-menu"><a href="gallery.html">The Gallery</a><a href="nft-gallery.html" class="crypto-only">NFT Gallery</a></span></span> &middot; <a href="login.html" id="nav-login">Log in</a> &middot; <a href="shop.html">Shop</a> &middot; <a href="contests.html">Contests</a> &middot; <a href="register.html">Register</a> &middot; <a href="https://ko-fi.com/artistbyron">Ko-fi</a> &middot; <a href="https://discord.gg/rA3UMEkpqc">Discord</a></p><p class="small">Get first word on Loot Crates and first dibs on the monthly free drop: <a href="index.html#email">join the email list</a>.</p></div></footer>
 <script>
-/* Minion 001 mint (Option B, Byron, 27 Nov 2026): one member/everyone
-   switch, four big chain-coloured buttons with the price in each, and a
-   counter for the shared pool of 100. The switch flips every button's
-   price at once. The member price is members only: the Member switch
-   stays locked unless this device knows a Horde profile. The counter
-   reads the WAX template's issued supply live and adds the XRP, Base
-   and Solana mints from data/minion-001-counter.json (Muse updates
-   that file after each manual mint). At 100 the buttons say Sold out. */
+/* Minion 001 mint (Byron, 27 Nov 2026): the price is picked automatically,
+   member price when this device knows a Horde profile, everyone price
+   otherwise. Four big chain-coloured buttons with the price in each, and a
+   counter for the shared pool of 100. The counter reads the WAX template's
+   issued supply live and adds the XRP, Base and Solana mints from
+   data/minion-001-counter.json (Muse updates that file after each manual
+   mint). At 100 the buttons say Sold out. */
 (function(){
   var launch = new Date('2026-11-27T13:00:00-05:00').getTime();
   var timer = document.getElementById('mint-timer');
   var note = document.getElementById('mint-note');
   var countEl = document.getElementById('mint-count');
   var barFill = document.getElementById('mint-bar-fill');
-  var tierMember = document.getElementById('tier-member');
-  var tierPublic = document.getElementById('tier-public');
   var chainBtns = document.querySelectorAll('.chain-btn');
   var MINT = {
     wax: { member: 'minion-001-claim.html?d=19', public: 'minion-001-claim.html?d=20' },
@@ -153,11 +143,6 @@
   function renderButtons(){
     var live = Date.now() >= launch;
     var soldOut = totalMinted >= 100;
-    if (tierMember) {
-      tierMember.classList.toggle('on', tier === 'member');
-      tierMember.disabled = !isMember();
-    }
-    if (tierPublic) tierPublic.classList.toggle('on', tier === 'public');
     chainBtns.forEach(function(b){
       var c = b.getAttribute('data-chain');
       var price = PRICE[c] && PRICE[c][tier];
@@ -177,7 +162,7 @@
         b.textContent = 'Mint on ' + name + ' · ' + price;
       }
     });
-    if (note) note.textContent = soldOut ? 'Sold out. All 100 Minions are minted.' : live ? 'Live now. Pick Member or Everyone above, then tap your chain.' : 'The mint opens at 1:00 PM. Pick Member or Everyone above, then tap your chain. The counter is the shared pool across all chains.';
+    if (note) note.textContent = soldOut ? 'Sold out. All 100 Minions are minted.' : live ? 'Live now. Tap your chain below to mint.' : 'The mint opens at 1:00 PM. Tap your chain below when it opens. The counter is the shared pool across all chains.';
   }
   function tick(){
     var diff = launch - Date.now();
@@ -215,8 +200,6 @@
     if (barFill) barFill.style.width = totalMinted + '%';
     renderButtons();
   }
-  if (tierMember) tierMember.addEventListener('click', function(){ if (isMember()) { tier = 'member'; renderButtons(); } });
-  if (tierPublic) tierPublic.addEventListener('click', function(){ tier = 'public'; renderButtons(); });
   chainBtns.forEach(function(b){
     b.addEventListener('click', function(){
       if (b.disabled) return;
