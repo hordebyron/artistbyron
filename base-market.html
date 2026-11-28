@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Base Market · Artist Byron</title>
 <meta name="description" content="The Horde secondary market on Base. Horde pieces, sold by the people who hold them. Minion 001 is the first drop.">
-<link rel="stylesheet" href="style.css?v=219">
+<link rel="stylesheet" href="style.css?v=222">
 <style>
 .addr{word-break:break-all}
 </style>
@@ -128,7 +128,7 @@ function loadDrops(){
     } catch (e) { st.textContent = 'The newest drops could not load just now.'; }
   }
   paint();
-  /* Refresh the Base claimed count from the site counter (Muse updates
+  /* Refresh the Base claimed count from the site counter (the minions update
      data/minion-001-counter.json after each manual Base mint). If it never
      arrives, the saved count stands. */
   var settled = false;

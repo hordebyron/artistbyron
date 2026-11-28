@@ -48,7 +48,7 @@
   .prod.feature{grid-template-columns:220px 1fr;gap:22px}
 }
 </style>
-<link rel="stylesheet" href="style.css?v=219">
+<link rel="stylesheet" href="style.css?v=222">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -441,11 +441,11 @@
     if (o.denom === 'SOL') return 'solana:' + o.wallet + '?amount=' + o.amount + '&label=' + encodeURIComponent('Artist Byron') + '&message=' + encodeURIComponent(o.item) + '&memo=' + encodeURIComponent(o.memo);
     return '';
   }
-  /* After a crypto payment, the buyer has to report it so Muse can match it
+  /* After a crypto payment, the buyer has to report it so the minions can match it
      and ship. Email alone fails on phones with no mail app set up, so the
      first path is copy + paste in the Horde Discord; email stays as a backup. */
   function copyText(text, btn){
-    var box = btn ? (btn.closest ? btn.closest('.tell-muse-block') : null) : null;
+    var box = btn ? (btn.closest ? btn.closest('.tell-minions-block') : null) : null;
     var status = box ? box.querySelector('[data-copy-status]') : null;
     function done(ok){
       if (status) status.textContent = ok ? 'Copied. Paste it in #general on the Horde Discord.' : 'Copy did not work. Select the details above and copy them by hand.';
@@ -475,15 +475,15 @@
     copyText(msg, b);
   });
   function paidMessage(o, txid){
-    var lines = ['Hi Muse, I paid for ' + o.item + ' on the shop.', '', 'Item: ' + o.item, 'Amount: ' + o.amount + ' ' + o.denom, 'Payment tx: ' + (txid || '(your transaction hash)'), 'Code: ' + o.memo];
+    var lines = ['Hi minions, I paid for ' + o.item + ' on the shop.', '', 'Item: ' + o.item, 'Amount: ' + o.amount + ' ' + o.denom, 'Payment tx: ' + (txid || '(your transaction hash)'), 'Code: ' + o.memo];
     if (o.wantNft) lines.push('My ' + o.denom + ' wallet address: (your wallet address)');
     lines.push('Shipping address: (your shipping address)', '', 'Please send it on. Thank you.');
     return lines.join('\n');
   }
-  function tellMuseBlock(o, txid){
+  function tellMinionsBlock(o, txid){
     var msg = paidMessage(o, txid);
     var mailto = 'mailto:hordemuse@muse.ai?subject=' + encodeURIComponent('Shop payment - ' + o.item) + '&body=' + encodeURIComponent(msg);
-    var h = '<div class="tell-muse-block">'
+    var h = '<div class="tell-minions-block">'
       + '<p><strong>Paid. Now let the minions know so your order gets sent.</strong></p>'
       + '<p class="small" style="background:#221f1d;border:1px solid #3a3633;border-radius:10px;padding:12px 14px;word-break:break-word;">'
       + 'Item: ' + esc(o.item) + '<br>Amount: ' + esc(o.amount) + ' ' + esc(o.denom)
@@ -501,7 +501,7 @@
   function paidHtml(o, txid){
     var h = '<p><strong>Paid.</strong> ' + esc(o.amount) + ' ' + esc(o.denom) + ' is on its way to Byron.</p>';
     if (txid) h += '<p class="small">Transaction: ' + esc(String(txid)) + '</p>';
-    h += tellMuseBlock(o, txid);
+    h += tellMinionsBlock(o, txid);
     return h;
   }
   function scanLine(o){
@@ -516,7 +516,7 @@
       + '<p>' + scanLine(o) + '</p>'
       + '<div class="qr-slot"></div>'
       + '<p><a class="btn" href="' + esc(uri) + '">' + openLabel + '</a></p>'
-      + tellMuseBlock(o, null), my);
+      + tellMinionsBlock(o, null), my);
     makeQrImg(uri).then(function(img){
       if (my !== undefined && result._attempt !== my) return;
       var slot = result.querySelector('.qr-slot');

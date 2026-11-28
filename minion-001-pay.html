@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays Muse, then Muse mints the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
+<!-- Minion 001 NoName (Axe Ready) pay page for XRP, Base and Solana: the buyer pays the Horde, then the minions mint the Minion to them. The chain and tier come from ?chain= and ?tier= in the address. Prices are fixed at setup from the live rate (27 Nov 2026), the same as the WAX drops. -->
 <title>Axe Ready - Minion 001 - pay</title>
 <meta name="description" content="Mint Minion 001 NoName, Axe Ready, with XRP, ETH or SOL. 50 cents for registered Horde members, a dollar for everyone else. You pay, the minions mint your Minion to you.">
-<link rel="stylesheet" href="style.css?v=219">
+<link rel="stylesheet" href="style.css?v=222">
 <link rel="icon" type="image/png" href="art/horde-h-black.png">
 <link rel="shortcut icon" href="art/horde-h-black.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -38,13 +38,13 @@
       <p id="sol-qr-img"></p>
       <p class="small" id="sol-qr-link-row"><a id="sol-qr-link" href="#">Open in your wallet</a></p>
     </div>
-    <div id="tell-muse" hidden>
+    <div id="tell-minions" hidden>
       <p><strong>Paid. Now let the minions know so your Minion gets minted.</strong></p>
-      <p class="small" id="tell-muse-details" style="background:#221f1d;border:1px solid #3a3633;border-radius:10px;padding:12px 14px;word-break:break-word;"></p>
+      <p class="small" id="tell-minions-details" style="background:#221f1d;border:1px solid #3a3633;border-radius:10px;padding:12px 14px;word-break:break-word;"></p>
       <p><button class="btn" type="button" id="copy-paid-btn">Copy payment details</button>
       <a class="btn" href="https://discord.gg/rA3UMEkpqc" target="_blank" rel="noopener">Paste it in #general on Discord</a></p>
       <p class="small" id="copy-paid-status"></p>
-      <p class="small">No Discord? <a id="tell-muse-email" href="#">Email the same details to hordemuse@muse.ai</a> instead.</p>
+      <p class="small">No Discord? <a id="tell-minions-email" href="#">Email the same details to hordemuse@muse.ai</a> instead.</p>
     </div>
     <p class="small" id="manual-note" hidden>No wallet on this device? Send the exact amount above to the address above yourself (XRP: add the note MINION-001), then copy the payment details below and paste them in #general on the Horde Discord.</p>
     <p><a href="minion-001.html">&larr; Back to Axe Ready</a></p>
@@ -81,7 +81,7 @@ var PAY_CONFIGS = {
   }
 };
 var LAUNCH = new Date('2026-11-27T13:00:00-05:00').getTime();
-var MUSE_MAIL = 'hordemuse@muse.ai';
+var MINIONS_MAIL = 'hordemuse@muse.ai';
 var params = new URLSearchParams(location.search);
 var CHAIN = (params.get('chain') || '').toLowerCase();
 var TIER = (params.get('tier') || '').toLowerCase();
@@ -93,7 +93,7 @@ var payStatus = document.getElementById('pay-status');
 var payBtn = document.getElementById('pay-btn');
 var payResult = document.getElementById('pay-result');
 var payHow = document.getElementById('pay-how');
-var tellMuse = document.getElementById('tell-muse');
+var tellMinions = document.getElementById('tell-minions');
 var manualNote = document.getElementById('manual-note');
 var xrpOfferNote = document.getElementById('xrp-offer-note');
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -168,11 +168,11 @@ function setStatus(msg){ if (payStatus) payStatus.textContent = msg; }
 function setResult(html){ if (payResult) payResult.innerHTML = html; }
 function mailtoLink(txHash, fromAddr){
   var subject = 'Minion 001 - ' + C.label + ' - ' + (TIER === 'member' ? 'member' : 'everyone');
-  var body = 'Hi Muse, I paid for Minion 001 NoName (Axe Ready).\n\nChain: ' + C.label + '\nTier: ' + (TIER === 'member' ? 'member (50 cents)' : 'everyone ($1)') + '\nAmount: ' + T.amount + ' ' + C.symbol + '\nPaid to: ' + C.payTo + '\nPayment tx: ' + txHash + '\nMy receiving address: ' + fromAddr + '\n\nPlease mint my Minion to that address. Thank you.';
-  return 'mailto:' + MUSE_MAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  var body = 'Hi minions, I paid for Minion 001 NoName (Axe Ready).\n\nChain: ' + C.label + '\nTier: ' + (TIER === 'member' ? 'member (50 cents)' : 'everyone ($1)') + '\nAmount: ' + T.amount + ' ' + C.symbol + '\nPaid to: ' + C.payTo + '\nPayment tx: ' + txHash + '\nMy receiving address: ' + fromAddr + '\n\nPlease mint my Minion to that address. Thank you.';
+  return 'mailto:' + MINIONS_MAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 function paidMessage(txHash, fromAddr){
-  return 'Hi Muse, I paid for Minion 001 NoName (Axe Ready).\n\nChain: ' + C.label + '\nTier: ' + (TIER === 'member' ? 'member (50 cents)' : 'everyone ($1)') + '\nAmount: ' + T.amount + ' ' + C.symbol + '\nPaid to: ' + C.payTo + '\nPayment tx: ' + txHash + '\nMy receiving address: ' + fromAddr + '\n\nPlease mint my Minion to that address. Thank you.';
+  return 'Hi minions, I paid for Minion 001 NoName (Axe Ready).\n\nChain: ' + C.label + '\nTier: ' + (TIER === 'member' ? 'member (50 cents)' : 'everyone ($1)') + '\nAmount: ' + T.amount + ' ' + C.symbol + '\nPaid to: ' + C.payTo + '\nPayment tx: ' + txHash + '\nMy receiving address: ' + fromAddr + '\n\nPlease mint my Minion to that address. Thank you.';
 }
 function copyText(text, statusEl){
   function done(ok){
@@ -196,20 +196,20 @@ function fallbackCopy(text, done){
   document.body.removeChild(ta);
   done(ok);
 }
-function showTellMuse(txHash, fromAddr){
-  var details = document.getElementById('tell-muse-details');
+function showTellMinions(txHash, fromAddr){
+  var details = document.getElementById('tell-minions-details');
   if (details) details.innerHTML = 'Item: Minion 001 NoName (Axe Ready)<br>Chain: ' + esc(C.label) + '<br>Amount: ' + esc(T.amount) + ' ' + esc(C.symbol) + '<br>Paid to: <span style="word-break:break-all">' + esc(C.payTo) + '</span><br>Payment tx: <span style="word-break:break-all">' + esc(txHash) + '</span><br>Your address: <span style="word-break:break-all">' + esc(fromAddr) + '</span>';
-  var emailLink = document.getElementById('tell-muse-email');
+  var emailLink = document.getElementById('tell-minions-email');
   if (emailLink) emailLink.href = mailtoLink(txHash, fromAddr);
   var statusEl = document.getElementById('copy-paid-status');
   if (statusEl) statusEl.textContent = '';
   var copyBtn = document.getElementById('copy-paid-btn');
   if (copyBtn) copyBtn.onclick = function(){ copyText(paidMessage(txHash, fromAddr), statusEl); };
-  tellMuse.hidden = false;
+  tellMinions.hidden = false;
 }
 function showPaid(txHash, fromAddr){
   setResult('<strong>Paid.</strong> Payment: <span style="word-break:break-all">' + esc(txHash) + '</span><br>From: <span style="word-break:break-all">' + esc(fromAddr) + '</span>');
-  showTellMuse(txHash, fromAddr);
+  showTellMinions(txHash, fromAddr);
   if (CHAIN === 'xrp') xrpOfferNote.hidden = false;
   payBtn.disabled = true;
   payBtn.textContent = 'Paid';
@@ -345,7 +345,7 @@ function init(){
   document.getElementById('info-price').textContent = T.amount + ' ' + C.symbol + (TIER === 'member' ? ' (member)' : ' (everyone)');
   document.getElementById('info-payto').textContent = C.payTo;
   var walletName = CHAIN === 'xrp' ? 'Xaman or Joey' : CHAIN === 'base' ? 'your Base wallet (MetaMask, Phantom, or any EVM wallet)' : 'Phantom';
-  payHow.textContent = 'Tap Pay to send ' + T.amount + ' ' + C.symbol + ' to Muse with ' + walletName + '. ' + (CHAIN === 'xrp' ? 'The payment carries the note MINION-001.' : 'After you pay, copy the payment details below and paste them in #general on the Horde Discord so your Minion gets minted to your address.');
+  payHow.textContent = 'Tap Pay and approve it in ' + walletName + '. ' + (CHAIN === 'xrp' ? 'The amount, the address, and the note MINION-001 are already filled in.' : 'After you pay, copy the payment details below and paste them in #general on the Horde Discord so your Minion gets minted to your address.');
   if (TIER === 'member' && !isMember()) {
     setStatus('The member price is for registered Horde members only. Register first, then come back, or pay the everyone price of $1.');
     payBtn.disabled = true;
@@ -359,7 +359,7 @@ function init(){
     manualNote.hidden = false;
     return;
   }
-  setStatus('Ready. Tap Pay to send ' + T.amount + ' ' + C.symbol + '.');
+  setStatus('Ready. Tap Pay.');
   payBtn.disabled = false;
   payBtn.textContent = 'Pay ' + T.amount + ' ' + C.symbol;
   manualNote.hidden = false;
@@ -378,11 +378,11 @@ payBtn.addEventListener('click', async function(){
     var msg = (e && e.message) || 'the payment did not go through';
     if (msg === 'no wallet on this device' || msg === 'the wallet tools could not load' || msg === 'the Solana tools could not load') {
       setStatus('No wallet was found on this device. Send the amount above yourself, then copy the payment details below and paste them in #general on the Horde Discord.');
-      showTellMuse('(your payment tx hash)', '(your receiving wallet address)');
+      showTellMinions('(your payment tx hash)', '(your receiving wallet address)');
       if (CHAIN === 'xrp') xrpOfferNote.hidden = false;
     } else if (msg.indexOf('Solana would not answer') === 0) {
       setStatus('Nothing was spent. ' + msg);
-      showTellMuse('(your payment tx hash)', '(your receiving wallet address)');
+      showTellMinions('(your payment tx hash)', '(your receiving wallet address)');
     } else {
       setStatus('Nothing was spent. ' + msg + ' Tap Pay to try again.');
     }
